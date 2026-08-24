@@ -89,12 +89,22 @@ export const transformers: ShikiTransformer[] = [
 const PRE_CLASS =
 	'no-scrollbar text-[.8125rem] min-w-0 overflow-x-auto py-3.5 outline-none has-data-[highlighted-line]:px-0 has-data-[line-numbers]:px-0 has-data-[slot=tabs]:p-0 !bg-transparent';
 
+export type HighlightCodeOptions = {
+	showLineNumbers?: boolean;
+	preClass?: string;
+};
+
+function classes(value: unknown): string[] {
+	if (Array.isArray(value)) return value.map(String);
+	return typeof value === 'string' ? value.split(/\s+/).filter(Boolean) : [];
+}
+
 export async function highlightCode(
 	code: string,
 	language = 'svelte',
-	options?: { showLineNumbers?: boolean }
+	options?: HighlightCodeOptions
 ): Promise<string> {
-	const { showLineNumbers = true } = options ?? {};
+	const { showLineNumbers = true, preClass = PRE_CLASS } = options ?? {};
 
 	return codeToHtml(code, {
 		lang: language,
@@ -111,7 +121,11 @@ export async function highlightCode(
 					node.properties['data-line'] = '';
 				},
 				pre(node) {
-					node.properties.class = PRE_CLASS;
+					// Keep Shiki's own classes. Standalone markdown fences use `.shiki` as their
+					// theme hook, while chart source tabs also sit inside a pretty-code figure.
+					node.properties.class = [
+						...new Set([...classes(node.properties.class), ...classes(preClass)])
+					];
 				}
 			},
 			transformerNotationHighlight(),

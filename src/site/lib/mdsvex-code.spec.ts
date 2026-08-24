@@ -32,6 +32,8 @@ describe('mdsvex code fences', () => {
 		);
 
 		expect(compiled).toContain('{@html "<pre');
+		expect(compiled).toContain('shiki');
+		expect(compiled).toContain('--shiki-dark:#FFC799');
 		expect(compiled).toContain('&#x3C;');
 		expect(compiled).toContain('code={"<script lang=');
 		expect(compiled).not.toContain('&#x26;lt;script');

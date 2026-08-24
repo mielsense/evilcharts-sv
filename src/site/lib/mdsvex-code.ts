@@ -17,12 +17,11 @@
  * Imported from `svelte.config.js`, which Node loads directly; the TypeScript is stripped natively
  * (Node >= 22.18).
  */
-import { codeToHtml } from 'shiki';
 import { visit } from 'unist-util-visit';
 // A `.ts` specifier, not `.js`: Node's type stripping does not rewrite the extension, and this
 // module is loaded through Node rather than a bundler. `rewriteRelativeImportExtensions` in
 // tsconfig.json keeps TypeScript happy with it.
-import { stripCodeAnnotations, transformers } from './highlight-code.ts';
+import { highlightCode, stripCodeAnnotations } from './highlight-code.ts';
 
 type MdastNode = {
 	type: string;
@@ -72,22 +71,12 @@ async function renderFence(code: string, lang: string | null | undefined, meta: 
 	const { title } = parseMeta(meta);
 	const source = decodeFenceSource(code);
 
-	const html = await codeToHtml(source, {
-		lang: language,
-		themes: { light: 'min-light', dark: 'vesper' },
-		// Both themes ship as CSS variables so the docs switch without re-highlighting.
-		defaultColor: false,
-		transformers: [
-			...transformers,
-			{
-				name: 'evilcharts-mdx-pre',
-				pre(node) {
-					node.properties.class = PRE_CLASS;
-					delete node.properties.tabindex;
-				}
-			}
-		]
-	});
+	const html = (
+		await highlightCode(source, language, {
+			showLineNumbers: false,
+			preClass: PRE_CLASS
+		})
+	).replace(/ tabindex="0"/, '');
 	// Shiki returns trusted build-time HTML from repository-owned markdown. Keeping it in a string
 	// prevents mdsvex and Svelte from encoding the highlighted entities a second time.
 	const highlighted = `{@html ${JSON.stringify(html)}}`;

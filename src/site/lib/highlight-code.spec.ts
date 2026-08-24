@@ -33,7 +33,18 @@ describe('highlightCode', () => {
 	it('carries the raw source and the pre class the docs style against', async () => {
 		const html = await highlightCode('<div />', 'svelte');
 		expect(html).toContain('no-scrollbar');
+		expect(html).toContain('shiki');
 		expect(html).toContain('data-line-numbers');
+	});
+
+	it('lets markdown fences use the same renderer with their own frame class', async () => {
+		const html = await highlightCode('<EvilAreaChart />', 'svelte', {
+			showLineNumbers: false,
+			preClass: 'docs-fence'
+		});
+		expect(html).toContain('shiki');
+		expect(html).toContain('docs-fence');
+		expect(html).toContain('--shiki-dark:#FFC799');
 	});
 
 	it('omits line numbers when asked', async () => {
