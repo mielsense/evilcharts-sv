@@ -4,7 +4,7 @@
 	"description": "Installable Svelte 5 chart components built with LayerChart, shadcn-svelte, and @humanspeak/svelte-motion.",
 	"branch": "main",
 	"folders": ["content/docs"],
-	"excludeFolders": ["evilcharts", "dither-kit", "advisor-plans", "plans"],
+	"excludeFolders": ["evilcharts", "dither-kit", "plans"],
 	"excludeFiles": [],
 	"rules": [
 		"Use the Svelte 5 examples and LayerChart component APIs from this repository.",
