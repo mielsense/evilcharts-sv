@@ -1,0 +1,25 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+
+# Build output
+.svelte-kit
+dist
+build
+
+# Generated
+static/r
+src/lib/registry/__index__.ts
+registry.json
+
+# Read-only React reference — never reformat
+evilcharts/
+
+# Test artifacts
+test-results
+playwright-report
+
+# Verbatim vendored CSS
+src/routes/shadcn-support.css

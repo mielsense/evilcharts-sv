@@ -1,0 +1,46 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+
+# build output
+/.svelte-kit
+/dist
+/build
+/.vercel
+/.netlify
+
+# generated registry items (registry.json and __index__.ts are tracked)
+/static/r
+
+# testing
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+/coverage
+
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env
+.env.*
+!.env.example
+
+# Read-only React reference, vendored locally for the port. Not ours to redistribute.
+/evilcharts
+
+# Porting plans, deviation log and pitfalls checklist — working notes, not product.
+/plans
+
+# Local agent tooling, not project configuration.
+/.agents
+/.claude
