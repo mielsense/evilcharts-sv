@@ -13,10 +13,10 @@
 	},
 	"scripts": {
 		"dev": "vite dev",
-		"build": "npm run registry:fresh && vite build && npm run prepack",
+		"build": "pnpm registry:fresh && vite build && pnpm prepack",
 		"registry:build": "tsx scripts/build-registry.ts",
 		"registry:clean": "rm -rf static/r registry.json src/lib/registry/__index__.ts",
-		"registry:fresh": "npm run registry:clean && npm run registry:build",
+		"registry:fresh": "pnpm registry:clean && pnpm registry:build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
@@ -25,7 +25,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run && npm run test:e2e",
+		"test": "pnpm test:unit --run && pnpm test:e2e",
 		"test:e2e:install": "playwright install",
 		"test:e2e": "playwright test",
 		"test:runtime": "playwright test --config playwright.runtime.config.ts"

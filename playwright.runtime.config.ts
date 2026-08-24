@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
 	webServer: {
-		command: 'npm run dev -- --host 127.0.0.1 --port 5174 --strictPort',
+		command: 'pnpm dev --host 127.0.0.1 --port 5174 --strictPort',
 		port: 5174,
 		reuseExistingServer: false
 	},
