@@ -1,0 +1,14 @@
+/* The reference declares these three families through `next/font/google` in
+   `src/app/layout.tsx` (Inter, Geist, JetBrains Mono) and exposes them as CSS variables.
+   Self-hosted here through Fontsource so the variable names, families and weights match.
+   `--font-google-sans` is referenced by the reference's `@theme` but never defined there;
+   it is left undefined for parity. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/jetbrains-mono';
+
+:root {
+	--font-inter: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-geist-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-jetbrains-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+}
