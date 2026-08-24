@@ -37,6 +37,7 @@
 	const ticks = $derived(
 		thinAxisTicks({
 			minGap: minTickGap,
+			leadingInset: chart.xAxisLeadingInset,
 			format: (value, index) => tickFormatter?.(value, index) ?? String(value)
 		})
 	);

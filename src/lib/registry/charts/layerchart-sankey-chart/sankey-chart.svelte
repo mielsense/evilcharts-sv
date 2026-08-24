@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * Root of the composible sankey chart. Owns the flow data, the shared context, the layout
+	 * Root of the composable sankey chart. Owns the flow data, the shared context, the layout
 	 * configuration, and the loading skeleton. The visual parts — the nodes, links, and tooltip —
 	 * are composed as children, so a consumer renders exactly the parts they need.
 	 */

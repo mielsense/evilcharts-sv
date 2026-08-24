@@ -22,7 +22,7 @@
 	);
 </script>
 
-{#if slot && resolvedPlacement === placement}
+{#if slot && !chart.isLoading && resolvedPlacement === placement}
 	<ChartLegendContent
 		{payload}
 		nameKey={chart.nameKey}
@@ -33,7 +33,7 @@
 		selected={chart.selectedSector}
 		onSelectChange={chart.selectSector}
 		class={placement === 'middle'
-			? 'pointer-events-auto absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-4'
-			: undefined}
+			? 'pointer-events-auto absolute inset-x-[5px] top-1/2 z-10 -translate-y-1/2'
+			: 'mx-[5px]'}
 	/>
 {/if}

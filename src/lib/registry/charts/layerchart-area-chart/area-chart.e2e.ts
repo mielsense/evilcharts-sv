@@ -108,6 +108,13 @@ test.describe('EvilAreaChart examples', () => {
 		await entries.first().click();
 		await page.waitForTimeout(200);
 		expect(await entries.nth(1).getAttribute('class')).not.toContain('opacity-30');
+
+		const [chartBox, legendBox] = await Promise.all([
+			page.locator('[data-chart]').boundingBox(),
+			entries.first().locator('xpath=..').boundingBox()
+		]);
+		expect(legendBox!.x - chartBox!.x).toBeCloseTo(5, 0);
+		expect(chartBox!.x + chartBox!.width - (legendBox!.x + legendBox!.width)).toBeCloseTo(5, 0);
 	});
 
 	test('selecting a series stripes the others with the unselected pattern', async ({ page }) => {
@@ -127,10 +134,11 @@ test.describe('EvilAreaChart examples', () => {
 
 		const tooltip = page.locator('.min-w-32');
 		await expect(tooltip).toBeVisible();
+		await expect(tooltip).toContainText('June');
 		await expect(tooltip).toContainText('Desktop');
 		await expect(tooltip).toContainText('Mobile');
-		// Values are localized; the June row is 781 / 598.
-		await expect(tooltip).toContainText(/\d/);
+		await expect(tooltip).toContainText('781');
+		await expect(tooltip).toContainText('598');
 	});
 
 	test('the expanded stack formats the value axis as percentages', async ({ page }) => {

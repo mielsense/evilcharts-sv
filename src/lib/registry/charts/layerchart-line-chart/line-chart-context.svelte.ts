@@ -17,6 +17,7 @@ type Options = {
 	animationType: () => LineAnimationType;
 	introStartedAt: () => number;
 	isLoading: () => boolean;
+	xAxisLeadingInset: () => number;
 	chartId: () => string;
 	selectedDataKey: () => string | null;
 	selectDataKey: (dataKey: string | null) => void;
@@ -76,6 +77,9 @@ export class LineChartContext {
 	}
 	get isLoading() {
 		return this.#options.isLoading();
+	}
+	get xAxisLeadingInset() {
+		return this.#options.xAxisLeadingInset();
 	}
 	get chartId() {
 		return this.#options.chartId();

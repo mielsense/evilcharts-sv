@@ -65,6 +65,10 @@
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+	// Recharts resolves an exact category midpoint to the category on its left. D3's quadtree
+	// resolves the same tie to the point on its right; an imperceptible end-aligned point padding
+	// moves the tie boundary just far enough to preserve the reference interaction.
+	const categoryScale = scalePoint().padding(0.001).align(1);
 	let introStartedAt = $state(Date.now());
 	let chartDimension = $state(untrack(() => initialDimension));
 	let previousLoading = untrack(() => isLoading);
@@ -164,6 +168,7 @@
 		isStacked: () => isStacked,
 		isExpanded: () => isExpanded,
 		isLoading: () => isLoading,
+		xAxisLeadingInset: () => padding.left,
 		chartId: () => chartId,
 		selectedDataKey: () => selectedDataKey,
 		selectDataKey: (next) => {
@@ -197,7 +202,7 @@
 		x={xKey}
 		{series}
 		{seriesLayout}
-		xScale={scalePoint()}
+		xScale={categoryScale}
 		xPadding={[0, 0]}
 		yBaseline={0}
 		yNice

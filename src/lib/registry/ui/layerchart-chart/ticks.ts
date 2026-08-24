@@ -46,7 +46,8 @@ export function dropOverflowingLeadTick(scale: AnyScale): unknown[] {
 export function thinAxisTicks({
 	format,
 	minGap = 5,
-	charWidth = 6.6
+	charWidth = 6.6,
+	leadingInset = 0
 }: {
 	/** Renders a domain value the way the axis will, so its width can be estimated. */
 	format: (value: unknown, index: number) => string;
@@ -54,11 +55,12 @@ export function thinAxisTicks({
 	minGap?: number;
 	/** Estimated advance per character, in pixels. */
 	charWidth?: number;
+	/** Space between the SVG edge and the scale range (for example a rendered Y axis). */
+	leadingInset?: number;
 }) {
 	return (scale: AnyScale): unknown[] => {
 		const domain = scale.domain() as unknown[];
-		const values = dropOverflowingLeadTick(scale);
-		if (values.length < 2) return values;
+		if (domain.length < 2) return domain;
 
 		const bandOffset =
 			typeof (scale as { bandwidth?: () => number }).bandwidth === 'function'
@@ -74,24 +76,53 @@ export function thinAxisTicks({
 			).length *
 				charWidth) /
 			2;
+		const range = scale.range() as number[];
+		const endBoundary = Math.max(...range);
 
-		// Walk from the end, as `preserveEnd` does, keeping a tick only when it clears the last kept.
+		// Recharts moves the final label just far enough inward for its trailing edge to stay inside
+		// the axis view box. That shifted label then owns the collision boundary, which is why a
+		// narrow Jan–Dec axis keeps Dec but drops Nov even though the unshifted labels would fit.
 		const kept: unknown[] = [];
 		let nextHeadEdge = Number.POSITIVE_INFINITY;
 
-		for (let index = values.length - 1; index >= 0; index -= 1) {
-			const value = values[index];
+		for (let index = domain.length - 1; index >= 0; index -= 1) {
+			const value = domain[index];
 			const half = halfWidthOf(value);
-			const tail = centreOf(value) + half;
+			const centre = centreOf(value);
+
+			// The first point-scale label may use space before the plot when a Y axis has reserved it.
+			// Clip against the SVG's physical leading edge (0), not the scale range's first position.
+			if (index === 0 && leadingInset + centre - half < 0) continue;
+
+			const adjustedCentre =
+				index === domain.length - 1 ? Math.min(centre, endBoundary - half) : centre;
+			const tail = adjustedCentre + half;
 
 			if (tail + minGap <= nextHeadEdge) {
 				kept.push(value);
-				nextHeadEdge = centreOf(value) - half;
+				nextHeadEdge = adjustedCentre - half;
 			}
 		}
 
 		return kept.reverse();
 	};
+}
+
+/**
+ * Recharts' numeric axes default to five ticks and include both ends of the resolved domain.
+ * D3's `scale.ticks(5)` instead chooses a rounded step and can omit the upper endpoint (for
+ * example `[0, 500, 1000, 1500]` for a `[0, 1800]` domain), so LayerChart needs explicit values.
+ */
+export function rechartsValueAxisTicks(scale: AnyScale, count = 5): unknown[] {
+	const domain = scale.domain() as unknown[];
+	const start = Number(domain[0]);
+	const end = Number(domain.at(-1));
+	if (!Number.isFinite(start) || !Number.isFinite(end) || count < 2) return domain;
+
+	const step = (end - start) / (count - 1);
+	return Array.from({ length: count }, (_, index) =>
+		Number((start + step * index).toPrecision(12))
+	);
 }
 
 /**

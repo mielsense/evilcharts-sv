@@ -1,6 +1,6 @@
 <script lang="ts" generics="TData extends Record<string, unknown>">
 	/**
-	 * Root of the composible radar chart. Owns the data, the shared context, and the loading
+	 * Root of the composable radar chart. Owns the data, the shared context, and the loading
 	 * skeleton. Everything visual — the polar grid, axes, tooltip, legend, and the radars
 	 * themselves — is composed as children, so a consumer renders exactly the parts they need.
 	 */

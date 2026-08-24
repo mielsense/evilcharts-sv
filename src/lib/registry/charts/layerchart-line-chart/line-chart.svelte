@@ -1,6 +1,6 @@
 <script lang="ts" generics="TData extends Record<string, unknown>">
 	/**
-	 * Root of the composible line chart. Owns the data, the shared context, the
+	 * Root of the composable line chart. Owns the data, the shared context, the
 	 * loading skeleton, and the optional zoom brush. Everything visual — axes,
 	 * grid, tooltip, legend, and the lines themselves — is composed as children,
 	 * so a consumer renders exactly the parts they need.
@@ -136,6 +136,7 @@
 		animationType: () => animationType,
 		introStartedAt: () => introStartedAt,
 		isLoading: () => isLoading,
+		xAxisLeadingInset: () => padding.left,
 		chartId: () => chartId,
 		selectedDataKey: () => selectedDataKey,
 		selectDataKey: (next) => {

@@ -1,6 +1,6 @@
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { describe, expect, it } from 'vitest';
-import { layerChartFormatter, thinAxisTicks } from './ticks.js';
+import { layerChartFormatter, rechartsValueAxisTicks, thinAxisTicks } from './ticks.js';
 
 describe('axis parity helpers', () => {
 	it('passes LayerChart tick indices through to Recharts-style formatters', () => {
@@ -25,6 +25,62 @@ describe('axis parity helpers', () => {
 		expect(ticks.at(-1)).toBe('April');
 		expect(ticks.length).toBeLessThan(3);
 		expect(calls).toContainEqual(['April', 3]);
+	});
+
+	it('preserves the end tick and drops the colliding penultimate mobile label', () => {
+		const months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December'
+		];
+		const scale = scalePoint<string>().domain(months).range([0, 396]);
+		const ticks = thinAxisTicks({
+			minGap: 8,
+			leadingInset: 5,
+			format: (value) => String(value).slice(0, 3)
+		})(scale);
+
+		expect(ticks).toEqual(months.slice(1, 10).concat('December'));
+	});
+
+	it('keeps the leading tick when a value axis leaves enough room for its label', () => {
+		const months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December'
+		];
+		const scale = scalePoint<string>().domain(months).range([0, 336]);
+		const ticks = thinAxisTicks({
+			minGap: 8,
+			leadingInset: 65,
+			format: (value) => String(value).slice(0, 3)
+		})(scale);
+
+		expect(ticks).toEqual(months.slice(0, 10).concat('December'));
+	});
+
+	it('matches Recharts five-tick numeric axes including both domain endpoints', () => {
+		const scale = scaleLinear().domain([0, 1800]).range([124, 0]);
+
+		expect(rechartsValueAxisTicks(scale)).toEqual([0, 450, 900, 1350, 1800]);
 	});
 
 	it('does not reinterpret vertical minTickGap as numeric tick spacing', () => {

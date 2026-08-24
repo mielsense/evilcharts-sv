@@ -7,7 +7,7 @@
 	import { Axis } from 'layerchart';
 	import type { ComponentProps } from 'svelte';
 	import { axisValueToPercentFormatter } from '../../ui/layerchart-chart/format.js';
-	import { layerChartFormatter } from '../../ui/layerchart-chart/ticks.js';
+	import { layerChartFormatter, rechartsValueAxisTicks } from '../../ui/layerchart-chart/ticks.js';
 	import { useAreaChart } from './area-chart-context.svelte.js';
 
 	type Props = Omit<ComponentProps<typeof Axis>, 'placement' | 'format'> & {
@@ -49,6 +49,7 @@
 {#if !chart.isLoading}
 	<Axis
 		placement="left"
+		ticks={rechartsValueAxisTicks}
 		rule={axisLine}
 		tickMarks={tickLine}
 		tickLength={tickMargin}

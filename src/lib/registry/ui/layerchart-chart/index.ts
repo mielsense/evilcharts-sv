@@ -17,4 +17,4 @@ export { axisValueToPercentFormatter } from './format.js';
 export { getLoadingData } from './loading.js';
 export { resolveCurve, CURVE_TYPES, type CurveType } from './curves.js';
 export { getBarPositions, type BarSlot, type BarInsets } from './bar-geometry.js';
-export { dropOverflowingLeadTick, thinAxisTicks } from './ticks.js';
+export { dropOverflowingLeadTick, rechartsValueAxisTicks, thinAxisTicks } from './ticks.js';

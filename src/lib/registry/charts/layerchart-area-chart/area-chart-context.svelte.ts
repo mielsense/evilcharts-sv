@@ -19,6 +19,7 @@ type Options = {
 	isStacked: () => boolean;
 	isExpanded: () => boolean;
 	isLoading: () => boolean;
+	xAxisLeadingInset: () => number;
 	chartId: () => string;
 	selectedDataKey: () => string | null;
 	selectDataKey: (dataKey: string | null) => void;
@@ -84,6 +85,9 @@ export class AreaChartContext {
 	}
 	get isLoading() {
 		return this.#options.isLoading();
+	}
+	get xAxisLeadingInset() {
+		return this.#options.xAxisLeadingInset();
 	}
 	get chartId() {
 		return this.#options.chartId();
