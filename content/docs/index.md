@@ -7,7 +7,7 @@ image: /og/og-image.png
 <Alert variant="svelte" title="EvilCharts for Svelte">
   <AlertContent variant="svelte">
 
-<p>This is a <code>Svelte 5</code> port of <a href="https://github.com/legions-developer/evilcharts" target="_blank" rel="noreferrer">EvilCharts</a>, maintained by <a href="https://github.com/mielsense" target="_blank" rel="noreferrer" class="text-svelte">Mathis</a>, with ordered-dither chart variants adapted from <a href="https://github.com/Boring-Software-Inc/dither-kit" target="_blank" rel="noreferrer">Dither Kit</a>.</p>
+<p>This is a <code>Svelte 5</code> port of <a href="https://github.com/legions-developer/evilcharts" target="_blank" rel="noreferrer" class="text-svelte underline underline-offset-4">EvilCharts</a>, maintained by <a href="https://github.com/mielsense" target="_blank" rel="noreferrer" class="text-svelte">Mathis</a>, with ordered-dither chart variants adapted from <a href="https://github.com/Boring-Software-Inc/dither-kit" target="_blank" rel="noreferrer" class="text-svelte underline underline-offset-4">Dither Kit</a>.</p>
 
 </AlertContent>
 </Alert>

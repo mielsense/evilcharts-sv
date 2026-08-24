@@ -27,6 +27,11 @@ test('the introduction uses the Svelte accent and padded credits', async ({ page
 	await expect(portNotice).toContainText(
 		'This is a Svelte 5 port of EvilCharts, maintained by Mathis, with ordered-dither chart variants adapted from Dither Kit.'
 	);
+	for (const name of ['EvilCharts', 'Dither Kit']) {
+		const link = portNotice.getByRole('link', { name });
+		await expect(link).toHaveClass(/text-svelte/);
+		await expect(link).toHaveCSS('text-decoration-line', 'underline');
+	}
 
 	const accentLink = page.getByRole('link', { name: 'LayerChart' }).first();
 	await expect(accentLink).toHaveClass(/text-svelte/);
