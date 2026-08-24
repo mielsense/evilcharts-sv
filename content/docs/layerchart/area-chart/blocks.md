@@ -4,20 +4,25 @@ description: Installable LayerChart area chart recipes for Svelte 5.
 image: /og/area-chart.png
 ---
 
-These recipes are complete registry items. Install one as a starting point, then edit the copied
-Svelte source in your project.
+These are complete dashboard compositions, translated from EvilCharts' original ECharts blocks.
+Each install copies editable Svelte source into your project.
 
-## Gradient bump
+## Latency percentiles
 
-<ComponentPreview class="mb-4" title="Gradient bump" name="ex-gradient-colors-bump-area-chart" />
-<CliBlock commands={["@evilcharts/ex-gradient-colors-bump-area-chart"]} />
+<ComponentPreview class="mb-4" title="Latency percentiles" name="latency-area-chart" />
+<CliBlock commands={["@evilcharts/latency-area-chart"]} />
 
-## Expanded share
+## Portfolio comparison
 
-<ComponentPreview class="mb-4" title="Expanded share" name="ex-expanded-type-area-chart" />
-<CliBlock commands={["@evilcharts/ex-expanded-type-area-chart"]} />
+<ComponentPreview class="mb-4" title="Portfolio comparison" name="portfolio-area-chart" />
+<CliBlock commands={["@evilcharts/portfolio-area-chart"]} />
 
-## Ordered dither
+## Signup benchmark
 
-<ComponentPreview class="mb-4" title="Ordered dither" name="ex-dither-area-chart" />
-<CliBlock commands={["@evilcharts/ex-dither-area-chart"]} />
+<ComponentPreview class="mb-4" title="Signup benchmark" name="benchmark-area-chart" />
+<CliBlock commands={["@evilcharts/benchmark-area-chart"]} />
+
+## Audience reach
+
+<ComponentPreview class="mb-4" title="Audience reach" name="audience-area-chart" />
+<CliBlock commands={["@evilcharts/audience-area-chart"]} />

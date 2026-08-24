@@ -38,8 +38,8 @@ loading, brushes, responsive layout, and transparent SVG interaction targets kee
 | Chart types            | 8: area, line, bar, composed, radar, pie, radial, sankey  |
 | Shared primitives      | 7: chart, tooltip, legend, dot, brush, background, dither |
 | Documentation examples | 119                                                       |
-| Installable blocks     | 4                                                         |
-| Registry items total   | 138                                                       |
+| Installable blocks     | 22                                                        |
+| Registry items total   | 156                                                       |
 
 ## Install a chart
 
@@ -137,7 +137,7 @@ src/lib/registry/          the installable product
   charts/                  8 chart modules, one directory each
   ui/                      7 shared primitives
   examples/layerchart/     119 `ex-*` documentation demos
-  blocks/layerchart/       4 larger `b-*` compositions
+  blocks/layerchart/       22 composed, installable chart blocks
   registry-*.ts            item manifests (names, deps, consumer targets)
   __index__.ts             generated; never edit by hand
 

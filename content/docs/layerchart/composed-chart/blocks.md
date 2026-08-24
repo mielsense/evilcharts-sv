@@ -4,19 +4,15 @@ description: Installable LayerChart composed chart recipes for Svelte 5.
 image: /og/composed-chart.png
 ---
 
-Use these blocks when one plot needs bars and lines. The installed source remains fully editable.
+These compositions pair bars and lines with the metrics they explain. Their data comes from the
+original EvilCharts composed and benchmark examples.
 
-## Gradient comparison
+## Revenue and profit
 
-<ComponentPreview class="mb-4" title="Gradient comparison" name="ex-gradient-colors-composed-chart" />
-<CliBlock commands={["@evilcharts/ex-gradient-colors-composed-chart"]} />
+<ComponentPreview class="mb-4" title="Revenue and profit" name="revenue-composed-chart" />
+<CliBlock commands={["@evilcharts/revenue-composed-chart"]} />
 
-## Glow and trace
+## Signups against target
 
-<ComponentPreview class="mb-4" title="Glow and trace" name="ex-glowing-composed-chart" />
-<CliBlock commands={["@evilcharts/ex-glowing-composed-chart"]} />
-
-## Ordered dither
-
-<ComponentPreview class="mb-4" title="Ordered dither" name="ex-dither-composed-chart" />
-<CliBlock commands={["@evilcharts/ex-dither-composed-chart"]} />
+<ComponentPreview class="mb-4" title="Signups against target" name="signups-composed-chart" />
+<CliBlock commands={["@evilcharts/signups-composed-chart"]} />

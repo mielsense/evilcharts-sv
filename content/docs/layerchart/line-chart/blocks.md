@@ -4,19 +4,15 @@ description: Installable LayerChart line chart recipes for Svelte 5.
 image: /og/line-chart.png
 ---
 
-Each block installs as Svelte source and keeps the same compound API as the default line chart.
+Both blocks preserve the original EvilCharts data, copy and surrounding metrics while using the
+Svelte 5 compound line-chart API.
 
-## Gradient bump
+## Payouts
 
-<ComponentPreview class="mb-4" title="Gradient bump" name="ex-gradient-colors-bump-line-chart" />
-<CliBlock commands={["@evilcharts/ex-gradient-colors-bump-line-chart"]} />
+<ComponentPreview class="mb-4" title="Payouts" name="payouts-line-chart" />
+<CliBlock commands={["@evilcharts/payouts-line-chart"]} />
 
-## Glowing series
+## Orders shipped
 
-<ComponentPreview class="mb-4" title="Glowing series" name="ex-glowing-desktop-line-chart" />
-<CliBlock commands={["@evilcharts/ex-glowing-desktop-line-chart"]} />
-
-## Ordered dither
-
-<ComponentPreview class="mb-4" title="Ordered dither" name="ex-dither-line-chart" />
-<CliBlock commands={["@evilcharts/ex-dither-line-chart"]} />
+<ComponentPreview class="mb-4" title="Orders shipped" name="shipments-line-chart" />
+<CliBlock commands={["@evilcharts/shipments-line-chart"]} />

@@ -7,6 +7,17 @@ const BLOCKS = [
 	'b-monospace-bar-chart'
 ] as const;
 
+const DASHBOARD_BLOCKS = [
+	'latency-area-chart',
+	'portfolio-area-chart',
+	'benchmark-area-chart',
+	'audience-area-chart',
+	'payouts-line-chart',
+	'shipments-line-chart',
+	'revenue-composed-chart',
+	'signups-composed-chart'
+] as const;
+
 function collectErrors(page: Page) {
 	const errors: string[] = [];
 	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
@@ -27,6 +38,42 @@ async function open(page: Page, name: string) {
 }
 
 test.describe('EvilCharts blocks', () => {
+	for (const name of DASHBOARD_BLOCKS) {
+		test(`${name} renders a complete dashboard card`, async ({ page }) => {
+			const errors = await open(page, name);
+			const block = page.locator(`[data-block="${name}"]`);
+
+			await expect(block).toBeVisible();
+			await expect(plot(page)).toBeVisible();
+			expect(await plot(page).locator('path, rect').count()).toBeGreaterThan(3);
+			expect(errors).toEqual([]);
+		});
+	}
+
+	test('dashboard blocks stay contained at compact and wide widths', async ({ page }) => {
+		test.setTimeout(90_000);
+
+		for (const width of [390, 630]) {
+			for (const name of DASHBOARD_BLOCKS) {
+				await page.goto(`/preview/${name}?w=${width}&h=360`);
+				await page.waitForSelector('[data-preview-ready]');
+				const overflow = await page.locator(`[data-block="${name}"]`).evaluate((block) => ({
+					blockX: block.scrollWidth - block.clientWidth,
+					blockY: block.scrollHeight - block.clientHeight,
+					previewX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+					previewY: document.documentElement.scrollHeight - document.documentElement.clientHeight
+				}));
+
+				expect(overflow, `${name} overflowed at ${width}px`).toEqual({
+					blockX: 0,
+					blockY: 0,
+					previewX: 0,
+					previewY: 0
+				});
+			}
+		}
+	});
+
 	for (const name of BLOCKS) {
 		test(`${name} renders cleanly`, async ({ page }) => {
 			const errors = await open(page, name);

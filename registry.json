@@ -3054,6 +3054,164 @@
       ]
     },
     {
+      "name": "latency-area-chart",
+      "description": "Selectable P99, P95, P75 and P50 latency dashboard",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "d3-scale"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-area-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-latency-area-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/latency-area-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "portfolio-area-chart",
+      "description": "Portfolio comparison with stepped dotted areas and return metrics",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "d3-scale"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-area-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-portfolio-area-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/portfolio-area-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "benchmark-area-chart",
+      "description": "Weekly signups benchmark with actual and target series",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "d3-scale"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-area-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-benchmark-area-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/benchmark-area-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "audience-area-chart",
+      "description": "Audience reach card with a compact total and gradient trend",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "d3-scale"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-area-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-audience-area-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/audience-area-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "payouts-line-chart",
+      "description": "Payout trend with monthly, yearly and city totals",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "d3-scale"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-line-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-payouts-line-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/payouts-line-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "shipments-line-chart",
+      "description": "Current and previous week shipment comparison",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "d3-scale"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-line-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-shipments-line-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/shipments-line-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "revenue-composed-chart",
+      "description": "Annual revenue bars with a monthly profit trend and margin summary",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-composed-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-revenue-composed-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/revenue-composed-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "signups-composed-chart",
+      "description": "Weekly signup bars measured against a stepped target line",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-composed-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-signups-composed-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/signups-composed-chart.svelte"
+        }
+      ]
+    },
+    {
       "name": "monospace-bar-chart",
       "description": "Monospace bar chart component",
       "dependencies": [
@@ -3156,6 +3314,197 @@
           "path": "src/lib/registry/blocks/layerchart/b-isometric-bar-chart-defs.svelte",
           "type": "registry:block",
           "target": "$lib/components/evilcharts/blocks/isometric-bar-chart-defs.svelte"
+        }
+      ]
+    },
+    {
+      "name": "market-share-pie-chart",
+      "description": "Interactive market-share donut with a selectable value breakdown",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-pie-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-market-share-pie-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/market-share-pie-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "progress-rings-pie-chart",
+      "description": "Research summary with paired dotted progress rings",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-pie-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-progress-rings-pie-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/progress-rings-pie-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "revenue-mix-pie-chart",
+      "description": "Revenue-channel donut with order total and compact breakdown",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-pie-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-revenue-mix-pie-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/revenue-mix-pie-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "reliability-score-pie-chart",
+      "description": "Segmented reliability gauge with score band and threshold scale",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-pie-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-reliability-score-pie-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/reliability-score-pie-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "capability-radar-chart",
+      "description": "Team capability dashboard comparing current and target performance",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-radar-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-capability-radar-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/capability-radar-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "budget-radial-chart",
+      "description": "Quarterly budget dashboard with allocation rings and ledger rows",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-radial-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-budget-radial-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/budget-radial-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "ride-radial-chart",
+      "description": "Cycling activity dashboard with goal, radial metrics, and effort splits",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion",
+        "@lucide/svelte"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-radial-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-ride-radial-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/ride-radial-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "cache-tiers-radial-chart",
+      "description": "Cache operations summary with semi-radial tiers and health counters",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-radial-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-cache-tiers-radial-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/cache-tiers-radial-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "allocation-sankey-chart",
+      "description": "Fund-allocation flow with position, AUM, and hedging metrics",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-sankey-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-allocation-sankey-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/allocation-sankey-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "pipeline-sankey-chart",
+      "description": "Revenue pipeline flow with a central booked-value summary",
+      "dependencies": [
+        "layerchart",
+        "@humanspeak/svelte-motion"
+      ],
+      "registryDependencies": [
+        "@evilcharts/layerchart-sankey-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/layerchart/b-pipeline-sankey-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/pipeline-sankey-chart.svelte"
         }
       ]
     }
