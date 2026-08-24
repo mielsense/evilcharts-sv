@@ -17,6 +17,7 @@
 		DropdownMenuItem,
 		DropdownMenuTrigger
 	} from '$site/components/ui/dropdown-menu/index.js';
+	import { buildDocsPrompt } from '$site/lib/docs-prompt.js';
 	import { cn } from '$site/lib/utils.js';
 
 	let { mdx, url, path }: { mdx: string; url: string; path: string } = $props();
@@ -38,11 +39,7 @@
 	$effect(() => () => clearTimeout(timer));
 
 	function promptUrl(baseURL: string) {
-		return `${baseURL}?q=${encodeURIComponent(
-			`I’m looking at this evilcharts documentation: ${url}.
-Help me understand how to use it. Be ready to explain concepts, give examples, or help debug based on it.
-  `
-		)}`;
+		return `${baseURL}?q=${encodeURIComponent(buildDocsPrompt(url))}`;
 	}
 
 	/**

@@ -44,3 +44,7 @@ export const PORT_REPO_API_URL = 'https://api.github.com/repos/mielsense/evilcha
 export const PORT_SITE_URL = 'https://evilcharts-sv.vercel.app';
 /** Last verified on 2026-08-24. Used when GitHub does not return a numeric count. */
 export const PORT_STARS_FALLBACK = 1;
+
+export function formatGithubStarsLabel(stars: number) {
+	return `${stars} GitHub ${stars === 1 ? 'star' : 'stars'}`;
+}

@@ -4,32 +4,35 @@ description: Define labels, colors, and icons for each data series
 image: /og/chart-config.png
 ---
 
-Every Evil Chart component accepts a `chartConfig` object. It maps each data key to its display metadata — **labels**, **colors** (with theme support), and optional **icons** shown in tooltips and legends.
+Every EvilCharts component uses a chart config object. It maps each data key to its label, theme colors, and optional icon for tooltips and legends.
 
 ## Structure
 
 ```svelte
 <script lang="ts">
-  import { type ChartConfig } from "$lib/components/evilcharts/ui/layerchart-chart/index.js";
+	import Monitor from '@lucide/svelte/icons/monitor';
+	import Smartphone from '@lucide/svelte/icons/smartphone';
+	import type { ChartConfig } from '$lib/components/evilcharts/ui/layerchart-chart/index.js';
 
-  const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    icon: MonitorIcon,
-    colors: {
-      light: ["#047857"],
-      dark: ["#10b981"],
-    },
-  },
-  mobile: {
-    label: "Mobile",
-    icon: SmartphoneIcon,
-    colors: {
-      light: ["#be123c"],
-      dark: ["#f43f5e"],
-    },
-  },
-} satisfies ChartConfig;
+	const chartConfig = {
+		desktop: {
+			label: 'Desktop',
+			icon: Monitor,
+			colors: {
+				light: ['#047857'],
+				dark: ['#10b981']
+			}
+		},
+		mobile: {
+			label: 'Mobile',
+			icon: Smartphone,
+			colors: {
+				light: ['#be123c'],
+				dark: ['#f43f5e']
+			}
+		}
+	} satisfies ChartConfig;
+</script>
 ```
 
 Each key (e.g. `desktop`, `mobile`) must match a data key in your dataset. Its type:
@@ -67,7 +70,7 @@ const chartConfig = {
 
 Theme-aware color arrays. Provide at least one theme key (`light` or `dark`); each holds an array of CSS color strings.
 
-**Single color** — one color per theme for a solid fill:
+One color per theme creates a solid fill:
 
 ```ts
 colors: {
@@ -76,7 +79,7 @@ colors: {
 }
 ```
 
-**Multiple colors** — an array creates gradient fills across bars, areas, and other elements, evenly distributed across the series:
+Multiple colors create gradient fills across bars, areas, and other elements. The chart distributes them evenly across the series:
 
 ```ts
 colors: {
@@ -85,11 +88,11 @@ colors: {
 }
 ```
 
-Themes can define different color counts — the chart distributes them using the max count across all themes.
+Themes can define different color counts. The chart uses the largest count across all themes.
 
 ### icon
 
-An optional Svelte component that replaces the default color indicator in the **tooltip** and **legend** — useful for distinguishing series beyond color.
+An optional Svelte component that replaces the default color indicator in the tooltip and legend. Use icons when color alone is not enough to distinguish each series.
 
 ```svelte
 <script lang="ts">
@@ -113,7 +116,7 @@ An optional Svelte component that replaces the default color indicator in the **
 
 The `icon` renders in place of the color dot/square in tooltips and the color indicator in legends. It's styled with `text-muted-foreground` and sized `h-2.5 w-2.5` in tooltips, `h-3 w-3` in legends.
 
-## How Colors Work
+## How colors work
 
 The chart config generates CSS custom properties scoped to each chart instance. A key `desktop` with colors `["#a855f7", "#6366f1"]` produces:
 
@@ -124,7 +127,7 @@ The chart config generates CSS custom properties scoped to each chart instance. 
 
 Chart components, tooltips, and legends read these variables for consistent theming. Switching between light and dark mode swaps in the correct set automatically.
 
-### Color Distribution
+### Color distribution
 
 When you provide fewer colors than segments need, they're **evenly distributed** across slots:
 
@@ -133,7 +136,7 @@ When you provide fewer colors than segments need, they're **evenly distributed**
 
 So 2-3 gradient stops smoothly span any number of data points.
 
-## Runtime Validation
+## Runtime validation
 
 The config is validated at runtime. An empty `colors` object, or one without a valid theme key, throws a clear error:
 
@@ -145,25 +148,25 @@ invalid keys.
 
 ## Examples
 
-### Default (Labels + Colors)
+### Default (labels and colors)
 
 Labels and theme-aware colors. The label shows in the tooltip and legend; the colors control the fill.
 
 <ComponentPreview title="Basic chart config" name="ex-chart-config-default-bar-chart" />
 
-### With Icons
+### With icons
 
 Pass an `icon` component per entry to replace the default color indicator in the tooltip and legend.
 
 <ComponentPreview title="Chart config with icons" name="ex-chart-config-icons-bar-chart" />
 
-### Gradient Colors
+### Gradient colors
 
 Pass multiple colors per theme for gradient fills. Each array value is a stop distributed across the chart elements.
 
 <ComponentPreview title="Gradient colors" name="ex-gradient-colors-bar-chart" />
 
-## API Reference
+## API reference
 
 <ApiTable>
   <ApiRow name="label" type="Snippet">

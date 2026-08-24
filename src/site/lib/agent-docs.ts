@@ -173,8 +173,8 @@ metadata:
 # EvilCharts (Svelte port)
 
 Use this skill when a user wants to install, add, customize, or debug EvilCharts chart components in
-a **Svelte** project. This is the Svelte 5 port by ${PORT_AUTHOR}: ${PORT_REPO_URL}
-The original React project is by ${UPSTREAM_AUTHOR}: ${UPSTREAM_REPO_URL}
+a **Svelte** project. This is the Svelte 5 port by ${PORT_AUTHOR}: ${PORT_REPO_URL}.
+The original React project is by ${UPSTREAM_AUTHOR}: ${UPSTREAM_REPO_URL}.
 
 ## Workflow
 

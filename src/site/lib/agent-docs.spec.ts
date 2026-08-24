@@ -136,6 +136,11 @@ describe('generateSkillMd', () => {
 		expect(text).toContain('https://github.com/mielsense/evilcharts-sv');
 	});
 
+	it('ends the project credit lines as complete sentences', () => {
+		expect(text).toContain('https://github.com/mielsense/evilcharts-sv.\n');
+		expect(text).toContain('https://github.com/legions-developer/evilcharts.\n');
+	});
+
 	it('agrees with PROVIDER_META on what is installable', () => {
 		for (const id of available) {
 			expect(text).toContain(PROVIDER_META[id].name);

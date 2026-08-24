@@ -12,7 +12,8 @@
 		PORT_AUTHOR_URL,
 		PORT_REPO_URL,
 		UPSTREAM_NAME,
-		UPSTREAM_REPO_URL
+		UPSTREAM_REPO_URL,
+		formatGithubStarsLabel
 	} from '$site/globals/constants/site.js';
 	import ThemeSwitcher from './theme-switcher.svelte';
 
@@ -51,7 +52,12 @@
 		</a>
 		<span class="hidden text-muted md:inline">|</span>
 		{#if stars !== null && stars !== undefined}
-			<a href={PORT_REPO_URL} target="_blank" rel="noreferrer" aria-label={`${stars} GitHub stars`}>
+			<a
+				href={PORT_REPO_URL}
+				target="_blank"
+				rel="noreferrer"
+				aria-label={formatGithubStarsLabel(stars)}
+			>
 				<Button variant="link" size="sm">
 					<GithubIcon /> <span class="text-xs text-primary">{stars}</span>
 				</Button>

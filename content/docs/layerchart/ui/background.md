@@ -60,15 +60,26 @@ image: /og/backgrounds.png
 
 Add your own style: define an SVG `<pattern>` and register it as a variant.
 
-1. Add the new name to the `BackgroundVariant` union in `src/registry/ui/background.tsx`.
+1. Add the new name to the `BackgroundVariant` union in `src/lib/registry/ui/layerchart-background/types.ts`.
 2. Create a pattern component that returns a `<pattern>` with your SVG shapes.
 3. Register the pattern component in `PATTERN_MAP`.
 
 Example custom pattern:
 
-```svelte title="src/lib/registry/ui/layerchart-background/types.ts"
-export type BackgroundVariant = | "dots" | "grid" | "cross-hatch" | "custom-pattern"; // ...other
-variants
+```ts title="src/lib/registry/ui/layerchart-background/types.ts"
+export type BackgroundVariant =
+	| 'dots'
+	| 'grid'
+	| 'cross-hatch'
+	| 'diagonal-lines'
+	| 'plus'
+	| 'falling-triangles'
+	| '4-pointed-star'
+	| 'tiny-checkers'
+	| 'overlapping-circles'
+	| 'wiggle-lines'
+	| 'bubbles'
+	| 'custom-pattern';
 ```
 
 ```svelte title="src/lib/registry/ui/layerchart-background/patterns/custom-pattern.svelte"
@@ -87,17 +98,34 @@ variants
 ```
 
 ```ts title="src/lib/registry/ui/layerchart-background/pattern-map.ts"
+import type { Component } from 'svelte';
+import Bubbles from './patterns/bubbles.svelte';
+import CrossHatch from './patterns/cross-hatch.svelte';
+import DiagonalLines from './patterns/diagonal-lines.svelte';
 import DotsPattern from './patterns/dots.svelte';
+import FallingTriangles from './patterns/falling-triangles.svelte';
+import FourPointedStar from './patterns/four-pointed-star.svelte';
 import GridPattern from './patterns/grid.svelte';
-import CrossHatchPattern from './patterns/cross-hatch.svelte';
+import OverlappingCircles from './patterns/overlapping-circles.svelte';
+import Plus from './patterns/plus.svelte';
+import TinyCheckers from './patterns/tiny-checkers.svelte';
+import WiggleLines from './patterns/wiggle-lines.svelte';
 import CustomPattern from './patterns/custom-pattern.svelte';
+import type { BackgroundVariant, PatternProps } from './types.js';
 
-export const PATTERN_MAP: Record<BackgroundVariant, Component<{ id: string }>> = {
+export const PATTERN_MAP: Record<BackgroundVariant, Component<PatternProps>> = {
 	dots: DotsPattern,
 	grid: GridPattern,
-	'cross-hatch': CrossHatchPattern,
+	plus: Plus,
+	bubbles: Bubbles,
+	'cross-hatch': CrossHatch,
+	'diagonal-lines': DiagonalLines,
+	'falling-triangles': FallingTriangles,
+	'4-pointed-star': FourPointedStar,
+	'tiny-checkers': TinyCheckers,
+	'overlapping-circles': OverlappingCircles,
+	'wiggle-lines': WiggleLines,
 	'custom-pattern': CustomPattern
-	// ...other variants
 };
 ```
 

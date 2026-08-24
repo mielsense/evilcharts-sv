@@ -17,7 +17,7 @@ shadcn-svelte once, then add only the charts you need.
 
 LayerChart powers every EvilCharts component and is a required dependency.
 
-See the <Link href="https://layerchart.github.io/en-US/guide/installation" _blank>LayerChart installation guide</Link>.
+See the <Link href="https://www.layerchart.com/docs" _blank>LayerChart getting-started guide</Link>.
 
 </StepDescription>
       <CommandBlock commands={["layerchart"]} />

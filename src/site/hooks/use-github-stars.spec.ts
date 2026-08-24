@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import {
 	PORT_REPO_API_URL,
 	PORT_REPO_URL,
-	PORT_STARS_FALLBACK
+	PORT_STARS_FALLBACK,
+	formatGithubStarsLabel
 } from '$site/globals/constants/site.js';
 import { useGithubStars } from './use-github-stars.js';
 
@@ -14,6 +15,14 @@ function response(body: unknown, status = 200) {
 }
 
 describe('useGithubStars', () => {
+	it.each([
+		[0, '0 GitHub stars'],
+		[1, '1 GitHub star'],
+		[2, '2 GitHub stars']
+	])('formats %i for assistive technology', (stars, label) => {
+		expect(formatGithubStarsLabel(stars)).toBe(label);
+	});
+
 	it('returns the numeric star count from the port repository', async () => {
 		const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response({ stargazers_count: 1 }));
 

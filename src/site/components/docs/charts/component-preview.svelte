@@ -53,13 +53,14 @@
 
 {#if !loader}
 	<p class="mt-4 text-[13px] leading-6 text-muted-foreground">
-		Component <code
+		The <code
 			class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
 			>{name}</code
 		>
-		not found in registry. Contact the developer to add it.
+		component is missing from the registry.
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- External issue tracker. -->
-		<a target="_blank" href={PORT_ISSUES_URL} class="text-primary hover:underline">open an issue</a>
+		<a target="_blank" href={PORT_ISSUES_URL} class="text-primary hover:underline">Open an issue</a
+		>.
 	</p>
 {:else if component}
 	<ComponentPreviewTabs

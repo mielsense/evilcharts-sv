@@ -7,67 +7,66 @@ image: /og/legend.png
 ## Usage
 
 ```svelte
-<EvilLineChart
-  xDataKey="month"
-  data={data}
-  chartConfig={chartConfig}
-  legendVariant="circle" | "square" | "circle-outline" // and so on
-/>
+<EvilLineChart {data} config={chartConfig}>
+	<EvilLineChart.XAxis dataKey="month" />
+	<EvilLineChart.Legend variant="circle" />
+	<EvilLineChart.Line dataKey="desktop" />
+</EvilLineChart>
 ```
 
 ## Variants
 
-Control the legend indicator style with the `legendVariant` prop.
+Set the `variant` prop on the chart's `Legend` part. The API reference lists every available value.
 
 ### Square
 
-<ComponentPreview title="legendVariant='square'" name="ex-legend-square-line-chart" />
+<ComponentPreview title="variant='square'" name="ex-legend-square-line-chart" />
 
 ### Circle
 
-<ComponentPreview title="legendVariant='circle'" name="ex-legend-circle-line-chart" />
+<ComponentPreview title="variant='circle'" name="ex-legend-circle-line-chart" />
 
-### Circle Outline
+### Circle outline
 
-<ComponentPreview title="legendVariant='circle-outline'" name="ex-legend-circle-outline-line-chart" />
+<ComponentPreview title="variant='circle-outline'" name="ex-legend-circle-outline-line-chart" />
 
-### Rounded Square (Default)
+### Rounded square (default)
 
-<ComponentPreview title="legendVariant='rounded-square'" name="ex-legend-rounded-square-line-chart" />
+<ComponentPreview title="variant='rounded-square'" name="ex-legend-rounded-square-line-chart" />
 
-### Rounded Square Outline
+### Rounded square outline
 
-<ComponentPreview title="legendVariant='rounded-square-outline'" name="ex-legend-rounded-square-outline-line-chart" />
+<ComponentPreview title="variant='rounded-square-outline'" name="ex-legend-rounded-square-outline-line-chart" />
 
-### Vertical Bar
+### Vertical bar
 
-<ComponentPreview title="legendVariant='vertical-bar'" name="ex-legend-vertical-bar-line-chart" />
+<ComponentPreview title="variant='vertical-bar'" name="ex-legend-vertical-bar-line-chart" />
 
-### Horizontal Bar
+### Horizontal bar
 
-<ComponentPreview title="legendVariant='horizontal-bar'" name="ex-legend-horizontal-bar-line-chart" />
+<ComponentPreview title="variant='horizontal-bar'" name="ex-legend-horizontal-bar-line-chart" />
 
-## API Reference
+## API reference
 
 <ApiTable>
-  <ApiRow name="legendVariant" type='"square" | "circle" | "circle-outline" | "rounded-square" | "rounded-square-outline" | "vertical-bar" | "horizontal-bar"' default='"rounded-square"'>
+	<ApiRow name="variant" type='"square" | "circle" | "circle-outline" | "rounded-square" | "rounded-square-outline" | "vertical-bar" | "horizontal-bar"' default='"rounded-square"'>
 
 Style of the legend indicator icon.
 
 </ApiRow>
-  <ApiRow name="hideLegend" type="boolean" default="false">
-
-Hides the legend entirely.
-
-</ApiRow>
-  <ApiRow name="hideIcon" type="boolean" default="false">
-
-Hides the color icon next to each item, leaving only label text.
-
-</ApiRow>
-  <ApiRow name="align" type='"left" | "center" | "right"' default='"right"'>
+	<ApiRow name="align" type='"left" | "center" | "right"' default='"right"'>
 
 Horizontal alignment of the legend items.
+
+</ApiRow>
+	<ApiRow name="verticalAlign" type='"top" | "middle" | "bottom"' default='"top"'>
+
+Places the legend above, within, or below the plot.
+
+</ApiRow>
+	<ApiRow name="isClickable" type="boolean" default="false">
+
+Lets each legend item toggle its series selection.
 
 </ApiRow>
 </ApiTable>
