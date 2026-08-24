@@ -9,9 +9,10 @@
  *
  * Two differences from the reference, both recorded in plans/DEVIATIONS.md R-3:
  *
- * - The reference shells out to `shadcn build` for step 3. That CLI is the React one and is not a
- *   dependency here, so the item files are written directly. The output is the same shape: the
- *   published `registry-item.json` schema with a `content` string per file.
+ * - The reference shells out to `shadcn build` for step 3. The Svelte port writes the equivalent
+ *   `registry-item.json` payload directly and performs the two transformations the CLI normally
+ *   handles: local registry dependencies become relative item URLs, and authoring imports become
+ *   their consumer paths.
  * - A `files[].path` that names a **directory** is expanded into one entry per source file inside
  *   it, sorted, with tests skipped. A Svelte chart is a folder rather than a single `.tsx`.
  *
@@ -128,21 +129,46 @@ async function buildRegistryJson(items: RegistryItem[]) {
 	await writeFile(REGISTRY_JSON, JSON.stringify(manifest, null, 2) + '\n');
 }
 
-/** One installable item file per entry, with each source inlined verbatim. */
+/** Convert the authoring paths used by the docs site into the paths installed in a consumer. */
+function consumerSource(source: string): string {
+	return source
+		.replaceAll('$lib/registry/charts/', '$lib/components/evilcharts/charts/')
+		.replaceAll('$lib/registry/ui/', '$lib/components/evilcharts/ui/')
+		.replaceAll('$lib/registry/blocks/', '$lib/components/evilcharts/blocks/')
+		.replaceAll('../../charts/', '$lib/components/evilcharts/charts/')
+		.replaceAll('../../ui/', '$lib/components/evilcharts/ui/')
+		.replace(/(from\s+['"]\.\/)b-/g, '$1');
+}
+
+/** `@evilcharts/name` is an authoring shorthand; published items use supported relative URLs. */
+function consumerDependencies(dependencies: string[] | undefined): string[] {
+	return (dependencies ?? []).map((dependency) =>
+		dependency.startsWith('@evilcharts/')
+			? `./${dependency.slice('@evilcharts/'.length)}.json`
+			: dependency
+	);
+}
+
+/** One installable item file per entry, with consumer-ready source inlined. */
 async function buildItemFiles(items: RegistryItem[]) {
 	await mkdir(ITEMS_DIR, { recursive: true });
 	for (const item of items) {
 		const files = await Promise.all(
 			item.files.map(async (file) => ({
 				path: `src/lib/registry/${file.path}`,
-				content: await readFile(path.join(REGISTRY_DIR, file.path), 'utf8'),
+				content: consumerSource(await readFile(path.join(REGISTRY_DIR, file.path), 'utf8')),
 				type: file.type,
 				...(file.target ? { target: file.target } : {})
 			}))
 		);
+		const registryDependencies = consumerDependencies(item.registryDependencies);
 		await writeFile(
 			path.join(ITEMS_DIR, `${item.name}.json`),
-			JSON.stringify({ $schema: REGISTRY_ITEM_SCHEMA, ...item, files }, null, 2) + '\n'
+			JSON.stringify(
+				{ $schema: REGISTRY_ITEM_SCHEMA, ...item, registryDependencies, files },
+				null,
+				2
+			) + '\n'
 		);
 	}
 	// The reference also publishes the whole manifest under the same directory.

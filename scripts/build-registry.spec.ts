@@ -49,8 +49,22 @@ describe.skipIf(!built)('registry build output', () => {
 		for (const file of item.files) {
 			expect(typeof file.content, `${name} ${file.path}`).toBe('string');
 			expect(file.content.length).toBeGreaterThan(0);
-			// The inlined source is verbatim, as in the reference — the docs viewer rewrites imports.
-			expect(file.content).toBe(readFileSync(path.join(ROOT, file.path), 'utf8'));
+			expect(file.content, `${name} leaks an authoring alias`).not.toMatch(
+				/\$lib\/registry\/(charts|ui|blocks)\//
+			);
+			expect(file.content, `${name} leaks a source-relative block import`).not.toMatch(
+				/from\s+['"]\.\.\/\.\.\/(charts|ui)\//
+			);
+			expect(file.content, `${name} keeps a source-only b- sibling name`).not.toMatch(
+				/from\s+['"]\.\/b-/
+			);
+		}
+
+		for (const dependency of item.registryDependencies ?? []) {
+			expect(dependency, `${name} has a non-portable registry dependency`).toMatch(
+				/^\.\/[a-z0-9-]+\.json$/
+			);
+			expect(existsSync(path.join(ITEMS_DIR, dependency)), `${name} -> ${dependency}`).toBe(true);
 		}
 	});
 });
