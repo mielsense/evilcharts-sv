@@ -182,9 +182,9 @@
 				class="absolute -inset-[1600px] bg-[radial-gradient(circle,var(--color-border)_1px,transparent_1px)] bg-[size:26px_26px] opacity-50 will-change-transform"
 			></div>
 			{#each CARDS as card, index (card.id)}
-				{@const isFocused = index === active}
-				{@const isLifted = isFocused || (!reducedMotion.current && hovered === index)}
-				{@const Card = cardComponents[card.card]}
+				{const isFocused = index === active}
+				{const isLifted = isFocused || (!reducedMotion.current && hovered === index)}
+				{const Card = cardComponents[card.card]}
 				<div
 					role="presentation"
 					class={cn('absolute rounded-[8px]', isFocused ? 'shadow-2xl' : 'shadow-md')}

@@ -5,7 +5,7 @@
 	 */
 	import { Spline } from 'layerchart';
 	import { curveLinearClosed } from 'd3-shape';
-	import { cubicBezier } from '@humanspeak/svelte-motion';
+	import { cubicBezier, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { LOADING_ANIMATION_DURATION, LOADING_RADAR_DATA_KEY } from '../types.js';
 
 	/**
@@ -14,6 +14,7 @@
 	 * curve for us.
 	 */
 	const easeInOut = cubicBezier(0.42, 0, 0.58, 1);
+	const shouldReduceMotion = useReducedMotion();
 </script>
 
 <!--
@@ -29,5 +30,7 @@
 	strokeWidth={2}
 	fill="currentColor"
 	fillOpacity={0.1}
-	motion={{ type: 'tween', duration: LOADING_ANIMATION_DURATION, easing: easeInOut }}
+	motion={shouldReduceMotion.current
+		? 'none'
+		: { type: 'tween', duration: LOADING_ANIMATION_DURATION, easing: easeInOut }}
 />

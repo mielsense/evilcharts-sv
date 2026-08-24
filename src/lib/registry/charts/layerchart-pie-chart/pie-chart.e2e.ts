@@ -141,10 +141,12 @@ test.describe('EvilPieChart examples', () => {
 			nodes.map((n) => {
 				const d = n.getAttribute('d') || '';
 				const start = d.match(/^M([\d.-]+),([\d.-]+)/);
-				const outer = d.match(/A114\.4,114\.4,0,\d,\d,([\d.-]+),([\d.-]+)/);
+				const outer = [...d.matchAll(/A([\d.]+),([\d.]+),0,\d,\d,([\d.-]+),([\d.-]+)/g)]
+					.filter((arc) => arc[1] === arc[2])
+					.toSorted((a, b) => Number(b[1]) - Number(a[1]))[0];
 				if (!start || !outer) return 0;
 				const a0 = Math.atan2(-Number(start[2]), Number(start[1]));
-				const a1 = Math.atan2(-Number(outer[2]), Number(outer[1]));
+				const a1 = Math.atan2(-Number(outer[4]), Number(outer[3]));
 				let span = ((a1 - a0) * 180) / Math.PI;
 				if (span < 0) span += 360;
 				return span;

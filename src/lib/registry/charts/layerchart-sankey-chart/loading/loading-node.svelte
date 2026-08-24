@@ -6,8 +6,6 @@
 	 * proxy, which Svelte rejects unless it is bound, and a binding cannot be declared inside an
 	 * `{#each}`. See plans/DEVIATIONS.md B-3b.
 	 */
-	import { motion } from '@humanspeak/svelte-motion';
-
 	let {
 		x,
 		y,
@@ -25,14 +23,34 @@
 	} = $props();
 </script>
 
-<motion.rect
+<rect
+	class="loading-node"
 	{x}
 	{y}
 	{width}
 	{height}
 	rx={2}
 	fill="currentColor"
-	initial={{ opacity: 0.15 }}
-	animate={{ opacity: [0.15, 0.4, 0.15] }}
-	transition={{ duration, delay, repeat: Infinity, ease: 'easeInOut' }}
+	style:--loading-duration={`${duration}s`}
+	style:--loading-delay={`${delay}s`}
 />
+
+<style>
+	.loading-node {
+		opacity: 0.15;
+		animation: loading-node-pulse var(--loading-duration) ease-in-out var(--loading-delay) infinite;
+	}
+
+	@keyframes loading-node-pulse {
+		50% {
+			opacity: 0.4;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.loading-node {
+			opacity: 0.25;
+			animation: none;
+		}
+	}
+</style>

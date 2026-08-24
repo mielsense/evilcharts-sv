@@ -7,7 +7,7 @@
 	 * scales with the same arithmetic.
 	 */
 	import { Bar as LayerBar, getChartContext } from 'layerchart';
-	import { motion } from '@humanspeak/svelte-motion';
+	import { useReducedMotion } from '@humanspeak/svelte-motion';
 	import { getBarPositions } from '$lib/registry/ui/layerchart-chart/index.js';
 
 	let {
@@ -23,6 +23,7 @@
 	} = $props();
 
 	const layer = getChartContext();
+	const shouldReduceMotion = useReducedMotion();
 
 	const DX = 10;
 	const DY = 10;
@@ -39,14 +40,30 @@
 	 * tear down and rebuild its presence child, which restarts the intro and leaves it reading a
 	 * destroyed branch's derived (`derived_inert`).
 	 */
-	const INTRO_INITIAL = { scaleY: 0, opacity: 0 };
-	const INTRO_ANIMATE = { scaleY: 1, opacity: 1 };
-	const INTRO_STYLE = { transformBox: 'fill-box', transformOrigin: '50% 100%' } as const;
+	const INTRO_INITIAL = { transform: 'scaleY(0)', opacity: 0 };
+	const INTRO_ANIMATE = { transform: 'scaleY(1)', opacity: 1 };
 
 	/** Memoised per index so the staggered transition keeps its identity when the scales change. */
 	const transitions: Record<number, { duration: number; delay: number; ease: number[] }> = {};
 	const transitionFor = (index: number) =>
 		(transitions[index] ??= { duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] });
+
+	function growIn(
+		transition: { duration: number; delay: number; ease: number[] },
+		reduced: boolean
+	) {
+		return (node: SVGGElement) => {
+			if (reduced) return undefined;
+
+			const animation = node.animate([INTRO_INITIAL, INTRO_ANIMATE], {
+				duration: transition.duration * 1000,
+				delay: transition.delay * 1000,
+				easing: `cubic-bezier(${transition.ease.join(',')})`,
+				fill: 'both'
+			});
+			return () => animation.cancel();
+		};
+	}
 
 	const bars = $derived.by(() => {
 		const band = layer.xScale.bandwidth?.() ?? 0;
@@ -95,11 +112,10 @@
 		tore the group down and rebuilt it — restarting the intro and leaving svelte-motion reading a
 		derived from the destroyed branch (`derived_inert`).
 	-->
-	<motion.g
-		initial={INTRO_INITIAL}
-		animate={INTRO_ANIMATE}
-		transition={bar.transition}
-		style={INTRO_STYLE}
+	<g
+		{@attach growIn(bar.transition, shouldReduceMotion.current)}
+		style:transform-box="fill-box"
+		style:transform-origin="50% 100%"
 	>
 		<polygon
 			points={bar.sidePoints}
@@ -128,5 +144,5 @@
 		{#if FILLED && bar.highlight}
 			<rect x={bar.bx} y={bar.by} width={2} height={bar.bh} fill="rgba(0,0,0,0.15)" />
 		{/if}
-	</motion.g>
+	</g>
 {/each}

@@ -47,7 +47,7 @@
 				)}
 			>
 				{#each managers as manager (manager)}
-					{@const Icon = icons[manager]}
+					{const Icon = icons[manager]}
 					<TabsTab
 						class={cn(
 							'h-5! gap-2 px-1.5 hover:bg-transparent!',

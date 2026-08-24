@@ -72,7 +72,7 @@
 							reference renders them in that order regardless of the frontmatter's. Matched here.
 						-->
 						{#each LINK_ORDER.filter((key) => links[key]) as key (key)}
-							{@const value = links[key]!}
+							{const value = links[key]!}
 							<a
 								class="flex flex-row items-center gap-2 rounded-md bg-muted/50 px-2 py-0.5 text-[11px] text-muted-foreground capitalize hover:text-primary"
 								href={value}

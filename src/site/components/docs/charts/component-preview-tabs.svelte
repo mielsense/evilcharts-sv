@@ -84,7 +84,7 @@
 								{/snippet}
 								<!-- Keyed on the reload counter, which is what the reference's `<Fragment key>` does. -->
 								{#key reloadKey}
-									{@const Preview = component}
+									{const Preview = component}
 									<Preview />
 								{/key}
 							</LazyMount>

@@ -4,7 +4,6 @@
 	 * staggered delay, producing a wave that travels around the pie.
 	 */
 	import { Arc } from 'layerchart';
-	import { motion } from '@humanspeak/svelte-motion';
 	import { LOADING_ANIMATION_DURATION, LOADING_SECTORS } from '../types.js';
 
 	let {
@@ -27,15 +26,10 @@
 	const delay = $derived((index / LOADING_SECTORS) * (LOADING_ANIMATION_DURATION / 1000));
 </script>
 
-<motion.g
-	initial={{ opacity: 0.15 }}
-	animate={{ opacity: [0.15, 0.5, 0.15] }}
-	transition={{
-		duration: LOADING_ANIMATION_DURATION / 1000,
-		delay,
-		repeat: Infinity,
-		ease: 'easeInOut'
-	}}
+<g
+	class="loading-sector"
+	style:--loading-duration={`${LOADING_ANIMATION_DURATION}ms`}
+	style:--loading-delay={`${delay}s`}
 >
 	<Arc
 		class="lc-pie-arc"
@@ -48,4 +42,25 @@
 		strokeWidth={0}
 		motion="none"
 	/>
-</motion.g>
+</g>
+
+<style>
+	.loading-sector {
+		opacity: 0.15;
+		animation: loading-sector-pulse var(--loading-duration) ease-in-out var(--loading-delay)
+			infinite;
+	}
+
+	@keyframes loading-sector-pulse {
+		50% {
+			opacity: 0.5;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.loading-sector {
+			opacity: 0.3;
+			animation: none;
+		}
+	}
+</style>

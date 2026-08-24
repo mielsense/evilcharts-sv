@@ -4,7 +4,7 @@
 	 * <RadialBar />, with animated values and a muted fill.
 	 */
 	import { Arc, getChartContext } from 'layerchart';
-	import { cubicBezier } from '@humanspeak/svelte-motion';
+	import { cubicBezier, useReducedMotion } from '@humanspeak/svelte-motion';
 	import {
 		DEFAULT_BAR_SIZE,
 		DEFAULT_CORNER_RADIUS,
@@ -25,6 +25,7 @@
 	 * curve for us.
 	 */
 	const easeInOut = cubicBezier(0.42, 0, 0.58, 1);
+	const shouldReduceMotion = useReducedMotion();
 
 	const variantConfig = $derived(getVariantConfig(chart.variant));
 	// `layer.width` / `layer.height` are the plot box, already inside the chart's `padding`, so the
@@ -65,6 +66,8 @@
 		fillOpacity={0.25}
 		track
 		{trackEndAngle}
-		motion={{ type: 'tween', duration: LOADING_ANIMATION_DURATION, easing: easeInOut }}
+		motion={shouldReduceMotion.current
+			? 'none'
+			: { type: 'tween', duration: LOADING_ANIMATION_DURATION, easing: easeInOut }}
 	/>
 {/each}

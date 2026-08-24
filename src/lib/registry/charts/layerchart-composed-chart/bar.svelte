@@ -6,7 +6,7 @@
 	 * without style collisions.
 	 */
 	import { Bar as LayerBar, getChartContext } from 'layerchart';
-	import { motion, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { useReducedMotion } from '@humanspeak/svelte-motion';
 	import { useComposedChart } from './composed-chart-context.svelte.js';
 	import BarGlowFilter from './defs/bar-glow-filter.svelte';
 	import DuotonePattern from './defs/duotone-pattern.svelte';
@@ -16,6 +16,7 @@
 	import StrippedPattern from './defs/stripped-pattern.svelte';
 	import VerticalColorGradient from './defs/vertical-color-gradient.svelte';
 	import { getBarPositions, type BarInsets } from '../../ui/layerchart-chart/bar-geometry.js';
+	import AnimatedGrow from '../../ui/layerchart-chart/animated-grow.svelte';
 	import { getBarGrowAnimation, getBarOpacity, getVariantFill } from './helpers.js';
 	import { DEFAULT_BAR_RADIUS, type BarVariant, type ComposedAnimationType } from './types.js';
 
@@ -157,14 +158,9 @@
 				tooltip
 			/>
 			{#if grow}
-				<motion.g
-					initial={grow.initial}
-					animate={grow.animate}
-					transition={grow.transition}
-					style={grow.style}
-				>
+				<AnimatedGrow animation={grow}>
 					{@render painted(row, opacity, capInset)}
-				</motion.g>
+				</AnimatedGrow>
 			{:else}
 				{@render painted(row, opacity, capInset)}
 			{/if}

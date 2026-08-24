@@ -114,7 +114,7 @@
 
 {#snippet indicator(entry: Entry)}
 	{#if entry.icon && !hideIcon}
-		{@const Icon = entry.icon}
+		{const Icon = entry.icon}
 		<Icon />
 	{:else}
 		<LegendIndicator {variant} dataKey={entry.key} colorsCount={entry.colorsCount} />
@@ -131,7 +131,7 @@
 {#if entries.length}
 	<div
 		class={cn(
-			'flex items-center gap-4 select-none',
+			'relative z-10 flex items-center gap-4 select-none',
 			align === 'left' && 'justify-start',
 			align === 'center' && 'justify-center',
 			align === 'right' && 'justify-end',

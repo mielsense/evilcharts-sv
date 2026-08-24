@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@humanspeak/svelte-motion';
 import { LOADING_ANIMATION_DURATION, LOADING_BARS } from '../types.js';
 
 /** Random skeleton rows with values between 40 and 100. */
@@ -16,9 +17,10 @@ export class LoadingDataState {
 
 	constructor(options: { isLoading: () => boolean }) {
 		this.#isLoading = options.isLoading;
+		const shouldReduceMotion = useReducedMotion();
 
 		$effect(() => {
-			if (!this.#isLoading()) return;
+			if (!this.#isLoading() || shouldReduceMotion.current) return;
 
 			const interval = setInterval(() => {
 				this.#tick += 1;

@@ -6,7 +6,7 @@ export default defineConfig({
 		port: 5174,
 		reuseExistingServer: false
 	},
-	testMatch: '**/*.runtime.spec.{ts,js}',
+	testMatch: '**/*.runtime.e2e.{ts,js}',
 	timeout: 30_000,
 	workers: 1,
 	use: {

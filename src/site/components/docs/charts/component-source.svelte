@@ -88,7 +88,12 @@
 	</p>
 {:else if !files}
 	<!-- Same height as a collapsed block, so the tab does not jump when the source lands. -->
-	<div class={cn('mt-4 h-64 w-full animate-pulse rounded-[8px] bg-muted/40', className)}></div>
+	<div
+		class={cn(
+			'mt-4 h-64 w-full animate-pulse rounded-[8px] bg-muted/40 motion-reduce:animate-none',
+			className
+		)}
+	></div>
 {:else if single}
 	{#if collapsible}
 		<CodeCollapsibleWrapper class={className}>

@@ -40,8 +40,8 @@
 		<SidebarGroupLabel>{label}</SidebarGroupLabel>
 		<SidebarMenu>
 			{#each visibleOptions as item (item.name)}
-				{@const isActive = page.url.pathname === item.url}
-				{@const Icon = OPTION_ICONS[item.id]}
+				{const isActive = page.url.pathname === item.url}
+				{const Icon = OPTION_ICONS[item.id]}
 				<SidebarMenuItem>
 					<SidebarMenuButton
 						href={item.url}

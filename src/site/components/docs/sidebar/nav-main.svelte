@@ -116,16 +116,16 @@
 		<SidebarGroupLabel>Components</SidebarGroupLabel>
 		<SidebarMenu>
 			{#each folders as folder (folder.name)}
-				{@const visible = visibleChildren(folder)}
+				{const visible = visibleChildren(folder)}
 				{#if visible.length}
-					{@const Icon = getNavItemIcon(folder.index?.url ?? visible[0].url)}
-					{@const hasActiveChild = folder.children.some(
+					{const Icon = getNavItemIcon(folder.index?.url ?? visible[0].url)}
+					{const hasActiveChild = folder.children.some(
 						(child) => child.type === 'page' && child.url === activeTrigger.url
 					)}
 					{#if visible.length === 1}
 						<!-- Only one child: show it directly as a clickable element. -->
-						{@const single = visible[0]}
-						{@const isActive = single.url === page.url.pathname}
+						{const single = visible[0]}
+						{const isActive = single.url === page.url.pathname}
 						<SidebarMenuItem>
 							<SidebarMenuButton
 								class={cn(
@@ -172,7 +172,7 @@
 									<SidebarMenuSub>
 										<TreeIndicator activeIndex={activeTrigger.index} {hasActiveChild} />
 										{#each visible as child (child.url)}
-											{@const isActive = activeTrigger.url === child.url}
+											{const isActive = activeTrigger.url === child.url}
 											<SidebarMenuSubItem class="relative flex w-full">
 												<SidebarMenuSubButton
 													class={cn(

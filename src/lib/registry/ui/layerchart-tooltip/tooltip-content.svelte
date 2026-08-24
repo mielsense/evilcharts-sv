@@ -155,7 +155,7 @@
 						)}
 					{:else}
 						{#if row.icon}
-							{@const Icon = row.icon}
+							{const Icon = row.icon}
 							<Icon />
 						{:else if !hideIndicator}
 							<div

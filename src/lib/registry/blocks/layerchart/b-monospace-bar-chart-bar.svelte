@@ -18,7 +18,6 @@
 	 * See plans/DEVIATIONS.md BL-1.
 	 */
 	import { Bar as LayerBar, getChartContext } from 'layerchart';
-	import { motion } from '@humanspeak/svelte-motion';
 	import { getBarPositions } from '$lib/registry/ui/layerchart-chart/index.js';
 
 	let {
@@ -37,7 +36,6 @@
 
 	// Scale factor: collapsed = thin line, expanded = full width
 	const COLLAPSED_SCALE = 0.1;
-	const SPRING = { type: 'spring' as const, stiffness: 200, damping: 25 };
 
 	/**
 	 * Geometry per row, read off the chart scales — the reference gets it from Recharts' shape
@@ -74,29 +72,26 @@
 	<!-- Transparent twin keeps the whole column hoverable while the painted bar is collapsed. -->
 	<LayerBar data={bar.row} seriesKey={dataKey} fill="transparent" motion="none" tooltip />
 
-	<motion.rect
+	<rect
+		class="origin-center transition-transform duration-300 ease-out motion-reduce:transition-none"
 		x={bar.x}
 		y={bar.y}
 		width={bar.width}
 		height={bar.height}
 		{fill}
-		initial={{ scaleX: bar.isActive ? COLLAPSED_SCALE : 1 }}
-		animate={{ scaleX: bar.isActive ? 1 : COLLAPSED_SCALE }}
-		transition={SPRING}
-		style={{ transformBox: 'fill-box' }}
+		style:transform={`scaleX(${bar.isActive ? 1 : COLLAPSED_SCALE})`}
+		style:transform-box="fill-box"
 	/>
-	<motion.text
-		class="pointer-events-none font-mono"
-		initial={{ opacity: 0, y: -10, filter: 'blur(3px)' }}
-		animate={bar.isActive
-			? { opacity: 1, y: 0, filter: 'blur(0px)' }
-			: { opacity: 0, y: -10, filter: 'blur(3px)' }}
-		transition={{ duration: 0.2 }}
+	<text
+		class="pointer-events-none font-mono transition-[opacity,transform,filter] duration-200 motion-reduce:transition-none"
+		style:opacity={bar.isActive ? 1 : 0}
+		style:transform={`translateY(${bar.isActive ? 0 : -10}px)`}
+		style:filter={bar.isActive ? 'blur(0px)' : 'blur(3px)'}
 		x={bar.centerX}
 		y={bar.y - 5}
 		text-anchor="middle"
 		{fill}
 	>
 		{bar.value}
-	</motion.text>
+	</text>
 {/each}

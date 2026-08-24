@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@humanspeak/svelte-motion';
 import {
 	LOADING_ANIMATION_DURATION,
 	LOADING_CATEGORIES,
@@ -26,9 +27,10 @@ export class LoadingDataState {
 	constructor(options: { isLoading: () => boolean; loadingPoints?: () => number }) {
 		this.#isLoading = options.isLoading;
 		this.#loadingPoints = options.loadingPoints ?? (() => LOADING_POINTS);
+		const shouldReduceMotion = useReducedMotion();
 
 		$effect(() => {
-			if (!this.#isLoading()) return;
+			if (!this.#isLoading() || shouldReduceMotion.current) return;
 
 			const interval = setInterval(() => {
 				this.#tick += 1;

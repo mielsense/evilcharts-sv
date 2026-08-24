@@ -6,7 +6,7 @@
 	 * chart without style collisions.
 	 */
 	import { Bar as LayerBar, getChartContext } from 'layerchart';
-	import { motion, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { useReducedMotion } from '@humanspeak/svelte-motion';
 	import { useBarChart } from './bar-chart-context.svelte.js';
 	import ColorGradient from './defs/color-gradient.svelte';
 	import BufferHatchedPattern from './defs/buffer-hatched-pattern.svelte';
@@ -17,6 +17,7 @@
 	import HatchedPattern from './defs/hatched-pattern.svelte';
 	import StrippedPattern from './defs/stripped-pattern.svelte';
 	import { getBarPositions, type BarInsets } from '../../ui/layerchart-chart/bar-geometry.js';
+	import AnimatedGrow from '../../ui/layerchart-chart/animated-grow.svelte';
 	import { getBarGrowAnimation, getBarOpacity, getVariantFill } from './helpers.js';
 	import type { BarAnimationType, BarVariant } from './types.js';
 
@@ -159,7 +160,7 @@
 	/**
 	 * Everything each row needs to paint, resolved in one derivation.
 	 *
-	 * Declaration tags (`{const}` / `{@const}`) inside a keyed `{#each}` do not reliably re-derive
+	 * Template declaration tags inside a keyed `{#each}` do not reliably re-derive
 	 * when an outer value changes, which is what froze the tooltip and the selection dimming
 	 * elsewhere in this port. See plans/DEVIATIONS.md A-6, A-6b and A-6c.
 	 */
@@ -213,14 +214,9 @@
 				tooltip
 			/>
 			{#if grow}
-				<motion.g
-					initial={grow.initial}
-					animate={grow.animate}
-					transition={grow.transition}
-					style={grow.style}
-				>
+				<AnimatedGrow animation={grow}>
 					{@render painted(row, fill, fillOpacity, last, capInset)}
-				</motion.g>
+				</AnimatedGrow>
 			{:else}
 				{@render painted(row, fill, fillOpacity, last, capInset)}
 			{/if}

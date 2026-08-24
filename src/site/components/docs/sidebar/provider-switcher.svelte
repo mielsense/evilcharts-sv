@@ -116,8 +116,8 @@
 			>
 				<div class="px-2 py-1.5 text-xs text-muted-foreground">Rendering engine</div>
 				{#each MENU_ORDER as id (id)}
-					{@const meta = PROVIDER_META[id]}
-					{@const Icon = PROVIDER_ICONS[id]}
+					{const meta = PROVIDER_META[id]}
+					{const Icon = PROVIDER_ICONS[id]}
 					<DropdownMenuItem class="gap-2 p-2" onclick={() => selectProvider(id)}>
 						<Icon class={cn(PROVIDER_TINT[id], 'size-6!')} aria-hidden="true" />
 						<div class="ml-0.5 grid flex-1 leading-tight">
