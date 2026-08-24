@@ -1,9 +1,9 @@
 ---
 title: Sankey Chart
-description: Sankey charts for flow data with nodes and links, plus gradient colors
+description: Sankey charts for flows between nodes, with labels and gradient links
 image: /og/sankey-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-sankey-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-sankey-chart
   doc: https://www.layerchart.com/docs/components/Sankey
   api: https://www.layerchart.com/docs/components/Chart
 ---

@@ -1,9 +1,9 @@
 ---
 title: Pie Chart
-description: Static, beautifully designed pie charts with donut, gradient, and glow effects
+description: Pie and donut charts with gradients, labels, and glow effects
 image: /og/pie-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-pie-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-pie-chart
   doc: https://www.layerchart.com/docs/components/Pie
   api: https://www.layerchart.com/docs/components/Chart
 ---

@@ -1,9 +1,9 @@
 ---
 title: Radial Chart
-description: Beautiful radial bar charts with full and semi-circle variants and gradient colors
+description: Radial bar charts with full-circle, semicircle, and gradient variants
 image: /og/radial-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-radial-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-radial-chart
   doc: https://www.layerchart.com/docs/components/Arc
   api: https://www.layerchart.com/docs/components/Chart
 ---

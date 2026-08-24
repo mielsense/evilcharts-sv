@@ -4,7 +4,8 @@ description: Install EvilCharts and add charts to your project
 image: /og/og-image.png
 ---
 
-EvilCharts is plug-and-play. Skip the heavy setup—follow these steps to add beautiful, interactive charts to your Next.js project.
+EvilCharts components are installed as source in a Svelte 5 project. Set up LayerChart and
+shadcn-svelte once, then add only the charts you need.
 
 ## Steps
 
@@ -24,13 +25,14 @@ See the <Link href="https://layerchart.github.io/en-US/guide/installation" _blan
   </Step>
 
   <Step>
-    <StepTitle>Setup shadcn/ui</StepTitle>
+    <StepTitle>Set up shadcn-svelte</StepTitle>
     <StepContent>
       <StepDescription>
 
-Initialize shadcn/ui to set up Tailwind CSS, themes, and component structure. Skip this if it's already installed.
+Initialize shadcn-svelte to configure Tailwind CSS, themes, and the component structure. Skip this
+step if your project already uses it.
 
-See the <Link href="https://ui.shadcn.com/docs/installation/next" _blank>shadcn/ui Next.js installation docs</Link>.
+See the <Link href="https://shadcn-svelte.com/docs/installation" _blank>shadcn-svelte installation guide</Link>.
 
 </StepDescription>
       <CliBlock commands={["init"]} />
@@ -38,14 +40,16 @@ See the <Link href="https://ui.shadcn.com/docs/installation/next" _blank>shadcn/
   </Step>
 
   <Step>
-    <StepTitle>Add EvilCharts Components</StepTitle>
+    <StepTitle>Add an EvilCharts component</StepTitle>
     <StepContent>
       <StepDescription>
 
-Add chart components with the CLI. Replace `{chart-name}` with the chart you want (e.g., `area-chart`, `bar-chart`, `line-chart`, `pie-chart`); it installs all files and dependencies.
+Add a chart with the CLI. Replace `{chart-name}` with a registry name such as
+`layerchart-area-chart`, `layerchart-bar-chart`, `layerchart-line-chart`, or
+`layerchart-pie-chart`. The CLI installs the component source and its dependencies.
 
 </StepDescription>
-      <CliBlock commands={["@evilcharts/layerchart-&#123;chart-name&#125;"]} />
+      <CliBlock commands={["https://evilcharts-sv.vercel.app/r/{chart-name}.json"]} />
     </StepContent>
   </Step>
 </Steps>

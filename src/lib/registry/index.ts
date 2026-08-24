@@ -12,7 +12,7 @@ import { ui } from './registry-ui.js';
 import { blocks } from './registry-blocks.js';
 
 export const registry: Registry = {
-	homepage: 'https://evilcharts.com',
+	homepage: 'https://evilcharts-sv.vercel.app',
 	name: 'EvilCharts',
 	items: [...ui, ...charts, ...examples, ...blocks]
 };

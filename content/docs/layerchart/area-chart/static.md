@@ -1,9 +1,9 @@
 ---
 title: Area Chart
-description: Static, beautifully designed area charts
+description: Area charts with stacked, gradient, pattern, and reveal variants
 image: /og/area-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-area-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-area-chart
   doc: https://www.layerchart.com/docs/components/Area
   api: https://www.layerchart.com/docs/components/Chart
 ---

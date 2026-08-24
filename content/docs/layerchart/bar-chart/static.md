@@ -1,9 +1,9 @@
 ---
 title: Bar Chart
-description: Static, beautifully designed bar charts
+description: Bar charts with grouped, stacked, gradient, pattern, and interactive variants
 image: /og/bar-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-bar-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-bar-chart
   doc: https://www.layerchart.com/docs/components/Bars
   api: https://www.layerchart.com/docs/components/Chart
 ---

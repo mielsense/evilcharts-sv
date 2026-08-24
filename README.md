@@ -1,21 +1,20 @@
 # Evil Charts for Svelte
 
 Animated, interactive chart components for **Svelte 5**. Built on [LayerChart][layerchart], styled
-for [shadcn-svelte][shadcn-svelte] — copy, paste, and ship beautiful charts.
+for [shadcn-svelte][shadcn-svelte], and installed as source in your project.
 
 > ### This is an unofficial port
 >
-> **All credit for the design, the component API, the documentation and the examples goes to
-> [Gurbinder (`legions-developer`)][author] and the original [EvilCharts][upstream] project.**
-> This repository is a community Svelte 5 translation of that React project: every chart, every
-> `ex-*` example, every docs page and every line of prose here started life there. It is
-> MIT-licensed, and this port is MIT-licensed too.
+> [Mathis (`mielsense`)][porter] built and maintains this Svelte 5 port. [Gurbinder
+> (`legions-developer`)][author] created the original [EvilCharts][upstream] design and React
+> implementation. This independent port preserves that credit and the original MIT license.
 >
+> - Svelte port: <https://github.com/mielsense/evilcharts-sv>
+> - Svelte docs: <https://evilcharts-sv.vercel.app/docs>
 > - Original project: <https://github.com/legions-developer/evilcharts>
 > - Original site: <https://evilcharts.com>
 >
-> This port is not affiliated with or endorsed by the original authors. If you like these charts,
-> **star the original repository.**
+> This port is not affiliated with or endorsed by the original authors.
 
 ---
 
@@ -24,23 +23,23 @@ for [shadcn-svelte][shadcn-svelte] — copy, paste, and ship beautiful charts.
 Two things in one repository, the same split the original uses:
 
 1. **A [shadcn-svelte][shadcn-svelte]-compatible registry** of copy-paste chart components built on
-   LayerChart. This is the product — the components keep working after you copy them into your own
+   LayerChart. The components keep working after you copy them into your own
    project.
 2. **The documentation site** that presents the registry, renders every example, publishes the docs
    and exposes machine-readable surfaces for agents.
 
-|                        | Count                                                     |
-| ---------------------- | --------------------------------------------------------- |
-| Chart types            | 8 — area, line, bar, composed, radar, pie, radial, sankey |
-| Shared primitives      | 6 — chart, tooltip, legend, dot, brush, background        |
-| Documentation examples | 113                                                       |
-| Installable blocks     | 4                                                         |
-| Registry items total   | 131                                                       |
+|                        | Count                                                    |
+| ---------------------- | -------------------------------------------------------- |
+| Chart types            | 8: area, line, bar, composed, radar, pie, radial, sankey |
+| Shared primitives      | 6: chart, tooltip, legend, dot, brush, background        |
+| Documentation examples | 113                                                      |
+| Installable blocks     | 4                                                        |
+| Registry items total   | 131                                                      |
 
 ## Install a chart
 
 ```bash
-npx shadcn-svelte@latest add https://evilcharts.com/r/layerchart-area-chart.json
+npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/layerchart-area-chart.json
 ```
 
 Then use it:
@@ -74,7 +73,8 @@ Then use it:
 ```
 
 Every chart is a compound component: the root owns the data, the config and the shared selection
-state; the visible parts are children. See the [docs](https://evilcharts.com/docs) for the full API.
+state; the visible parts are children. See the [Svelte docs](https://evilcharts-sv.vercel.app/docs)
+for the full API.
 
 ## Stack
 
@@ -116,7 +116,7 @@ generated and gitignored.
 
 ## Deploying
 
-The site is built with `@sveltejs/adapter-vercel` and is almost entirely prerendered — `/mcp`'s
+The site is built with `@sveltejs/adapter-vercel` and is almost entirely prerendered. `/mcp`'s
 `POST` is the one dynamic route. Any static-capable host works; the adapter is the only thing to
 swap.
 
@@ -134,7 +134,7 @@ src/lib/registry/          the installable product
   examples/layerchart/     113 `ex-*` documentation demos
   blocks/layerchart/       4 larger `b-*` compositions
   registry-*.ts            item manifests (names, deps, consumer targets)
-  __index__.ts             generated — never edit by hand
+  __index__.ts             generated; never edit by hand
 
 src/site/                  the documentation site
   components/docs/         docs chrome, previews, the markdown component map
@@ -169,14 +169,15 @@ Bug reports and fixes are welcome. Two things to know first:
   [evilcharts.com][upstream-site] needs a reason, and that reason belongs in
   `plans/DEVIATIONS.md` with the measurement behind it.
 - **New chart designs belong upstream.** If you have an idea for a new chart or variant, open it on
-  the [original repository][upstream] — this port follows it.
+  the [original repository][upstream]. This port follows it.
 
 ## Licence
 
-MIT. See [`LICENSE`](./LICENSE) — it reproduces the original project's copyright, because
-substantially all of this work derives from it.
+MIT. See [`LICENSE`](./LICENSE). It preserves the original project's copyright and identifies
+Mathis as the author of the Svelte port.
 
 [author]: https://x.com/legionsdev
+[porter]: https://github.com/mielsense
 [upstream]: https://github.com/legions-developer/evilcharts
 [upstream-site]: https://evilcharts.com
 [layerchart]: https://www.layerchart.com

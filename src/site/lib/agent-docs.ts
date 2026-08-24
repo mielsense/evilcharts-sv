@@ -10,6 +10,12 @@ import {
 	PROVIDER_META,
 	type Provider
 } from '$site/globals/constants/providers.js';
+import {
+	PORT_AUTHOR,
+	PORT_REPO_URL,
+	UPSTREAM_AUTHOR,
+	UPSTREAM_REPO_URL
+} from '$site/globals/constants/site.js';
 import { processMdxForLLMs } from './llm.js';
 import { absoluteUrl } from './utils.js';
 import { getPages, type DocsPage } from './source.js';
@@ -114,9 +120,9 @@ ${renderLinks(ui)}`;
 
 	return `# EvilCharts Documentation (Svelte port)
 
-> EvilCharts is an open-source chart UI website built with shadcn and LayerChart, beautifully designed and handcrafted.
-> This is the unofficial Svelte 5 port of the React original at https://github.com/legions-developer/evilcharts,
-> by Gurbinder. MIT-licensed, community-maintained, not affiliated with the original authors.
+> Svelte 5 port by ${PORT_AUTHOR}: ${PORT_REPO_URL}
+> Original EvilCharts by ${UPSTREAM_AUTHOR}: ${UPSTREAM_REPO_URL}
+> The port uses LayerChart and shadcn-svelte. It is independent from the original project.
 
 ## Start Here
 ${renderLinks(startHere)}
@@ -146,9 +152,9 @@ ${content}`;
 
 	return `# EvilCharts Full Documentation (Svelte port)
 
-> Full markdown snapshot of the EvilCharts documentation generated from the same markdown source as the site.
-> This is the unofficial Svelte 5 port of the React original at https://github.com/legions-developer/evilcharts,
-> by Gurbinder. MIT-licensed, community-maintained, not affiliated with the original authors.
+> Full markdown snapshot generated from the same source as the site.
+> Svelte 5 port by ${PORT_AUTHOR}: ${PORT_REPO_URL}
+> Original EvilCharts by ${UPSTREAM_AUTHOR}: ${UPSTREAM_REPO_URL}
 
 ${sections.join('\n\n---\n\n')}
 `;
@@ -157,7 +163,7 @@ ${sections.join('\n\n---\n\n')}
 export function generateSkillMd() {
 	return `---
 name: evilcharts
-description: Add and customize EvilCharts chart components in shadcn-svelte and LayerChart projects. Svelte port of legions-developer/evilcharts.
+description: Add and customize the Svelte 5 port of EvilCharts with shadcn-svelte and LayerChart.
 license: MIT
 compatibility: Requires a Svelte/SvelteKit project with shadcn-svelte and LayerChart.
 metadata:
@@ -167,8 +173,8 @@ metadata:
 # EvilCharts (Svelte port)
 
 Use this skill when a user wants to install, add, customize, or debug EvilCharts chart components in
-a **Svelte** project. This is the unofficial Svelte 5 port of the React original at
-https://github.com/legions-developer/evilcharts by Gurbinder; for a React project, use that instead.
+a **Svelte** project. This is the Svelte 5 port by ${PORT_AUTHOR}: ${PORT_REPO_URL}
+The original React project is by ${UPSTREAM_AUTHOR}: ${UPSTREAM_REPO_URL}
 
 ## Workflow
 
@@ -186,10 +192,10 @@ https://github.com/legions-developer/evilcharts by Gurbinder; for a React projec
 		(id) => PROVIDER_META[id].name
 	).join(' and ')} ${
 		AVAILABLE_PROVIDERS.length === 1 ? 'is' : 'are'
-	} installable — never suggest components from a provider that is not listed in \`/llms.txt\`.
+	} installable. Never suggest components from a provider that is not listed in \`/llms.txt\`.
 - \`chartConfig\` is the one contract shared across engines; see \`/docs/chart-config.md\`.
 - Preserve the user's existing shadcn-svelte and Tailwind setup.
-- This is a Svelte port. For React, point the user at https://github.com/legions-developer/evilcharts.
+- This is a Svelte port. For React, point the user at ${UPSTREAM_REPO_URL}.
 `;
 }
 

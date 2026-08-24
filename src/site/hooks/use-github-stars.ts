@@ -1,6 +1,8 @@
+import { PORT_REPO_API_URL, PORT_STARS_FALLBACK } from '$site/globals/constants/site.js';
+
 export const useGithubStars = async (fetcher: typeof fetch = fetch): Promise<number | null> => {
 	try {
-		const res = await fetcher('https://api.github.com/repos/legions-developer/evilcharts', {
+		const res = await fetcher(PORT_REPO_API_URL, {
 			headers: {
 				Accept: 'application/vnd.github+json',
 				'X-GitHub-Api-Version': '2022-11-28'
@@ -8,13 +10,12 @@ export const useGithubStars = async (fetcher: typeof fetch = fetch): Promise<num
 		});
 
 		if (!res.ok) {
-			return null;
+			return PORT_STARS_FALLBACK;
 		}
 
 		const data = await res.json();
-		return data.stargazers_count;
-	} catch (error) {
-		console.error(error);
-		return null;
+		return typeof data.stargazers_count === 'number' ? data.stargazers_count : PORT_STARS_FALLBACK;
+	} catch {
+		return PORT_STARS_FALLBACK;
 	}
 };

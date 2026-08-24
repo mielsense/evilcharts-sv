@@ -9,6 +9,7 @@
 	import type { Component } from 'svelte';
 	import { getRegistryComponent } from '$lib/registry/components.js';
 	import { Index } from '$lib/registry/__index__.js';
+	import { PORT_ISSUES_URL } from '$site/globals/constants/site.js';
 	import { cn } from '$site/lib/utils.js';
 	import ComponentPreviewTabs from './component-preview-tabs.svelte';
 	import ComponentSource from './component-source.svelte';
@@ -57,11 +58,8 @@
 			>{name}</code
 		>
 		not found in registry. Contact the developer to add it.
-		<a
-			target="_blank"
-			href="https://github.com/legions-developer/evilcharts/issues"
-			class="text-primary hover:underline">open an issue</a
-		>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- External issue tracker. -->
+		<a target="_blank" href={PORT_ISSUES_URL} class="text-primary hover:underline">open an issue</a>
 	</p>
 {:else if component}
 	<ComponentPreviewTabs

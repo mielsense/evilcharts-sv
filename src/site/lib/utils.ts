@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/public';
+import { PORT_SITE_URL } from '$site/globals/constants/site.js';
 
 export { cn } from '$lib/utils.js';
 
@@ -14,7 +15,7 @@ export const SITE_URL = (
 	env.PUBLIC_APP_URL ??
 	// Vercel injects this on every deployment, including previews.
 	(env.PUBLIC_VERCEL_URL ? `https://${env.PUBLIC_VERCEL_URL}` : undefined) ??
-	'http://localhost:5173'
+	PORT_SITE_URL
 ).replace(/\/$/, '');
 
 export function absoluteUrl(path: string) {

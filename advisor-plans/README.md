@@ -8,7 +8,7 @@ plan fully, preserve the nested `evilcharts/` and `dither-kit/` references, and 
 | Plan | Title | Priority | Effort | Depends on | Status |
 | --- | --- | --- | --- | --- | --- |
 | 001 | Repair docs rendering and navigation | P1 | M | — | DONE |
-| 002 | Correct project identity and public copy | P1 | M | 001 | TODO |
+| 002 | Correct project identity and public copy | P1 | M | 001 | DONE |
 | 003 | Restore chart API and runtime parity | P1 | L | 001 | DONE |
 | 004 | Remove Svelte runtime and accessibility defects | P1 | L | 003 | TODO |
 | 005 | Add dither chart variants | P1 | L | 002, 003, 004 | TODO |

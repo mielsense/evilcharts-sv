@@ -2,13 +2,18 @@
 	/**
 	 * `DocsHeader` from `evilcharts/src/components/docs/sidebar/header.tsx`.
 	 *
-	 * The reference awaits its star count on the server and rebuilds daily; here the count arrives
-	 * as a prop from the docs layout's load, which is the same once-per-build fetch.
+	 * The star count belongs to this Svelte port. Upstream attribution stays separate.
 	 */
 	import { GithubIcon } from '$site/assets/icons/index.js';
 	import { Button } from '$site/components/ui/button/index.js';
 	import { SidebarHeader, SidebarTrigger } from '$site/components/ui/sidebar/index.js';
-	import { UPSTREAM_NAME, UPSTREAM_REPO_URL } from '$site/globals/constants/site.js';
+	import {
+		PORT_AUTHOR,
+		PORT_AUTHOR_URL,
+		PORT_REPO_URL,
+		UPSTREAM_NAME,
+		UPSTREAM_REPO_URL
+	} from '$site/globals/constants/site.js';
 	import ThemeSwitcher from './theme-switcher.svelte';
 
 	let { stars }: { stars?: number | null } = $props();
@@ -22,24 +27,31 @@
 >
 	<div class="pointer-events-auto flex min-w-0 items-center gap-1.5 pl-3">
 		<SidebarTrigger class="sidebar:hidden" />
-		<span class="truncate text-[11px] font-medium text-[#ff3e00] sm:hidden">Svelte 5 port</span>
+		<a
+			class="truncate rounded-sm text-[11px] font-semibold text-[#ff3e00] outline-none focus-visible:ring-[3px] focus-visible:ring-[#ff3e00]/35 sm:hidden"
+			href={PORT_REPO_URL}
+			target="_blank"
+			rel="noreferrer">Svelte 5 port</a
+		>
 	</div>
 	<div class="pointer-events-auto relative z-10 flex h-full items-center gap-2 pl-6">
-		<!--
-			Added by the port: every docs page carries a link back to the project this is a translation
-			of. The reference has no such line because it *is* the original.
-		-->
 		<a
-			class="hidden text-[11px] whitespace-nowrap text-muted-foreground/70 duration-100 hover:text-primary sm:inline"
+			class="hidden rounded-sm bg-[#ff3e00] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap text-white outline-none hover:bg-[#e63800] focus-visible:ring-[3px] focus-visible:ring-[#ff3e00]/35 sm:inline"
+			href={PORT_REPO_URL}
+			target="_blank"
+			rel="noreferrer">Svelte 5 port</a
+		>
+		<a
+			class="hidden text-[11px] whitespace-nowrap text-muted-foreground/70 duration-100 hover:text-primary md:inline"
 			href={UPSTREAM_REPO_URL}
 			target="_blank"
 			rel="noreferrer"
 		>
-			Svelte port of <span class="underline decoration-1 underline-offset-2">{UPSTREAM_NAME}</span>
+			Based on <span class="underline decoration-1 underline-offset-2">{UPSTREAM_NAME}</span>
 		</a>
-		<span class="hidden text-muted sm:inline">|</span>
-		{#if stars}
-			<a href="https://github.com/legions-developer/evilcharts" target="_blank" rel="noreferrer">
+		<span class="hidden text-muted md:inline">|</span>
+		{#if stars !== null && stars !== undefined}
+			<a href={PORT_REPO_URL} target="_blank" rel="noreferrer" aria-label={`${stars} GitHub stars`}>
 				<Button variant="link" size="sm">
 					<GithubIcon /> <span class="text-xs text-primary">{stars}</span>
 				</Button>
@@ -47,10 +59,10 @@
 			<span class="text-muted">|</span>
 		{/if}
 		<ThemeSwitcher />
-		<a class="hidden sm:block" href="https://x.com/legionsdev" target="_blank" rel="noreferrer">
+		<a class="hidden sm:block" href={PORT_AUTHOR_URL} target="_blank" rel="noreferrer">
 			<Button class="group" size="sm" variant="ghost">
 				<span class="text-xs text-muted-foreground group-hover:text-primary">
-					Built by Gurbinder
+					Built by {PORT_AUTHOR}
 				</span>
 			</Button>
 		</a>

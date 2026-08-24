@@ -2,15 +2,16 @@
 	/**
 	 * Ported from `evilcharts/src/app/page.tsx`.
 	 *
-	 * The hero copy names Svelte and LayerChart instead of React and Recharts, and carries the port
-	 * attribution the original project's licence and courtesy both call for: this is a community
-	 * port, and the design and API are Gurbinder's.
+	 * The hero names the people responsible for the Svelte port and the original React project.
 	 */
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import EvilChartWordmark from '$site/assets/logos/evilchart-wordmark.svelte';
 	import ChartStage from '$site/components/landing/chart-stage.svelte';
 	import { Button } from '$site/components/ui/button/index.js';
 	import {
+		PORT_AUTHOR,
+		PORT_AUTHOR_URL,
+		PORT_REPO_URL,
 		SITE_DESCRIPTION,
 		SITE_TITLE,
 		UPSTREAM_AUTHOR,
@@ -21,8 +22,6 @@
 	import type { PageData } from './$types.js';
 
 	let { data }: { data: PageData } = $props();
-
-	const PORT_GITHUB_URL = 'https://github.com/legions-developer/evilcharts-svelte';
 
 	/** `1234` → `1.2k`, as the reference formats it. */
 	const formatStars = (count: number) =>
@@ -51,31 +50,44 @@
 		class="relative z-10 flex flex-col justify-center px-6 pt-20 pb-10 sm:px-12 lg:h-full lg:w-[44%] lg:min-w-105 lg:items-center lg:px-12 lg:pt-0 lg:pb-0"
 	>
 		<div class="flex w-full max-w-md flex-col gap-7">
-			<h1>
+			<h1 class="flex flex-wrap items-center gap-3">
 				<EvilChartWordmark class="h-9 w-auto text-foreground" />
 				<span class="sr-only">Evil Charts for Svelte</span>
+				<a
+					href={PORT_REPO_URL}
+					target="_blank"
+					rel="noreferrer"
+					class="inline-flex h-7 items-center rounded-md bg-[#ff3e00] px-2.5 text-xs font-semibold text-white outline-none hover:bg-[#e63800] focus-visible:ring-[3px] focus-visible:ring-[#ff3e00]/35"
+				>
+					Svelte 5 port
+				</a>
 			</h1>
-			<p class="text-base text-[15px] text-muted-foreground">
-				Animated, interactive chart components for Svelte. Built on LayerChart and styled for
-				shadcn-svelte — copy, paste, and ship beautiful charts.
+			<p class="text-[15px] text-muted-foreground">
+				Animated chart components for Svelte 5. They use LayerChart and install as source through
+				shadcn-svelte.
 			</p>
 			<p class="text-[13px] leading-relaxed text-muted-foreground/80">
-				An unofficial Svelte 5 port of
+				<a
+					class="underline decoration-[#ff3e00]/50 decoration-1 underline-offset-4 hover:decoration-[#ff3e00]"
+					href={PORT_AUTHOR_URL}
+					target="_blank"
+					rel="noreferrer">{PORT_AUTHOR}</a
+				>
+				built and maintains this Svelte 5 port. {UPSTREAM_AUTHOR} created the original
 				<a
 					class="underline decoration-primary/50 decoration-1 underline-offset-4 hover:decoration-primary"
 					href={UPSTREAM_REPO_URL}
 					target="_blank"
 					rel="noreferrer">{UPSTREAM_NAME}</a
 				>
-				by {UPSTREAM_AUTHOR}. Every chart, example and page here is a translation of that project —
-				the design, the API and the copy are theirs, MIT-licensed. This port is community-maintained
-				and not affiliated with it.
+				design and React implementation. This independent port keeps that credit and the original MIT
+				license.
 			</p>
 			<div class="flex flex-wrap items-center gap-3">
 				<Button href="/docs">
 					Browse Charts <ArrowRight />
 				</Button>
-				<Button variant="outline" href={PORT_GITHUB_URL} target="_blank" rel="noreferrer">
+				<Button variant="outline" href={PORT_REPO_URL} target="_blank" rel="noreferrer">
 					<!-- GitHub's mark, as the reference inlines it. -->
 					<svg class="size-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 						<path

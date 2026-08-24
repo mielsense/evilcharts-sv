@@ -1,9 +1,9 @@
 export const SITE_NAME = 'Evil Charts';
 
-export const SITE_TITLE = 'Evil Charts — Animated Svelte Chart Components for shadcn-svelte';
+export const SITE_TITLE = 'Evil Charts for Svelte | Animated chart components';
 
 export const SITE_DESCRIPTION =
-	'Free, open-source animated Svelte chart components built with LayerChart, shadcn-svelte, and Tailwind CSS. Copy, paste, and ship beautiful charts.';
+	'Open-source Svelte 5 chart components built with LayerChart, shadcn-svelte, and Tailwind CSS.';
 
 export const SITE_KEYWORDS: string[] = [
 	'evil charts',
@@ -30,9 +30,17 @@ export const SITE_KEYWORDS: string[] = [
 
 /** The React project this is a port of. Credited on the landing page, in the docs and in the README. */
 export const UPSTREAM_NAME = 'EvilCharts';
-export const UPSTREAM_AUTHOR = 'Gurbinder (legions-developer)';
+export const UPSTREAM_AUTHOR = 'Gurbinder';
+export const UPSTREAM_AUTHOR_URL = 'https://x.com/legionsdev';
 export const UPSTREAM_REPO_URL = 'https://github.com/legions-developer/evilcharts';
 export const UPSTREAM_SITE_URL = 'https://evilcharts.com';
 
 /** This port. */
-export const PORT_REPO_URL = 'https://github.com/legions-developer/evilcharts-svelte';
+export const PORT_AUTHOR = 'Mathis';
+export const PORT_AUTHOR_URL = 'https://github.com/mielsense';
+export const PORT_REPO_URL = 'https://github.com/mielsense/evilcharts-sv';
+export const PORT_ISSUES_URL = 'https://github.com/mielsense/evilcharts-sv/issues';
+export const PORT_REPO_API_URL = 'https://api.github.com/repos/mielsense/evilcharts-sv';
+export const PORT_SITE_URL = 'https://evilcharts-sv.vercel.app';
+/** Last verified on 2026-08-24. Used when GitHub does not return a numeric count. */
+export const PORT_STARS_FALLBACK = 1;

@@ -1,9 +1,9 @@
 ---
 title: Line Chart
-description: Beautifully designed static line charts
+description: Line charts with interactive dots, gradients, patterns, and reveal variants
 image: /og/line-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-line-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-line-chart
   doc: https://www.layerchart.com/docs/components/Spline
   api: https://www.layerchart.com/docs/components/Chart
 ---

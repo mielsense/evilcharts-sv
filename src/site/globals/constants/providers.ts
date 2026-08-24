@@ -33,7 +33,7 @@ export const PROVIDER_META: Record<Provider, ProviderMeta> = {
 	layerchart: {
 		id: 'layerchart',
 		name: 'LayerChart',
-		tagline: 'SVG · the original Evil charts',
+		tagline: 'SVG charts rendered by Svelte',
 		available: true
 	}
 };

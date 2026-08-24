@@ -1,9 +1,9 @@
 ---
 title: Radar Chart
-description: Radar charts with filled and lines variants, gradient colors, and glow effects
+description: Radar charts with filled and line variants, gradients, and glow effects
 image: /og/radar-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-radar-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-radar-chart
   doc: https://www.layerchart.com/docs/components/Points
   api: https://www.layerchart.com/docs/components/Chart
 ---

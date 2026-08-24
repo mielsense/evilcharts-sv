@@ -1,9 +1,9 @@
 ---
 title: Composed Chart
-description: Static, beautifully designed composed charts combining bars and lines
+description: Composed charts that combine bars, lines, gradients, and interactive states
 image: /og/composed-chart.png
 links:
-  github: https://github.com/legions-developer/evilcharts-svelte/tree/main/src/lib/registry/charts/layerchart-composed-chart
+  github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-composed-chart
   doc: https://www.layerchart.com/docs/components/Chart
   api: https://www.layerchart.com/docs/components/Chart
 ---

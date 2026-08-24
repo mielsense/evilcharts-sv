@@ -89,6 +89,12 @@ describe('generateLlmsTxt', () => {
 		expect(text).toContain('/mcp');
 	});
 
+	it('distinguishes the Svelte porter from the original author', () => {
+		expect(text).toContain('Svelte 5 port by Mathis');
+		expect(text).toContain('https://github.com/mielsense/evilcharts-sv');
+		expect(text).toContain('Original EvilCharts by Gurbinder');
+	});
+
 	it('never names the React library the port replaced', () => {
 		expect(text.toLowerCase()).not.toContain('recharts');
 	});
@@ -123,6 +129,11 @@ describe('generateSkillMd', () => {
 		expect(text).toContain('Treat LayerChart as the underlying chart dependency.');
 		expect(text).toContain('npx shadcn-svelte@latest add');
 		expect(text.toLowerCase()).not.toContain('recharts');
+	});
+
+	it('points agents at the maintained Svelte port', () => {
+		expect(text).toContain('Svelte 5 port by Mathis');
+		expect(text).toContain('https://github.com/mielsense/evilcharts-sv');
 	});
 
 	it('agrees with PROVIDER_META on what is installable', () => {

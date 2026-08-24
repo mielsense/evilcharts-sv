@@ -3,10 +3,13 @@
 	"version": "0.0.1",
 	"description": "Animated, interactive Svelte 5 chart components on LayerChart. An unofficial Svelte port of EvilCharts.",
 	"license": "MIT",
-	"homepage": "https://github.com/legions-developer/evilcharts-svelte",
+	"homepage": "https://evilcharts-sv.vercel.app",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/legions-developer/evilcharts-svelte.git"
+		"url": "git+https://github.com/mielsense/evilcharts-sv.git"
+	},
+	"bugs": {
+		"url": "https://github.com/mielsense/evilcharts-sv/issues"
 	},
 	"scripts": {
 		"dev": "vite dev",
