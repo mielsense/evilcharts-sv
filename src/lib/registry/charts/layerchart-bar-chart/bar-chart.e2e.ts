@@ -99,14 +99,28 @@ test.describe('EvilBarChart examples', () => {
 		expect(mobile.x).toBeLessThan(desktop.x + desktop.w * 2.5);
 	});
 
-	test('mobile settled geometry reserves the bottom legend inside the plot', async ({ page }) => {
-		await page.goto('/preview/ex-bar-chart?w=440&h=256');
-		await page.waitForSelector('[data-preview-ready]');
-		await page.waitForTimeout(1600);
-		const height = await seriesBars(page, 'desktop')
-			.first()
-			.evaluate((node) => (node as SVGGraphicsElement).getBBox().height);
-		expect(height).toBeCloseTo(31.46, 0);
+	test('settled painted bars match the reference while hit targets retain their 3px reach', async ({
+		page
+	}) => {
+		for (const [width, height, expected] of [
+			[440, 256, 31.464],
+			[632, 360, 67.032]
+		] as const) {
+			await page.goto(`/preview/ex-bar-chart?w=${width}&h=${height}`);
+			await page.waitForSelector('[data-preview-ready]');
+			await page.waitForTimeout(1600);
+			const [paintedHeight, hitHeight] = await Promise.all([
+				seriesBars(page, 'desktop')
+					.first()
+					.evaluate((node) => (node as SVGGraphicsElement).getBBox().height),
+				plot(page)
+					.locator('.lc-bar[fill="transparent"]')
+					.first()
+					.evaluate((node) => (node as SVGGraphicsElement).getBBox().height)
+			]);
+			expect(paintedHeight).toBeCloseTo(expected, 0);
+			expect(hitHeight - paintedHeight).toBeCloseTo(3, 1);
+		}
 	});
 
 	test('each fill variant paints from its own pattern', async ({ page }) => {

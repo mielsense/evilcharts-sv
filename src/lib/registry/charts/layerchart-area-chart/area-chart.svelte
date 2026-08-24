@@ -1,6 +1,6 @@
 <script lang="ts" generics="TData extends Record<string, unknown>">
 	/**
-	 * Root of the composible area chart. Owns the data, the shared context, the
+	 * Root of the composable area chart. Owns the data, the shared context, the
 	 * loading skeleton, and the optional zoom brush. Everything visual — axes,
 	 * grid, tooltip, legend, and the areas themselves — is composed as children,
 	 * so a consumer renders exactly the parts they need.
@@ -130,11 +130,22 @@
 	const CHART_MARGIN = 5; // Recharts' default <AreaChart margin>
 	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
 	const Y_AXIS_WIDTH = 60; // Recharts' default <YAxis width>
+	// Recharts reserves a 32px edge-legend band before resolving the value scale.
+	const EDGE_LEGEND_HEIGHT = 32;
+	let areaContext: ReturnType<typeof setAreaChartContext>;
+	const edgeLegendPlacement = $derived.by(() => {
+		if (isLoading || !areaContext) return null;
+		const align = areaContext.slots.legend?.verticalAlign;
+		return align === 'top' || align === 'bottom' ? align : null;
+	});
 
 	const padding = $derived({
-		top: CHART_MARGIN,
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
 		right: CHART_MARGIN,
-		bottom: CHART_MARGIN + (axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0),
+		bottom:
+			CHART_MARGIN +
+			(axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
+			(edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
 		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
 	});
 
@@ -171,7 +182,7 @@
 		isExpanded ? ('stackExpand' as const) : isStacked ? ('stack' as const) : ('overlap' as const)
 	);
 
-	setAreaChartContext({
+	areaContext = setAreaChartContext({
 		config: () => config,
 		data: () => chartData,
 		xKey: () => xKey,

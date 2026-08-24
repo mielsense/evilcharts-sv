@@ -85,6 +85,28 @@ test.describe('EvilAreaChart examples', () => {
 		expect(await lines.first().getAttribute('stroke-dasharray')).toBe('3 3');
 	});
 
+	test('settled area geometry reserves the top legend at mobile and desktop widths', async ({
+		page
+	}) => {
+		for (const [width, height, expected] of [
+			[440, 256, { width: 396, height: 47.278 }],
+			[632, 360, { width: 588, height: 100.722 }]
+		] as const) {
+			await page.goto(`/preview/ex-area-chart?w=${width}&h=${height}`);
+			await page.waitForSelector('[data-preview-ready]');
+			await page.waitForTimeout(1400);
+			const bounds = await plot(page)
+				.locator('path.lc-area-path')
+				.first()
+				.evaluate((node) => {
+					const box = (node as SVGGraphicsElement).getBBox();
+					return { width: box.width, height: box.height };
+				});
+			expect(bounds.width).toBeCloseTo(expected.width, 0);
+			expect(bounds.height).toBeCloseTo(expected.height, 0);
+		}
+	});
+
 	test('each fill variant emits its own pattern', async ({ page }) => {
 		for (const [name, variant] of Object.entries(FILL_VARIANTS)) {
 			await open(page, name);
@@ -113,8 +135,10 @@ test.describe('EvilAreaChart examples', () => {
 			page.locator('[data-chart]').boundingBox(),
 			entries.first().locator('xpath=..').boundingBox()
 		]);
-		expect(legendBox!.x - chartBox!.x).toBeCloseTo(5, 0);
-		expect(chartBox!.x + chartBox!.width - (legendBox!.x + legendBox!.width)).toBeCloseTo(5, 0);
+		// The example contributes 16px container padding and Recharts adds its 5px chart margin.
+		// The deployed reference therefore places both legend edges 21px inside `[data-chart]`.
+		expect(legendBox!.x - chartBox!.x).toBeCloseTo(21, 0);
+		expect(chartBox!.x + chartBox!.width - (legendBox!.x + legendBox!.width)).toBeCloseTo(21, 0);
 	});
 
 	test('selecting a series stripes the others with the unselected pattern', async ({ page }) => {

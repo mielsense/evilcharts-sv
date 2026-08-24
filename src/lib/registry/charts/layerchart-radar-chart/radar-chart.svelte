@@ -160,9 +160,9 @@
 	});
 
 	const CHART_MARGIN = 5;
-	// The outer legend layout already consumes half of Recharts' 32px band. Reserve the remaining
-	// scale space here so the settled polygon geometry matches the reference.
-	const EDGE_LEGEND_HEIGHT = 15;
+	// The reference reserves its full 32px edge-legend band, then nices the 305 maximum to 320.
+	// LayerChart's explicit count of 11 reproduces that settled domain at both preview sizes.
+	const EDGE_LEGEND_HEIGHT = 32;
 	const edgeLegendPlacement = $derived.by(() => {
 		if (isLoading) return null;
 		const align = radarContext.slots.legend?.verticalAlign;
@@ -209,7 +209,7 @@
 			radial
 			bandPadding={0}
 			yBaseline={0}
-			yNice
+			yNice={11}
 			yRange={({ width, height }) => [
 				0,
 				(Math.min(width, height) / 2) * DEFAULT_OUTER_RADIUS_RATIO

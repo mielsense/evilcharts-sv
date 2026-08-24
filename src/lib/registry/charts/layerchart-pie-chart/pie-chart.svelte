@@ -72,14 +72,21 @@
 
 	/** Recharts' default `<PieChart margin>`, which is what its maximum radius measures against. */
 	const CHART_MARGIN = 5;
-	const padding = {
-		top: CHART_MARGIN,
+	const EDGE_LEGEND_HEIGHT = 32;
+	let pieContext: ReturnType<typeof setPieChartContext>;
+	const edgeLegendPlacement = $derived.by(() => {
+		if (isLoading || !pieContext) return null;
+		const align = pieContext.slots.legend?.verticalAlign;
+		return align === 'top' || align === 'bottom' ? align : null;
+	});
+	const padding = $derived({
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
 		right: CHART_MARGIN,
-		bottom: CHART_MARGIN,
+		bottom: CHART_MARGIN + (edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
 		left: CHART_MARGIN
-	};
+	});
 
-	setPieChartContext({
+	pieContext = setPieChartContext({
 		config: () => config,
 		data: () => rows,
 		dataKey: () => dataKey,

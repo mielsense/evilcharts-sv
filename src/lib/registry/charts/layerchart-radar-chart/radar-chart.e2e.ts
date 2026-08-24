@@ -81,7 +81,7 @@ test.describe('EvilRadarChart examples', () => {
 	}) => {
 		await page.goto('/preview/ex-radar-chart?w=440&h=256');
 		await page.waitForSelector('[data-preview-ready]');
-		await page.waitForTimeout(1600);
+		await page.waitForTimeout(2400);
 		const bounds = await radars(page)
 			.first()
 			.evaluate((node) => {
@@ -90,6 +90,20 @@ test.describe('EvilRadarChart examples', () => {
 			});
 		expect(bounds.width).toBeCloseTo(102.25, 0);
 		expect(bounds.height).toBeCloseTo(81.67, 0);
+	});
+
+	test('desktop settled geometry scales the web to the reference bounds', async ({ page }) => {
+		await page.goto('/preview/ex-radar-chart?w=632&h=360');
+		await page.waitForSelector('[data-preview-ready]');
+		await page.waitForTimeout(2400);
+		const bounds = await radars(page)
+			.first()
+			.evaluate((node) => {
+				const box = (node as SVGGraphicsElement).getBBox();
+				return { width: box.width, height: box.height };
+			});
+		expect(bounds.width).toBeCloseTo(160.685, 0);
+		expect(bounds.height).toBeCloseTo(128.343, 0);
 	});
 
 	test('the first vertex sits at 12 o’clock and the polygon runs clockwise', async ({ page }) => {

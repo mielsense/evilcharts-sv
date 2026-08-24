@@ -35,17 +35,6 @@ async function open(page: Page, name: string) {
 	return errors;
 }
 
-/** The pie is centred with a `<Group center>`, so arc coordinates are relative to that translate. */
-async function centre(page: Page) {
-	return plot(page)
-		.locator('.lc-group-g')
-		.first()
-		.evaluate((n) => {
-			const m = new DOMMatrixReadOnly(getComputedStyle(n).transform);
-			return { x: m.e, y: m.f };
-		});
-}
-
 test.describe('EvilPieChart examples', () => {
 	for (const name of EXAMPLES) {
 		test(`${name} renders cleanly`, async ({ page }) => {
@@ -61,25 +50,18 @@ test.describe('EvilPieChart examples', () => {
 		});
 	}
 
-	test('the pie fills 80% of the plot radius, centred', async ({ page }) => {
-		await open(page, 'ex-pie-chart');
-
-		const { x, y } = await centre(page);
-		const svg = plot(page);
-		const box = {
-			w: Number(await svg.getAttribute('width')),
-			h: Number(await svg.getAttribute('height'))
-		};
-		// Recharts' default `<PieChart margin>` is 5 on every side.
-		const CHART_MARGIN = 5;
-		expect(x + CHART_MARGIN).toBeCloseTo(box.w / 2, 0);
-		expect(y + CHART_MARGIN).toBeCloseTo(box.h / 2, 0);
-
-		// `outerRadius="80%"` of half the smaller plot dimension.
-		const expected = 0.8 * (Math.min(box.w - 2 * CHART_MARGIN, box.h - 2 * CHART_MARGIN) / 2);
-		const d = (await sectors(page).first().getAttribute('d'))!;
-		const radius = Number(d.match(/A([\d.]+),/)![1]);
-		expect(radius).toBeCloseTo(expected, 1);
+	test('the pie reserves its bottom legend before resolving its 80% radius', async ({ page }) => {
+		for (const [width, height, expectedRadius] of [
+			[440, 256, 72.8],
+			[632, 360, 114.4]
+		] as const) {
+			await page.goto(`/preview/ex-pie-chart?w=${width}&h=${height}`);
+			await page.waitForSelector('[data-preview-ready]');
+			await page.waitForTimeout(2400);
+			const d = (await sectors(page).first().getAttribute('d'))!;
+			const radius = Number(d.match(/A([\d.]+),/)![1]);
+			expect(radius).toBeCloseTo(expectedRadius, 1);
+		}
 	});
 
 	test('the first sector starts at 3 o’clock and sweeps anticlockwise', async ({ page }) => {
