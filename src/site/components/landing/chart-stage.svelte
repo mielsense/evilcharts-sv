@@ -3,11 +3,11 @@
 	 * `ChartStage` from `evilcharts/src/components/landing/chart-stage.tsx`.
 	 *
 	 * The camera arithmetic, the flight easing, the focus cadence and the per-card opacity/scale
-	 * springs are the reference's; `motion/react`'s `animate`, `useReducedMotion` and `motion.div`
-	 * become their `@humanspeak/svelte-motion` equivalents. The card grid is re-flowed for one
-	 * provider — see `chart-stage.svelte.ts`.
+	 * springs are the reference's; the camera uses `@humanspeak/svelte-motion`, while per-card
+	 * opacity and scale use native CSS transitions to keep animation ownership in this component.
+	 * The card grid is re-flowed for one provider — see `chart-stage.svelte.ts`.
 	 */
-	import { animate, motion, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { animate, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { untrack, type Component } from 'svelte';
 	import { cn } from '$site/lib/utils.js';
 	import * as Cards from './cards/index.js';
@@ -185,32 +185,22 @@
 				{@const isFocused = index === active}
 				{@const isLifted = isFocused || (!reducedMotion.current && hovered === index)}
 				{@const Card = cardComponents[card.card]}
-				<motion.div
-					class={cn(
-						'absolute rounded-[8px] transition-shadow duration-500',
-						isFocused ? 'shadow-2xl' : 'shadow-md'
-					)}
-					style={{
-						left: `${card.x}px`,
-						top: `${card.y}px`,
-						width: `${card.w}px`,
-						height: `${card.h}px`,
-						zIndex: isFocused ? 10 : hovered === index ? 5 : 1
-					}}
-					initial={false}
-					animate={{
-						opacity: reducedMotion.current || isLifted ? 1 : 0.3,
-						scale: !reducedMotion.current && isFocused ? 1.06 : 1
-					}}
-					transition={{
-						opacity: { duration: 0.9, ease: 'easeInOut', delay: isFocused ? focusDelay : 0 },
-						scale: {
-							type: 'spring',
-							stiffness: 170,
-							damping: 26,
-							delay: isFocused ? focusDelay : 0
-						}
-					}}
+				<div
+					role="presentation"
+					class={cn('absolute rounded-[8px]', isFocused ? 'shadow-2xl' : 'shadow-md')}
+					style:left={`${card.x}px`}
+					style:top={`${card.y}px`}
+					style:width={`${card.w}px`}
+					style:height={`${card.h}px`}
+					style:z-index={isFocused ? 10 : hovered === index ? 5 : 1}
+					style:opacity={reducedMotion.current || isLifted ? 1 : 0.3}
+					style:transform={`scale(${!reducedMotion.current && isFocused ? 1.06 : 1})`}
+					style:transition-property="opacity, transform, box-shadow"
+					style:transition-duration={reducedMotion.current ? '0ms' : '900ms, 700ms, 500ms'}
+					style:transition-timing-function="ease-in-out, cubic-bezier(0.16, 1, 0.3, 1), ease"
+					style:transition-delay={reducedMotion.current
+						? '0ms'
+						: `${isFocused ? focusDelay : 0}s, ${isFocused ? focusDelay : 0}s, 0ms`}
 					onpointerenter={() => (hovered = index)}
 					onpointerleave={() => {
 						if (hovered === index) hovered = null;
@@ -219,7 +209,7 @@
 					<CardShell title={card.title}>
 						<Card />
 					</CardShell>
-				</motion.div>
+				</div>
 			{/each}
 		</div>
 	{/if}

@@ -10,6 +10,21 @@ async function selection(brush: Locator) {
 	return { left, width };
 }
 
+async function waitForSelectionToSettle(brush: Locator) {
+	let previous = '';
+	await expect
+		.poll(
+			async () => {
+				const current = JSON.stringify(await selection(brush));
+				const settled = current === previous;
+				previous = current;
+				return settled;
+			},
+			{ timeout: 5000, intervals: [80, 80, 120, 160, 200] }
+		)
+		.toBe(true);
+}
+
 async function dragBy(page: Page, target: Locator, dx: number) {
 	const box = await target.boundingBox();
 	if (!box) throw new Error('drag target has no box');
@@ -23,19 +38,28 @@ async function dragBy(page: Page, target: Locator, dx: number) {
 
 	// The handles are spring-animated, so wait for the position to stop changing rather than for a
 	// fixed delay — a fixed one is flaky when the suite runs several workers in parallel.
-	const brush = page.locator(BRUSH).first();
-	let previous = '';
-	await expect
-		.poll(
-			async () => {
-				const current = JSON.stringify(await selection(brush));
-				const settled = current === previous;
-				previous = current;
-				return settled;
+	await waitForSelectionToSettle(page.locator(BRUSH).first());
+}
+
+async function startDrag(page: Page, target: Locator, dx: number) {
+	const box = await target.boundingBox();
+	if (!box) throw new Error('drag target has no box');
+	await target.evaluate((element) => {
+		element.addEventListener(
+			'pointerdown',
+			(event) => {
+				(element as HTMLElement).dataset.pointerId = String((event as PointerEvent).pointerId);
 			},
-			{ timeout: 5000, intervals: [80, 80, 120, 160, 200] }
-		)
-		.toBe(true);
+			{ once: true }
+		);
+	});
+	const y = box.y + box.height / 2;
+	const startX = box.x + box.width / 2;
+	await page.mouse.move(startX, y);
+	await page.mouse.down();
+	await page.mouse.move(startX + dx, y, { steps: 5 });
+	const pointerId = Number(await target.getAttribute('data-pointer-id'));
+	return { box, pointerId, startX, y };
 }
 
 test.describe('EvilBrush', () => {
@@ -109,6 +133,57 @@ test.describe('EvilBrush', () => {
 
 		expect(after.left).toBeGreaterThan(before.left);
 		expect(after.width).toBeCloseTo(before.width, 0);
+	});
+
+	test('pointer cancellation stops the active drag and permits the next drag', async ({ page }) => {
+		const brush = page.locator(BRUSH).first();
+		const handle = brush.locator('.cursor-ew-resize').first();
+		const brushBox = (await brush.boundingBox())!;
+		const { pointerId, startX, y } = await startDrag(page, handle, brushBox.width * 0.15);
+		await handle.dispatchEvent('pointercancel', {
+			pointerId,
+			pointerType: 'mouse',
+			clientX: startX + brushBox.width * 0.15,
+			clientY: y
+		});
+		await waitForSelectionToSettle(brush);
+		const cancelledAt = await selection(brush);
+		await handle.dispatchEvent('pointermove', {
+			pointerId,
+			pointerType: 'mouse',
+			buttons: 1,
+			clientX: startX + brushBox.width * 0.55,
+			clientY: y
+		});
+		await page.waitForTimeout(300);
+		expect(await selection(brush)).toEqual(cancelledAt);
+		await page.mouse.up();
+
+		await dragBy(page, handle, brushBox.width * 0.15);
+		expect((await selection(brush)).left).toBeGreaterThan(cancelledAt.left);
+	});
+
+	test('lost pointer capture stops the active drag and permits the next drag', async ({ page }) => {
+		const brush = page.locator(BRUSH).first();
+		const handle = brush.locator('.cursor-ew-resize').first();
+		const box = (await brush.boundingBox())!;
+		const { pointerId, startX, y } = await startDrag(page, handle, box.width * 0.15);
+		await handle.evaluate((element, id) => element.releasePointerCapture(id), pointerId);
+		await waitForSelectionToSettle(brush);
+		const releasedAt = await selection(brush);
+		await handle.dispatchEvent('pointermove', {
+			pointerId,
+			pointerType: 'mouse',
+			buttons: 1,
+			clientX: startX + box.width * 0.55,
+			clientY: y
+		});
+		await page.waitForTimeout(300);
+		expect(await selection(brush)).toEqual(releasedAt);
+		await page.mouse.up();
+
+		await dragBy(page, handle, box.width * 0.15);
+		expect((await selection(brush)).left).toBeGreaterThan(releasedAt.left);
 	});
 
 	test('a controlled brush drives the visible range and the handle labels', async ({ page }) => {

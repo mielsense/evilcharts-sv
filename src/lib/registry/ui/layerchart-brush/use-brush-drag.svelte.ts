@@ -12,6 +12,8 @@ export type BrushDragHandlers = {
 	onpointerdown: (event: PointerEvent) => void;
 	onpointermove: (event: PointerEvent) => void;
 	onpointerup: (event: PointerEvent) => void;
+	onpointercancel: (event: PointerEvent) => void;
+	onlostpointercapture: (event: PointerEvent) => void;
 };
 
 /**
@@ -40,7 +42,7 @@ export class BrushDrag {
 
 	#onPointerDown(event: PointerEvent, type: DragType) {
 		event.preventDefault();
-		(event.target as HTMLElement).setPointerCapture(event.pointerId);
+		(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
 		this.#drag = { type, originX: event.clientX, originRange: { ...this.#options.range() } };
 		this.isDragging = true;
 	}
@@ -62,8 +64,9 @@ export class BrushDrag {
 		}
 	};
 
-	#onPointerUp = (event: PointerEvent) => {
-		(event.target as HTMLElement).releasePointerCapture(event.pointerId);
+	#finishDrag = (event: PointerEvent) => {
+		const target = event.currentTarget as HTMLElement;
+		if (target.hasPointerCapture(event.pointerId)) target.releasePointerCapture(event.pointerId);
 		this.#drag = null;
 		this.isDragging = false;
 	};
@@ -73,7 +76,9 @@ export class BrushDrag {
 		return {
 			onpointerdown: (event: PointerEvent) => this.#onPointerDown(event, type),
 			onpointermove: this.#onPointerMove,
-			onpointerup: this.#onPointerUp
+			onpointerup: this.#finishDrag,
+			onpointercancel: this.#finishDrag,
+			onlostpointercapture: this.#finishDrag
 		};
 	}
 }
