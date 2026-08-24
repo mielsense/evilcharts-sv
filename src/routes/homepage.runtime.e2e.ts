@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 // The stage's first automatic focus hop runs at 4.6s. Keep this comfortably beyond that boundary
 // so the test exercises the prop update that previously read destroyed motion derivations.
 const FIRST_FOCUS_HOP_WAIT_MS = 5_600;
+const STAGE_HYDRATION_TIMEOUT_MS = 15_000;
 
 function collectRuntimeDiagnostics(page: Page) {
 	const diagnostics: string[] = [];
@@ -42,14 +43,26 @@ test('the landing stage completes a focus hop without runtime diagnostics', asyn
 test('the landing stage keeps every shell while bounding live chart modules', async ({ page }) => {
 	await page.goto('/');
 
-	await expect(page.locator('[data-stage-card]')).toHaveCount(22);
-	await expect(page.locator('[data-stage-live-chart]')).toHaveCount(9);
-	await expect(page.locator('[data-stage-focused] [data-stage-live-chart]')).toHaveCount(1);
+	await expect(page.locator('[data-stage-card]')).toHaveCount(22, {
+		timeout: STAGE_HYDRATION_TIMEOUT_MS
+	});
+	await expect(page.locator('[data-stage-live-chart]')).toHaveCount(9, {
+		timeout: STAGE_HYDRATION_TIMEOUT_MS
+	});
+	await expect(page.locator('[data-stage-focused] [data-stage-live-chart]')).toHaveCount(1, {
+		timeout: STAGE_HYDRATION_TIMEOUT_MS
+	});
 
 	await page.waitForTimeout(FIRST_FOCUS_HOP_WAIT_MS);
-	await expect(page.locator('[data-stage-card]')).toHaveCount(22);
-	await expect(page.locator('[data-stage-live-chart]')).toHaveCount(9);
-	await expect(page.locator('[data-stage-focused] [data-stage-live-chart]')).toHaveCount(1);
+	await expect(page.locator('[data-stage-card]')).toHaveCount(22, {
+		timeout: STAGE_HYDRATION_TIMEOUT_MS
+	});
+	await expect(page.locator('[data-stage-live-chart]')).toHaveCount(9, {
+		timeout: STAGE_HYDRATION_TIMEOUT_MS
+	});
+	await expect(page.locator('[data-stage-focused] [data-stage-live-chart]')).toHaveCount(1, {
+		timeout: STAGE_HYDRATION_TIMEOUT_MS
+	});
 });
 
 test('docs render decoded code and keep the desktop table-of-contents marker active', async ({

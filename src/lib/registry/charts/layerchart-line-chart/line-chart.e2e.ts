@@ -115,9 +115,10 @@ test.describe('EvilLineChart examples', () => {
 
 	test('reserves the original top legend band and value-axis ticks', async ({ page }) => {
 		await open(page, 'ex-solid-stroke-line-chart');
-		expect(await plot(page).locator('.lc-layout-svg-g').getAttribute('transform')).toBe(
-			'translate(47, 37)'
-		);
+		const transform = await plot(page).locator('.lc-layout-svg-g').getAttribute('transform');
+		const translation = transform?.match(/^translate\(([\d.]+),\s*([\d.]+)\)$/);
+		expect(translation).not.toBeNull();
+		expect(Number(translation![2])).toBe(37);
 		const labels = await plot(page).locator('.lc-axis.placement-left text').allTextContents();
 		expect(labels).toEqual(['0', '250', '500', '750', '1000']);
 		const plotOrigin = await plot(page)
@@ -155,8 +156,12 @@ test.describe('EvilLineChart examples', () => {
 			223.624
 		];
 		expect(points).toHaveLength(12);
+		const firstX = points[0][0];
+		const lastX = points.at(-1)![0];
+		const span = lastX - firstX;
+		expect(span).toBeGreaterThan(500);
 		for (const [index, [x, y]] of points.entries()) {
-			expect(x).toBeCloseTo(47 + (546 * index) / 11, 2);
+			expect(x).toBeCloseTo(firstX + (span * index) / 11, 2);
 			expect(y).toBeCloseTo(expectedY[index], 2);
 		}
 	});

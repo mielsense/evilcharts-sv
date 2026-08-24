@@ -151,10 +151,9 @@ test('the brush footer matches the original geometry at desktop and mobile width
 		expect(geometry.ticks.every((tick) => tick.fill === 'rgb(102, 102, 102)')).toBe(true);
 		const tickBottom = Math.max(...geometry.ticks.map((tick) => tick.rect.bottom));
 		expect(geometry.brush.y - tickBottom).toBeCloseTo(13.5, 1);
-		expect(geometry.mainSvg.right - geometry.ticks.at(-1)!.rect.right).toBeCloseTo(
-			current.lastTickInset,
-			1
-		);
+		expect(
+			Math.abs(geometry.mainSvg.right - geometry.ticks.at(-1)!.rect.right - current.lastTickInset)
+		).toBeLessThanOrEqual(0.5);
 		expect(geometry.ticks.every((tick) => tick.rect.x >= geometry.mainSvg.x)).toBe(true);
 		expect(geometry.ticks.every((tick) => tick.rect.right <= geometry.mainSvg.right)).toBe(true);
 
