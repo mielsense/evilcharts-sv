@@ -1,0 +1,231 @@
+<script lang="ts" generics="TData extends Record<string, unknown>">
+	/**
+	 * Root of the composible composed chart. Owns the data, the shared context, the
+	 * loading skeleton, and the optional zoom brush. Everything visual — axes, grid,
+	 * tooltip, legend, and the bars and lines themselves — is composed as children,
+	 * so a consumer renders exactly the parts they need.
+	 */
+	import { Chart, Svg } from 'layerchart';
+	import { untrack, type Snippet } from 'svelte';
+	import {
+		ChartContainer,
+		LoadingIndicator,
+		type ChartConfig
+	} from '../../ui/layerchart-chart/index.js';
+	import {
+		EvilBrush,
+		EvilBrushState,
+		setBrushSlotContext
+	} from '../../ui/layerchart-brush/index.js';
+	import { setComposedChartContext } from './composed-chart-context.svelte.js';
+	import LegendRender from './legend-render.svelte';
+	import LoadingBar from './loading/loading-bar.svelte';
+	import { LoadingDataState } from './loading/use-loading-data.svelte.js';
+	import TooltipCursor from './tooltip-cursor.svelte';
+	import TooltipRender from './tooltip-render.svelte';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
+	import {
+		DEFAULT_BAR_RADIUS,
+		LOADING_DATA_KEY,
+		type ComposedAnimationType,
+		type CurveType
+	} from './types.js';
+
+	let {
+		config,
+		data,
+		children,
+		class: className,
+		chartProps,
+		curveType = 'linear',
+		animationType = 'left-to-right',
+		barGap,
+		barCategoryGap,
+		defaultSelectedDataKey = null,
+		onSelectionChange,
+		isLoading = false,
+		loadingBars,
+		xDataKey
+	}: {
+		config: ChartConfig; // series colors + labels for bars and lines
+		data: TData[]; // rows rendered by the chart
+		children: Snippet; // composed parts — <Bar />, <Line />, <XAxis />, <Legend />, …
+		class?: string; // extra classes for the chart container
+		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		curveType?: CurveType; // default curve interpolation for every <Line />
+		animationType?: ComposedAnimationType; // default intro for every <Bar /> and <Line />
+		barGap?: number; // gap between bars sharing a category
+		barCategoryGap?: number; // gap between bar categories
+		defaultSelectedDataKey?: string | null; // series selected on first render
+		onSelectionChange?: (selectedDataKey: string | null) => void; // fires when the selected series changes
+		isLoading?: boolean; // shows the animated loading skeleton
+		loadingBars?: number; // number of bars in the loading skeleton
+		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
+	} = $props();
+
+	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+
+	/**
+	 * Anchors the intro to a fixed moment so it plays exactly once — re-renders read elapsed
+	 * time from here instead of replaying.
+	 */
+	const introStartedAt = Date.now();
+
+	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
+	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
+	let hoveredIndex = $state<number | null>(null);
+
+	const loading = new LoadingDataState({
+		isLoading: () => isLoading,
+		loadingBars: () => loadingBars ?? 12
+	});
+
+	const brush = new EvilBrushState({ data: () => data as Record<string, unknown>[] });
+
+	// The <Brush> child is config-only: its presence turns the footer on. The reference pulls it
+	// out of `children`; Svelte registers it into this context instead (SPEC §4.2).
+	const brushSlot = setBrushSlotContext();
+	const showBrush = $derived(brushSlot.present);
+
+	/** Category key pushed up by the rendered `<XAxis dataKey>`, when there is one. */
+	let registeredXKey = $state<string | undefined>(undefined);
+	let registeredXKeyToken: string | null = null;
+
+	/** Data keys of the rendered `<Bar />` children, so several bars can split a category. */
+	// `SvelteMap` for the same reason as `axesPresent` below (DEVIATIONS U-3).
+	const barKeyByToken = new SvelteMap<string, string>();
+	const barKeys = $derived([...barKeyByToken.values()]);
+
+	/** Which axes are rendered, so the plot reserves the space Recharts does (DEVIATIONS A-7). */
+	// `SvelteSet`, not a plain `Set` in `$state`: `$state` proxies objects and arrays but not
+	// `Map`/`Set`, so `.add()` / `.delete()` would not notify and the padding would never
+	// pick up an axis. See plans/DEVIATIONS.md U-3.
+	const axesPresent = { x: new SvelteSet<string>(), y: new SvelteSet<string>() };
+
+	const CHART_MARGIN = 5; // Recharts' default <ComposedChart margin>
+	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
+	const Y_AXIS_WIDTH = 60; // Recharts' default <YAxis width>
+
+	const padding = $derived({
+		top: CHART_MARGIN,
+		right: CHART_MARGIN,
+		bottom: CHART_MARGIN + (axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0),
+		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
+	});
+
+	const seriesKeys = $derived(Object.keys(config));
+	const displayData = $derived(showBrush && !isLoading ? brush.visibleData : data);
+	const chartData = $derived(
+		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
+	);
+
+	/** Category key for the band scale. See plans/DEVIATIONS.md A-1. */
+	const fallbackXKey = $derived(
+		Object.keys(chartData[0] ?? {}).find(
+			(key) => !seriesKeys.includes(key) && key !== LOADING_DATA_KEY
+		)
+	);
+	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
+
+	const series = $derived(
+		isLoading
+			? [{ key: LOADING_DATA_KEY, value: LOADING_DATA_KEY }]
+			: seriesKeys.map((key) => ({ key, value: key }))
+	);
+
+	setComposedChartContext({
+		config: () => config,
+		data: () => chartData,
+		xKey: () => xKey,
+		seriesKeys: () => seriesKeys,
+		barKeys: () => barKeys,
+		curveType: () => curveType,
+		animationType: () => animationType,
+		barGap: () => barGap,
+		barCategoryGap: () => barCategoryGap,
+		introStartedAt: () => introStartedAt,
+		isLoading: () => isLoading,
+		hoveredIndex: () => hoveredIndex,
+		chartId: () => chartId,
+		selectedDataKey: () => selectedDataKey,
+		selectDataKey: (next) => {
+			selectedDataKey = next;
+			onSelectionChange?.(next);
+		},
+		registerBar: (token, key) => {
+			if (key === undefined) barKeyByToken.delete(token);
+			else barKeyByToken.set(token, key);
+		},
+		registerXAxisDataKey: (token, key) => {
+			// Ignore a stale teardown from LayerChart's mount-time remount (DEVIATIONS.md A-3).
+			if (key === undefined && registeredXKeyToken !== token) return;
+			registeredXKeyToken = key === undefined ? null : token;
+			registeredXKey = key;
+		},
+		registerAxis: (token, axis, present) => {
+			if (present) axesPresent[axis].add(token);
+			else axesPresent[axis].delete(token);
+		}
+	});
+</script>
+
+<ChartContainer {config} class={className}>
+	<LoadingIndicator {isLoading} />
+	<LegendRender placement="top" />
+	<!-- The reference clears the hovered column when the pointer leaves the chart. -->
+	<div
+		class="flex min-h-0 w-full flex-1 flex-col"
+		onpointerleave={() => (hoveredIndex = null)}
+		role="presentation"
+	>
+		<Chart
+			data={chartData}
+			x={xKey}
+			{series}
+			seriesLayout="overlap"
+			bandPadding={0}
+			yBaseline={0}
+			yNice
+			{padding}
+			tooltipContext={{ mode: 'band' }}
+			class="h-full w-full"
+			{...chartProps}
+		>
+			<Svg>
+				{@render children()}
+				<TooltipCursor />
+				{#if isLoading}
+					<LoadingBar
+						{chartId}
+						barRadius={DEFAULT_BAR_RADIUS}
+						onShimmerExit={loading.onShimmerExit}
+					/>
+				{/if}
+			</Svg>
+			<TooltipRender />
+		</Chart>
+	</div>
+	<LegendRender placement="bottom" />
+
+	{#snippet footer()}
+		{#if showBrush && !isLoading}
+			<EvilBrush
+				data={data as Record<string, unknown>[]}
+				chartConfig={config}
+				{xDataKey}
+				variant="area"
+				{curveType}
+				height={brushSlot.slot?.height}
+				formatLabel={brushSlot.slot?.formatLabel}
+				skipStyle
+				class="mt-1"
+				startIndex={brush.brushProps.startIndex}
+				endIndex={brush.brushProps.endIndex}
+				onChange={(range) => {
+					brush.brushProps.onChange(range);
+					brushSlot.slot?.onChange?.(range);
+				}}
+			/>
+		{/if}
+	{/snippet}
+</ChartContainer>
