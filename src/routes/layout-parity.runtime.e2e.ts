@@ -174,25 +174,52 @@ test('the brush footer matches the original geometry at desktop and mobile width
 test('the docs attribution header stays inside its responsive container', async ({ page }) => {
 	await page.goto('/docs/chart-config');
 	const header = page.locator('[data-sidebar="header"]').filter({ hasText: 'Based on EvilCharts' });
+	const headerActions = header.locator(':scope > div').last();
 	const attribution = header.getByRole('link', { name: 'Based on EvilCharts' });
+	const author = header.getByRole('link', { name: 'Built by Mathis' });
 
-	for (const width of [768, 940, 1280]) {
+	for (const width of [640, 768, 940, 996]) {
+		await page.setViewportSize({ width, height: 800 });
+		await expect(attribution).toBeHidden();
+		await expect(author).toBeVisible();
+
+		const [headerBox, actionsBox] = await Promise.all([
+			header.boundingBox(),
+			headerActions.boundingBox()
+		]);
+		expect(headerBox).not.toBeNull();
+		expect(actionsBox).not.toBeNull();
+		expect(actionsBox!.x).toBeGreaterThanOrEqual(headerBox!.x);
+		expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width);
+		await expect
+			.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+			.toBeLessThanOrEqual(width);
+	}
+
+	for (const width of [1024, 1280]) {
 		await page.setViewportSize({ width, height: 800 });
 		await expect(attribution).toBeVisible();
+		await expect(author).toBeVisible();
 
-		const [headerBox, attributionBox] = await Promise.all([
+		const [headerBox, attributionBox, actionsBox] = await Promise.all([
 			header.boundingBox(),
-			attribution.boundingBox()
+			attribution.boundingBox(),
+			headerActions.boundingBox()
 		]);
 		expect(headerBox).not.toBeNull();
 		expect(attributionBox).not.toBeNull();
+		expect(actionsBox).not.toBeNull();
 		expect(attributionBox!.x).toBeGreaterThanOrEqual(headerBox!.x);
 		expect(attributionBox!.x + attributionBox!.width).toBeLessThanOrEqual(
 			headerBox!.x + headerBox!.width
 		);
+		expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width);
 		expect(await attribution.evaluate((element) => element.scrollWidth)).toBe(
 			await attribution.evaluate((element) => element.clientWidth)
 		);
+		await expect
+			.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+			.toBeLessThanOrEqual(width);
 	}
 
 	await page.setViewportSize({ width: 320, height: 568 });

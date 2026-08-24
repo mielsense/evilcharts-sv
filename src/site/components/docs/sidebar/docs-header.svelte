@@ -43,7 +43,7 @@
 			rel="noreferrer">Svelte 5 port</a
 		>
 		<a
-			class="hidden shrink-0 text-[11px] whitespace-nowrap text-muted-foreground/70 duration-100 hover:text-primary md:inline"
+			class="hidden shrink-0 text-[11px] whitespace-nowrap text-muted-foreground/70 duration-100 hover:text-primary lg:inline"
 			href={UPSTREAM_REPO_URL}
 			target="_blank"
 			rel="noreferrer"
