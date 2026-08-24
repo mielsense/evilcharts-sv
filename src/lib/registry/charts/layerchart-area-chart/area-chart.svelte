@@ -230,6 +230,8 @@
 		isStacked: () => isStacked,
 		isExpanded: () => isExpanded,
 		isLoading: () => isLoading,
+		chartHeight: () => chartDimension.height,
+		plotTop: () => padding.top,
 		xAxisLeadingInset: () => padding.left,
 		chartId: () => chartId,
 		selectedDataKey: () => selectedDataKey,

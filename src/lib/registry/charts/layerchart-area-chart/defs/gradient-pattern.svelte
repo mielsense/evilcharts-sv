@@ -1,9 +1,26 @@
 <script lang="ts">
 	/** Gradient fill that fades from visible at the top to transparent at the bottom. */
-	let { id, dataKey }: { id: string; dataKey: string } = $props();
+	let {
+		id,
+		dataKey,
+		chartHeight,
+		plotTop
+	}: { id: string; dataKey: string; chartHeight: number; plotTop: number } = $props();
 </script>
 
-<linearGradient id={`${id}-vertical-fade`} x1="0" y1="0" x2="0" y2="1">
+<!--
+	LayerChart renders marks inside a translated plot group. Recharts renders the same area path in
+	the root SVG coordinate space, so its user-space pattern includes the chart's top padding in the
+	vertical fade. Start above the local plot by that padding to preserve the reference alpha ramp.
+-->
+<linearGradient
+	id={`${id}-vertical-fade`}
+	gradientUnits="userSpaceOnUse"
+	x1="0"
+	y1={-plotTop}
+	x2="0"
+	y2={chartHeight - plotTop}
+>
 	<stop offset="0%" stop-color="white" stop-opacity={0.1} />
 	<stop offset="100%" stop-color="white" stop-opacity={0} />
 </linearGradient>

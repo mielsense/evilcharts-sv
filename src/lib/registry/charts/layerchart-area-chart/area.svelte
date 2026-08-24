@@ -189,10 +189,15 @@
 		{/if}
 		<ColorGradient {id} {dataKey} config={chart.config} isExpanded={chart.isExpanded} />
 		{#if variant === 'gradient'}
-			<GradientPattern {id} {dataKey} />
+			<GradientPattern {id} {dataKey} chartHeight={chart.chartHeight} plotTop={chart.plotTop} />
 		{/if}
 		{#if variant === 'gradient-reverse'}
-			<ReverseGradientPattern {id} {dataKey} />
+			<ReverseGradientPattern
+				{id}
+				{dataKey}
+				chartHeight={chart.chartHeight}
+				plotTop={chart.plotTop}
+			/>
 		{/if}
 		{#if variant === 'solid'}
 			<SolidPattern {id} {dataKey} />

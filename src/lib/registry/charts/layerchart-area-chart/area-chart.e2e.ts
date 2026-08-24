@@ -191,6 +191,46 @@ test.describe('EvilAreaChart examples', () => {
 		}
 	});
 
+	test('anchors gradient fills to the full chart coordinate space', async ({ page }) => {
+		for (const [width, height] of [
+			[440, 256],
+			[632, 360]
+		] as const) {
+			await page.goto(`/preview/ex-area-chart?w=${width}&h=${height}`);
+			await page.waitForSelector('[data-preview-ready]');
+			await page.waitForTimeout(1400);
+
+			const metrics = await plot(page).evaluate((svg) => {
+				const plotGroup = svg.querySelector('.lc-layout-svg-g');
+				const translation = plotGroup
+					?.getAttribute('transform')
+					?.match(/^translate\([^,]+,\s*([\d.]+)\)$/);
+				const plotTop = Number(translation?.[1]);
+				const chartHeight = Number(svg.getAttribute('height'));
+				const gradients = [...svg.querySelectorAll('linearGradient[id$="-vertical-fade"]')];
+
+				return {
+					chartHeight,
+					plotTop,
+					gradients: gradients.map((gradient) => ({
+						units: gradient.getAttribute('gradientUnits'),
+						y1: Number(gradient.getAttribute('y1')),
+						y2: Number(gradient.getAttribute('y2'))
+					}))
+				};
+			});
+
+			expect(metrics.gradients).toHaveLength(2);
+			for (const gradient of metrics.gradients) {
+				expect(gradient).toEqual({
+					units: 'userSpaceOnUse',
+					y1: -metrics.plotTop,
+					y2: metrics.chartHeight - metrics.plotTop
+				});
+			}
+		}
+	});
+
 	test('each fill variant emits its own pattern', async ({ page }) => {
 		for (const [name, variant] of Object.entries(FILL_VARIANTS)) {
 			await open(page, name);
