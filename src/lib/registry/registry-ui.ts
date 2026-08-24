@@ -14,6 +14,18 @@ const TARGET_BASE_PATH = '$lib/components/evilcharts/ui';
 
 export const ui: RegistryItem[] = [
 	{
+		name: 'layerchart-dither',
+		description: 'Independent ordered-dither renderer inspired by Dither Kit',
+		type: 'registry:component',
+		files: [
+			{
+				path: 'ui/layerchart-dither',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/layerchart-dither'
+			}
+		]
+	},
+	{
 		name: 'layerchart-chart',
 		type: 'registry:component',
 		dependencies: ['layerchart', 'd3-shape'],

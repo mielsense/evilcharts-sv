@@ -6,6 +6,7 @@ export {
 } from './backing-size.js';
 export { resolveDitherColor, type CssVariableReader } from './color.js';
 export { default as DitherCanvas } from './dither-canvas.svelte';
+export { default as DitherDomLayer } from './dither-dom-layer.svelte';
 export {
 	createDitherInvalidator,
 	type DitherInvalidationReason,
@@ -18,9 +19,11 @@ export {
 	normalizeDitherBounds,
 	paintDitherArc,
 	paintDitherPath,
+	paintDitherVariantPath,
 	paintDitherPolygon,
 	paintDitherRect,
 	paintDitherStroke,
+	ditherVariantCoverage,
 	type DitherArc,
 	type DitherBounds,
 	type DitherCell,
@@ -28,6 +31,14 @@ export {
 	type DitherCoverage,
 	type DitherCoverageSample,
 	type DitherShapeOptions,
-	type DitherStrokeOptions
+	type DitherStrokeOptions,
+	type DitherVariantOptions
 } from './paint.js';
-export type { DitherCanvasFrame, DitherCanvasPainter, DitherRevision } from './types.js';
+export type {
+	DitherBloom,
+	DitherCanvasFrame,
+	DitherCanvasPainter,
+	DitherRevision,
+	DitherVariant,
+	RenderStyle
+} from './types.js';

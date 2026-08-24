@@ -1,5 +1,9 @@
 import type { DitherPaintFrame } from './invalidation.js';
 
+export type RenderStyle = 'svg' | 'dither';
+export type DitherVariant = 'gradient' | 'dotted' | 'hatched' | 'solid';
+export type DitherBloom = 'off' | 'low' | 'high' | 'aura';
+
 export type DitherCanvasFrame = DitherPaintFrame & {
 	canvas: HTMLCanvasElement;
 	context: CanvasRenderingContext2D;

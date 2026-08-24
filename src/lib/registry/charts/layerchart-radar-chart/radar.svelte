@@ -11,6 +11,7 @@
 	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import ColorGradient from './defs/color-gradient.svelte';
 	import FillGradient from './defs/fill-gradient.svelte';
 	import GlowFilter from './defs/glow-filter.svelte';
@@ -34,7 +35,8 @@
 		isGlowing = false,
 		isClickable = false,
 		children,
-		radarProps
+		radarProps,
+		ditherVariant
 	}: {
 		dataKey: string; // series key — must exist on the data and config
 		variant?: RadarVariant; // fill style for this radar only
@@ -43,6 +45,7 @@
 		isClickable?: boolean; // lets this radar be selected by clicking it
 		children?: Snippet; // optional <Dot /> and <ActiveDot /> composition
 		radarProps?: Record<string, unknown>; // escape hatch for raw LayerChart Spline props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const chart = useRadarChart();
@@ -51,6 +54,8 @@
 	const id = $props.id(); // unique id scopes this radar's style defs
 	// Devices set to "reduce motion" skip the intro entirely
 	const shouldReduceMotion = useReducedMotion();
+	const isDither = $derived(chart.renderStyle === 'dither');
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 
 	/**
 	 * The intro, reproducing `<Radar>`'s own animation: every point travels from the centre to its
@@ -137,12 +142,16 @@
 		<Spline
 			seriesKey={dataKey}
 			curve={curveLinearClosed}
-			stroke={`url(#${id}-radar-stroke-${dataKey})`}
+			stroke={isDither && !isFilled ? 'transparent' : `url(#${id}-radar-stroke-${dataKey})`}
 			strokeOpacity={opacity.stroke}
 			strokeWidth={STROKE_WIDTH}
-			fill={isFilled ? `url(#${id}-radar-fill-${dataKey})` : 'none'}
+			fill={isFilled && !isDither ? `url(#${id}-radar-fill-${dataKey})` : 'transparent'}
 			fillOpacity={isFilled ? fillOpacity * opacity.fill : 0}
 			filter={isGlowing ? `url(#${id}-radar-glow-${dataKey})` : undefined}
+			data-evil-dither-mark={isDither ? (isFilled ? 'fill' : 'stroke') : undefined}
+			data-evil-dither-key={isDither ? dataKey : undefined}
+			data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+			data-evil-dither-glow={isDither && isGlowing ? 'true' : undefined}
 			class={['transition-opacity duration-200', isClickable && 'cursor-pointer']
 				.filter(Boolean)
 				.join(' ')}

@@ -76,6 +76,22 @@ test.describe('EvilRadarChart examples', () => {
 		expect(centre.y).toBeCloseTo(box.h / 2, 0);
 	});
 
+	test('mobile settled geometry reserves the edge legend before scaling the web', async ({
+		page
+	}) => {
+		await page.goto('/preview/ex-radar-chart?w=440&h=256');
+		await page.waitForSelector('[data-preview-ready]');
+		await page.waitForTimeout(1600);
+		const bounds = await radars(page)
+			.first()
+			.evaluate((node) => {
+				const box = (node as SVGGraphicsElement).getBBox();
+				return { width: box.width, height: box.height };
+			});
+		expect(bounds.width).toBeCloseTo(102.25, 0);
+		expect(bounds.height).toBeCloseTo(81.67, 0);
+	});
+
 	test('the first vertex sits at 12 o’clock and the polygon runs clockwise', async ({ page }) => {
 		await open(page, 'ex-radar-chart');
 		const points = vertices((await radars(page).first().getAttribute('d'))!);

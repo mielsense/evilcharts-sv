@@ -17,6 +17,7 @@
 	import VerticalColorGradient from './defs/vertical-color-gradient.svelte';
 	import { getBarPositions, type BarInsets } from '../../ui/layerchart-chart/bar-geometry.js';
 	import AnimatedGrow from '../../ui/layerchart-chart/animated-grow.svelte';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { getBarGrowAnimation, getBarOpacity, getVariantFill } from './helpers.js';
 	import { DEFAULT_BAR_RADIUS, type BarVariant, type ComposedAnimationType } from './types.js';
 
@@ -28,7 +29,8 @@
 		animationType,
 		isClickable = false,
 		enableHoverHighlight = false,
-		barProps
+		barProps,
+		ditherVariant
 	}: {
 		dataKey: string; // series key — must exist on the data and config
 		variant?: BarVariant; // fill style for this bar only
@@ -38,6 +40,7 @@
 		isClickable?: boolean; // lets this bar be selected by clicking it
 		enableHoverHighlight?: boolean; // dims this bar when another column is hovered
 		barProps?: Record<string, unknown>; // escape hatch for raw LayerChart Bar props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const chart = useComposedChart();
@@ -56,6 +59,8 @@
 
 	const isSelected = $derived(chart.selectedDataKey === null || chart.selectedDataKey === dataKey);
 	const filter = $derived(glow ? `url(#${id}-glow)` : undefined);
+	const isDither = $derived(chart.renderStyle === 'dither');
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 
 	// The grow-in is a per-frame animation — heavier than a static chart — so
 	// `"none"` and the OS reduce-motion preference both opt out of it.
@@ -201,7 +206,12 @@
 				data={row}
 				seriesKey={dataKey}
 				radius={0}
-				{fill}
+				fill={isDither ? 'transparent' : fill}
+				opacity={isDither ? opacity : undefined}
+				data-evil-dither-mark={isDither ? 'fill' : undefined}
+				data-evil-dither-key={isDither ? dataKey : undefined}
+				data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+				data-evil-dither-glow={isDither && glow ? 'true' : undefined}
 				insets={bandInsets}
 				motion="none"
 			/>
@@ -210,7 +220,11 @@
 				seriesKey={dataKey}
 				radius={0}
 				insets={capInset}
-				fill={`url(#${id}-bar-colors)`}
+				fill={isDither ? 'transparent' : `url(#${id}-bar-colors)`}
+				opacity={isDither ? opacity : undefined}
+				data-evil-dither-mark={isDither ? 'fill' : undefined}
+				data-evil-dither-key={isDither ? dataKey : undefined}
+				data-evil-dither-variant={isDither ? 'solid' : undefined}
 				motion="none"
 			/>
 		</g>
@@ -220,11 +234,15 @@
 			seriesKey={dataKey}
 			{radius}
 			rounded="all"
-			{fill}
+			fill={isDither ? 'transparent' : fill}
 			{opacity}
 			{filter}
 			insets={bandInsets}
 			class="transition-opacity duration-200"
+			data-evil-dither-mark={isDither ? 'fill' : undefined}
+			data-evil-dither-key={isDither ? dataKey : undefined}
+			data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+			data-evil-dither-glow={isDither && glow ? 'true' : undefined}
 			motion="none"
 			{...barProps}
 		/>

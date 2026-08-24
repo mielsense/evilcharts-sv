@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
+import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
 import { ChartSlots } from './chart-slots.svelte.js';
 import type { AreaAnimationType, CurveType } from './types.js';
 
@@ -16,6 +17,8 @@ type Options = {
 	curveType: () => CurveType;
 	animationType: () => AreaAnimationType;
 	introStartedAt: () => number;
+	renderStyle: () => RenderStyle;
+	ditherVariant: () => DitherVariant;
 	isStacked: () => boolean;
 	isExpanded: () => boolean;
 	isLoading: () => boolean;
@@ -76,6 +79,12 @@ export class AreaChartContext {
 	}
 	get introStartedAt() {
 		return this.#options.introStartedAt();
+	}
+	get renderStyle() {
+		return this.#options.renderStyle();
+	}
+	get ditherVariant() {
+		return this.#options.ditherVariant();
 	}
 	get isStacked() {
 		return this.#options.isStacked();

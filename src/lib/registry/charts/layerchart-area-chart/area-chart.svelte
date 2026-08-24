@@ -5,7 +5,7 @@
 	 * grid, tooltip, legend, and the areas themselves — is composed as children,
 	 * so a consumer renders exactly the parts they need.
 	 */
-	import { Chart, Svg } from 'layerchart';
+	import { Chart, Html, Svg } from 'layerchart';
 	import { scalePoint } from 'd3-scale';
 	import { untrack, type Snippet } from 'svelte';
 	import {
@@ -19,6 +19,12 @@
 		setBrushSlotContext
 	} from '../../ui/layerchart-brush/index.js';
 	import { setAreaChartContext } from './area-chart-context.svelte.js';
+	import {
+		DitherDomLayer,
+		type DitherBloom,
+		type DitherVariant,
+		type RenderStyle
+	} from '../../ui/layerchart-dither/index.js';
 	import LegendRender from './legend-render.svelte';
 	import TooltipCursor from './tooltip-cursor.svelte';
 	import TooltipRender from './tooltip-render.svelte';
@@ -46,7 +52,11 @@
 		isLoading = false,
 		loadingPoints,
 		xDataKey,
-		initialDimension = { width: 320, height: 200 }
+		initialDimension = { width: 320, height: 200 },
+		renderStyle = 'svg',
+		ditherVariant = 'gradient',
+		ditherCellSize = 2,
+		bloom = 'off'
 	}: {
 		config: ChartConfig; // series colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -62,6 +72,10 @@
 		loadingPoints?: number; // number of points in the loading skeleton
 		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
 		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
+		renderStyle?: RenderStyle;
+		ditherVariant?: DitherVariant;
+		ditherCellSize?: number;
+		bloom?: DitherBloom;
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
@@ -165,6 +179,8 @@
 		curveType: () => curveType,
 		animationType: () => animationType,
 		introStartedAt: () => introStartedAt,
+		renderStyle: () => renderStyle,
+		ditherVariant: () => ditherVariant,
 		isStacked: () => isStacked,
 		isExpanded: () => isExpanded,
 		isLoading: () => isLoading,
@@ -211,7 +227,19 @@
 		class="h-full w-full"
 		{...chartProps}
 	>
-		<Svg>
+		{#if renderStyle === 'dither'}
+			<Html pointerEvents={false} clip zIndex={0}>
+				<DitherDomLayer
+					{ditherVariant}
+					cellSize={ditherCellSize}
+					{bloom}
+					paused={isLoading}
+					animationDuration={1000}
+					animationRevision={introStartedAt}
+				/>
+			</Html>
+		{/if}
+		<Svg zIndex={1}>
 			{@render children()}
 			<TooltipCursor />
 			{#if isLoading}

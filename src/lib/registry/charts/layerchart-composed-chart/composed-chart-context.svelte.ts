@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
+import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
 import { ChartSlots } from './chart-slots.svelte.js';
 import type { ComposedAnimationType, CurveType } from './types.js';
 
@@ -23,6 +24,8 @@ type Options = {
 	barCategoryGap: () => number | undefined;
 	/** Timestamp the chart mounted — anchors the one-shot intro. */
 	introStartedAt: () => number;
+	renderStyle: () => RenderStyle;
+	ditherVariant: () => DitherVariant;
 	isLoading: () => boolean;
 	/** Data index currently hovered, or null when none. */
 	hoveredIndex: () => number | null;
@@ -99,6 +102,12 @@ export class ComposedChartContext {
 	}
 	get introStartedAt() {
 		return this.#options.introStartedAt();
+	}
+	get renderStyle() {
+		return this.#options.renderStyle();
+	}
+	get ditherVariant() {
+		return this.#options.ditherVariant();
 	}
 	get dataLength() {
 		return this.#options.data().length;

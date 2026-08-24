@@ -11,6 +11,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolveCurve } from '../../ui/layerchart-chart/curves.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { useComposedChart } from './composed-chart-context.svelte.js';
 	import HorizontalColorGradient from './defs/horizontal-color-gradient.svelte';
 	import LineGlowFilter from './defs/line-glow-filter.svelte';
@@ -33,7 +34,8 @@
 		glow = false,
 		isClickable = false,
 		children,
-		lineProps
+		lineProps,
+		ditherVariant
 	}: {
 		dataKey: string; // series key — must exist on the data and config
 		strokeVariant?: StrokeVariant; // stroke style for this line only
@@ -44,6 +46,7 @@
 		isClickable?: boolean; // lets this line be selected by clicking it
 		children?: Snippet; // optional <Dot /> and <ActiveDot /> composition
 		lineProps?: Record<string, unknown>; // escape hatch for raw LayerChart Spline props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const chart = useComposedChart();
@@ -71,6 +74,8 @@
 
 	const isAnimatedDashed = $derived(strokeVariant === 'animated-dashed');
 	const isDashed = $derived(strokeVariant === 'dashed' || isAnimatedDashed);
+	const isDither = $derived(chart.renderStyle === 'dither' && !isAnimatedDashed);
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 
 	const defined = $derived(
 		connectNulls
@@ -116,12 +121,17 @@
 		seriesKey={dataKey}
 		curve={resolveCurve(resolvedCurve)}
 		strokeOpacity={opacity.stroke}
-		stroke={`url(#${id}-line-colors-${dataKey})`}
+		stroke={isDither ? 'transparent' : `url(#${id}-line-colors-${dataKey})`}
 		strokeWidth={STROKE_WIDTH}
 		stroke-dasharray={isDashed ? '5 5' : undefined}
 		{filter}
 		{defined}
 		mask={maskId ? `url(#${maskId})` : undefined}
+		data-evil-dither-mark={isDither ? 'stroke' : undefined}
+		data-evil-dither-key={isDither ? dataKey : undefined}
+		data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+		data-evil-dither-reveal={isDither ? revealType : undefined}
+		data-evil-dither-glow={isDither && glow ? 'true' : undefined}
 		class={[
 			isClickable && 'pointer-events-none cursor-pointer',
 			isAnimatedDashed && !hasSelection && 'evil-composed-animated-dash'

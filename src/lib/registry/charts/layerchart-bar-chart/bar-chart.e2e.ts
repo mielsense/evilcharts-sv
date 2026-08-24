@@ -99,6 +99,16 @@ test.describe('EvilBarChart examples', () => {
 		expect(mobile.x).toBeLessThan(desktop.x + desktop.w * 2.5);
 	});
 
+	test('mobile settled geometry reserves the bottom legend inside the plot', async ({ page }) => {
+		await page.goto('/preview/ex-bar-chart?w=440&h=256');
+		await page.waitForSelector('[data-preview-ready]');
+		await page.waitForTimeout(1600);
+		const height = await seriesBars(page, 'desktop')
+			.first()
+			.evaluate((node) => (node as SVGGraphicsElement).getBBox().height);
+		expect(height).toBeCloseTo(31.46, 0);
+	});
+
 	test('each fill variant paints from its own pattern', async ({ page }) => {
 		for (const [name, suffix] of Object.entries(FILL_VARIANTS)) {
 			await open(page, name);

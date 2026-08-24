@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ditherCells, normalizeDitherBounds } from './paint.js';
+import { ditherCells, ditherVariantCoverage, normalizeDitherBounds } from './paint.js';
 
 describe('family-agnostic dither cells', () => {
 	it('aligns a clipped shape to the shared 2 CSS pixel grid', () => {
@@ -65,5 +65,21 @@ describe('family-agnostic dither cells', () => {
 			width: 0,
 			height: 0
 		});
+	});
+
+	it('keeps dither variants deterministic and reverses gradient density', () => {
+		const top = { x: 2, y: 2, relativeY: 0.1 };
+		const bottom = { x: 2, y: 14, relativeY: 0.9 };
+		expect(ditherVariantCoverage('gradient', top)).toBeGreaterThan(
+			ditherVariantCoverage('gradient', bottom)
+		);
+		expect(ditherVariantCoverage('gradient', top, true)).toBeLessThan(
+			ditherVariantCoverage('gradient', bottom, true)
+		);
+		expect(ditherVariantCoverage('solid', top)).toBe(0.875);
+		expect(ditherVariantCoverage('dotted', top)).toBe(0.3125);
+		expect(ditherVariantCoverage('hatched', top)).not.toBe(
+			ditherVariantCoverage('hatched', { x: 6, y: 2, relativeY: 0.1 })
+		);
 	});
 });

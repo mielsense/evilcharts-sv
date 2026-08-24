@@ -4,7 +4,7 @@
 	 * skeleton. Everything visual — the polar grid, axes, tooltip, legend, and the radars
 	 * themselves — is composed as children, so a consumer renders exactly the parts they need.
 	 */
-	import { Chart, Group, Svg, type ChartState } from 'layerchart';
+	import { Chart, Group, Html, Svg, type ChartState } from 'layerchart';
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
@@ -16,8 +16,20 @@
 	import LoadingRadar from './loading/loading-radar.svelte';
 	import { LoadingDataState } from './loading/use-loading-data.svelte.js';
 	import { setRadarChartContext } from './radar-chart-context.svelte.js';
+	import {
+		DitherDomLayer,
+		type DitherBloom,
+		type DitherVariant,
+		type RenderStyle
+	} from '../../ui/layerchart-dither/index.js';
 	import TooltipRender from './tooltip-render.svelte';
-	import { DEFAULT_OUTER_RADIUS_RATIO, LOADING_POINTS, LOADING_RADAR_DATA_KEY } from './types.js';
+	import {
+		DEFAULT_OUTER_RADIUS_RATIO,
+		LOADING_POINTS,
+		LOADING_RADAR_DATA_KEY,
+		REVEAL_BEGIN,
+		REVEAL_DURATION
+	} from './types.js';
 
 	let {
 		config,
@@ -30,7 +42,11 @@
 		onSelectionChange,
 		isLoading = false,
 		loadingPoints,
-		initialDimension = { width: 320, height: 200 }
+		initialDimension = { width: 320, height: 200 },
+		renderStyle = 'svg',
+		ditherVariant = 'gradient',
+		ditherCellSize = 2,
+		bloom = 'off'
 	}: {
 		config: ChartConfig; // series colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -43,11 +59,23 @@
 		isLoading?: boolean; // shows the animated loading skeleton
 		loadingPoints?: number; // number of points in the loading skeleton
 		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
+		renderStyle?: RenderStyle;
+		ditherVariant?: DitherVariant;
+		ditherCellSize?: number;
+		bloom?: DitherBloom;
 	} = $props();
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
 	let chartDimension = $state(untrack(() => initialDimension));
+	let introStartedAt = $state(Date.now());
+	let previousLoading = untrack(() => isLoading);
+
+	$effect(() => {
+		const loadingNow = isLoading;
+		if (previousLoading && !loadingNow) introStartedAt = Date.now();
+		previousLoading = loadingNow;
+	});
 
 	/** LayerChart's chart state, so the pointer handlers below can drive the tooltip. */
 	let layerContext = $state<ChartState<Record<string, unknown>> | undefined>(undefined);
@@ -109,12 +137,15 @@
 			: seriesKeys.map((key) => ({ key, value: key }))
 	);
 
-	setRadarChartContext({
+	const radarContext = setRadarChartContext({
 		config: () => config,
 		data: () => chartData,
 		seriesKeys: () => (isLoading ? [LOADING_RADAR_DATA_KEY] : seriesKeys),
 		angleKey: () => angleKey,
 		isLoading: () => isLoading,
+		introStartedAt: () => introStartedAt,
+		renderStyle: () => renderStyle,
+		ditherVariant: () => ditherVariant,
 		selectedDataKey: () => selectedDataKey,
 		selectDataKey: (next) => {
 			selectedDataKey = next;
@@ -127,6 +158,22 @@
 			registeredAngleKey = key;
 		}
 	});
+
+	const CHART_MARGIN = 5;
+	// The outer legend layout already consumes half of Recharts' 32px band. Reserve the remaining
+	// scale space here so the settled polygon geometry matches the reference.
+	const EDGE_LEGEND_HEIGHT = 15;
+	const edgeLegendPlacement = $derived.by(() => {
+		if (isLoading) return null;
+		const align = radarContext.slots.legend?.verticalAlign;
+		return align === 'top' || align === 'bottom' ? align : null;
+	});
+	const padding = $derived({
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
+		right: CHART_MARGIN,
+		bottom: CHART_MARGIN + (edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
+		left: CHART_MARGIN
+	});
 </script>
 
 <ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
@@ -138,9 +185,8 @@
 		would put the last vertex back on the first. `bandPadding={0}` keeps each vertex on its own
 		band edge, which is where LayerChart's radial line generator reads the angle from.
 
-		No `yNice`: Recharts' `<PolarRadiusAxis>` runs the radius straight from 0 to the data
-		maximum, so the largest vertex touches the outermost web ring. Rounding the domain up would
-		leave every polygon short of the edge.
+		Recharts reserves its 5px chart margin and an edge legend before computing the radius, then
+		nices the value domain. The explicit padding and `yNice` below reproduce that settled layout.
 	-->
 	<!--
 		The pointer handlers live on this wrapper so they see a move anywhere over the chart,
@@ -163,16 +209,29 @@
 			radial
 			bandPadding={0}
 			yBaseline={0}
+			yNice
 			yRange={({ width, height }) => [
 				0,
 				(Math.min(width, height) / 2) * DEFAULT_OUTER_RADIUS_RATIO
 			]}
-			padding={{ top: 0, right: 0, bottom: 0, left: 0 }}
+			{padding}
 			tooltipContext={{ mode: 'manual' }}
 			class="h-full w-full"
 			{...chartProps}
 		>
-			<Svg>
+			{#if renderStyle === 'dither'}
+				<Html pointerEvents={false} clip zIndex={0}>
+					<DitherDomLayer
+						{ditherVariant}
+						cellSize={ditherCellSize}
+						{bloom}
+						paused={isLoading}
+						animationDuration={REVEAL_BEGIN + REVEAL_DURATION}
+						animationRevision={introStartedAt}
+					/>
+				</Html>
+			{/if}
+			<Svg zIndex={1}>
 				<Group center>
 					{#if backgroundVariant}
 						<ChartBackground variant={backgroundVariant} />

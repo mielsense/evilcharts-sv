@@ -18,6 +18,7 @@
 	import StrippedPattern from './defs/stripped-pattern.svelte';
 	import { getBarPositions, type BarInsets } from '../../ui/layerchart-chart/bar-geometry.js';
 	import AnimatedGrow from '../../ui/layerchart-chart/animated-grow.svelte';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { getBarGrowAnimation, getBarOpacity, getVariantFill } from './helpers.js';
 	import type { BarAnimationType, BarVariant } from './types.js';
 
@@ -30,7 +31,8 @@
 		enableHoverHighlight = false,
 		glowing = false,
 		bufferBar = false,
-		barProps
+		barProps,
+		ditherVariant
 	}: {
 		dataKey: string; // series key — must exist on the data and config
 		variant?: BarVariant; // fill style for this bar only
@@ -41,6 +43,7 @@
 		glowing?: boolean; // applies a soft outer glow to this bar
 		bufferBar?: boolean; // renders the last data point as a hatched "buffer" bar
 		barProps?: Record<string, unknown>; // escape hatch for raw LayerChart Bar props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const chart = useBarChart();
@@ -71,6 +74,8 @@
 	const rounded = $derived(isStripped ? ('top' as const) : ('all' as const));
 
 	const filter = $derived(glowing ? `url(#${id}-bar-glow-${dataKey})` : undefined);
+	const isDither = $derived(chart.renderStyle === 'dither');
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 
 	/**
 	 * This bar's slice of the category, in pixels.
@@ -265,11 +270,15 @@
 		seriesKey={dataKey}
 		radius={resolvedRadius}
 		{rounded}
-		{fill}
+		fill={isDither ? 'transparent' : fill}
 		{fillOpacity}
 		{filter}
 		stroke={last ? `url(#${id}-colors-${dataKey})` : undefined}
 		strokeWidth={last ? 1 : undefined}
+		data-evil-dither-mark={isDither ? 'fill' : undefined}
+		data-evil-dither-key={isDither ? dataKey : undefined}
+		data-evil-dither-variant={isDither ? (last ? 'hatched' : resolvedDitherVariant) : undefined}
+		data-evil-dither-glow={isDither && glowing ? 'true' : undefined}
 		insets={{ ...bandInsets, ...(chart.isHorizontal ? { right: 3 } : { bottom: 3 }) }}
 		motion="none"
 		{...barProps}
@@ -285,7 +294,10 @@
 			seriesKey={dataKey}
 			radius={1}
 			rounded="all"
-			fill={`url(#${id}-colors-${dataKey})`}
+			fill={isDither ? 'transparent' : `url(#${id}-colors-${dataKey})`}
+			data-evil-dither-mark={isDither ? 'fill' : undefined}
+			data-evil-dither-key={isDither ? dataKey : undefined}
+			data-evil-dither-variant={isDither ? 'solid' : undefined}
 			insets={capInset}
 			motion="none"
 		/>

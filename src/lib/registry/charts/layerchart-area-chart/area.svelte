@@ -11,6 +11,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolveCurve } from '../../ui/layerchart-chart/curves.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { useAreaChart } from './area-chart-context.svelte.js';
 	import { setAreaSlotsContext } from './area-slots.svelte.js';
 	import ColorGradient from './defs/color-gradient.svelte';
@@ -41,7 +42,8 @@
 		connectNulls = false,
 		isClickable = false,
 		children,
-		areaProps
+		areaProps,
+		ditherVariant
 	}: {
 		dataKey: string; // series key — must exist on the data and config
 		variant?: AreaVariant; // fill style for this area only
@@ -53,6 +55,7 @@
 		isClickable?: boolean; // lets this area be selected by clicking it
 		children?: Snippet; // optional <Dot /> and <ActiveDot /> composition
 		areaProps?: Record<string, unknown>; // escape hatch for raw LayerChart Area props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const chart = useAreaChart();
@@ -83,6 +86,8 @@
 
 	const isAnimatedDashed = $derived(strokeVariant === 'animated-dashed');
 	const isDashed = $derived(strokeVariant === 'dashed' || isAnimatedDashed);
+	const isDither = $derived(chart.renderStyle === 'dither');
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 </script>
 
 <!-- The root renders the skeleton area while loading, so real areas step aside -->
@@ -104,14 +109,24 @@
 			seriesKey={dataKey}
 			curve={resolveCurve(resolvedCurve)}
 			fillOpacity={opacity.fill}
-			fill={getFillPattern(variant, showUnselected, id)}
+			fill={isDither ? 'transparent' : getFillPattern(variant, showUnselected, id)}
 			stroke="none"
+			data-evil-dither-mark={isDither ? 'fill' : undefined}
+			data-evil-dither-key={isDither ? dataKey : undefined}
+			data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+			data-evil-dither-reverse={isDither && variant === 'gradient-reverse' ? 'true' : undefined}
+			data-evil-dither-reveal={isDither ? revealType : undefined}
 			line={{
-				stroke: `url(#${id}-colors-${dataKey})`,
+				stroke: isDither && !isAnimatedDashed ? 'transparent' : `url(#${id}-colors-${dataKey})`,
 				strokeOpacity: opacity.stroke,
 				strokeWidth,
 				'stroke-dasharray': isDashed ? '3 3' : undefined,
-				class: isAnimatedDashed && !hasSelection ? 'evil-animated-dash' : undefined
+				class: isAnimatedDashed && !hasSelection ? 'evil-animated-dash' : undefined,
+				'data-evil-dither-mark': isDither && !isAnimatedDashed ? 'stroke' : undefined,
+				'data-evil-dither-key': isDither && !isAnimatedDashed ? dataKey : undefined,
+				'data-evil-dither-variant':
+					isDither && !isAnimatedDashed ? resolvedDitherVariant : undefined,
+				'data-evil-dither-reveal': isDither && !isAnimatedDashed ? revealType : undefined
 			}}
 			defined={connectNulls
 				? undefined

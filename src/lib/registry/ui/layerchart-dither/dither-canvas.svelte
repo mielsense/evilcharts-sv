@@ -13,8 +13,10 @@
 		hoverRevision?: DitherRevision;
 		themeRevision?: DitherRevision;
 		animationRevision?: DitherRevision;
+		transitionRevision?: DitherRevision;
 		animate?: boolean;
 		animationDuration?: number;
+		transitionDuration?: number;
 		pixelRatio?: number;
 		maxPixelRatio?: number;
 		maxPixels?: number;
@@ -29,8 +31,10 @@
 		hoverRevision,
 		themeRevision,
 		animationRevision,
+		transitionRevision,
 		animate = true,
 		animationDuration = 500,
+		transitionDuration = 200,
 		pixelRatio,
 		maxPixelRatio = 2,
 		maxPixels = 16_777_216,
@@ -82,6 +86,13 @@
 		if (!invalidator) return;
 		if (animate) invalidator.startAnimation(animationDuration);
 		else invalidator.invalidate('animation');
+	});
+
+	$effect(() => {
+		void transitionRevision;
+		if (!invalidator || transitionRevision === undefined) return;
+		if (transitionDuration > 0) invalidator.startAnimation(transitionDuration);
+		else invalidator.invalidate('transition');
 	});
 
 	$effect(() => {

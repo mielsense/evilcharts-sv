@@ -5,7 +5,7 @@
 	 * grid, tooltip, legend, and the bars themselves — is composed as children,
 	 * so a consumer renders exactly the parts they need.
 	 */
-	import { Chart, Svg, type ChartState } from 'layerchart';
+	import { Chart, Html, Svg, type ChartState } from 'layerchart';
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
@@ -19,6 +19,12 @@
 	} from '../../ui/layerchart-brush/index.js';
 	import { ChartBackground, type BackgroundVariant } from '../../ui/layerchart-background/index.js';
 	import { setBarChartContext } from './bar-chart-context.svelte.js';
+	import {
+		DitherDomLayer,
+		type DitherBloom,
+		type DitherVariant,
+		type RenderStyle
+	} from '../../ui/layerchart-dither/index.js';
 	import LegendRender from './legend-render.svelte';
 	import LoadingBar from './loading/loading-bar.svelte';
 	import { LoadingDataState } from './loading/use-loading-data.svelte.js';
@@ -50,7 +56,11 @@
 		isLoading = false,
 		loadingBars,
 		xDataKey,
-		initialDimension = { width: 320, height: 200 }
+		initialDimension = { width: 320, height: 200 },
+		renderStyle = 'svg',
+		ditherVariant = 'gradient',
+		ditherCellSize = 2,
+		bloom = 'off'
 	}: {
 		config: ChartConfig; // series colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -70,6 +80,10 @@
 		loadingBars?: number; // number of bars in the loading skeleton
 		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
 		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
+		renderStyle?: RenderStyle;
+		ditherVariant?: DitherVariant;
+		ditherCellSize?: number;
+		bloom?: DitherBloom;
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
@@ -79,7 +93,14 @@
 	 * Anchors the grow-in to a fixed moment so it plays exactly once — re-renders read elapsed
 	 * time from here instead of replaying.
 	 */
-	const introStartedAt = Date.now();
+	let introStartedAt = $state(Date.now());
+	let previousLoading = untrack(() => isLoading);
+
+	$effect(() => {
+		const loadingNow = isLoading;
+		if (previousLoading && !loadingNow) introStartedAt = Date.now();
+		previousLoading = loadingNow;
+	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
@@ -123,10 +144,23 @@
 	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
 	const Y_AXIS_WIDTH = 60; // Recharts' default <YAxis width>
 
+	// ChartContainer already contributes the legend's 8px gap; reserve the remaining 24px here so
+	// the effective Recharts edge-legend band is 32px inside the scale calculation.
+	const EDGE_LEGEND_HEIGHT = 24;
+	let barContext: ReturnType<typeof setBarChartContext>;
+	const edgeLegendPlacement = $derived.by(() => {
+		if (isLoading || !barContext) return null;
+		const align = barContext.slots.legend?.verticalAlign;
+		return align === 'top' || align === 'bottom' ? align : null;
+	});
+
 	const padding = $derived({
-		top: CHART_MARGIN,
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
 		right: CHART_MARGIN,
-		bottom: CHART_MARGIN + (axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0),
+		bottom:
+			CHART_MARGIN +
+			(axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
+			(edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
 		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
 	});
 
@@ -135,6 +169,7 @@
 	const chartData = $derived(
 		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
 	);
+	const ditherAnimationDuration = $derived(500 + Math.max(0, chartData.length - 1) * 50);
 
 	/** Category key for the band scale. See plans/DEVIATIONS.md A-1. */
 	const fallbackXKey = $derived(
@@ -159,7 +194,7 @@
 		isPercent ? ('stackExpand' as const) : isStacked ? ('stack' as const) : ('overlap' as const)
 	);
 
-	setBarChartContext({
+	barContext = setBarChartContext({
 		config: () => config,
 		data: () => chartData,
 		xKey: () => xKey,
@@ -173,6 +208,8 @@
 		barGap: () => barGap,
 		barCategoryGap: () => barCategoryGap,
 		introStartedAt: () => introStartedAt,
+		renderStyle: () => renderStyle,
+		ditherVariant: () => ditherVariant,
 		isMouseInChart: () => isMouseInChart,
 		activeRow: () => layerContext?.tooltip?.data as Record<string, unknown> | undefined,
 		isLoading: () => isLoading,
@@ -229,7 +266,19 @@
 			class="h-full w-full"
 			{...chartProps}
 		>
-			<Svg>
+			{#if renderStyle === 'dither'}
+				<Html pointerEvents={false} clip zIndex={0}>
+					<DitherDomLayer
+						{ditherVariant}
+						cellSize={ditherCellSize}
+						{bloom}
+						paused={isLoading}
+						animationDuration={ditherAnimationDuration}
+						animationRevision={introStartedAt}
+					/>
+				</Html>
+			{/if}
+			<Svg zIndex={1}>
 				{#if backgroundVariant}
 					<ChartBackground variant={backgroundVariant} />
 				{/if}

@@ -980,5 +980,24 @@ export const examples: RegistryItem[] = [
 		files: [
 			{ path: 'examples/layerchart/ex-chart-config-icons-bar-chart.svelte', type: 'registry:block' }
 		]
-	}
+	},
+	// Dither rendering examples
+	...[
+		['area', 'layerchart-area-chart'],
+		['line', 'layerchart-line-chart'],
+		['bar', 'layerchart-bar-chart'],
+		['composed', 'layerchart-composed-chart'],
+		['pie', 'layerchart-pie-chart'],
+		['radar', 'layerchart-radar-chart']
+	].map(([family, dependency]) => ({
+		name: `ex-dither-${family}-chart`,
+		registryDependencies: [`@evilcharts/${dependency}`],
+		type: 'registry:block' as const,
+		files: [
+			{
+				path: `examples/layerchart/ex-dither-${family}-chart.svelte`,
+				type: 'registry:block' as const
+			}
+		]
+	}))
 ];

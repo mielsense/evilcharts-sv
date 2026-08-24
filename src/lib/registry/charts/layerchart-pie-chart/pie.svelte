@@ -9,6 +9,7 @@
 	import { Arc, getChartContext } from 'layerchart';
 	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import type { Snippet } from 'svelte';
 	import ColorGradient from './defs/radial-color-gradient.svelte';
 	import GlowFilter from './defs/glow-filter.svelte';
@@ -47,7 +48,8 @@
 		glowingSectors = [],
 		children,
 		pieProps,
-		arcProps
+		arcProps,
+		ditherVariant
 	}: {
 		variant?: PieVariant; // fill style for the pie's sectors
 		innerRadius?: number | string; // inner radius — set above 0 for a donut
@@ -62,6 +64,7 @@
 		pieProps?: Record<string, unknown>; // canonical escape hatch, matching the original EvilCharts API
 		/** @deprecated Use `pieProps`. */
 		arcProps?: Record<string, unknown>; // escape hatch for raw LayerChart Arc props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const forwardedPieProps = $derived({ ...(arcProps ?? {}), ...(pieProps ?? {}) });
@@ -73,6 +76,8 @@
 
 	const slots = setPieSlotsContext();
 	const shouldReduceMotion = useReducedMotion();
+	const isDither = $derived(chart.renderStyle === 'dither');
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 
 	const resolvedInner = $derived(toArcRadius(innerRadius));
 	const resolvedOuter = $derived(toArcRadius(outerRadius));
@@ -199,13 +204,17 @@
 			innerRadius={resolvedInner}
 			outerRadius={resolvedOuter}
 			{cornerRadius}
-			fill={`url(#${id}-colors-${sector.name})`}
+			fill={isDither ? 'transparent' : `url(#${id}-colors-${sector.name})`}
 			filter={glowingSectors.includes(sector.name) ? `url(#${id}-glow-${sector.name})` : undefined}
 			stroke={overlapping ? 'var(--background)' : 'none'}
 			strokeWidth={overlapping ? 5 : 0}
 			opacity={isClickable && chart.selectedSector !== null && chart.selectedSector !== sector.name
 				? 0.15
 				: 1}
+			data-evil-dither-mark={isDither ? 'fill' : undefined}
+			data-evil-dither-key={isDither ? sector.name : undefined}
+			data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+			data-evil-dither-glow={isDither && glowingSectors.includes(sector.name) ? 'true' : undefined}
 			data={sector.row}
 			tooltip
 			motion="none"

@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
+import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
 import { ChartSlots } from './chart-slots.svelte.js';
 import type { BarAnimationType } from './types.js';
 
@@ -26,6 +27,8 @@ type Options = {
 	barCategoryGap: () => number | undefined;
 	/** Timestamp the chart mounted — anchors the one-shot grow-in. */
 	introStartedAt: () => number;
+	renderStyle: () => RenderStyle;
+	ditherVariant: () => DitherVariant;
 	/** Whether the pointer is currently over the chart. */
 	isMouseInChart: () => boolean;
 	/** The row the pointer is currently over, so a bar can tell if it is the active one. */
@@ -112,6 +115,12 @@ export class BarChartContext {
 	}
 	get introStartedAt() {
 		return this.#options.introStartedAt();
+	}
+	get renderStyle() {
+		return this.#options.renderStyle();
+	}
+	get ditherVariant() {
+		return this.#options.ditherVariant();
 	}
 	get isMouseInChart() {
 		return this.#options.isMouseInChart();

@@ -1,11 +1,11 @@
 <script lang="ts" generics="TData extends Record<string, unknown>">
 	/**
-	 * Root of the composible composed chart. Owns the data, the shared context, the
+	 * Root of the composable composed chart. Owns the data, the shared context, the
 	 * loading skeleton, and the optional zoom brush. Everything visual — axes, grid,
 	 * tooltip, legend, and the bars and lines themselves — is composed as children,
 	 * so a consumer renders exactly the parts they need.
 	 */
-	import { Chart, Svg } from 'layerchart';
+	import { Chart, Html, Svg } from 'layerchart';
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
@@ -18,6 +18,12 @@
 		setBrushSlotContext
 	} from '../../ui/layerchart-brush/index.js';
 	import { setComposedChartContext } from './composed-chart-context.svelte.js';
+	import {
+		DitherDomLayer,
+		type DitherBloom,
+		type DitherVariant,
+		type RenderStyle
+	} from '../../ui/layerchart-dither/index.js';
 	import LegendRender from './legend-render.svelte';
 	import LoadingBar from './loading/loading-bar.svelte';
 	import { LoadingDataState } from './loading/use-loading-data.svelte.js';
@@ -46,7 +52,11 @@
 		isLoading = false,
 		loadingBars,
 		xDataKey,
-		initialDimension = { width: 320, height: 200 }
+		initialDimension = { width: 320, height: 200 },
+		renderStyle = 'svg',
+		ditherVariant = 'gradient',
+		ditherCellSize = 2,
+		bloom = 'off'
 	}: {
 		config: ChartConfig; // series colors + labels for bars and lines
 		data: TData[]; // rows rendered by the chart
@@ -63,6 +73,10 @@
 		loadingBars?: number; // number of bars in the loading skeleton
 		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
 		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
+		renderStyle?: RenderStyle;
+		ditherVariant?: DitherVariant;
+		ditherCellSize?: number;
+		bloom?: DitherBloom;
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
@@ -142,6 +156,9 @@
 			? [{ key: LOADING_DATA_KEY, value: LOADING_DATA_KEY }]
 			: seriesKeys.map((key) => ({ key, value: key }))
 	);
+	const ditherAnimationDuration = $derived(
+		Math.max(1000, 500 + Math.max(0, chartData.length - 1) * 50)
+	);
 
 	setComposedChartContext({
 		config: () => config,
@@ -154,6 +171,8 @@
 		barGap: () => barGap,
 		barCategoryGap: () => barCategoryGap,
 		introStartedAt: () => introStartedAt,
+		renderStyle: () => renderStyle,
+		ditherVariant: () => ditherVariant,
 		isLoading: () => isLoading,
 		hoveredIndex: () => hoveredIndex,
 		chartId: () => chartId,
@@ -203,7 +222,19 @@
 			class="h-full w-full"
 			{...chartProps}
 		>
-			<Svg>
+			{#if renderStyle === 'dither'}
+				<Html pointerEvents={false} clip zIndex={0}>
+					<DitherDomLayer
+						{ditherVariant}
+						cellSize={ditherCellSize}
+						{bloom}
+						paused={isLoading}
+						animationDuration={ditherAnimationDuration}
+						animationRevision={introStartedAt}
+					/>
+				</Html>
+			{/if}
+			<Svg zIndex={1}>
 				{@render children()}
 				<TooltipCursor />
 				{#if isLoading}

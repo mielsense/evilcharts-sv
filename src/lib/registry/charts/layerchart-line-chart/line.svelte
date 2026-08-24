@@ -11,6 +11,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolveCurve } from '../../ui/layerchart-chart/curves.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
+	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { bufferLine } from './buffer-line.svelte.js';
 	import ColorGradient from './defs/color-gradient.svelte';
 	import GlowFilter from './defs/glow-filter.svelte';
@@ -36,7 +37,8 @@
 		glowing = false,
 		enableBufferLine = false,
 		children,
-		lineProps
+		lineProps,
+		ditherVariant
 	}: {
 		dataKey: string; // series key — must exist on the data and config
 		strokeVariant?: StrokeVariant; // stroke style for this line only
@@ -49,6 +51,7 @@
 		enableBufferLine?: boolean; // renders this line's last segment as a dashed buffer
 		children?: Snippet; // optional <Dot /> and <ActiveDot /> composition
 		lineProps?: Record<string, unknown>; // escape hatch for raw LayerChart Spline props
+		ditherVariant?: DitherVariant; // ordered-dither texture override
 	} = $props();
 
 	const chart = useLineChart();
@@ -78,6 +81,8 @@
 
 	const isAnimatedDashed = $derived(strokeVariant === 'animated-dashed');
 	const isDashed = $derived(strokeVariant === 'dashed' || isAnimatedDashed);
+	const isDither = $derived(chart.renderStyle === 'dither' && !isAnimatedDashed);
+	const resolvedDitherVariant = $derived(ditherVariant ?? chart.ditherVariant);
 
 	/**
 	 * x of the second-to-last point — where the buffer line's solid run meets the dashes.
@@ -124,7 +129,7 @@
 				seriesKey={dataKey}
 				curve={resolveCurve(resolvedCurve)}
 				strokeOpacity={opacity.stroke}
-				stroke={`url(#${id}-colors-${dataKey})`}
+				stroke={isDither ? 'transparent' : `url(#${id}-colors-${dataKey})`}
 				{strokeWidth}
 				stroke-dasharray={getStrokeDasharray(enableBufferLine, isDashed)}
 				filter={glowing ? `url(#${id}-glow-${dataKey})` : undefined}
@@ -132,6 +137,11 @@
 					? undefined
 					: (d: Record<string, unknown>) => d[dataKey] !== null && d[dataKey] !== undefined}
 				mask={maskId ? `url(#${maskId})` : undefined}
+				data-evil-dither-mark={isDither ? 'stroke' : undefined}
+				data-evil-dither-key={isDither ? dataKey : undefined}
+				data-evil-dither-variant={isDither ? resolvedDitherVariant : undefined}
+				data-evil-dither-reveal={isDither ? revealType : undefined}
+				data-evil-dither-glow={isDither && glowing ? 'true' : undefined}
 				class={[
 					isClickable && 'cursor-pointer',
 					isAnimatedDashed && !hasSelection && 'evil-line-animated-dash'

@@ -1,10 +1,12 @@
 export type DitherInvalidationReason =
-	'animation' | 'data' | 'hover' | 'selection' | 'size' | 'theme' | 'visibility';
+	'animation' | 'data' | 'hover' | 'selection' | 'size' | 'theme' | 'transition' | 'visibility';
 
 export type DitherPaintFrame = {
 	now: number;
 	reasons: ReadonlySet<DitherInvalidationReason>;
 	progress: number;
+	elapsed: number;
+	duration: number;
 	animating: boolean;
 };
 
@@ -50,16 +52,25 @@ export function createDitherInvalidator({
 		if (destroyed || paused) return;
 
 		let progress = 1;
+		let elapsed = animationDuration;
 		if (animationActive && !reducedMotion) {
 			animationStartedAt ??= now;
-			progress = Math.min(1, Math.max(0, (now - animationStartedAt) / animationDuration));
+			elapsed = Math.min(animationDuration, Math.max(0, now - animationStartedAt));
+			progress = Math.min(1, Math.max(0, elapsed / animationDuration));
 		}
 
 		if (reducedMotion || progress >= 1) animationActive = false;
 
 		const frameReasons = new Set(reasons);
 		reasons.clear();
-		paint({ now, reasons: frameReasons, progress, animating: animationActive });
+		paint({
+			now,
+			reasons: frameReasons,
+			progress,
+			elapsed,
+			duration: animationDuration,
+			animating: animationActive
+		});
 
 		if (animationActive) reasons.add('animation');
 		schedule();

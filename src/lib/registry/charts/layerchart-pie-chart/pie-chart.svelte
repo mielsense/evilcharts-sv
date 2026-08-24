@@ -1,10 +1,10 @@
 <script lang="ts" generics="TData extends Record<string, unknown>">
 	/**
-	 * Root of the composible pie chart. Owns the data, the shared context, and the loading
+	 * Root of the composable pie chart. Owns the data, the shared context, and the loading
 	 * skeleton. Everything visual — the pie itself, tooltip, legend, and an optional background —
 	 * is composed as children, so a consumer renders exactly the parts they need.
 	 */
-	import { Chart, Group, Svg } from 'layerchart';
+	import { Chart, Group, Html, Svg } from 'layerchart';
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
@@ -13,7 +13,14 @@
 	} from '../../ui/layerchart-chart/index.js';
 	import LegendRender from './legend-render.svelte';
 	import { setPieChartContext } from './pie-chart-context.svelte.js';
+	import {
+		DitherDomLayer,
+		type DitherBloom,
+		type DitherVariant,
+		type RenderStyle
+	} from '../../ui/layerchart-dither/index.js';
 	import TooltipRender from './tooltip-render.svelte';
+	import { ANIMATION_BEGIN, ANIMATION_DURATION } from './types.js';
 
 	let {
 		config,
@@ -26,7 +33,11 @@
 		defaultSelectedSector = null,
 		onSelectionChange,
 		isLoading = false,
-		initialDimension = { width: 320, height: 200 }
+		initialDimension = { width: 320, height: 200 },
+		renderStyle = 'svg',
+		ditherVariant = 'gradient',
+		ditherCellSize = 2,
+		bloom = 'off'
 	}: {
 		config: ChartConfig; // sector colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -39,11 +50,23 @@
 		onSelectionChange?: (selection: { dataKey: string; value: number } | null) => void; // fires when the selected sector changes
 		isLoading?: boolean; // shows the animated loading skeleton
 		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
+		renderStyle?: RenderStyle;
+		ditherVariant?: DitherVariant;
+		ditherCellSize?: number;
+		bloom?: DitherBloom;
 	} = $props();
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedSector)`.
 	let selectedSector = $state<string | null>(untrack(() => defaultSelectedSector));
 	let chartDimension = $state(untrack(() => initialDimension));
+	let introStartedAt = $state(Date.now());
+	let previousLoading = untrack(() => isLoading);
+
+	$effect(() => {
+		const loadingNow = isLoading;
+		if (previousLoading && !loadingNow) introStartedAt = Date.now();
+		previousLoading = loadingNow;
+	});
 
 	const rows = $derived(data as Record<string, unknown>[]);
 
@@ -62,6 +85,9 @@
 		dataKey: () => dataKey,
 		nameKey: () => nameKey,
 		isLoading: () => isLoading,
+		introStartedAt: () => introStartedAt,
+		renderStyle: () => renderStyle,
+		ditherVariant: () => ditherVariant,
 		selectedSector: () => selectedSector,
 		selectSector: (sectorName) => {
 			selectedSector = sectorName;
@@ -92,7 +118,19 @@
 		class="h-full w-full"
 		{...chartProps}
 	>
-		<Svg>
+		{#if renderStyle === 'dither'}
+			<Html pointerEvents={false} clip zIndex={0}>
+				<DitherDomLayer
+					{ditherVariant}
+					cellSize={ditherCellSize}
+					{bloom}
+					paused={isLoading}
+					animationDuration={ANIMATION_BEGIN + ANIMATION_DURATION}
+					animationRevision={introStartedAt}
+				/>
+			</Html>
+		{/if}
+		<Svg zIndex={1}>
 			<!--
 				The pie is centred in the plot box, which is how Recharts places it: `cx`/`cy` both
 				default to `"50%"`, and the sectors' radii are measured from there.

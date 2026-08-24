@@ -47,3 +47,4 @@ export type {
 	StrokeVariant
 } from './types.js';
 export type { ChartConfig } from '../../ui/layerchart-chart/index.js';
+export type { DitherBloom, DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';

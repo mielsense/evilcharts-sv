@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
+import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
 import { ChartSlots } from './chart-slots.svelte.js';
 
 const PIE_CHART_KEY = Symbol('evilcharts.pie-chart');
@@ -13,6 +14,9 @@ type Options = {
 	/** Key holding each sector's name. */
 	nameKey: () => string;
 	isLoading: () => boolean;
+	introStartedAt: () => number;
+	renderStyle: () => RenderStyle;
+	ditherVariant: () => DitherVariant;
 	selectedSector: () => string | null;
 	selectSector: (sectorName: string | null) => void;
 };
@@ -46,6 +50,15 @@ export class PieChartContext {
 	}
 	get isLoading() {
 		return this.#options.isLoading();
+	}
+	get introStartedAt() {
+		return this.#options.introStartedAt();
+	}
+	get renderStyle() {
+		return this.#options.renderStyle();
+	}
+	get ditherVariant() {
+		return this.#options.ditherVariant();
 	}
 	get selectedSector() {
 		return this.#options.selectedSector();

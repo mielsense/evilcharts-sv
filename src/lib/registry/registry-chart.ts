@@ -18,6 +18,7 @@ export const charts: RegistryItem[] = [
 		name: 'layerchart-area-chart',
 		description: 'Area chart component',
 		registryDependencies: [
+			'@evilcharts/layerchart-dither',
 			'@evilcharts/layerchart-chart',
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-legend',
@@ -39,6 +40,7 @@ export const charts: RegistryItem[] = [
 		name: 'layerchart-line-chart',
 		description: 'Line chart component',
 		registryDependencies: [
+			'@evilcharts/layerchart-dither',
 			'@evilcharts/layerchart-chart',
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-legend',
@@ -60,6 +62,7 @@ export const charts: RegistryItem[] = [
 		name: 'layerchart-bar-chart',
 		description: 'Bar chart component',
 		registryDependencies: [
+			'@evilcharts/layerchart-dither',
 			'@evilcharts/layerchart-chart',
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-legend',
@@ -80,6 +83,7 @@ export const charts: RegistryItem[] = [
 		name: 'layerchart-composed-chart',
 		description: 'Composed chart component combining bar and line charts',
 		registryDependencies: [
+			'@evilcharts/layerchart-dither',
 			'@evilcharts/layerchart-chart',
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-legend',
@@ -101,6 +105,7 @@ export const charts: RegistryItem[] = [
 		name: 'layerchart-pie-chart',
 		description: 'Pie chart component with donut, gradient, and glow effects',
 		registryDependencies: [
+			'@evilcharts/layerchart-dither',
 			'@evilcharts/layerchart-chart',
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-legend',
@@ -139,6 +144,7 @@ export const charts: RegistryItem[] = [
 		name: 'layerchart-radar-chart',
 		description: 'Radar chart component with filled and lines variants',
 		registryDependencies: [
+			'@evilcharts/layerchart-dither',
 			'@evilcharts/layerchart-chart',
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-legend',

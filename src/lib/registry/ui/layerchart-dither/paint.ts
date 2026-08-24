@@ -1,4 +1,5 @@
 import { shouldPaintDitherCell } from './bayer.js';
+import type { DitherVariant } from './types.js';
 
 export type DitherBounds = {
 	x: number;
@@ -36,10 +37,20 @@ export type DitherShapeOptions = DitherCellOptions & {
 };
 
 export type DitherStrokeOptions = {
-	color: string;
+	color?: string;
+	colors?: readonly string[];
 	lineWidth?: number;
 	cellSize?: number;
 	opacity?: number;
+	dash?: readonly number[];
+	dashOffset?: number;
+};
+
+export type DitherVariantOptions = DitherCellOptions & {
+	colors: readonly string[];
+	variant: DitherVariant;
+	opacity?: number;
+	reverse?: boolean;
 };
 
 export type DitherArc = {
@@ -57,6 +68,29 @@ function finite(value: number): number | null {
 
 function clampUnit(value: number): number {
 	return Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
+}
+
+export function ditherVariantCoverage(
+	variant: DitherVariant,
+	sample: Pick<DitherCoverageSample, 'x' | 'y' | 'relativeY'>,
+	reverse = false
+): number {
+	const vertical = reverse ? sample.relativeY : 1 - sample.relativeY;
+	if (variant === 'solid') return 0.875;
+	if (variant === 'dotted') return 0.3125;
+	if (variant === 'hatched') {
+		return (Math.floor(sample.x / 2) + Math.floor(sample.y / 2)) % 4 < 2 ? 0.75 : 0.125;
+	}
+	return 0.18 + vertical * 0.72;
+}
+
+function colorAt(colors: readonly string[], position: number): string | null {
+	if (colors.length === 0) return null;
+	const index = Math.min(
+		colors.length - 1,
+		Math.max(0, Math.floor(clampUnit(position) * colors.length))
+	);
+	return colors[index];
 }
 
 export function normalizeDitherBounds(bounds: DitherBounds): DitherBounds {
@@ -126,6 +160,31 @@ export function paintDitherPath(
 	context.fillStyle = options.color;
 	context.globalAlpha *= clampUnit(options.opacity ?? 1);
 	for (const cell of ditherCells(bounds, options)) {
+		context.fillRect(cell.x, cell.y, cell.size, cell.size);
+	}
+	context.restore();
+}
+
+export function paintDitherVariantPath(
+	context: CanvasRenderingContext2D,
+	path: Path2D,
+	bounds: DitherBounds,
+	options: DitherVariantOptions
+): void {
+	const normalized = normalizeDitherBounds(bounds);
+	if (normalized.width === 0 || normalized.height === 0 || options.colors.length === 0) return;
+
+	context.save();
+	context.clip(path);
+	context.globalAlpha *= clampUnit(options.opacity ?? 1);
+	for (const cell of ditherCells(normalized, {
+		...options,
+		coverage: (sample) => ditherVariantCoverage(options.variant, sample, options.reverse)
+	})) {
+		const relativeY = (cell.y + cell.size / 2 - normalized.y) / normalized.height;
+		const color = colorAt(options.colors, options.reverse ? 1 - relativeY : relativeY);
+		if (!color) continue;
+		context.fillStyle = color;
 		context.fillRect(cell.x, cell.y, cell.size, cell.size);
 	}
 	context.restore();
@@ -202,12 +261,23 @@ export function paintDitherStroke(
 	options: DitherStrokeOptions
 ): void {
 	const cellSize = Math.max(1, Math.floor(options.cellSize ?? 2));
+	const colors = options.colors?.length ? options.colors : options.color ? [options.color] : [];
+	if (colors.length === 0) return;
 	context.save();
-	context.strokeStyle = options.color;
+	if (colors.length === 1) {
+		context.strokeStyle = colors[0];
+	} else {
+		const gradient = context.createLinearGradient(0, 0, context.canvas.width, 0);
+		colors.forEach((color, index) =>
+			gradient.addColorStop(colors.length === 1 ? 0 : index / (colors.length - 1), color)
+		);
+		context.strokeStyle = gradient;
+	}
 	context.globalAlpha *= clampUnit(options.opacity ?? 1);
 	context.lineWidth = Math.max(1, options.lineWidth ?? cellSize);
 	context.lineCap = 'butt';
-	context.setLineDash([cellSize, cellSize]);
+	context.setLineDash(options.dash?.length ? [...options.dash] : [cellSize, cellSize]);
+	context.lineDashOffset = options.dashOffset ?? 0;
 	context.stroke(path);
 	context.restore();
 }
