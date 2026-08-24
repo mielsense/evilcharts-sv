@@ -234,7 +234,7 @@
 					/>
 				</Html>
 			{/if}
-			<Svg zIndex={1}>
+			<Svg>
 				{@render children()}
 				<TooltipCursor />
 				{#if isLoading}

@@ -69,11 +69,13 @@ test.describe('EvilRadarChart examples', () => {
 			.locator('.lc-group-g')
 			.first()
 			.evaluate((n) => {
-				const m = new DOMMatrixReadOnly(getComputedStyle(n).transform);
-				return { x: m.e, y: m.f };
+				const matrix = (n as SVGGraphicsElement).getCTM();
+				return { x: matrix?.e, y: matrix?.f };
 			});
+		// The composed transform includes the 5px chart margin. The bottom legend then reserves
+		// 32px from the plot, so the web sits at the centre of the remaining drawing area.
 		expect(centre.x).toBeCloseTo(box.w / 2, 0);
-		expect(centre.y).toBeCloseTo(box.h / 2, 0);
+		expect(centre.y).toBeCloseTo((box.h - 32) / 2, 0);
 	});
 
 	test('mobile settled geometry reserves the edge legend before scaling the web', async ({
@@ -124,10 +126,9 @@ test.describe('EvilRadarChart examples', () => {
 		}
 	});
 
-	test('the largest value reaches the outermost ring', async ({ page }) => {
+	test('the largest value respects the niced radial domain', async ({ page }) => {
 		await open(page, 'ex-radar-chart');
-		// Recharts runs the radius axis from 0 to the data maximum, so the widest vertex lands on
-		// the outer ring rather than short of it.
+		// Recharts nices this example's 305 maximum to a 320 domain maximum.
 		const rings = await plot(page)
 			.locator('.lc-grid-y-radial-line, .lc-grid-y-radial-circle')
 			.evaluateAll((nodes) =>
@@ -152,7 +153,7 @@ test.describe('EvilRadarChart examples', () => {
 		const radii = vertices((await radars(page).first().getAttribute('d'))!).map((p) =>
 			Math.hypot(p.x, p.y)
 		);
-		expect(Math.max(...radii)).toBeCloseTo(outer, 0);
+		expect(Math.max(...radii)).toBeCloseTo(outer * (305 / 320), 0);
 	});
 
 	test('the grid draws dashed spokes and rings in the same ink', async ({ page }) => {
@@ -185,7 +186,7 @@ test.describe('EvilRadarChart examples', () => {
 		expect(labels).toEqual(SKILLS);
 	});
 
-	test('the filled variant paints from its radial gradient, lines paints nothing', async ({
+	test('the filled variant paints its gradient and lines keeps an invisible hit target', async ({
 		page
 	}) => {
 		await open(page, 'ex-radar-chart');
@@ -214,7 +215,8 @@ test.describe('EvilRadarChart examples', () => {
 				fill: n.getAttribute('fill'),
 				fillOpacity: n.getAttribute('fill-opacity')
 			}));
-		expect(lines.fill).toBe('none');
+		// The line-only chart retains a transparent fill so its interior remains interactive.
+		expect(lines.fill).toBe('transparent');
 		expect(Number(lines.fillOpacity)).toBe(0);
 	});
 

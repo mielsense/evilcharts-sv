@@ -278,7 +278,7 @@
 					/>
 				</Html>
 			{/if}
-			<Svg zIndex={1}>
+			<Svg>
 				{#if backgroundVariant}
 					<ChartBackground variant={backgroundVariant} />
 				{/if}
