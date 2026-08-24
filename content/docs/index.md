@@ -4,17 +4,10 @@ description: Open-source Svelte 5 chart components built with LayerChart and sha
 image: /og/og-image.png
 ---
 
-<Alert variant="svelte" title="This is an unofficial Svelte port">
+<Alert variant="svelte" title="EvilCharts for Svelte">
   <AlertContent variant="svelte">
 
-<Link href="https://github.com/mielsense" _blank={true} accent={true}>Mathis</Link> built and maintains this
-<code>Svelte 5</code> port. <Link href="https://x.com/legionsdev" _blank={true}>Gurbinder</Link> created the
-original <Link href="https://github.com/legions-developer/evilcharts" _blank={true}>EvilCharts</Link>
-design and React implementation. This independent port preserves that credit and the original MIT
-license.
-
-The port is not affiliated with or endorsed by the original project. You can find its source at
-<Link href="https://github.com/mielsense/evilcharts-sv" _blank={true}>mielsense/evilcharts-sv</Link>.
+<p>This is a <code>Svelte 5</code> port of <a href="https://github.com/legions-developer/evilcharts" target="_blank" rel="noreferrer">EvilCharts</a>, maintained by <a href="https://github.com/mielsense" target="_blank" rel="noreferrer" class="text-svelte">Mathis</a>, with ordered-dither chart variants adapted from <a href="https://github.com/Boring-Software-Inc/dither-kit" target="_blank" rel="noreferrer">Dither Kit</a>.</p>
 
 </AlertContent>
 </Alert>

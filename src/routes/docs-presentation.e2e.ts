@@ -22,6 +22,12 @@ test('markdown fences and chart source tabs use syntax token colors', async ({ p
 test('the introduction uses the Svelte accent and padded credits', async ({ page }) => {
 	await page.goto('/docs');
 
+	const portNotice = page.locator('[data-slot="alert-description"]').first();
+	await expect(portNotice.locator(':scope > p')).toHaveCount(1);
+	await expect(portNotice).toContainText(
+		'This is a Svelte 5 port of EvilCharts, maintained by Mathis, with ordered-dither chart variants adapted from Dither Kit.'
+	);
+
 	const accentLink = page.getByRole('link', { name: 'LayerChart' }).first();
 	await expect(accentLink).toHaveClass(/text-svelte/);
 
