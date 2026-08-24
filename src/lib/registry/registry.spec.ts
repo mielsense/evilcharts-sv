@@ -1,6 +1,10 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { blocks } from './registry-blocks.js';
+import { charts } from './registry-chart.js';
+import { examples } from './registry-example.js';
+import { ui } from './registry-ui.js';
 import { registry } from './index.js';
 
 const REGISTRY_DIR = path.join(process.cwd(), 'src/lib/registry');
@@ -28,8 +32,11 @@ function sourcesOf(item: (typeof registry.items)[number]): string[] {
 
 describe('registry manifests', () => {
 	it('holds one item per source file group', () => {
-		// 6 primitives + 8 charts + 113 examples + 4 blocks, exactly as the reference's recharts half.
-		expect(registry.items).toHaveLength(131);
+		const expectedItemCount = [ui, charts, examples, blocks].reduce(
+			(total, category) => total + category.length,
+			0
+		);
+		expect(registry.items).toHaveLength(expectedItemCount);
 		expect(names.size).toBe(registry.items.length);
 	});
 
