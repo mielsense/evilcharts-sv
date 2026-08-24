@@ -166,6 +166,19 @@ The docs are published for machines as well as people:
 
 A request to any `/docs/…` page with `Accept: text/markdown` is served its markdown mirror.
 
+### Context7
+
+The repository includes [`context7.json`](./context7.json), and the documentation source lives in
+`content/docs`. To make the library available through Context7, submit
+`https://github.com/mielsense/evilcharts-sv` at <https://context7.com/add-library>. Context7 assigns
+GitHub libraries an `/owner/repository` ID, so this repository should resolve as
+`/mielsense/evilcharts-sv` after Context7 finishes indexing it. Submission and indexing happen on
+Context7; committing the configuration file does not publish the library by itself.
+
+Until then, models can read <https://evilcharts-sv.vercel.app/llms.txt> for the page index,
+<https://evilcharts-sv.vercel.app/llms-full.txt> for the combined documentation, or connect to the
+JSON-RPC endpoint at <https://evilcharts-sv.vercel.app/mcp>.
+
 ## Contributing
 
 Bug reports and fixes are welcome. Two things to know first:

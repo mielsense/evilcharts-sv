@@ -1,0 +1,14 @@
+{
+	"$schema": "https://context7.com/schema/context7.json",
+	"projectTitle": "Evil Charts for Svelte",
+	"description": "Installable Svelte 5 chart components built with LayerChart, shadcn-svelte, and @humanspeak/svelte-motion.",
+	"branch": "main",
+	"folders": ["content/docs"],
+	"excludeFolders": ["evilcharts", "dither-kit", "advisor-plans", "plans"],
+	"excludeFiles": [],
+	"rules": [
+		"Use the Svelte 5 examples and LayerChart component APIs from this repository.",
+		"Install components from the Evil Charts SV shadcn-svelte registry before importing them.",
+		"Do not substitute the original React EvilCharts API for this Svelte port."
+	]
+}
