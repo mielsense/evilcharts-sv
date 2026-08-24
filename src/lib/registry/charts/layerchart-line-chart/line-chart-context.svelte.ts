@@ -1,0 +1,113 @@
+import { getContext, setContext } from 'svelte';
+import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
+import { ChartSlots } from './chart-slots.svelte.js';
+import type { LineAnimationType, CurveType } from './types.js';
+
+const LINE_CHART_KEY = Symbol('evilcharts.line-chart');
+
+type Options = {
+	config: () => ChartConfig;
+	/** Rows currently rendered by the chart (brush-filtered, or the loading skeleton). */
+	data: () => Record<string, unknown>[];
+	/** Resolved category key for the x scale. */
+	xKey: () => string | undefined;
+	/** Series keys rendered by the chart, in config order. */
+	seriesKeys: () => string[];
+	curveType: () => CurveType;
+	animationType: () => LineAnimationType;
+	isLoading: () => boolean;
+	chartId: () => string;
+	selectedDataKey: () => string | null;
+	selectDataKey: (dataKey: string | null) => void;
+	/**
+	 * Called by `<XAxis dataKey>` on mount.
+	 *
+	 * Recharts reads the category key off `<XAxis dataKey>`; LayerChart needs it on the root's
+	 * `x` accessor, so the axis pushes it up rather than the root reading down. Keeping the
+	 * state on the root avoids a circular dependency between `xKey` and this context.
+	 */
+	registerXAxisDataKey: (token: string, dataKey: string | undefined) => void;
+	/**
+	 * Called by `<XAxis />` / `<YAxis />` so the root can reserve plot-area space for them.
+	 *
+	 * Recharts sizes the plot from the axes it renders (default chart margin 5 on every side, plus
+	 * a 30px band for an `<XAxis>` and a 60px gutter for a `<YAxis>`). LayerChart takes `padding`
+	 * as a single explicit value, so the axes announce themselves and the root derives it.
+	 */
+	registerAxis: (token: string, axis: 'x' | 'y', present: boolean) => void;
+};
+
+/**
+ * Shared state for every part of the chart. Lifted into <EvilLineChart /> so that
+ * <Line />, <XAxis />, <Legend />, and friends can read it without prop drilling.
+ * Sub-components are composed freely — the provider is the single source of truth.
+ */
+export class LineChartContext {
+	#options: Options;
+
+	/** Parts that render outside `<Svg>` — see `ChartSlots`. */
+	slots = new ChartSlots();
+
+	constructor(options: Options) {
+		this.#options = options;
+	}
+
+	get config() {
+		return this.#options.config();
+	}
+	get data() {
+		return this.#options.data();
+	}
+	get xKey() {
+		return this.#options.xKey();
+	}
+	get seriesKeys() {
+		return this.#options.seriesKeys();
+	}
+	get curveType() {
+		return this.#options.curveType();
+	}
+	get animationType() {
+		return this.#options.animationType();
+	}
+	get isLoading() {
+		return this.#options.isLoading();
+	}
+	get chartId() {
+		return this.#options.chartId();
+	}
+	get selectedDataKey() {
+		return this.#options.selectedDataKey();
+	}
+
+	selectDataKey = (dataKey: string | null) => {
+		this.#options.selectDataKey(dataKey);
+	};
+
+	registerXAxisDataKey = (token: string, dataKey: string | undefined) => {
+		this.#options.registerXAxisDataKey(token, dataKey);
+	};
+
+	registerAxis = (token: string, axis: 'x' | 'y', present: boolean) => {
+		this.#options.registerAxis(token, axis, present);
+	};
+}
+
+export function setLineChartContext(options: Options) {
+	const context = new LineChartContext(options);
+	setContext(LINE_CHART_KEY, context);
+	return context;
+}
+
+/** Reads the chart context, throwing a helpful error when used outside <EvilLineChart /> */
+export function useLineChart(): LineChartContext {
+	const context = getContext<LineChartContext | undefined>(LINE_CHART_KEY);
+
+	if (!context) {
+		throw new Error(
+			'Line chart parts (<Line />, <XAxis />, …) must be used within <EvilLineChart />'
+		);
+	}
+
+	return context;
+}
