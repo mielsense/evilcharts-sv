@@ -1,5 +1,6 @@
 <script lang="ts">
 	/** Ported from `evilcharts/src/app/docs/layout.tsx`. */
+	import { afterNavigate } from '$app/navigation';
 	import type { Snippet } from 'svelte';
 	import DecorativeBorder from '$site/components/docs/layout/decorative-border.svelte';
 	import { DocsHeader, DocsSidebar } from '$site/components/docs/sidebar/index.js';
@@ -8,6 +9,22 @@
 	import type { LayoutData } from './$types.js';
 
 	let { data, children }: { data: LayoutData; children?: Snippet } = $props();
+	let scrollRoot = $state<HTMLDivElement>();
+
+	afterNavigate(({ from, to }) => {
+		const root = scrollRoot;
+		if (!root || !to?.url || from?.url.pathname === to.url.pathname) return;
+
+		requestAnimationFrame(() => {
+			if (to.url.hash) {
+				document.getElementById(decodeURIComponent(to.url.hash.slice(1)))?.scrollIntoView();
+				return;
+			}
+
+			root.scrollTop = 0;
+			root.scrollLeft = 0;
+		});
+	});
 </script>
 
 <SidebarProvider>
@@ -15,6 +32,8 @@
 	<div class={cn('w-full bg-sidebar', 'p-0 pl-0 sm:py-2 sm:pr-2')}>
 		<DecorativeBorder />
 		<div
+			bind:this={scrollRoot}
+			data-docs-scroll-root
 			class={cn(
 				'no-scrollbar overflow-scroll bg-background sm:h-[calc(100vh-1rem)] sm:overscroll-none sm:border',
 				// bottom-right is XL to match the macOS browser radius

@@ -274,7 +274,7 @@
 				formatLabel={brushSlot.slot?.formatLabel}
 				stacked={isStacked}
 				skipStyle
-				class="mt-1"
+				class="mt-6"
 				startIndex={brush.brushProps.startIndex}
 				endIndex={brush.brushProps.endIndex}
 				onChange={(range) => {

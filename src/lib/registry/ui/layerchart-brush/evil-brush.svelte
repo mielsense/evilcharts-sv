@@ -167,6 +167,7 @@
 {#if totalPoints !== 0}
 	<div
 		bind:this={containerRef}
+		data-slot="brush"
 		data-chart={skipStyle ? undefined : chartId}
 		class={cn('group relative select-none', className)}
 		style:height={`${height}px`}

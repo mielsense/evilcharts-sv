@@ -42,9 +42,9 @@ export const CARDS: StageCard[] = [
 	{ id: 'dotted-area',     title: 'dotted-area-chart',      x: 675,  y: 990,  w: 470, h: 290, card: 'LandingDottedAreaChart' },
 	{ id: 'bump-line',       title: 'bump-line-chart',        x: 675,  y: 1380, w: 470, h: 290, card: 'LandingBumpLineChart' },
 
-	{ id: 'hatched-bar',     title: 'hatched-bar-chart',      x: 1290, y: 40,   w: 480, h: 300, card: 'LandingHatchedBarChart' },
+	{ id: 'circle-radar',    title: 'circle-radar-chart',     x: 1290, y: 40,   w: 470, h: 290, card: 'LandingCircleRadarChart' },
 	{ id: 'donut',           title: 'donut-pie-chart',        x: 1290, y: 440,  w: 470, h: 300, card: 'LandingDonutPieChart' },
-	{ id: 'circle-radar',    title: 'circle-radar-chart',     x: 1290, y: 840,  w: 470, h: 290, card: 'LandingCircleRadarChart' },
+	{ id: 'hatched-bar',     title: 'hatched-bar-chart',      x: 1290, y: 840,  w: 480, h: 300, card: 'LandingHatchedBarChart' },
 	{ id: 'expanded-area',   title: 'expanded-area-chart',    x: 1290, y: 1230, w: 480, h: 300, card: 'LandingExpandedAreaChart' },
 
 	{ id: 'gradient-area',   title: 'gradient-area-chart',    x: 1905, y: 200,  w: 480, h: 300, card: 'LandingGradientAreaChart' },

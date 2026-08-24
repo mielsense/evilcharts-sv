@@ -187,6 +187,8 @@
 				{const Card = cardComponents[card.card]}
 				<div
 					role="presentation"
+					data-stage-card={card.id}
+					data-stage-focused={isFocused || undefined}
 					class={cn('absolute rounded-[8px]', isFocused ? 'shadow-2xl' : 'shadow-md')}
 					style:left={`${card.x}px`}
 					style:top={`${card.y}px`}

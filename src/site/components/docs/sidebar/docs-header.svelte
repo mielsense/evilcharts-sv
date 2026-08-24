@@ -35,15 +35,15 @@
 			rel="noreferrer">Svelte 5 port</a
 		>
 	</div>
-	<div class="pointer-events-auto relative z-10 flex h-full items-center gap-2 pl-6">
+	<div class="pointer-events-auto relative z-10 flex h-full shrink-0 items-center gap-2 pr-2 pl-6">
 		<a
-			class="hidden rounded-sm bg-[#ff3e00] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap text-white outline-none hover:bg-[#e63800] focus-visible:ring-[3px] focus-visible:ring-[#ff3e00]/35 sm:inline"
+			class="hidden shrink-0 rounded-sm bg-[#ff3e00] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap text-white outline-none hover:bg-[#e63800] focus-visible:ring-[3px] focus-visible:ring-[#ff3e00]/35 sm:inline"
 			href={PORT_REPO_URL}
 			target="_blank"
 			rel="noreferrer">Svelte 5 port</a
 		>
 		<a
-			class="hidden text-[11px] whitespace-nowrap text-muted-foreground/70 duration-100 hover:text-primary md:inline"
+			class="hidden shrink-0 text-[11px] whitespace-nowrap text-muted-foreground/70 duration-100 hover:text-primary md:inline"
 			href={UPSTREAM_REPO_URL}
 			target="_blank"
 			rel="noreferrer"
