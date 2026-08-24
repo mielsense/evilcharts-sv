@@ -38,6 +38,9 @@ pnpm-debug.log*
 # Read-only React reference, vendored locally for the port. Not ours to redistribute.
 /evilcharts
 
+# Read-only Dither Kit reference used to verify the independent ordered-dither renderer.
+/dither-kit
+
 # Porting plans, deviation log and pitfalls checklist — working notes, not product.
 /plans
 

@@ -5,6 +5,11 @@ The Svelte port was created by Mathis (https://github.com/mielsense). The origin
 Copyright (c) 2026 Gurbinder and is licensed under the MIT License, reproduced below. The design,
 component API, documentation, and examples in this repository derive from that project.
 
+The optional ordered-dither chart rendering is an independent implementation inspired by Dither
+Kit (https://github.com/Boring-Software-Inc/dither-kit) by Boring Software. The upstream package
+metadata declares the MIT license. No Dither Kit source is redistributed here, and this project is
+not affiliated with or endorsed by Boring Software.
+
 Copyright (c) 2026 Gurbinder
 Copyright (c) 2026 Mathis and EvilCharts Svelte contributors (Svelte port)
 

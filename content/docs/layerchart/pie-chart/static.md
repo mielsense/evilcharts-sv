@@ -62,7 +62,7 @@ Below is the main chart component.
         <StepTitle>Add the sub-components.</StepTitle>
         <StepDescription>
 
-Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
+Create `tooltip.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -73,7 +73,7 @@ Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Then create `legend.tsx` in the same folder and paste the code there.
+Then create `legend.svelte` in the same folder and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -229,6 +229,14 @@ Pass an array of sector names (values from your `nameKey` field) to `glowingSect
 </AlertContent>
 </Alert>
 
+### Dither rendering
+
+Set `renderStyle="dither"` on the existing pie root for ordered-dither sectors. Donut holes, padding, rounded corners, labels, tooltips, selection, loading, and sweep motion keep their existing behavior. Use `ditherVariant` on `<Pie />` to override the root texture.
+
+<ComponentPreview title="dithered donut" name="ex-dither-pie-chart" />
+
+The renderer is independently implemented for EvilCharts SV and inspired by [Dither Kit](https://github.com/Boring-Software-Inc/dither-kit) by Boring Software.
+
 ## API Reference
 
 Props are grouped by the part they belong to.
@@ -283,9 +291,13 @@ Fires when a sector is selected or deselected via a clickable `<Pie />` sector o
 Shows a placeholder animation while data loads.
 
 </ApiRow>
+  <ApiRow name="renderStyle" type='"svg" | "dither"' default='"svg"'>Selects the SVG or ordered-dither renderer.</ApiRow>
+  <ApiRow name="ditherVariant" type='"gradient" | "dotted" | "hatched" | "solid"' default='"gradient"'>Default texture for dithered sectors.</ApiRow>
+  <ApiRow name="ditherCellSize" type="number" default="2">Dither cell size in CSS pixels.</ApiRow>
+  <ApiRow name="bloom" type='"off" | "low" | "high" | "aura"' default='"off"'>Optional bounded glow around dither pixels.</ApiRow>
   <ApiRow name="chartProps" type="ComponentProps<typeof PieChart>">
 
-Extra props forwarded to the underlying LayerChart PieChart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart PieChart docs</Link> for options.
+Extra props forwarded to the underlying LayerChart Chart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -342,7 +354,7 @@ Optional `<Label />` that draws labels on each sector.
 </ApiRow>
   <ApiRow name="pieProps" type='Omit<ComponentProps<typeof Pie>, "data" | "dataKey" | "nameKey">'>
 
-Escape hatch for raw props forwarded to the underlying LayerChart Pie. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Pie docs</Link> for options.
+Escape hatch for raw props forwarded to the underlying LayerChart Arc. See the <Link href="https://www.layerchart.com/docs/components/Arc" _blank>LayerChart Arc documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -359,7 +371,7 @@ Data key for label text. Falls back to the chart's `dataKey` when omitted.
 </ApiRow>
   <ApiRow name="labelListProps" type='Omit<ComponentProps<typeof LabelList>, "dataKey">'>
 
-Escape hatch for raw props forwarded to the underlying LayerChart LabelList. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart LabelList docs</Link> for options.
+Escape hatch for label props. See the <Link href="https://www.layerchart.com/docs/components/Text" _blank>LayerChart Text documentation</Link>.
 
 </ApiRow>
 </ApiTable>

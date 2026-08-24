@@ -62,7 +62,7 @@ Below is the main chart component.
         <StepTitle>Add the sub-components.</StepTitle>
         <StepDescription>
 
-Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
+Create `tooltip.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -73,7 +73,7 @@ Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Then create `legend.tsx` in the same folder and paste the code there.
+Then create `legend.svelte` in the same folder and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -89,7 +89,7 @@ Then create `legend.tsx` in the same folder and paste the code there.
 
 ## Usage
 
-The bar chart is composible. `<EvilBarChart>` is the container, and every part hangs off it as a compound member — `<EvilBarChart.Grid>`, `<EvilBarChart.XAxis>`, `<EvilBarChart.YAxis>`, `<EvilBarChart.Legend>`, `<EvilBarChart.Tooltip>`, and one or more `<EvilBarChart.Bar>` — as children. Each `<Bar>` sets its own `variant`, `radius`, `glowing`, `bufferBar`, and `isClickable`, so one chart can mix fill styles and make only some series interactive.
+The bar chart is composable. `<EvilBarChart>` is the container, and every part hangs off it as a compound member — `<EvilBarChart.Grid>`, `<EvilBarChart.XAxis>`, `<EvilBarChart.YAxis>`, `<EvilBarChart.Legend>`, `<EvilBarChart.Tooltip>`, and one or more `<EvilBarChart.Bar>` — as children. Each `<Bar>` sets its own `variant`, `radius`, `glowing`, `bufferBar`, and `isClickable`, so one chart can mix fill styles and make only some series interactive.
 
 ```svelte
 <script lang="ts">
@@ -204,6 +204,14 @@ Set `layout="horizontal"` on `<EvilBarChart>` to lay bars sideways. The `<YAxis>
 <ComponentPreview class="mb-0" title="<Bar glowing /> - desktop" name="ex-glowing-desktop-bar-chart"  />
 <ComponentPreview title="<Bar glowing /> - mobile" name="ex-glowing-mobile-bar-chart"  />
 
+### Dither rendering
+
+Set `renderStyle="dither"` on the existing chart root for ordered-dither bars without changing grouping, stacking, horizontal layout, hover, selection, loading, or brush behavior. A bar-level `ditherVariant` overrides the root texture.
+
+<ComponentPreview title="renderStyle='dither'" name="ex-dither-bar-chart" />
+
+The renderer is independently implemented for EvilCharts SV and inspired by [Dither Kit](https://github.com/Boring-Software-Inc/dither-kit) by Boring Software.
+
 ## API Reference
 
 The chart has several parts. Props below are grouped by component.
@@ -293,9 +301,13 @@ Number of bars in the loading skeleton.
 X-axis data key. Only the brush footer needs it — the axis reads its own key from `<XAxis dataKey="…" />`.
 
 </ApiRow>
+  <ApiRow name="renderStyle" type='"svg" | "dither"' default='"svg"'>Selects the SVG or ordered-dither renderer.</ApiRow>
+  <ApiRow name="ditherVariant" type='"gradient" | "dotted" | "hatched" | "solid"' default='"gradient"'>Default texture for dithered series.</ApiRow>
+  <ApiRow name="ditherCellSize" type="number" default="2">Dither cell size in CSS pixels.</ApiRow>
+  <ApiRow name="bloom" type='"off" | "low" | "high" | "aura"' default='"off"'>Optional bounded glow around dither pixels.</ApiRow>
   <ApiRow name="chartProps" type="ComponentProps<typeof BarChart>">
 
-Extra props forwarded to the underlying LayerChart BarChart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart BarChart docs</Link> for options.
+Extra props forwarded to the underlying LayerChart Chart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -364,7 +376,7 @@ The data key for the axis values.
 </ApiRow>
   <ApiRow name="…axisProps">
 
-Every other LayerChart XAxis / YAxis prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart XAxis</Link> and <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart YAxis</Link> docs for options.
+Every other LayerChart axis prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Axis" _blank>LayerChart Axis documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -376,7 +388,7 @@ The background grid lines. Defaults to dashed lines aligned to the value axis fo
 <ApiTable>
   <ApiRow name="…gridProps">
 
-Every LayerChart CartesianGrid prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart CartesianGrid docs</Link> for options.
+Every LayerChart grid prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Grid" _blank>LayerChart Grid documentation</Link>.
 
 </ApiRow>
 </ApiTable>

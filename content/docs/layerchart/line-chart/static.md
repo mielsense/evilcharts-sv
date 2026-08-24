@@ -62,7 +62,7 @@ Below is the main chart component.
         <StepTitle>Add the sub-components.</StepTitle>
         <StepDescription>
 
-Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
+Create `tooltip.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -73,7 +73,7 @@ Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Next, create `legend.tsx` inside `evilcharts/ui` and paste the code there.
+Next, create `legend.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -84,7 +84,7 @@ Next, create `legend.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Finally, create `dot.tsx` inside `evilcharts/ui` and paste the code there.
+Finally, create `dot.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -100,7 +100,7 @@ Finally, create `dot.tsx` inside `evilcharts/ui` and paste the code there.
 
 ## Usage
 
-The line chart is composible. `<EvilLineChart>` is the container, and every part hangs off it as a compound member — `<EvilLineChart.Grid>`, `<EvilLineChart.XAxis>`, `<EvilLineChart.YAxis>`, `<EvilLineChart.Legend>`, `<EvilLineChart.Tooltip>`, and one or more `<EvilLineChart.Line>` — as children. Each `<Line>` sets its own `strokeVariant`, `curveType`, `glowing`, `enableBufferLine`, and `isClickable`, so one chart can mix stroke styles and make only some series interactive.
+The line chart is composable. `<EvilLineChart>` is the container, and every part hangs off it as a compound member — `<EvilLineChart.Grid>`, `<EvilLineChart.XAxis>`, `<EvilLineChart.YAxis>`, `<EvilLineChart.Legend>`, `<EvilLineChart.Tooltip>`, and one or more `<EvilLineChart.Line>` — as children. Each `<Line>` sets its own `strokeVariant`, `curveType`, `glowing`, `enableBufferLine`, and `isClickable`, so one chart can mix stroke styles and make only some series interactive.
 
 ```svelte
 <script lang="ts">
@@ -198,6 +198,14 @@ Examples with different `variants` — change the `curveType` and `strokeVariant
 <ComponentPreview class="mb-0" title="glowing - gradient colors" name="ex-glowing-desktop-line-chart"  />
 <ComponentPreview title="glowing - solid colors" name="ex-glowing-mobile-line-chart"  />
 
+### Dither rendering
+
+Set `renderStyle="dither"` on the existing chart root for a responsive ordered-dither stroke while the SVG line remains the tooltip, selection, dot, and brush target. A line-level `ditherVariant` overrides the root texture.
+
+<ComponentPreview title="renderStyle='dither'" name="ex-dither-line-chart" />
+
+The renderer is independently implemented for EvilCharts SV and inspired by [Dither Kit](https://github.com/Boring-Software-Inc/dither-kit) by Boring Software.
+
 ## API Reference
 
 Props below are grouped by the component they belong to.
@@ -262,9 +270,13 @@ Data points shown in the loading skeleton.
 The x-axis data key. Only the brush footer needs it — the axis reads its key from `<XAxis dataKey="…" />`.
 
 </ApiRow>
+  <ApiRow name="renderStyle" type='"svg" | "dither"' default='"svg"'>Selects the SVG or ordered-dither renderer.</ApiRow>
+  <ApiRow name="ditherVariant" type='"gradient" | "dotted" | "hatched" | "solid"' default='"gradient"'>Default texture for dithered series.</ApiRow>
+  <ApiRow name="ditherCellSize" type="number" default="2">Dither cell size in CSS pixels.</ApiRow>
+  <ApiRow name="bloom" type='"off" | "low" | "high" | "aura"' default='"off"'>Optional bounded glow around dither pixels.</ApiRow>
   <ApiRow name="chartProps" type="ComponentProps<typeof LineChart>">
 
-Extra props forwarded to the underlying LayerChart LineChart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart LineChart documentation</Link>.
+Extra props forwarded to the underlying LayerChart Chart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -355,7 +367,7 @@ The data key for the axis values.
 </ApiRow>
   <ApiRow name="…axisProps">
 
-Every other LayerChart XAxis / YAxis prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart XAxis</Link> and <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart YAxis</Link> docs.
+Every other LayerChart axis prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Axis" _blank>LayerChart Axis documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -367,7 +379,7 @@ The background grid lines. Defaults to horizontal-only dashed lines and forwards
 <ApiTable>
   <ApiRow name="…gridProps">
 
-Every LayerChart CartesianGrid prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart CartesianGrid documentation</Link>.
+Every LayerChart grid prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Grid" _blank>LayerChart Grid documentation</Link>.
 
 </ApiRow>
 </ApiTable>

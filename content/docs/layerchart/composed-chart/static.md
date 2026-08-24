@@ -62,7 +62,7 @@ Below is the main chart component.
         <StepTitle>Add the sub-components.</StepTitle>
         <StepDescription>
 
-Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
+Create `tooltip.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -73,7 +73,7 @@ Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Then create `legend.tsx` in the same folder and paste the code there.
+Then create `legend.svelte` in the same folder and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -84,7 +84,7 @@ Then create `legend.tsx` in the same folder and paste the code there.
         </StepContent>
         <StepDescription>
 
-Finally, create `dot.tsx` in the same folder and paste the code there.
+Finally, create `dot.svelte` in the same folder and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -229,6 +229,14 @@ Add the `glow` prop to a `<Bar>` or `<Line>` for a subtle glow. Each glowing ser
 </AlertContent>
 </Alert>
 
+### Dither rendering
+
+Set `renderStyle="dither"` on the existing chart root to share one ordered-dither canvas across its bars and lines. SVG marks continue to own hover, selection, tooltips, dots, loading, and brush interaction; each `<Bar />` or `<Line />` can override `ditherVariant`.
+
+<ComponentPreview title="renderStyle='dither'" name="ex-dither-composed-chart" />
+
+The renderer is independently implemented for EvilCharts SV and inspired by [Dither Kit](https://github.com/Boring-Software-Inc/dither-kit) by Boring Software.
+
 ## API Reference
 
 The props below are grouped by the component they belong to.
@@ -303,9 +311,13 @@ Number of bars in the loading skeleton.
 The x-axis data key. Only needed by the brush footer — the axis reads its own key from `<XAxis dataKey="…" />`.
 
 </ApiRow>
+  <ApiRow name="renderStyle" type='"svg" | "dither"' default='"svg"'>Selects the SVG or ordered-dither renderer.</ApiRow>
+  <ApiRow name="ditherVariant" type='"gradient" | "dotted" | "hatched" | "solid"' default='"gradient"'>Default texture for dithered series.</ApiRow>
+  <ApiRow name="ditherCellSize" type="number" default="2">Dither cell size in CSS pixels.</ApiRow>
+  <ApiRow name="bloom" type='"off" | "low" | "high" | "aura"' default='"off"'>Optional bounded glow around dither pixels.</ApiRow>
   <ApiRow name="chartProps" type="ComponentProps<typeof ComposedChart>">
 
-Extra props forwarded to the underlying LayerChart ComposedChart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart ComposedChart documentation</Link> for available props.
+Extra props forwarded to the underlying LayerChart Chart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -433,7 +445,7 @@ The data key for the axis values.
 </ApiRow>
   <ApiRow name="…axisProps">
 
-Every other LayerChart XAxis / YAxis prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart XAxis</Link> and <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart YAxis</Link> docs for available props.
+Every other LayerChart axis prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Axis" _blank>LayerChart Axis documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -445,7 +457,7 @@ The background grid lines. Defaults to horizontal-only dashed lines and forwards
 <ApiTable>
   <ApiRow name="…gridProps">
 
-Every LayerChart CartesianGrid prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart CartesianGrid documentation</Link> for available props.
+Every LayerChart grid prop is forwarded as-is. See the <Link href="https://www.layerchart.com/docs/components/Grid" _blank>LayerChart Grid documentation</Link>.
 
 </ApiRow>
 </ApiTable>

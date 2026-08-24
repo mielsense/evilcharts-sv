@@ -10,7 +10,7 @@ for [shadcn-svelte][shadcn-svelte], and installed as source in your project.
 > implementation. This independent port preserves that credit and the original MIT license.
 >
 > - Svelte port: <https://github.com/mielsense/evilcharts-sv>
-> - Svelte docs: <https://evilcharts-sv.vercel.app/docs>
+> - Svelte site and install guide: <https://evilcharts-sv.vercel.app/>
 > - Original project: <https://github.com/legions-developer/evilcharts>
 > - Original site: <https://evilcharts.com>
 >
@@ -27,6 +27,11 @@ Two things in one repository, the same split the original uses:
    project.
 2. **The documentation site** that presents the registry, renders every example, publishes the docs
    and exposes machine-readable surfaces for agents.
+
+Area, line, bar, composed, pie/donut, and radar charts also support `renderStyle="dither"`. This
+ordered-dither renderer is an independent Svelte implementation inspired by [Dither Kit][dither-kit]
+by Boring Software. It stays inside the same EvilCharts SV components, so tooltips, selection,
+loading, brushes, responsive layout, and transparent SVG interaction targets keep working.
 
 |                        | Count                                                    |
 | ---------------------- | -------------------------------------------------------- |
@@ -174,7 +179,8 @@ Bug reports and fixes are welcome. Two things to know first:
 ## Licence
 
 MIT. See [`LICENSE`](./LICENSE). It preserves the original project's copyright and identifies
-Mathis as the author of the Svelte port.
+Mathis as the author of the Svelte port. The Dither Kit inspiration and source boundary are also
+recorded there; this project is not affiliated with Boring Software.
 
 [author]: https://x.com/legionsdev
 [porter]: https://github.com/mielsense
@@ -184,3 +190,4 @@ Mathis as the author of the Svelte port.
 [shadcn-svelte]: https://shadcn-svelte.com
 [svelte-motion]: https://github.com/humanspeak/svelte-motion
 [bits-ui]: https://bits-ui.com
+[dither-kit]: https://github.com/Boring-Software-Inc/dither-kit

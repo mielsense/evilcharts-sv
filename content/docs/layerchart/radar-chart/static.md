@@ -62,7 +62,7 @@ Below is the main chart component.
         <StepTitle>Add the sub components.</StepTitle>
         <StepDescription>
 
-Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
+Create `tooltip.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -73,7 +73,7 @@ Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Then create `legend.tsx` in the same folder and paste the code there.
+Then create `legend.svelte` in the same folder and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -89,7 +89,7 @@ Then create `legend.tsx` in the same folder and paste the code there.
 
 ## Usage
 
-`<EvilRadarChart />` is the root of a composible compound component. Every visual part (`<EvilRadarChart.PolarGrid />`, `<EvilRadarChart.PolarAngleAxis />`, `<EvilRadarChart.Tooltip />`, `<EvilRadarChart.Legend />`, and the `<EvilRadarChart.Radar />` series) composes as a child — render only what you need.
+`<EvilRadarChart />` is the root of a composable compound component. Every visual part (`<EvilRadarChart.PolarGrid />`, `<EvilRadarChart.PolarAngleAxis />`, `<EvilRadarChart.Tooltip />`, `<EvilRadarChart.Legend />`, and the `<EvilRadarChart.Radar />` series) composes as a child — render only what you need.
 
 ```svelte
 <script lang="ts">
@@ -221,9 +221,17 @@ Set `isGlowing` on a `<Radar />` for a soft glow. Each radar controls its own gl
 </AlertContent>
 </Alert>
 
+### Dither rendering
+
+Set `renderStyle="dither"` on the existing radar root for ordered-dither polygons while the SVG grid, axes, dots, tooltip, and selection targets remain authoritative. A radar-level `ditherVariant` overrides the root texture.
+
+<ComponentPreview title="renderStyle='dither'" name="ex-dither-radar-chart" />
+
+The renderer is independently implemented for EvilCharts SV and inspired by [Dither Kit](https://github.com/Boring-Software-Inc/dither-kit) by Boring Software.
+
 ## API Reference
 
-A root container plus a set of composible parts, each documented below.
+A root container plus a set of composable parts, each documented below.
 
 <ApiHeading>EvilRadarChart</ApiHeading>
 
@@ -275,9 +283,13 @@ Shows an animated loading skeleton while data is being fetched.
 Number of points rendered in the loading skeleton radar.
 
 </ApiRow>
+  <ApiRow name="renderStyle" type='"svg" | "dither"' default='"svg"'>Selects the SVG or ordered-dither renderer.</ApiRow>
+  <ApiRow name="ditherVariant" type='"gradient" | "dotted" | "hatched" | "solid"' default='"gradient"'>Default texture for dithered radars.</ApiRow>
+  <ApiRow name="ditherCellSize" type="number" default="2">Dither cell size in CSS pixels.</ApiRow>
+  <ApiRow name="bloom" type='"off" | "low" | "high" | "aura"' default='"off"'>Optional bounded glow around dither pixels.</ApiRow>
   <ApiRow name="chartProps" type="ComponentProps<typeof RadarChart>">
 
-Extra props forwarded to the underlying LayerChart RadarChart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart RadarChart documentation</Link> for available props.
+Extra props forwarded to the underlying LayerChart Chart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -319,7 +331,7 @@ Optional `<Dot />` and `<ActiveDot />` for point markers on this radar.
 </ApiRow>
   <ApiRow name="radarProps" type='Omit<ComponentProps<typeof Radar>, "dataKey">'>
 
-Extra props forwarded to the underlying LayerChart Radar. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Radar documentation</Link> for available props.
+Extra props forwarded to the underlying LayerChart Spline. See the <Link href="https://www.layerchart.com/docs/components/Spline" _blank>LayerChart Spline documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -348,7 +360,7 @@ Shape of the grid lines. `"polygon"` for angular, `"circle"` for circular.
 </ApiRow>
   <ApiRow name="...props" type="ComponentProps<typeof PolarGrid>">
 
-Forwarded to the underlying LayerChart PolarGrid. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart PolarGrid documentation</Link> for available props.
+Forwarded to the underlying LayerChart radial Grid. See the <Link href="https://www.layerchart.com/docs/components/Grid" _blank>LayerChart Grid documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -365,7 +377,7 @@ The data key for the angle axis labels (e.g. categories, skills, months).
 </ApiRow>
   <ApiRow name="...props" type="ComponentProps<typeof PolarAngleAxis>">
 
-Forwarded to the underlying LayerChart PolarAngleAxis. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart PolarAngleAxis documentation</Link> for available props.
+Forwarded to the underlying LayerChart radial Axis. See the <Link href="https://www.layerchart.com/docs/components/Axis" _blank>LayerChart Axis documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -377,7 +389,7 @@ The radial value axis — the scale from center outward. Hidden while loading.
 <ApiTable>
   <ApiRow name="...props" type="ComponentProps<typeof PolarRadiusAxis>">
 
-Forwarded to the underlying LayerChart PolarRadiusAxis. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart PolarRadiusAxis documentation</Link> for available props.
+Forwarded to the underlying LayerChart radial Axis. See the <Link href="https://www.layerchart.com/docs/components/Axis" _blank>LayerChart Axis documentation</Link>.
 
 </ApiRow>
 </ApiTable>
