@@ -285,7 +285,13 @@ export function flattenTree(items: PageTreeItem[] = pageTree.children): { url: s
 
 /** Fumadocs' `findNeighbour(tree, url)`. */
 export function findNeighbour(url: string): { previous?: DocsPage; next?: DocsPage } {
-	const order = flattenTree();
+	const pages = flattenTree();
+	// Keep chart landing pages in the established chart-to-chart sequence. Blocks remain visible in
+	// the sidebar and use the full page order when they are open, but they should not intercept the
+	// previous/next controls on a chart's primary documentation page.
+	const order = url.endsWith('/blocks')
+		? pages
+		: pages.filter((entry) => !entry.url.endsWith('/blocks'));
 	const at = order.findIndex((entry) => entry.url === url);
 	if (at === -1) return {};
 	return {

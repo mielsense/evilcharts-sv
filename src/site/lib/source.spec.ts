@@ -15,6 +15,13 @@ describe('docs neighbours', () => {
 		expect(next?.url).toBe('/docs/layerchart/bar-chart');
 	});
 
+	it('keeps block galleries in their local page sequence', () => {
+		const { previous, next } = findNeighbour('/docs/layerchart/line-chart/blocks');
+
+		expect(previous?.url).toBe('/docs/layerchart/line-chart');
+		expect(next?.url).toBe('/docs/layerchart/bar-chart');
+	});
+
 	it('does not return a neighbour outside the first or last entry', () => {
 		const urls = flattenTree().map((page) => page.url);
 
