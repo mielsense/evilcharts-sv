@@ -1,0 +1,263 @@
+<script lang="ts" generics="TData extends Record<string, unknown>">
+	/**
+	 * Root of the composible bar chart. Owns the data, the shared context, the
+	 * loading skeleton, and the optional zoom brush. Everything visual — axes,
+	 * grid, tooltip, legend, and the bars themselves — is composed as children,
+	 * so a consumer renders exactly the parts they need.
+	 */
+	import { Chart, Svg, type ChartState } from 'layerchart';
+	import { untrack, type Snippet } from 'svelte';
+	import {
+		ChartContainer,
+		LoadingIndicator,
+		type ChartConfig
+	} from '../../ui/layerchart-chart/index.js';
+	import {
+		EvilBrush,
+		EvilBrushState,
+		setBrushSlotContext
+	} from '../../ui/layerchart-brush/index.js';
+	import { ChartBackground, type BackgroundVariant } from '../../ui/layerchart-background/index.js';
+	import { setBarChartContext } from './bar-chart-context.svelte.js';
+	import LegendRender from './legend-render.svelte';
+	import LoadingBar from './loading/loading-bar.svelte';
+	import { LoadingDataState } from './loading/use-loading-data.svelte.js';
+	import TooltipRender from './tooltip-render.svelte';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
+	import {
+		DEFAULT_BAR_RADIUS,
+		LOADING_BAR_DATA_KEY,
+		type BarAnimationType,
+		type BarLayout,
+		type StackType
+	} from './types.js';
+
+	let {
+		config,
+		data,
+		children,
+		class: className,
+		chartProps,
+		stackType = 'default',
+		layout = 'vertical',
+		barRadius = DEFAULT_BAR_RADIUS,
+		animationType = 'left-to-right',
+		barGap,
+		barCategoryGap,
+		backgroundVariant,
+		defaultSelectedDataKey = null,
+		onSelectionChange,
+		isLoading = false,
+		loadingBars,
+		xDataKey
+	}: {
+		config: ChartConfig; // series colors + labels
+		data: TData[]; // rows rendered by the chart
+		children: Snippet; // composed parts — <Bar />, <XAxis />, <Legend />, …
+		class?: string; // extra classes for the chart container
+		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		stackType?: StackType; // how multiple bars combine
+		layout?: BarLayout; // orientation of the bars
+		barRadius?: number; // default corner radius for every <Bar />
+		animationType?: BarAnimationType; // default grow-in order for every <Bar />
+		barGap?: number; // gap between bars within the same category
+		barCategoryGap?: number; // gap between categories of bars
+		backgroundVariant?: BackgroundVariant; // background pattern drawn behind the chart
+		defaultSelectedDataKey?: string | null; // series selected on first render
+		onSelectionChange?: (selectedDataKey: string | null) => void; // fires when the selected series changes
+		isLoading?: boolean; // shows the animated loading skeleton
+		loadingBars?: number; // number of bars in the loading skeleton
+		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
+	} = $props();
+
+	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+
+	/**
+	 * Anchors the grow-in to a fixed moment so it plays exactly once — re-renders read elapsed
+	 * time from here instead of replaying.
+	 */
+	const introStartedAt = Date.now();
+
+	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
+	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
+	let isMouseInChart = $state(false);
+
+	/** LayerChart's chart state, read for the row the pointer is currently over. */
+	let layerContext = $state<ChartState<Record<string, unknown>> | undefined>(undefined);
+
+	const loading = new LoadingDataState({
+		isLoading: () => isLoading,
+		loadingBars: () => loadingBars ?? 12
+	});
+
+	const brush = new EvilBrushState({ data: () => data as Record<string, unknown>[] });
+
+	// The <Brush> child is config-only: its presence turns the footer on. The reference pulls it
+	// out of `children`; Svelte registers it into this context instead (SPEC §4.2).
+	const brushSlot = setBrushSlotContext();
+	const showBrush = $derived(brushSlot.present);
+
+	const isPercent = $derived(stackType === 'percent');
+	const isStacked = $derived(stackType === 'stacked' || isPercent);
+	const isHorizontal = $derived(layout === 'horizontal');
+
+	/** Category key pushed up by the rendered `<XAxis dataKey>`, when there is one. */
+	let registeredXKey = $state<string | undefined>(undefined);
+	let registeredXKeyToken: string | null = null;
+
+	/** Data keys of the rendered `<Bar />` children, so a category can be divided between them. */
+	// `SvelteMap` for the same reason as `axesPresent` below (DEVIATIONS U-3).
+	const barKeyByToken = new SvelteMap<string, string>();
+	const barKeys = $derived([...barKeyByToken.values()]);
+
+	/** Which axes are rendered, so the plot reserves the space Recharts does (DEVIATIONS A-7). */
+	// `SvelteSet`, not a plain `Set` in `$state`: `$state` proxies objects and arrays but not
+	// `Map`/`Set`, so `.add()` / `.delete()` would not notify and the padding would never
+	// pick up an axis. See plans/DEVIATIONS.md U-3.
+	const axesPresent = { x: new SvelteSet<string>(), y: new SvelteSet<string>() };
+
+	const CHART_MARGIN = 5; // Recharts' default <BarChart margin>
+	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
+	const Y_AXIS_WIDTH = 60; // Recharts' default <YAxis width>
+
+	const padding = $derived({
+		top: CHART_MARGIN,
+		right: CHART_MARGIN,
+		bottom: CHART_MARGIN + (axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0),
+		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
+	});
+
+	const seriesKeys = $derived(Object.keys(config));
+	const displayData = $derived(showBrush && !isLoading ? brush.visibleData : data);
+	const chartData = $derived(
+		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
+	);
+
+	/** Category key for the band scale. See plans/DEVIATIONS.md A-1. */
+	const fallbackXKey = $derived(
+		Object.keys(chartData[0] ?? {}).find(
+			(key) => !seriesKeys.includes(key) && key !== LOADING_BAR_DATA_KEY
+		)
+	);
+	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
+
+	const series = $derived(
+		isLoading
+			? [{ key: LOADING_BAR_DATA_KEY, value: LOADING_BAR_DATA_KEY }]
+			: seriesKeys.map((key) => ({ key, value: key }))
+	);
+
+	// The baseline and `nice` rounding belong to the value axis, which the layout picks.
+	/**
+	 * Grouped bars are positioned by `getBarPositions` rather than by a nested band scale, so the
+	 * series only ever `overlap` here — see plans/DEVIATIONS.md B-1b.
+	 */
+	const seriesLayout = $derived(
+		isPercent ? ('stackExpand' as const) : isStacked ? ('stack' as const) : ('overlap' as const)
+	);
+
+	setBarChartContext({
+		config: () => config,
+		data: () => chartData,
+		xKey: () => xKey,
+		seriesKeys: () => seriesKeys,
+		barKeys: () => barKeys,
+		animationType: () => animationType,
+		isStacked: () => isStacked,
+		isPercent: () => isPercent,
+		isHorizontal: () => isHorizontal,
+		barRadius: () => barRadius,
+		barGap: () => barGap,
+		barCategoryGap: () => barCategoryGap,
+		introStartedAt: () => introStartedAt,
+		isMouseInChart: () => isMouseInChart,
+		activeRow: () => layerContext?.tooltip?.data as Record<string, unknown> | undefined,
+		isLoading: () => isLoading,
+		chartId: () => chartId,
+		selectedDataKey: () => selectedDataKey,
+		selectDataKey: (next) => {
+			selectedDataKey = next;
+			onSelectionChange?.(next);
+		},
+		registerBar: (token, key) => {
+			if (key === undefined) barKeyByToken.delete(token);
+			else barKeyByToken.set(token, key);
+		},
+		registerXAxisDataKey: (token, key) => {
+			// Ignore a stale teardown from LayerChart's mount-time remount (DEVIATIONS.md A-3).
+			if (key === undefined && registeredXKeyToken !== token) return;
+			registeredXKeyToken = key === undefined ? null : token;
+			registeredXKey = key;
+		},
+		registerAxis: (token, axis, present) => {
+			if (present) axesPresent[axis].add(token);
+			else axesPresent[axis].delete(token);
+		}
+	});
+</script>
+
+<ChartContainer {config} class={className}>
+	<LoadingIndicator {isLoading} />
+	<LegendRender placement="top" />
+	<!-- The reference tracks pointer enter/leave on the chart to drive the hover highlight. -->
+	<div
+		class="flex min-h-0 w-full flex-1 flex-col"
+		onpointerenter={() => (isMouseInChart = true)}
+		onpointerleave={() => (isMouseInChart = false)}
+		role="presentation"
+	>
+		<Chart
+			bind:context={layerContext}
+			data={chartData}
+			x={isHorizontal ? undefined : xKey}
+			y={isHorizontal ? xKey : undefined}
+			valueAxis={isHorizontal ? 'x' : 'y'}
+			{series}
+			{seriesLayout}
+			bandPadding={0}
+			xBaseline={isHorizontal ? 0 : undefined}
+			yBaseline={isHorizontal ? undefined : 0}
+			xNice={isHorizontal}
+			yNice={!isHorizontal}
+			{padding}
+			tooltipContext={{ mode: 'band' }}
+			class="h-full w-full"
+			{...chartProps}
+		>
+			<Svg>
+				{#if backgroundVariant}
+					<ChartBackground variant={backgroundVariant} />
+				{/if}
+				{@render children()}
+				{#if isLoading}
+					<LoadingBar {chartId} onShimmerExit={loading.onShimmerExit} />
+				{/if}
+			</Svg>
+			<TooltipRender />
+		</Chart>
+	</div>
+	<LegendRender placement="bottom" />
+
+	{#snippet footer()}
+		{#if showBrush && !isLoading}
+			<EvilBrush
+				data={data as Record<string, unknown>[]}
+				chartConfig={config}
+				{xDataKey}
+				variant="bar"
+				{barRadius}
+				height={brushSlot.slot?.height}
+				formatLabel={brushSlot.slot?.formatLabel}
+				stacked={isStacked}
+				skipStyle
+				class="mt-1"
+				startIndex={brush.brushProps.startIndex}
+				endIndex={brush.brushProps.endIndex}
+				onChange={(range) => {
+					brush.brushProps.onChange(range);
+					brushSlot.slot?.onChange?.(range);
+				}}
+			/>
+		{/if}
+	{/snippet}
+</ChartContainer>
