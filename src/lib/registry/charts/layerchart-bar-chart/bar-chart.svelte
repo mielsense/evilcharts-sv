@@ -305,7 +305,7 @@
 				formatLabel={brushSlot.slot?.formatLabel}
 				stacked={isStacked}
 				skipStyle
-				class="mt-1 translate-y-[18px]"
+				class="mt-1"
 				startIndex={brush.brushProps.startIndex}
 				endIndex={brush.brushProps.endIndex}
 				onChange={(range) => {

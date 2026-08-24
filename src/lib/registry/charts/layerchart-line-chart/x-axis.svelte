@@ -8,7 +8,11 @@
 	 * root's `x` accessor, so it is registered into the chart context on mount.
 	 */
 	import { Axis } from 'layerchart';
-	import { layerChartFormatter, thinAxisTicks } from '../../ui/layerchart-chart/ticks.js';
+	import {
+		layerChartFormatter,
+		RECHARTS_X_AXIS_TICK_OFFSET,
+		thinAxisTicks
+	} from '../../ui/layerchart-chart/ticks.js';
 	import type { ComponentProps } from 'svelte';
 	import { useLineChart } from './line-chart-context.svelte.js';
 
@@ -33,6 +37,7 @@
 
 	const chart = useLineChart();
 	const token = $props.id();
+	const translatedTickLength = $derived(tickMargin + RECHARTS_X_AXIS_TICK_OFFSET);
 	const format = $derived(tickFormatter ? layerChartFormatter(tickFormatter) : undefined);
 	const ticks = $derived(
 		thinAxisTicks({
@@ -55,10 +60,11 @@
 {#if !chart.isLoading}
 	<Axis
 		placement="bottom"
+		data-evil-scale="point"
 		{ticks}
 		rule={axisLine}
 		tickMarks={tickLine}
-		tickLength={tickMargin}
+		tickLength={translatedTickLength}
 		{format}
 		{...restProps}
 	/>

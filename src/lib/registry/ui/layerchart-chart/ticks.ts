@@ -1,5 +1,8 @@
 import type { AnyScale } from 'layerchart';
 
+/** Converts LayerChart's x-axis tick origin to Recharts' `tickMargin` baseline. */
+export const RECHARTS_X_AXIS_TICK_OFFSET = 5.5;
+
 /**
  * Axis tick values with a leading tick dropped when its label cannot fit inside the plot.
  *
