@@ -26,11 +26,11 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm registry:fresh
       - run: git diff --exit-code -- registry.json src/lib/registry/__index__.ts
       - run: pnpm check
       - run: pnpm lint
       - run: pnpm test:unit --run
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
