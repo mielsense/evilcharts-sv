@@ -18,9 +18,10 @@ function collectRuntimeDiagnostics(page: Page) {
 
 async function prepareRuntimePage(page: Page) {
 	const diagnostics = collectRuntimeDiagnostics(page);
-	await page.route('https://api.github.com/repos/**', (route) =>
-		route.fulfill({ status: 200, contentType: 'application/json', body: '{"stargazers_count":0}' })
-	);
+	await page.route('https://api.github.com/repos/**', async (route) => {
+		diagnostics.push(`browser requested ${route.request().url()}`);
+		await route.abort();
+	});
 	await page.addInitScript(() => {
 		window.addEventListener('error', (event) => {
 			console.error(`[window-error] ${event.message}`);
@@ -34,6 +35,39 @@ test('the landing stage completes a focus hop without runtime diagnostics', asyn
 
 	await page.goto('/');
 	await page.waitForTimeout(FIRST_FOCUS_HOP_WAIT_MS);
+
+	expect(diagnostics).toEqual([]);
+});
+
+test('docs render decoded code and keep the desktop table-of-contents marker active', async ({
+	page
+}) => {
+	const diagnostics = await prepareRuntimePage(page);
+
+	for (const width of [320, 640, 1440]) {
+		await page.setViewportSize({ width, height: 900 });
+		const areaResponse = await page.goto('/docs/layerchart/area-chart');
+		expect(areaResponse?.status(), `Area docs at ${width}px`).toBe(200);
+
+		const body = await page.locator('body').innerText();
+		for (const entity of ['&lt;', '&gt;', '&#123;', '&#125;']) {
+			expect(body, `${entity} at ${width}px`).not.toContain(entity);
+		}
+
+		const barResponse = await page.goto('/docs/layerchart/bar-chart');
+		expect(barResponse?.status(), `Bar docs at ${width}px`).toBe(200);
+		await expect(page.getByRole('heading', { level: 1, name: 'Bar Chart' })).toBeVisible();
+	}
+
+	await page.goto('/docs/layerchart/area-chart');
+	const tableOfContents = page
+		.getByText('On This Page', { exact: true })
+		.locator('..')
+		.locator('..');
+	await expect(tableOfContents.locator('path[stroke="currentColor"]')).not.toHaveAttribute('d', '');
+	await page.locator('#usage').evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
+	await expect(page.locator('a[href="#usage"][data-active="true"]')).toBeVisible();
+	await expect(page.locator('#gradient-tail-of-toc-indicator')).not.toHaveCSS('opacity', '0');
 
 	expect(diagnostics).toEqual([]);
 });

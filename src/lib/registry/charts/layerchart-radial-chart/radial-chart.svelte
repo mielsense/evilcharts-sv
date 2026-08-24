@@ -1,6 +1,6 @@
 <script lang="ts" generics="TData extends Record<string, unknown>">
 	/**
-	 * Root of the composible radial chart. Owns the data, the shared context, the loading skeleton,
+	 * Root of the composable radial chart. Owns the data, the shared context, the loading skeleton,
 	 * and the chart-wide arc shape. Everything visual — the tooltip, legend, and the radial bar
 	 * itself — is composed as children, so a consumer renders exactly the parts they need.
 	 */

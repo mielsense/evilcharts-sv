@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { generateLlmsFullTxt } from './agent-docs.js';
 import { getPages } from './source.js';
@@ -44,7 +45,39 @@ describe('copyable documentation', () => {
 		const full = generateLlmsFullTxt();
 
 		expect(full).not.toContain('src/registry/ui/background.tsx');
+		expect(full).not.toContain('tooltip.tsx');
+		expect(full).not.toContain('legend.tsx');
+		expect(full).not.toContain('composible');
 		expect(full).not.toContain('layerchart.github.io');
 		expect(full).not.toMatch(/tooltipVariant="[^"]+"\s*\|/);
+	});
+
+	it('links radial and Sankey escape hatches to the LayerChart components they wrap', () => {
+		const radial = pageBody('/docs/layerchart/radial-chart');
+		const sankey = pageBody('/docs/layerchart/sankey-chart');
+
+		expect(radial).toContain(
+			'href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation'
+		);
+		expect(radial).toContain(
+			'href="https://www.layerchart.com/docs/components/Arc" _blank>LayerChart Arc documentation'
+		);
+		expect(sankey).toContain(
+			'href="https://www.layerchart.com/docs/components/Sankey" _blank>LayerChart Sankey documentation'
+		);
+	});
+
+	it('keeps the README registry inventory in sync with the built registry', () => {
+		const readme = readFileSync('README.md', 'utf8');
+		const registry = JSON.parse(readFileSync('registry.json', 'utf8')) as {
+			items: Array<{ name: string }>;
+		};
+		const examples = registry.items.filter(({ name }) => name.startsWith('ex-')).length;
+
+		expect(readme).toContain(`| Documentation examples | ${examples}`);
+		expect(readme).toContain(`| Registry items total   | ${registry.items.length}`);
+		expect(readme).toContain(`examples/layerchart/     ${examples} \`ex-*\` documentation demos`);
+		expect(readme).toContain('| Shared primitives      | 7:');
+		expect(readme).toContain('ui/                      7 shared primitives');
 	});
 });

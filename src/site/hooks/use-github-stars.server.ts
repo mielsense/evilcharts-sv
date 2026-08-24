@@ -1,6 +1,6 @@
 import { PORT_REPO_API_URL, PORT_STARS_FALLBACK } from '$site/globals/constants/site.js';
 
-export const useGithubStars = async (fetcher: typeof fetch = fetch): Promise<number | null> => {
+export const useGithubStars = async (fetcher: typeof fetch = fetch): Promise<number> => {
 	try {
 		const res = await fetcher(PORT_REPO_API_URL, {
 			headers: {

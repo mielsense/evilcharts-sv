@@ -5,7 +5,7 @@ import {
 	PORT_STARS_FALLBACK,
 	formatGithubStarsLabel
 } from '$site/globals/constants/site.js';
-import { useGithubStars } from './use-github-stars.js';
+import { useGithubStars } from './use-github-stars.server.js';
 
 function response(body: unknown, status = 200) {
 	return new Response(JSON.stringify(body), {

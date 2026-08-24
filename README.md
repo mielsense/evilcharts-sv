@@ -33,13 +33,13 @@ ordered-dither renderer is an independent Svelte implementation inspired by [Dit
 by Boring Software. It stays inside the same EvilCharts SV components, so tooltips, selection,
 loading, brushes, responsive layout, and transparent SVG interaction targets keep working.
 
-|                        | Count                                                    |
-| ---------------------- | -------------------------------------------------------- |
-| Chart types            | 8: area, line, bar, composed, radar, pie, radial, sankey |
-| Shared primitives      | 6: chart, tooltip, legend, dot, brush, background        |
-| Documentation examples | 113                                                      |
-| Installable blocks     | 4                                                        |
-| Registry items total   | 131                                                      |
+|                        | Count                                                     |
+| ---------------------- | --------------------------------------------------------- |
+| Chart types            | 8: area, line, bar, composed, radar, pie, radial, sankey  |
+| Shared primitives      | 7: chart, tooltip, legend, dot, brush, background, dither |
+| Documentation examples | 119                                                       |
+| Installable blocks     | 4                                                         |
+| Registry items total   | 138                                                       |
 
 ## Install a chart
 
@@ -135,8 +135,8 @@ fallback so previews are self-consistent. See [`.env.example`](./.env.example).
 ```
 src/lib/registry/          the installable product
   charts/                  8 chart modules, one directory each
-  ui/                      6 shared primitives
-  examples/layerchart/     113 `ex-*` documentation demos
+  ui/                      7 shared primitives
+  examples/layerchart/     119 `ex-*` documentation demos
   blocks/layerchart/       4 larger `b-*` compositions
   registry-*.ts            item manifests (names, deps, consumer targets)
   __index__.ts             generated; never edit by hand

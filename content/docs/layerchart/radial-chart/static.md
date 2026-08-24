@@ -62,7 +62,7 @@ Below is the main chart component.
         <StepTitle>Add the sub-components.</StepTitle>
         <StepDescription>
 
-Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
+Create `tooltip.svelte` inside `evilcharts/ui` and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -73,7 +73,7 @@ Create `tooltip.tsx` inside `evilcharts/ui` and paste the code there.
         </StepContent>
         <StepDescription>
 
-Then create `legend.tsx` in the same folder and paste the code there.
+Then create `legend.svelte` in the same folder and paste the code there.
 
 </StepDescription>
         <StepContent>
@@ -258,9 +258,9 @@ Shows a placeholder animation while data loads.
 Background pattern shown behind the chart.
 
 </ApiRow>
-  <ApiRow name="chartProps" type="ComponentProps<typeof RadialBarChart>">
+  <ApiRow name="chartProps" type="Record<string, unknown>">
 
-Props forwarded to the underlying LayerChart RadialBarChart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart RadialBarChart docs</Link> for options.
+Extra props forwarded to the underlying LayerChart Chart. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Chart documentation</Link>.
 
 </ApiRow>
 </ApiTable>
@@ -295,9 +295,9 @@ Whether to render the background track (the unfilled portion of each bar).
 Lets users click bars to select/deselect them. Unselected bars dim while a selection is active.
 
 </ApiRow>
-  <ApiRow name="radialBarProps" type='Omit<ComponentProps<typeof RadialBar>, "dataKey">'>
+  <ApiRow name="radialBarProps" type="Record<string, unknown>">
 
-Props forwarded to the underlying LayerChart RadialBar. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart RadialBar docs</Link> for options.
+Extra props forwarded to the underlying LayerChart Arc. See the <Link href="https://www.layerchart.com/docs/components/Arc" _blank>LayerChart Arc documentation</Link>.
 
 </ApiRow>
 </ApiTable>

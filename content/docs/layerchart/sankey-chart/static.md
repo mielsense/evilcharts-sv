@@ -215,7 +215,7 @@ Set `<Link />` `variant` to `"source"` to color links by their source node, trac
 
 ## API Reference
 
-A root container plus a few composible parts. Render the root, then compose the
+A root container plus a few composable parts. Render the root, then compose the
 parts you need.
 
 <ApiHeading>EvilSankeyChart</ApiHeading>
@@ -301,7 +301,7 @@ Shows a loading placeholder animation when data is being fetched.
 </ApiRow>
   <ApiRow name="sankeyProps" type='Omit<SankeyProps, "data">'>
 
-Extra props for the underlying LayerChart Sankey component. See the <Link href="https://www.layerchart.com/docs/components/Chart" _blank>LayerChart Sankey documentation</Link> for available props.
+Extra props for the underlying LayerChart Sankey component. See the <Link href="https://www.layerchart.com/docs/components/Sankey" _blank>LayerChart Sankey documentation</Link> for available props.
 
 </ApiRow>
 </ApiTable>

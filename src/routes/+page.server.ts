@@ -1,5 +1,5 @@
-import { useGithubStars } from '$site/hooks/use-github-stars.js';
-import type { PageLoad } from './$types.js';
+import { useGithubStars } from '$site/hooks/use-github-stars.server.js';
+import type { PageServerLoad } from './$types.js';
 
 /**
  * Prerendered. The reference serves this from cache with ISR (`revalidate = 3600`); for a static
@@ -7,6 +7,6 @@ import type { PageLoad } from './$types.js';
  */
 export const prerender = true;
 
-export const load: PageLoad = async ({ fetch }) => ({
+export const load: PageServerLoad = async ({ fetch }) => ({
 	stars: await useGithubStars(fetch)
 });
