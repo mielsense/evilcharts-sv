@@ -1,0 +1,15 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "ex-dither-line-chart",
+  "registryDependencies": [
+    "@evilcharts/layerchart-line-chart"
+  ],
+  "type": "registry:block",
+  "files": [
+    {
+      "path": "src/lib/registry/examples/layerchart/ex-dither-line-chart.svelte",
+      "content": "<script lang=\"ts\">\n\timport {\n\t\tEvilLineChart,\n\t\ttype ChartConfig\n\t} from '$lib/registry/charts/layerchart-line-chart/index.js';\n\tconst data = [\n\t\t{ month: 'Jan', desktop: 42, mobile: 25 },\n\t\t{ month: 'Feb', desktop: 76, mobile: 54 },\n\t\t{ month: 'Mar', desktop: 51, mobile: 38 },\n\t\t{ month: 'Apr', desktop: 84, mobile: 62 },\n\t\t{ month: 'May', desktop: 63, mobile: 47 },\n\t\t{ month: 'Jun', desktop: 91, mobile: 70 }\n\t];\n\tconst config = {\n\t\tdesktop: { label: 'Desktop', colors: { light: ['#047857'], dark: ['#10b981'] } },\n\t\tmobile: { label: 'Mobile', colors: { light: ['#be123c'], dark: ['#f43f5e'] } }\n\t} satisfies ChartConfig;\n</script>\n\n<EvilLineChart\n\t{data}\n\t{config}\n\txDataKey=\"month\"\n\trenderStyle=\"dither\"\n\tbloom=\"low\"\n\tclass=\"h-full w-full p-4\"\n>\n\t<EvilLineChart.Grid /><EvilLineChart.XAxis dataKey=\"month\" /><EvilLineChart.Legend\n\t\tisClickable\n\t/><EvilLineChart.Tooltip />\n\t<EvilLineChart.Line dataKey=\"desktop\" isClickable /><EvilLineChart.Line\n\t\tdataKey=\"mobile\"\n\t\tstrokeVariant=\"dashed\"\n\t\tisClickable\n\t/>\n</EvilLineChart>\n",
+      "type": "registry:block"
+    }
+  ]
+}

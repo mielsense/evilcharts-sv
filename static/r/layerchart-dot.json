@@ -1,0 +1,46 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "layerchart-dot",
+  "type": "registry:component",
+  "dependencies": [
+    "layerchart"
+  ],
+  "files": [
+    {
+      "path": "src/lib/registry/ui/layerchart-dot/chart-dot.svelte",
+      "content": "<script lang=\"ts\">\n\t// The reference wraps each variant in `React.memo`; Svelte's fine-grained updates make that\n\t// unnecessary, so the memo boundaries are dropped and nothing else changes.\n\timport ColoredBorderDot from './colored-border-dot.svelte';\n\timport DefaultDot from './default-dot.svelte';\n\timport PrimaryBorderDot from './primary-border-dot.svelte';\n\timport type { ChartDotProps } from './types.js';\n\n\tlet {\n\t\tcx,\n\t\tcy,\n\t\tdataKey,\n\t\tchartId,\n\t\tclass: className,\n\t\tfillOpacity = 1,\n\t\ttype = 'default',\n\t\tmaskId,\n\t\tgradientX = 0,\n\t\tgradientWidth = '100%'\n\t}: ChartDotProps = $props();\n\n\tconst dotId = $props.id();\n\tconst gradientUrl = $derived(`url(#${chartId}-colors-${String(dataKey)})`);\n</script>\n\n{#if cx !== undefined && cy !== undefined}\n\t{#if type === 'border'}\n\t\t<PrimaryBorderDot\n\t\t\t{cx}\n\t\t\t{cy}\n\t\t\t{dotId}\n\t\t\t{fillOpacity}\n\t\t\t{gradientUrl}\n\t\t\tclass={className}\n\t\t\t{maskId}\n\t\t\t{gradientX}\n\t\t\t{gradientWidth}\n\t\t/>\n\t{:else if type === 'colored-border'}\n\t\t<ColoredBorderDot\n\t\t\t{cx}\n\t\t\t{cy}\n\t\t\t{dotId}\n\t\t\t{fillOpacity}\n\t\t\t{gradientUrl}\n\t\t\tclass={className}\n\t\t\t{maskId}\n\t\t\t{gradientX}\n\t\t\t{gradientWidth}\n\t\t/>\n\t{:else}\n\t\t<DefaultDot\n\t\t\t{cx}\n\t\t\t{cy}\n\t\t\t{dotId}\n\t\t\t{fillOpacity}\n\t\t\t{gradientUrl}\n\t\t\tclass={className}\n\t\t\t{maskId}\n\t\t\t{gradientX}\n\t\t\t{gradientWidth}\n\t\t/>\n\t{/if}\n{/if}\n",
+      "type": "registry:component",
+      "target": "$lib/components/evilcharts/ui/layerchart-dot/chart-dot.svelte"
+    },
+    {
+      "path": "src/lib/registry/ui/layerchart-dot/colored-border-dot.svelte",
+      "content": "<script lang=\"ts\">\n\timport { cn } from '$lib/utils.js';\n\timport type { DotVariantProps } from './types.js';\n\n\tlet {\n\t\tcx,\n\t\tcy,\n\t\tdotId,\n\t\tfillOpacity,\n\t\tgradientUrl,\n\t\tclass: className,\n\t\tmaskId,\n\t\tgradientX,\n\t\tgradientWidth\n\t}: DotVariantProps = $props();\n\n\tconst r = 3;\n\tconst strokeWidth = 1;\n</script>\n\n<g class={cn(className, 'text-background')} mask={maskId ? `url(#${maskId})` : undefined}>\n\t<defs>\n\t\t<clipPath id={`dot-clip-${dotId}`}>\n\t\t\t<circle {cx} {cy} r={r + strokeWidth / 2} />\n\t\t</clipPath>\n\t</defs>\n\t<!-- Gradient stroke (border) via clipped rect -->\n\t<rect\n\t\tx={gradientX}\n\t\ty={cy - r - strokeWidth / 2}\n\t\twidth={gradientWidth}\n\t\theight={(r + strokeWidth / 2) * 2}\n\t\tfill={gradientUrl}\n\t\tfill-opacity={fillOpacity}\n\t\tclip-path={`url(#dot-clip-${dotId})`}\n\t/>\n\t<!-- Inner solid fill -->\n\t<circle {cx} {cy} r={r - strokeWidth / 2} fill=\"currentColor\" />\n</g>\n",
+      "type": "registry:component",
+      "target": "$lib/components/evilcharts/ui/layerchart-dot/colored-border-dot.svelte"
+    },
+    {
+      "path": "src/lib/registry/ui/layerchart-dot/default-dot.svelte",
+      "content": "<script lang=\"ts\">\n\timport type { DotVariantProps } from './types.js';\n\n\tlet {\n\t\tcx,\n\t\tcy,\n\t\tdotId,\n\t\tfillOpacity,\n\t\tgradientUrl,\n\t\tclass: className,\n\t\tmaskId,\n\t\tgradientX,\n\t\tgradientWidth\n\t}: DotVariantProps = $props();\n\n\tconst r = 3;\n</script>\n\n<g class={className} mask={maskId ? `url(#${maskId})` : undefined}>\n\t<defs>\n\t\t<clipPath id={`dot-clip-${dotId}`}>\n\t\t\t<circle {cx} {cy} {r} />\n\t\t</clipPath>\n\t</defs>\n\t<!-- Full-width gradient rectangle clipped to dot shape -->\n\t<rect\n\t\tx={gradientX}\n\t\ty={cy - r}\n\t\twidth={gradientWidth}\n\t\theight={r * 2}\n\t\tfill={gradientUrl}\n\t\tfill-opacity={fillOpacity}\n\t\tclip-path={`url(#dot-clip-${dotId})`}\n\t/>\n</g>\n",
+      "type": "registry:component",
+      "target": "$lib/components/evilcharts/ui/layerchart-dot/default-dot.svelte"
+    },
+    {
+      "path": "src/lib/registry/ui/layerchart-dot/index.ts",
+      "content": "export { default as ChartDot } from './chart-dot.svelte';\nexport type { ChartDotProps, DotVariant, DotVariantProps } from './types.js';\n",
+      "type": "registry:component",
+      "target": "$lib/components/evilcharts/ui/layerchart-dot/index.ts"
+    },
+    {
+      "path": "src/lib/registry/ui/layerchart-dot/primary-border-dot.svelte",
+      "content": "<script lang=\"ts\">\n\timport { cn } from '$lib/utils.js';\n\timport type { DotVariantProps } from './types.js';\n\n\tlet {\n\t\tcx,\n\t\tcy,\n\t\tdotId,\n\t\tfillOpacity,\n\t\tgradientUrl,\n\t\tclass: className,\n\t\tmaskId,\n\t\tgradientX,\n\t\tgradientWidth\n\t}: DotVariantProps = $props();\n\n\tconst r = 6;\n\tconst strokeWidth = 5;\n</script>\n\n<g class={cn(className, 'text-background')} mask={maskId ? `url(#${maskId})` : undefined}>\n\t<defs>\n\t\t<clipPath id={`dot-clip-${dotId}`}>\n\t\t\t<circle {cx} {cy} {r} />\n\t\t</clipPath>\n\t</defs>\n\t<!-- Background stroke (border) -->\n\t<circle {cx} {cy} {r} fill=\"currentColor\" />\n\t<!-- Inner gradient circle clipped -->\n\t<rect\n\t\tx={gradientX}\n\t\ty={cy - (r - strokeWidth / 2)}\n\t\twidth={gradientWidth}\n\t\theight={(r - strokeWidth / 2) * 2}\n\t\tfill={gradientUrl}\n\t\tfill-opacity={fillOpacity}\n\t\tclip-path={`url(#dot-clip-inner-${dotId})`}\n\t/>\n\t<defs>\n\t\t<clipPath id={`dot-clip-inner-${dotId}`}>\n\t\t\t<circle {cx} {cy} r={r - strokeWidth / 2} />\n\t\t</clipPath>\n\t</defs>\n</g>\n",
+      "type": "registry:component",
+      "target": "$lib/components/evilcharts/ui/layerchart-dot/primary-border-dot.svelte"
+    },
+    {
+      "path": "src/lib/registry/ui/layerchart-dot/types.ts",
+      "content": "export type DotVariant = 'default' | 'border' | 'colored-border';\n\nexport type ChartDotProps = {\n\tcx?: number;\n\tcy?: number;\n\tdataKey: string;\n\tchartId: string;\n\tclass?: string;\n\tfillOpacity?: number;\n\ttype?: DotVariant;\n\t/** Optional SVG <mask> id — lets the dot share an area's intro reveal wipe. */\n\tmaskId?: string;\n\t/**\n\t * Left edge and width of the gradient rect each dot is clipped out of.\n\t *\n\t * The reference draws a plot-wide rect and clips it to a circle, so a dot samples the series'\n\t * horizontal gradient at its own x. That assumes the origin is the plot's left edge, which is\n\t * true in a cartesian chart but not inside a centred `<Group>` — there, `x=\"0\"` starts at the\n\t * *centre* and every dot left of it disappeared. A radial chart passes its own plot span.\n\t * See plans/DEVIATIONS.md U-7.\n\t */\n\tgradientX?: number | string;\n\tgradientWidth?: number | string;\n};\n\nexport type DotVariantProps = {\n\tcx: number;\n\tcy: number;\n\tdotId: string;\n\tfillOpacity: number;\n\tgradientUrl: string;\n\tclass?: string;\n\tmaskId?: string;\n\tgradientX: number | string;\n\tgradientWidth: number | string;\n};\n",
+      "type": "registry:component",
+      "target": "$lib/components/evilcharts/ui/layerchart-dot/types.ts"
+    }
+  ]
+}

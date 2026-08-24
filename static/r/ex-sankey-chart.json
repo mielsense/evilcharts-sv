@@ -1,0 +1,15 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "ex-sankey-chart",
+  "registryDependencies": [
+    "@evilcharts/layerchart-sankey-chart"
+  ],
+  "type": "registry:block",
+  "files": [
+    {
+      "path": "src/lib/registry/examples/layerchart/ex-sankey-chart.svelte",
+      "content": "<script lang=\"ts\">\n\timport {\n\t\tEvilSankeyChart,\n\t\ttype SankeyData\n\t} from '$lib/registry/charts/layerchart-sankey-chart/index.js';\n\timport { type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';\n\n\tconst data: SankeyData = {\n\t\tnodes: [\n\t\t\t{ name: 'Organic' },\n\t\t\t{ name: 'PaidAds' },\n\t\t\t{ name: 'Social' },\n\t\t\t{ name: 'Landing' },\n\t\t\t{ name: 'Product' },\n\t\t\t{ name: 'Cart' },\n\t\t\t{ name: 'Purchase' },\n\t\t\t{ name: 'Bounced' }\n\t\t],\n\t\tlinks: [\n\t\t\t{ source: 0, target: 3, value: 42000 },\n\t\t\t{ source: 1, target: 3, value: 28000 },\n\t\t\t{ source: 2, target: 3, value: 18000 },\n\t\t\t{ source: 3, target: 4, value: 52000 },\n\t\t\t{ source: 3, target: 7, value: 36000 },\n\t\t\t{ source: 4, target: 5, value: 31000 },\n\t\t\t{ source: 4, target: 7, value: 21000 },\n\t\t\t{ source: 5, target: 6, value: 24000 },\n\t\t\t{ source: 5, target: 7, value: 7000 }\n\t\t]\n\t};\n\n\tconst chartConfig = {\n\t\tOrganic: {\n\t\t\tlabel: 'Organic Search',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#059669'],\n\t\t\t\tdark: ['#34d399']\n\t\t\t}\n\t\t},\n\t\tPaidAds: {\n\t\t\tlabel: 'Paid Ads',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#dc2626'],\n\t\t\t\tdark: ['#f87171']\n\t\t\t}\n\t\t},\n\t\tSocial: {\n\t\t\tlabel: 'Social Media',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#7c3aed'],\n\t\t\t\tdark: ['#a78bfa']\n\t\t\t}\n\t\t},\n\t\tLanding: {\n\t\t\tlabel: 'Landing Page',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#0891b2'],\n\t\t\t\tdark: ['#22d3ee']\n\t\t\t}\n\t\t},\n\t\tProduct: {\n\t\t\tlabel: 'Product Page',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#2563eb'],\n\t\t\t\tdark: ['#60a5fa']\n\t\t\t}\n\t\t},\n\t\tCart: {\n\t\t\tlabel: 'Cart',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#ea580c'],\n\t\t\t\tdark: ['#fb923c']\n\t\t\t}\n\t\t},\n\t\tPurchase: {\n\t\t\tlabel: 'Purchase',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#16a34a'],\n\t\t\t\tdark: ['#4ade80']\n\t\t\t}\n\t\t},\n\t\tBounced: {\n\t\t\tlabel: 'Bounced',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#f43f5e'],\n\t\t\t\tdark: ['#fb7185']\n\t\t\t}\n\t\t}\n\t} satisfies ChartConfig;\n</script>\n\n<EvilSankeyChart class=\"h-full w-full p-4\" {data} config={chartConfig}>\n\t<EvilSankeyChart.Node isClickable>\n\t\t<EvilSankeyChart.NodeLabel position=\"outside\" showValues />\n\t</EvilSankeyChart.Node>\n\t<EvilSankeyChart.Link variant=\"source\" />\n\t<EvilSankeyChart.Tooltip />\n</EvilSankeyChart>\n",
+      "type": "registry:block"
+    }
+  ]
+}

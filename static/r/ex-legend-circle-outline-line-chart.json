@@ -1,0 +1,15 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "ex-legend-circle-outline-line-chart",
+  "registryDependencies": [
+    "@evilcharts/layerchart-line-chart"
+  ],
+  "type": "registry:block",
+  "files": [
+    {
+      "path": "src/lib/registry/examples/layerchart/ex-legend-circle-outline-line-chart.svelte",
+      "content": "<script lang=\"ts\">\n\timport { EvilLineChart } from '$lib/registry/charts/layerchart-line-chart/index.js';\n\timport { type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';\n\n\tconst data = [\n\t\t{ month: 'January', desktop: 342, mobile: 245 },\n\t\t{ month: 'February', desktop: 876, mobile: 654 },\n\t\t{ month: 'March', desktop: 512, mobile: 387 },\n\t\t{ month: 'April', desktop: 629, mobile: 521 },\n\t\t{ month: 'May', desktop: 458, mobile: 412 },\n\t\t{ month: 'June', desktop: 781, mobile: 598 },\n\t\t{ month: 'July', desktop: 394, mobile: 312 },\n\t\t{ month: 'August', desktop: 925, mobile: 743 },\n\t\t{ month: 'September', desktop: 647, mobile: 489 },\n\t\t{ month: 'October', desktop: 532, mobile: 476 },\n\t\t{ month: 'November', desktop: 803, mobile: 687 },\n\t\t{ month: 'December', desktop: 271, mobile: 198 }\n\t];\n\n\tconst chartConfig = {\n\t\tdesktop: {\n\t\t\tlabel: 'Desktop',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#047857'],\n\t\t\t\tdark: ['#10b981']\n\t\t\t}\n\t\t},\n\t\tmobile: {\n\t\t\tlabel: 'Mobile',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#be123c'],\n\t\t\t\tdark: ['#f43f5e']\n\t\t\t}\n\t\t}\n\t} satisfies ChartConfig;\n</script>\n\n<EvilLineChart {data} config={chartConfig} class=\"h-full w-full p-4\">\n\t<EvilLineChart.XAxis dataKey=\"month\" tickFormatter={(value) => String(value).substring(0, 3)} />\n\t<!-- [!code highlight] -->\n\t<EvilLineChart.Legend variant=\"circle-outline\" />\n\t<EvilLineChart.Tooltip />\n\t<EvilLineChart.Line dataKey=\"desktop\" strokeVariant=\"solid\" />\n\t<EvilLineChart.Line dataKey=\"mobile\" strokeVariant=\"solid\" />\n</EvilLineChart>\n",
+      "type": "registry:block"
+    }
+  ]
+}

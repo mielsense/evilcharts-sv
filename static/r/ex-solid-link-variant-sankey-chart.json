@@ -1,0 +1,15 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "ex-solid-link-variant-sankey-chart",
+  "registryDependencies": [
+    "@evilcharts/layerchart-sankey-chart"
+  ],
+  "type": "registry:block",
+  "files": [
+    {
+      "path": "src/lib/registry/examples/layerchart/ex-solid-link-variant-sankey-chart.svelte",
+      "content": "<script lang=\"ts\">\n\timport {\n\t\tEvilSankeyChart,\n\t\ttype SankeyData\n\t} from '$lib/registry/charts/layerchart-sankey-chart/index.js';\n\timport { type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';\n\n\tconst data: SankeyData = {\n\t\tnodes: [\n\t\t\t{ name: 'Direct' },\n\t\t\t{ name: 'Email' },\n\t\t\t{ name: 'Referral' },\n\t\t\t{ name: 'Browse' },\n\t\t\t{ name: 'Search' },\n\t\t\t{ name: 'ViewItem' },\n\t\t\t{ name: 'AddToCart' },\n\t\t\t{ name: 'Checkout' },\n\t\t\t{ name: 'Abandoned' }\n\t\t],\n\t\tlinks: [\n\t\t\t{ source: 0, target: 3, value: 15200 },\n\t\t\t{ source: 1, target: 3, value: 8400 },\n\t\t\t{ source: 2, target: 3, value: 6800 },\n\t\t\t{ source: 3, target: 4, value: 18600 },\n\t\t\t{ source: 3, target: 8, value: 11800 },\n\t\t\t{ source: 4, target: 5, value: 12400 },\n\t\t\t{ source: 4, target: 8, value: 6200 },\n\t\t\t{ source: 5, target: 6, value: 8100 },\n\t\t\t{ source: 5, target: 8, value: 4300 },\n\t\t\t{ source: 6, target: 7, value: 5400 },\n\t\t\t{ source: 6, target: 8, value: 2700 }\n\t\t]\n\t};\n\n\tconst chartConfig = {\n\t\tDirect: {\n\t\t\tlabel: 'Direct Traffic',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#3b82f6'],\n\t\t\t\tdark: ['#60a5fa']\n\t\t\t}\n\t\t},\n\t\tEmail: {\n\t\t\tlabel: 'Email Campaign',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#8b5cf6'],\n\t\t\t\tdark: ['#a78bfa']\n\t\t\t}\n\t\t},\n\t\tReferral: {\n\t\t\tlabel: 'Referral',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#06b6d4'],\n\t\t\t\tdark: ['#22d3ee']\n\t\t\t}\n\t\t},\n\t\tBrowse: {\n\t\t\tlabel: 'Browse',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#f59e0b'],\n\t\t\t\tdark: ['#fbbf24']\n\t\t\t}\n\t\t},\n\t\tSearch: {\n\t\t\tlabel: 'Search',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#10b981'],\n\t\t\t\tdark: ['#34d399']\n\t\t\t}\n\t\t},\n\t\tViewItem: {\n\t\t\tlabel: 'View Item',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#ec4899'],\n\t\t\t\tdark: ['#f472b6']\n\t\t\t}\n\t\t},\n\t\tAddToCart: {\n\t\t\tlabel: 'Add to Cart',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#f97316'],\n\t\t\t\tdark: ['#fb923c']\n\t\t\t}\n\t\t},\n\t\tCheckout: {\n\t\t\tlabel: 'Checkout',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#22c55e'],\n\t\t\t\tdark: ['#4ade80']\n\t\t\t}\n\t\t},\n\t\tAbandoned: {\n\t\t\tlabel: 'Abandoned',\n\t\t\tcolors: {\n\t\t\t\tlight: ['#e11d48'],\n\t\t\t\tdark: ['#f43f5e']\n\t\t\t}\n\t\t}\n\t} satisfies ChartConfig;\n</script>\n\n<EvilSankeyChart class=\"h-full w-full p-4\" {data} config={chartConfig}>\n\t<EvilSankeyChart.Node isClickable />\n\t<!-- [!code highlight:2] -->\n\t<EvilSankeyChart.Link variant=\"solid\" />\n\t<EvilSankeyChart.Tooltip />\n</EvilSankeyChart>\n",
+      "type": "registry:block"
+    }
+  ]
+}

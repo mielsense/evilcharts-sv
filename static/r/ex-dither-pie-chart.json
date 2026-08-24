@@ -1,0 +1,15 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "ex-dither-pie-chart",
+  "registryDependencies": [
+    "@evilcharts/layerchart-pie-chart"
+  ],
+  "type": "registry:block",
+  "files": [
+    {
+      "path": "src/lib/registry/examples/layerchart/ex-dither-pie-chart.svelte",
+      "content": "<script lang=\"ts\">\n\timport {\n\t\tEvilPieChart,\n\t\ttype ChartConfig\n\t} from '$lib/registry/charts/layerchart-pie-chart/index.js';\n\tconst data = [\n\t\t{ browser: 'chrome', visitors: 46 },\n\t\t{ browser: 'safari', visitors: 28 },\n\t\t{ browser: 'firefox', visitors: 17 },\n\t\t{ browser: 'other', visitors: 9 }\n\t];\n\tconst config = {\n\t\tchrome: { label: 'Chrome', colors: { light: ['#047857'], dark: ['#10b981'] } },\n\t\tsafari: { label: 'Safari', colors: { light: ['#0369a1'], dark: ['#38bdf8'] } },\n\t\tfirefox: { label: 'Firefox', colors: { light: ['#be123c'], dark: ['#f43f5e'] } },\n\t\tother: { label: 'Other', colors: { light: ['#a16207'], dark: ['#facc15'] } }\n\t} satisfies ChartConfig;\n</script>\n\n<EvilPieChart\n\t{data}\n\t{config}\n\tdataKey=\"visitors\"\n\tnameKey=\"browser\"\n\trenderStyle=\"dither\"\n\tbloom=\"low\"\n\tclass=\"h-full w-full p-4\"\n>\n\t<EvilPieChart.Legend isClickable /><EvilPieChart.Tooltip />\n\t<EvilPieChart.Pie innerRadius={54} ditherVariant=\"gradient\" isClickable />\n</EvilPieChart>\n",
+      "type": "registry:block"
+    }
+  ]
+}

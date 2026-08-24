@@ -1,0 +1,15 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry-item.json",
+  "name": "ex-dither-bar-chart",
+  "registryDependencies": [
+    "@evilcharts/layerchart-bar-chart"
+  ],
+  "type": "registry:block",
+  "files": [
+    {
+      "path": "src/lib/registry/examples/layerchart/ex-dither-bar-chart.svelte",
+      "content": "<script lang=\"ts\">\n\timport {\n\t\tEvilBarChart,\n\t\ttype ChartConfig\n\t} from '$lib/registry/charts/layerchart-bar-chart/index.js';\n\tconst data = [\n\t\t{ month: 'Jan', desktop: 42, mobile: 25 },\n\t\t{ month: 'Feb', desktop: 76, mobile: 54 },\n\t\t{ month: 'Mar', desktop: 51, mobile: 38 },\n\t\t{ month: 'Apr', desktop: 84, mobile: 62 },\n\t\t{ month: 'May', desktop: 63, mobile: 47 },\n\t\t{ month: 'Jun', desktop: 91, mobile: 70 }\n\t];\n\tconst config = {\n\t\tdesktop: {\n\t\t\tlabel: 'Desktop',\n\t\t\tcolors: { light: ['#047857', '#34d399'], dark: ['#10b981', '#6ee7b7'] }\n\t\t},\n\t\tmobile: { label: 'Mobile', colors: { light: ['#be123c'], dark: ['#f43f5e'] } }\n\t} satisfies ChartConfig;\n</script>\n\n<EvilBarChart\n\t{data}\n\t{config}\n\txDataKey=\"month\"\n\trenderStyle=\"dither\"\n\tbloom=\"low\"\n\tclass=\"h-full w-full p-4\"\n>\n\t<EvilBarChart.Grid /><EvilBarChart.XAxis dataKey=\"month\" /><EvilBarChart.Legend\n\t\tisClickable\n\t/><EvilBarChart.Tooltip />\n\t<EvilBarChart.Bar dataKey=\"desktop\" ditherVariant=\"gradient\" isClickable enableHoverHighlight />\n\t<EvilBarChart.Bar dataKey=\"mobile\" ditherVariant=\"hatched\" isClickable enableHoverHighlight />\n</EvilBarChart>\n",
+      "type": "registry:block"
+    }
+  ]
+}
