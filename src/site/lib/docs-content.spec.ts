@@ -41,6 +41,16 @@ describe('copyable documentation', () => {
 		expect(installation).not.toContain('layerchart.github.io');
 	});
 
+	it('publishes the exact Context7 library ID for coding agents', () => {
+		const installation = pageBody('/docs/layerchart/installation');
+		const readme = readFileSync('README.md', 'utf8');
+
+		for (const content of [installation, readme]) {
+			expect(content).toContain('/mielsense/evilcharts-sv');
+			expect(content).toContain('https://context7.com/mielsense/evilcharts-sv');
+		}
+	});
+
 	it('carries the corrected shared docs into the full agent snapshot', () => {
 		const full = generateLlmsFullTxt();
 

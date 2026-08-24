@@ -53,3 +53,15 @@ Add a chart with the CLI. Replace `{chart-name}` with a registry name such as
     </StepContent>
   </Step>
 </Steps>
+
+## Use with AI agents
+
+Evil Charts for Svelte is available through Context7 MCP. Give your coding agent the exact library
+ID <code>/mielsense/evilcharts-sv</code> so it reads this Svelte port instead of the original React
+project.
+
+```text
+Use Context7 library /mielsense/evilcharts-sv for EvilCharts Svelte docs.
+```
+
+<Link href="https://context7.com/mielsense/evilcharts-sv" _blank>Open the Evil Charts for Svelte Context7 page</Link>.

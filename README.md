@@ -168,14 +168,18 @@ A request to any `/docs/…` page with `Accept: text/markdown` is served its mar
 
 ### Context7
 
-The repository includes [`context7.json`](./context7.json), and the documentation source lives in
-`content/docs`. To make the library available through Context7, submit
-`https://github.com/mielsense/evilcharts-sv` at <https://context7.com/add-library>. Context7 assigns
-GitHub libraries an `/owner/repository` ID, so this repository should resolve as
-`/mielsense/evilcharts-sv` after Context7 finishes indexing it. Submission and indexing happen on
-Context7; committing the configuration file does not publish the library by itself.
+Evil Charts for Svelte is indexed on Context7 as
+[`/mielsense/evilcharts-sv`](https://context7.com/mielsense/evilcharts-sv). If your coding agent has
+Context7 MCP connected, give it that library ID directly:
 
-Until then, models can read <https://evilcharts-sv.vercel.app/llms.txt> for the page index,
+```text
+Use Context7 library /mielsense/evilcharts-sv for EvilCharts Svelte docs.
+```
+
+The explicit ID selects this Svelte port instead of the original React project. The repository's
+[`context7.json`](./context7.json) controls what Context7 indexes from `content/docs`.
+
+Agents can also read <https://evilcharts-sv.vercel.app/llms.txt> for the page index,
 <https://evilcharts-sv.vercel.app/llms-full.txt> for the combined documentation, or connect to the
 JSON-RPC endpoint at <https://evilcharts-sv.vercel.app/mcp>.
 
