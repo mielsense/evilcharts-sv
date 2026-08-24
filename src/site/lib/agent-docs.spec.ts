@@ -8,6 +8,7 @@ import {
 } from './agent-docs.js';
 import { PROVIDERS, PROVIDER_META } from '$site/globals/constants/providers.js';
 import { getPages } from './source.js';
+import { absoluteUrl, SITE_URL } from './utils.js';
 
 const available = PROVIDERS.filter((id) => PROVIDER_META[id].available);
 
@@ -46,7 +47,7 @@ describe('generateLlmsTxt', () => {
 	it('opens with the index heading and the Start Here block', () => {
 		expect(text.startsWith('# EvilCharts Documentation')).toBe(true);
 		expect(text).toContain('## Start Here');
-		expect(text).toContain('](https://evilcharts.com/docs.md)');
+		expect(text).toContain(`](${absoluteUrl('/docs.md')})`);
 	});
 
 	it('groups each provider into Setup, Chart Components and UI Components', () => {
@@ -78,7 +79,7 @@ describe('generateLlmsTxt', () => {
 
 	it('links every URL absolutely, because agents read it detached from the site', () => {
 		for (const [, url] of text.matchAll(/\]\(([^)]+)\)/g)) {
-			expect(url.startsWith('https://')).toBe(true);
+			expect(url.startsWith(SITE_URL), url).toBe(true);
 		}
 	});
 
@@ -99,7 +100,7 @@ describe('generateLlmsFullTxt', () => {
 	it('embeds one section per agent page', () => {
 		expect(text.startsWith('# EvilCharts Full Documentation')).toBe(true);
 		for (const page of getAgentDocPages()) {
-			expect(text, page.url).toContain(`Source: https://evilcharts.com${page.url}`);
+			expect(text, page.url).toContain(`Source: ${absoluteUrl(page.url)}`);
 		}
 	});
 
@@ -115,7 +116,7 @@ describe('generateSkillMd', () => {
 
 	it('carries the frontmatter an agent-skill loader reads', () => {
 		expect(text.startsWith('---\nname: evilcharts')).toBe(true);
-		expect(text).toContain('source: https://evilcharts.com/llms.txt');
+		expect(text).toContain(`source: ${absoluteUrl('/llms.txt')}`);
 	});
 
 	it('names the substituted dependency and CLI', () => {

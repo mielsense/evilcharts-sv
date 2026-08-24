@@ -100,7 +100,7 @@ export function generateLlmsTxt() {
 
 		return `## ${meta.name}
 
-> ${meta.tagline}. Install with \`npx shadcn-svelte@latest add https://evilcharts.com/r/{component}.json\`.
+> ${meta.tagline}. Install with \`npx shadcn-svelte@latest add ${absoluteUrl('/r/{component}.json')}\`.
 
 ### Setup
 ${renderLinks(guides)}
@@ -176,7 +176,7 @@ https://github.com/legions-developer/evilcharts by Gurbinder; for a React projec
 2. For setup, follow \`/docs/${AGENT_PROVIDER}/installation.md\`.
 3. For chart usage, read the matching chart page such as \`/docs/${AGENT_PROVIDER}/bar-chart.md\`.
 4. For shared options, read \`/docs/chart-config.md\`, \`/docs/${AGENT_PROVIDER}/ui/tooltip.md\`, \`/docs/${AGENT_PROVIDER}/ui/legend.md\`, and \`/docs/${AGENT_PROVIDER}/ui/background.md\`.
-5. Add components with the shadcn-svelte CLI pattern documented by EvilCharts: \`npx shadcn-svelte@latest add https://evilcharts.com/r/{chart-name}.json\`.
+5. Add components with the shadcn-svelte CLI pattern documented by EvilCharts: \`npx shadcn-svelte@latest add ${absoluteUrl('/r/{chart-name}.json')}\`.
 
 ## Constraints
 

@@ -114,6 +114,17 @@ pnpm registry:fresh   # clean, then rebuild
 with the source. `registry.json` and `src/lib/registry/__index__.ts` are tracked; `static/r/` is
 generated and gitignored.
 
+## Deploying
+
+The site is built with `@sveltejs/adapter-vercel` and is almost entirely prerendered — `/mcp`'s
+`POST` is the one dynamic route. Any static-capable host works; the adapter is the only thing to
+swap.
+
+Set `PUBLIC_APP_URL` to the deployment's own origin. It backs the canonical tags, the OG image URLs,
+the sitemap and every absolute URL the agent surfaces publish, so leaving it unset on a custom
+domain would point agents at the wrong registry. On Vercel, `PUBLIC_VERCEL_URL` is used as a
+fallback so previews are self-consistent. See [`.env.example`](./.env.example).
+
 ## Repository map
 
 ```
