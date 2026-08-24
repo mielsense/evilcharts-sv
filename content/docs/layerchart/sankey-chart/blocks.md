@@ -1,22 +1,17 @@
 ---
 title: Sankey Blocks
-description: Installable LayerChart Sankey chart recipes for Svelte 5.
+description: Ready-made Sankey dashboards, ported to Svelte 5 and LayerChart.
 image: /og/sankey-chart.png
 ---
 
-Start with a complete flow diagram, then edit its nodes, links, labels, and link treatment.
+These blocks keep the surrounding portfolio and pipeline metrics from the original EvilCharts designs.
 
-## Gradient flow
+## Fund Allocation
 
-<ComponentPreview class="mb-4" title="Gradient flow" name="ex-gradient-colors-sankey-chart" />
-<CliBlock commands={["@evilcharts/ex-gradient-colors-sankey-chart"]} />
+<ComponentPreview class="mb-4" title="Fund Allocation" name="allocation-sankey-chart" />
+<CliBlock commands={["@evilcharts/allocation-sankey-chart"]} />
 
-## Labeled nodes
+## Revenue Pipeline
 
-<ComponentPreview class="mb-4" title="Labeled nodes" name="ex-solid-labeled-nodes-sankey-chart" />
-<CliBlock commands={["@evilcharts/ex-solid-labeled-nodes-sankey-chart"]} />
-
-## Source-colored links
-
-<ComponentPreview class="mb-4" title="Source-colored links" name="ex-source-link-variant-sankey-chart" />
-<CliBlock commands={["@evilcharts/ex-source-link-variant-sankey-chart"]} />
+<ComponentPreview class="mb-4" title="Revenue Pipeline" name="pipeline-sankey-chart" />
+<CliBlock commands={["@evilcharts/pipeline-sankey-chart"]} />

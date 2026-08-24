@@ -1,22 +1,22 @@
 ---
 title: Radial Blocks
-description: Installable LayerChart radial chart recipes for Svelte 5.
+description: Ready-made radial dashboards, ported to Svelte 5 and LayerChart.
 image: /og/radial-chart.png
 ---
 
-These blocks cover full and partial radial layouts. Install one and edit the generated Svelte file.
+These blocks preserve the metrics, counters, labels, and responsive composition of the original EvilCharts designs.
 
-## Multi-ring radial
+## Monthly Budget
 
-<ComponentPreview class="mb-4" title="Multi-ring radial" name="ex-radial-chart" />
-<CliBlock commands={["@evilcharts/ex-radial-chart"]} />
+<ComponentPreview class="mb-4" title="Monthly Budget" name="budget-radial-chart" />
+<CliBlock commands={["@evilcharts/budget-radial-chart"]} />
 
-## Semi radial
+## Ride Summary
 
-<ComponentPreview class="mb-4" title="Semi radial" name="ex-semi-variant-radial-chart" />
-<CliBlock commands={["@evilcharts/ex-semi-variant-radial-chart"]} />
+<ComponentPreview class="mb-4" title="Ride Summary" name="ride-radial-chart" />
+<CliBlock commands={["@evilcharts/ride-radial-chart"]} />
 
-## Gradient rings
+## Cache Tiers
 
-<ComponentPreview class="mb-4" title="Gradient rings" name="ex-gradient-colors-radial-chart" />
-<CliBlock commands={["@evilcharts/ex-gradient-colors-radial-chart"]} />
+<ComponentPreview class="mb-4" title="Cache Tiers" name="cache-tiers-radial-chart" />
+<CliBlock commands={["@evilcharts/cache-tiers-radial-chart"]} />

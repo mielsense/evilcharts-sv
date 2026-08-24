@@ -1,22 +1,12 @@
 ---
 title: Radar Blocks
-description: Installable LayerChart radar chart recipes for Svelte 5.
+description: Ready-made radar dashboards for Svelte 5 and LayerChart.
 image: /og/radar-chart.png
 ---
 
-These registry items cover the radar chart's strongest visual treatments without changing its API.
+The original EvilCharts block catalog has no radar dashboard, so this Svelte-only block extends the same composed visual language.
 
-## Circular grid
+## Capability Map
 
-<ComponentPreview class="mb-4" title="Circular grid" name="ex-circle-grid-radar-chart" />
-<CliBlock commands={["@evilcharts/ex-circle-grid-radar-chart"]} />
-
-## Glowing radar
-
-<ComponentPreview class="mb-4" title="Glowing radar" name="ex-glowing-radar-chart" />
-<CliBlock commands={["@evilcharts/ex-glowing-radar-chart"]} />
-
-## Ordered dither
-
-<ComponentPreview class="mb-4" title="Ordered dither" name="ex-dither-radar-chart" />
-<CliBlock commands={["@evilcharts/ex-dither-radar-chart"]} />
+<ComponentPreview class="mb-4" title="Capability Map" name="capability-radar-chart" />
+<CliBlock commands={["@evilcharts/capability-radar-chart"]} />

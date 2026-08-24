@@ -1,22 +1,27 @@
 ---
 title: Pie Blocks
-description: Installable LayerChart pie and donut chart recipes for Svelte 5.
+description: Ready-made pie and donut dashboards, ported to Svelte 5 and LayerChart.
 image: /og/pie-chart.png
 ---
 
-Install a complete pie recipe, then change its data, labels, and radii in the copied component.
+These composed blocks preserve the original EvilCharts dashboard designs while using the Svelte 5 chart API.
 
-## Donut breakdown
+## Market Share
 
-<ComponentPreview class="mb-4" title="Donut breakdown" name="ex-donut-pie-chart" />
-<CliBlock commands={["@evilcharts/ex-donut-pie-chart"]} />
+<ComponentPreview class="mb-4" title="Market Share" name="market-share-pie-chart" />
+<CliBlock commands={["@evilcharts/market-share-pie-chart"]} />
 
-## Padded sectors
+## Progress Rings
 
-<ComponentPreview class="mb-4" title="Padded sectors" name="ex-padded-pie-chart" />
-<CliBlock commands={["@evilcharts/ex-padded-pie-chart"]} />
+<ComponentPreview class="mb-4" title="Progress Rings" name="progress-rings-pie-chart" />
+<CliBlock commands={["@evilcharts/progress-rings-pie-chart"]} />
 
-## Dithered donut
+## Revenue Mix
 
-<ComponentPreview class="mb-4" title="Dithered donut" name="ex-dither-pie-chart" />
-<CliBlock commands={["@evilcharts/ex-dither-pie-chart"]} />
+<ComponentPreview class="mb-4" title="Revenue Mix" name="revenue-mix-pie-chart" />
+<CliBlock commands={["@evilcharts/revenue-mix-pie-chart"]} />
+
+## Reliability Score
+
+<ComponentPreview class="mb-4" title="Reliability Score" name="reliability-score-pie-chart" />
+<CliBlock commands={["@evilcharts/reliability-score-pie-chart"]} />
