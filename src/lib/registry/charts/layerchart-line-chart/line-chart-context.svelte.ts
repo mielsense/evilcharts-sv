@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
 import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
-import { ChartSlots } from './chart-slots.svelte.js';
+import { ChartSlots } from '../../ui/layerchart-chart/chart-slots.svelte.js';
 import type { LineAnimationType, CurveType } from './types.js';
 
 const LINE_CHART_KEY = Symbol('evilcharts.line-chart');
@@ -12,7 +12,7 @@ type Options = {
 	data: () => Record<string, unknown>[];
 	/** Resolved category key for the x scale. */
 	xKey: () => string | undefined;
-	/** Series keys rendered by the chart, in config order. */
+	/** Series keys rendered by mounted `<Line />` marks, in composition order. */
 	seriesKeys: () => string[];
 	curveType: () => CurveType;
 	animationType: () => LineAnimationType;
@@ -32,6 +32,8 @@ type Options = {
 	 * state on the root avoids a circular dependency between `xKey` and this context.
 	 */
 	registerXAxisDataKey: (token: string, dataKey: string | undefined) => void;
+	/** Called by each `<Line />` so geometry, legends, and tooltips use rendered marks only. */
+	registerSeries: (token: symbol, dataKey: string, present: boolean) => void;
 	/**
 	 * Called by `<XAxis />` / `<YAxis />` so the root can reserve plot-area space for them.
 	 *
@@ -39,7 +41,7 @@ type Options = {
 	 * a 30px band for an `<XAxis>` and a 60px gutter for a `<YAxis>`). LayerChart takes `padding`
 	 * as a single explicit value, so the axes announce themselves and the root derives it.
 	 */
-	registerAxis: (token: string, axis: 'x' | 'y', present: boolean) => void;
+	registerAxis: (token: string, axis: 'x' | 'y', present: boolean, size?: number) => void;
 };
 
 /**
@@ -105,8 +107,12 @@ export class LineChartContext {
 		this.#options.registerXAxisDataKey(token, dataKey);
 	};
 
-	registerAxis = (token: string, axis: 'x' | 'y', present: boolean) => {
-		this.#options.registerAxis(token, axis, present);
+	registerSeries = (token: symbol, dataKey: string, present: boolean) => {
+		this.#options.registerSeries(token, dataKey, present);
+	};
+
+	registerAxis = (token: string, axis: 'x' | 'y', present: boolean, size?: number) => {
+		this.#options.registerAxis(token, axis, present, size);
 	};
 }
 

@@ -10,9 +10,12 @@ describe('canonical special-chart escape-hatch props', () => {
 				container.querySelector('[data-test="pie"] .lc-pie-arc')?.getAttribute('data-parity-prop')
 			)
 			.toBe('pie');
-		expect(
-			container.querySelector('[data-test="pie"] text')?.getAttribute('data-parity-label')
-		).toBe('pie-label');
+		await expect
+			.poll(
+				() => container.querySelector('[data-test="pie"] text')?.getAttribute('data-parity-label'),
+				{ timeout: 3_000 }
+			)
+			.toBe('pie-label');
 	});
 
 	it('forwards radialBarProps', async () => {

@@ -15,8 +15,7 @@
 	const defaultRow = $derived(
 		slot?.defaultIndex === undefined ? undefined : chart.data[slot.defaultIndex]
 	);
-	// The hovered row wins over `defaultIndex`, for the same reason as the tooltip box
-	// (DEVIATIONS A-12).
+	// The hovered row wins over `defaultIndex`, so pointer movement is not pinned to the initial row.
 	const cursorRow = $derived(layer.tooltip.data ?? defaultRow);
 </script>
 

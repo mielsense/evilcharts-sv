@@ -56,6 +56,11 @@
 
 	const slots = setLineSlotsContext();
 
+	$effect.pre(() => {
+		chart.registerSeries(id, dataKey);
+		return () => chart.registerSeries(id, undefined);
+	});
+
 	const resolvedCurve = $derived(curveType ?? chart.curveType);
 
 	// The reveal is an animated SVG mask — heavier than a static chart — so

@@ -54,7 +54,11 @@
 	// the way Recharts does.
 	$effect.pre(() => {
 		chart.registerBar(id, dataKey);
-		return () => chart.registerBar(id, undefined);
+		chart.registerSeries(id, dataKey);
+		return () => {
+			chart.registerBar(id, undefined);
+			chart.registerSeries(id, undefined);
+		};
 	});
 
 	const isSelected = $derived(chart.selectedDataKey === null || chart.selectedDataKey === dataKey);
@@ -79,7 +83,7 @@
 	 * shape Recharts' arithmetic assumes. `getBarPositions` then divides it exactly as Recharts
 	 * does and the result is applied as insets, rather than letting LayerChart nest a second band
 	 * scale. Doing it here rather than on the chart also keeps the lines on the full category
-	 * width, as Recharts does. See plans/DEVIATIONS.md B-1b.
+	 * width, as Recharts does.
 	 */
 	const bandSize = $derived(layer.xScale.bandwidth?.() ?? 0);
 
@@ -123,7 +127,6 @@
 	 *
 	 * A `{const}` inside the keyed `{#each}` below does not re-derive when the selection changes,
 	 * so the per-row values are computed here where they track it properly.
-	 * See plans/DEVIATIONS.md A-6.
 	 */
 	const rows = $derived(
 		chart.data.map((row, index) => ({

@@ -8,8 +8,7 @@ const BRUSH_SLOT_KEY = Symbol('evilcharts.brush-slot');
  *
  * The reference pulls the `<Brush>` element out of `children` with
  * `React.Children.toArray(...).find(...)`. Svelte cannot inspect a snippet, so the slot
- * registers itself into this context instead — the config-slot pattern from
- * plans/SPEC.md §4.2. Every cartesian chart root creates one.
+ * registers itself into this context instead. Every cartesian chart root creates one.
  */
 export class BrushSlotRegistry {
 	#token: string | null = null;
@@ -24,7 +23,7 @@ export class BrushSlotRegistry {
 	 * Registration is keyed by a per-instance token: LayerChart's `<Chart>` wraps its content in
 	 * `{#key isMounted}`, so the subtree remounts once on mount and the old instance's teardown can
 	 * run after the new instance has registered. Ignoring a stale teardown keeps the live
-	 * registration intact. See plans/DEVIATIONS.md A-3.
+	 * registration intact.
 	 */
 	register(token: string, props: BrushProps) {
 		this.#token = token;

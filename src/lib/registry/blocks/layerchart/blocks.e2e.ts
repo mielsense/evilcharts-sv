@@ -136,4 +136,24 @@ test.describe('EvilCharts blocks', () => {
 		// `$47K`, not `47` — the block passes a custom formatter.
 		await expect(page.locator('.min-w-32').first()).toContainText('$38K');
 	});
+
+	test('the monospace block expands bars with the reference spring', async ({ page }) => {
+		await open(page, 'b-monospace-bar-chart');
+		const painted = plot(page).locator('rect:not([fill="transparent"])').first();
+		const hit = plot(page).locator('rect[fill="transparent"]').first();
+
+		expect(await painted.evaluate((node) => getComputedStyle(node).transitionDuration)).toBe('0s');
+		const box = (await hit.boundingBox())!;
+		await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+		await page.waitForTimeout(35);
+		const early = await painted.evaluate(
+			(node) => new DOMMatrixReadOnly(getComputedStyle(node).transform).a
+		);
+		expect(early).toBeGreaterThan(0.1);
+		expect(early).toBeLessThan(1);
+		await page.waitForTimeout(700);
+		expect(
+			await painted.evaluate((node) => new DOMMatrixReadOnly(getComputedStyle(node).transform).a)
+		).toBeCloseTo(1, 1);
+	});
 });

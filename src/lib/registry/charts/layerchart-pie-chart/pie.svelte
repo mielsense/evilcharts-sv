@@ -8,7 +8,6 @@
 	 */
 	import { Arc, getChartContext } from 'layerchart';
 	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
-	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
 	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import type { Snippet } from 'svelte';
 	import ColorGradient from './defs/radial-color-gradient.svelte';
@@ -16,7 +15,7 @@
 	import LoadingSector from './loading/loading-sector.svelte';
 	import { usePieChart } from './pie-chart-context.svelte.js';
 	import { setPieSlotsContext } from './pie-slots.svelte.js';
-	import { getSectors } from './sectors.js';
+	import { getSectors, interpolateSectors, type PieSector } from './sectors.js';
 	import { untrack } from 'svelte';
 	import {
 		ANIMATION_BEGIN,
@@ -87,31 +86,10 @@
 	 * final span together, so the pie unrolls from its start angle. Same begin, duration and
 	 * easing curve as `<Pie animationBegin animationDuration animationEasing>`.
 	 */
-	const progress = useMotionValue(0);
+	const progress = useMotionValue(1);
+	let sourceSectors = $state<PieSector[]>([]);
+	let targetSectors = $state<PieSector[]>([]);
 	let previousLoading: boolean | undefined;
-
-	// `untrack`: `animate` reads the motion value, and a tracked read would re-run this effect
-	// on every frame — each run restarting the tween, so it crawled instead of playing once.
-	$effect(() => {
-		const loadingNow = chart.isLoading;
-		const action = polarIntroAction(previousLoading, loadingNow, shouldReduceMotion.current);
-		previousLoading = loadingNow;
-		let controls: ReturnType<typeof animate> | undefined;
-
-		untrack(() => {
-			if (action === 'reset') progress.set(0);
-			if (action === 'finish') progress.set(1);
-			if (action === 'animate') {
-				progress.set(0);
-				controls = animate(progress, 1, {
-					delay: ANIMATION_BEGIN / 1000,
-					duration: ANIMATION_DURATION / 1000,
-					ease: ANIMATION_EASE
-				});
-			}
-		});
-		return () => controls?.stop();
-	});
 
 	/**
 	 * The skeleton's equal sectors, re-keyed onto the chart's own name/value keys so the same
@@ -124,16 +102,63 @@
 		}))
 	);
 
-	const rawSectors = $derived(
+	const resolvedSectors = $derived(
 		getSectors({
 			rows: chart.isLoading ? loadingRows : chart.data,
 			dataKey: chart.dataKey,
 			startAngle,
 			endAngle,
-			paddingAngle,
-			// The skeleton is a static ring; only the real pie sweeps in.
-			progress: chart.isLoading ? 1 : progress.current
+			paddingAngle
 		})
+	);
+
+	// Recharts animates every change to the pie's sector geometry, not only the first render. Keep
+	// the currently painted sectors as the next animation's source so interrupted updates remain
+	// continuous. `untrack` prevents per-frame motion-value reads from restarting the tween.
+	$effect(() => {
+		const loadingNow = chart.isLoading;
+		const nextSectors = resolvedSectors;
+		const reduceMotion = shouldReduceMotion.current;
+		let controls: ReturnType<typeof animate> | undefined;
+
+		untrack(() => {
+			if (loadingNow) {
+				sourceSectors = nextSectors;
+				targetSectors = nextSectors;
+				progress.set(1);
+			} else {
+				const entering = previousLoading === undefined || previousLoading;
+				const currentSectors = entering
+					? []
+					: interpolateSectors(sourceSectors, targetSectors, progress.get());
+
+				sourceSectors = currentSectors;
+				targetSectors = nextSectors;
+
+				if (reduceMotion) {
+					progress.set(1);
+				} else {
+					progress.set(0);
+					controls = animate(progress, 1, {
+						delay: ANIMATION_BEGIN / 1000,
+						duration: ANIMATION_DURATION / 1000,
+						ease: ANIMATION_EASE
+					});
+				}
+			}
+			previousLoading = loadingNow;
+		});
+
+		return () => controls?.stop();
+	});
+
+	const rawSectors = $derived(
+		chart.isLoading
+			? resolvedSectors
+			: interpolateSectors(sourceSectors, targetSectors, progress.current)
+	);
+	const isAnimating = $derived(
+		!chart.isLoading && !shouldReduceMotion.current && progress.current < 1
 	);
 
 	/**
@@ -141,7 +166,7 @@
 	 *
 	 * A declaration tag inside the keyed `{#each}` below would not re-derive when the row at an
 	 * index changes, so the name — which drives the fill, the glow and the click target — is
-	 * resolved here. See plans/DEVIATIONS.md A-6c.
+	 * resolved here.
 	 */
 	const sectors = $derived(
 		rawSectors.map((sector) => ({ ...sector, name: String(sector.row[chart.nameKey]) }))
@@ -162,7 +187,7 @@
 	 * Recharts' `<LabelList>` defaults a polar view box to `position="middle"`: the sector's
 	 * mid-angle at `(innerRadius + outerRadius) / 2`. That is computed here rather than read from
 	 * `<Arc>`'s `centroid` snippet parameter, which does not track the intro sweep — it stays at
-	 * the angles the arc had on its first frame. See plans/DEVIATIONS.md D-2.
+	 * the angles the arc had on its first frame.
 	 */
 	const radii = $derived(
 		resolveRadii(resolvedInner, resolvedOuter, Math.min(layer.width, layer.height) / 2)
@@ -177,6 +202,12 @@
 		if (!isClickable) return;
 		// Clicking the selected sector clears the selection, otherwise selects it
 		chart.selectSector(chart.selectedSector === sectorName ? null : sectorName);
+	}
+
+	function selectFromKeyboard(event: KeyboardEvent, sectorName: string) {
+		if (!isClickable || (event.key !== 'Enter' && event.key !== ' ')) return;
+		event.preventDefault();
+		select(sectorName);
 	}
 </script>
 
@@ -199,6 +230,7 @@
 			class={['lc-pie-arc transition-opacity duration-200', isClickable && 'cursor-pointer']
 				.filter(Boolean)
 				.join(' ')}
+			data-evil-animation-state={isAnimating ? 'running' : 'idle'}
 			startAngle={toArcAngle(sector.startAngle)}
 			endAngle={toArcAngle(sector.endAngle)}
 			innerRadius={resolvedInner}
@@ -218,12 +250,19 @@
 			data={sector.row}
 			tooltip
 			motion="none"
+			role={isClickable ? 'button' : 'presentation'}
+			tabindex={isClickable ? 0 : undefined}
+			aria-label={isClickable
+				? `${sector.name}: ${String(sector.row[chart.dataKey] ?? '')}`
+				: undefined}
+			aria-pressed={isClickable ? chart.selectedSector === sector.name : undefined}
+			onkeydown={(event: KeyboardEvent) => selectFromKeyboard(event, sector.name)}
 			onclick={() => select(sector.name)}
 			{...forwardedPieProps}
 		/>
 	{/each}
 
-	{#if label}
+	{#if label && !isAnimating}
 		{#each sectors as sector, index (sector.index)}
 			<!--
 				`dy` matches the `0.355em` Recharts' `<Text>` emits for a single line with

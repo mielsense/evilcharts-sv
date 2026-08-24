@@ -15,8 +15,7 @@ type RootComponent = typeof Root;
 // writes <EvilAreaChart.Area/>, <EvilAreaChart.Tooltip/>, … from a single import
 // — no colliding named marker exports when several charts share one file.
 //
-// The explicit annotation is required for `svelte-package` to emit types; see
-// plans/DEVIATIONS.md F-1.
+// The explicit annotation is required for `svelte-package` to emit types.
 export const EvilAreaChart: RootComponent & {
 	Area: typeof Area;
 	Dot: typeof Dot;
@@ -46,5 +45,5 @@ export type {
 	StackType,
 	StrokeVariant
 } from './types.js';
-export type { ChartConfig } from '../../ui/layerchart-chart/index.js';
+export type { ChartAccessibility, ChartConfig } from '../../ui/layerchart-chart/index.js';
 export type { DitherBloom, DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';

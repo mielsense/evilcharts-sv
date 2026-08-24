@@ -207,6 +207,18 @@ test.describe('EvilPieChart examples', () => {
 		expect(after.slice(1).every((o) => o === 0.15)).toBe(true);
 	});
 
+	test('keyboard activation selects and clears a sector', async ({ page }) => {
+		await open(page, 'ex-pie-chart');
+		const sector = plot(page).locator('.lc-pie-arc[role="button"]').first();
+		await sector.focus();
+		await page.keyboard.press('Enter');
+		await expect(sector).toHaveAttribute('aria-pressed', 'true');
+		expect(Number(await sectors(page).nth(1).getAttribute('opacity'))).toBe(0.15);
+
+		await page.keyboard.press('Space');
+		await expect(sector).toHaveAttribute('aria-pressed', 'false');
+	});
+
 	test('clicking a legend entry dims the other sectors', async ({ page }) => {
 		await open(page, 'ex-pie-chart');
 		const entries = page.locator('.select-none > button');

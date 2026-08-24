@@ -4,9 +4,12 @@
 	import { EvilComposedChart } from './layerchart-composed-chart/index.js';
 	import { EvilLineChart } from './layerchart-line-chart/index.js';
 	import { EvilPieChart } from './layerchart-pie-chart/index.js';
+	import { EvilRadarChart } from './layerchart-radar-chart/index.js';
+	import { EvilRadialChart } from './layerchart-radial-chart/index.js';
+	import { EvilSankeyChart, type SankeyData } from './layerchart-sankey-chart/index.js';
 	import type { ChartConfig } from '../ui/layerchart-chart/index.js';
 
-	type Family = 'area' | 'line' | 'bar' | 'composed' | 'pie';
+	type Family = 'area' | 'line' | 'bar' | 'composed' | 'pie' | 'radar' | 'radial' | 'sankey';
 	let { family }: { family: Family } = $props();
 
 	const cartesianData = [
@@ -25,6 +28,19 @@
 	const pieConfig = {
 		chrome: { label: 'Chrome', colors: { light: ['#3b82f6'] } },
 		safari: { label: 'Safari', colors: { light: ['#10b981'] } }
+	} satisfies ChartConfig;
+	const radarData = [
+		{ skill: 'Design', desktop: 80, mobile: 55 },
+		{ skill: 'Code', desktop: 65, mobile: 75 },
+		{ skill: 'Research', desktop: 70, mobile: 60 }
+	];
+	const sankeyData = {
+		nodes: [{ name: 'Alpha' }, { name: 'Beta' }],
+		links: [{ source: 0, target: 1, value: 10 }]
+	} satisfies SankeyData;
+	const sankeyConfig = {
+		Alpha: { label: 'Alpha', colors: { light: ['#3b82f6'] } },
+		Beta: { label: 'Beta', colors: { light: ['#10b981'] } }
 	} satisfies ChartConfig;
 
 	let loading = $state(true);
@@ -89,7 +105,7 @@
 			<EvilComposedChart.Bar dataKey="desktop" />
 			<EvilComposedChart.Line dataKey="mobile" />
 		</EvilComposedChart>
-	{:else}
+	{:else if family === 'pie'}
 		<EvilPieChart
 			data={pieData}
 			dataKey="visitors"
@@ -102,5 +118,28 @@
 			<EvilPieChart.Tooltip />
 			<EvilPieChart.Pie isClickable />
 		</EvilPieChart>
+	{:else if family === 'radar'}
+		<EvilRadarChart data={radarData} config={cartesianConfig} isLoading={loading} class="h-full">
+			<EvilRadarChart.PolarAngleAxis dataKey="skill" />
+			<EvilRadarChart.Legend isClickable />
+			<EvilRadarChart.Radar dataKey="desktop" isClickable />
+			<EvilRadarChart.Radar dataKey="mobile" isClickable />
+		</EvilRadarChart>
+	{:else if family === 'radial'}
+		<EvilRadialChart
+			data={pieData}
+			nameKey="browser"
+			config={pieConfig}
+			isLoading={loading}
+			class="h-full"
+		>
+			<EvilRadialChart.Legend isClickable />
+			<EvilRadialChart.RadialBar dataKey="visitors" isClickable />
+		</EvilRadialChart>
+	{:else}
+		<EvilSankeyChart data={sankeyData} config={sankeyConfig} isLoading={loading} class="h-full">
+			<EvilSankeyChart.Node isClickable />
+			<EvilSankeyChart.Link />
+		</EvilSankeyChart>
 	{/if}
 </div>

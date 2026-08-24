@@ -1,6 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
-import { ChartSlots } from './chart-slots.svelte.js';
+import { ChartSlots } from '../../ui/layerchart-chart/chart-slots.svelte.js';
 import type { RadialVariant } from './types.js';
 
 const RADIAL_CHART_KEY = Symbol('evilcharts.radial-chart');
@@ -15,7 +15,7 @@ type Options = {
 	 * Value key, pushed up by the rendered `<RadialBar dataKey>`.
 	 *
 	 * Recharts reads it off the bar; the tooltip needs it too, so the bar registers it rather than
-	 * the root guessing. Token-keyed against LayerChart's mount-time remount (DEVIATIONS A-3).
+	 * the root guessing. The token prevents a stale teardown from clearing a remounted bar.
 	 */
 	valueKey: () => string | undefined;
 	registerValueKey: (token: string, dataKey: string | undefined) => void;

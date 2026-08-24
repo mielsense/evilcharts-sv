@@ -1,6 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
-import { ChartSlots } from './chart-slots.svelte.js';
+import { ChartSlots } from '../../ui/layerchart-chart/chart-slots.svelte.js';
 import type { SankeyData } from './layout.js';
 
 const SANKEY_CHART_KEY = Symbol('evilcharts.sankey-chart');

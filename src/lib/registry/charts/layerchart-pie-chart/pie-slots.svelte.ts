@@ -13,8 +13,8 @@ export type LabelSlot = {
  * Registry for the `<Label />` child of one `<Pie />`.
  *
  * The reference resolves it with `React.Children.forEach`; Svelte cannot inspect a snippet, so
- * the slot registers itself here instead — the config-slot pattern from plans/SPEC.md §4.2.
- * Token-keyed so a remount's stale teardown cannot clear the live slot (DEVIATIONS.md A-3).
+ * the slot registers itself here instead. Tokens prevent a remount's stale teardown from clearing
+ * the live slot.
  */
 export class PieSlots {
 	#labelToken: string | null = null;

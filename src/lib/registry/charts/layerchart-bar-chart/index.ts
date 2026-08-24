@@ -13,8 +13,7 @@ type RootComponent = typeof Root;
 // writes <EvilBarChart.Bar/>, <EvilBarChart.Tooltip/>, … from a single import
 // — no colliding named marker exports when several charts share one file.
 //
-// The explicit annotation is required for `svelte-package` to emit types; see
-// plans/DEVIATIONS.md F-1.
+// The explicit annotation is required for `svelte-package` to emit types.
 export const EvilBarChart: RootComponent & {
 	Bar: typeof Bar;
 	XAxis: typeof XAxis;
@@ -26,5 +25,5 @@ export const EvilBarChart: RootComponent & {
 } = Object.assign(Root, { Bar, XAxis, YAxis, Grid, Tooltip, Legend, Brush });
 
 export type { BarAnimationType, BarLayout, BarVariant, StackType } from './types.js';
-export type { ChartConfig } from '../../ui/layerchart-chart/index.js';
+export type { ChartAccessibility, ChartConfig } from '../../ui/layerchart-chart/index.js';
 export type { DitherBloom, DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';

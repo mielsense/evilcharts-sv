@@ -85,6 +85,41 @@ test.describe('EvilAreaChart examples', () => {
 		expect(await lines.first().getAttribute('stroke-dasharray')).toBe('3 3');
 	});
 
+	test('uses the original five grid coordinates and exact point-scale bounds', async ({ page }) => {
+		await open(page, 'ex-area-chart');
+		const grid = plot(page).locator('.lc-grid-y-line');
+		await expect(grid).toHaveCount(5);
+		expect(
+			await grid.evaluateAll((lines) => lines.map((line) => Number(line.getAttribute('y1'))))
+		).toEqual([196, 147, 98, 49, 0]);
+
+		const path = plot(page).locator('path.lc-area-line').first();
+		const [start, end] = await path.evaluate((node) => {
+			const numbers = node
+				.getAttribute('d')!
+				.match(/-?\d+(?:\.\d+)?/g)!
+				.map(Number);
+			return [numbers[0], numbers.at(-2)];
+		});
+		expect(start).toBe(0);
+		expect(end).toBe(586);
+	});
+
+	test('matches the original ungrouped five-tick value axis', async ({ page }) => {
+		await open(page, 'ex-bump-curve-type-area-chart');
+		const valueAxis = plot(page).locator('.lc-axis.placement-left text');
+		const labels = await valueAxis.allTextContents();
+		expect(labels).toEqual(['0', '450', '900', '1350', '1800']);
+		const plotOrigin = await plot(page)
+			.locator('.lc-layout-svg-g')
+			.evaluate((node) => (node as SVGGraphicsElement).getScreenCTM()!.e);
+		const rightEdges = await valueAxis.evaluateAll(
+			(nodes, origin) => nodes.map((node) => node.getBoundingClientRect().right - origin),
+			plotOrigin
+		);
+		for (const edge of rightEdges) expect(edge).toBeCloseTo(-14, 0);
+	});
+
 	test('the animated dash moves without changing the stroke pattern or area fill', async ({
 		page
 	}) => {

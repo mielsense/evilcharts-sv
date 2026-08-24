@@ -4,7 +4,7 @@
 	 *
 	 * A component per element so each owns its own `ref`: motion-sv writes `ref` back into the props
 	 * proxy, which Svelte rejects unless it is bound, and a binding cannot be declared inside an
-	 * `{#each}`. See plans/DEVIATIONS.md B-3b.
+	 * `{#each}`.
 	 */
 	let {
 		x,

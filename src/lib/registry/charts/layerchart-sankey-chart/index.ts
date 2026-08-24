@@ -10,8 +10,7 @@ type RootComponent = typeof Root;
 // writes <EvilSankeyChart.Node/>, <EvilSankeyChart.Tooltip/>, … from a single import
 // — no colliding named marker exports when several charts share one file.
 //
-// The explicit annotation is required for `svelte-package` to emit types; see
-// plans/DEVIATIONS.md F-1.
+// The explicit annotation is required for `svelte-package` to emit types.
 export const EvilSankeyChart: RootComponent & {
 	Node: typeof Node;
 	NodeLabel: typeof NodeLabel;
@@ -26,4 +25,4 @@ export const EvilSankeyChart: RootComponent & {
 
 export type { LinkVariant, NodeLabelPosition } from './types.js';
 export type { SankeyData } from './layout.js';
-export type { ChartConfig } from '../../ui/layerchart-chart/index.js';
+export type { ChartAccessibility, ChartConfig } from '../../ui/layerchart-chart/index.js';

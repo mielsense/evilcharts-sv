@@ -10,6 +10,7 @@
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
 	import {
@@ -44,6 +45,7 @@
 		children,
 		class: className,
 		chartProps,
+		accessibility,
 		stackType = 'default',
 		layout = 'vertical',
 		barRadius = DEFAULT_BAR_RADIUS,
@@ -67,6 +69,7 @@
 		children: Snippet; // composed parts — <Bar />, <XAxis />, <Legend />, …
 		class?: string; // extra classes for the chart container
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		stackType?: StackType; // how multiple bars combine
 		layout?: BarLayout; // orientation of the bars
 		barRadius?: number; // default corner radius for every <Bar />
@@ -117,7 +120,7 @@
 	const brush = new EvilBrushState({ data: () => data as Record<string, unknown>[] });
 
 	// The <Brush> child is config-only: its presence turns the footer on. The reference pulls it
-	// out of `children`; Svelte registers it into this context instead (SPEC §4.2).
+	// out of `children`; Svelte registers it into this context instead.
 	const brushSlot = setBrushSlotContext();
 	const showBrush = $derived(brushSlot.present);
 
@@ -130,23 +133,22 @@
 	let registeredXKeyToken: string | null = null;
 
 	/** Data keys of the rendered `<Bar />` children, so a category can be divided between them. */
-	// `SvelteMap` for the same reason as `axesPresent` below (DEVIATIONS U-3).
+	// `SvelteMap` for the same reactive mutation behavior as `axesPresent` below.
 	const barKeyByToken = new SvelteMap<string, string>();
 	const barKeys = $derived([...barKeyByToken.values()]);
 
-	/** Which axes are rendered, so the plot reserves the space Recharts does (DEVIATIONS A-7). */
+	/** Which axes are rendered, so the plot reserves the space Recharts does. */
 	// `SvelteSet`, not a plain `Set` in `$state`: `$state` proxies objects and arrays but not
 	// `Map`/`Set`, so `.add()` / `.delete()` would not notify and the padding would never
-	// pick up an axis. See plans/DEVIATIONS.md U-3.
+	// pick up an axis.
 	const axesPresent = { x: new SvelteSet<string>(), y: new SvelteSet<string>() };
 
 	const CHART_MARGIN = 5; // Recharts' default <BarChart margin>
 	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
 	const Y_AXIS_WIDTH = 60; // Recharts' default <YAxis width>
 
-	// ChartContainer already contributes the legend's 8px gap; reserve the remaining 24px here so
-	// the effective Recharts edge-legend band is 32px inside the scale calculation.
-	const EDGE_LEGEND_HEIGHT = 24;
+	// Recharts reserves the legend wrapper's full 32px height inside the chart surface.
+	const EDGE_LEGEND_HEIGHT = 32;
 	let barContext: ReturnType<typeof setBarChartContext>;
 	const edgeLegendPlacement = $derived.by(() => {
 		if (isLoading || !barContext) return null;
@@ -164,17 +166,20 @@
 		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
 	});
 
-	const seriesKeys = $derived(Object.keys(config));
+	const configuredKeys = $derived(Object.keys(config));
+	// Recharts derives domains, legends and tooltips from rendered graphical children. Config is
+	// only presentation metadata, so unused config entries must never become phantom series.
+	const seriesKeys = $derived(barKeys);
 	const displayData = $derived(showBrush && !isLoading ? brush.visibleData : data);
 	const chartData = $derived(
 		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
 	);
 	const ditherAnimationDuration = $derived(500 + Math.max(0, chartData.length - 1) * 50);
 
-	/** Category key for the band scale. See plans/DEVIATIONS.md A-1. */
+	/** Category key for the band scale, resolved from the mounted axis before falling back to data. */
 	const fallbackXKey = $derived(
 		Object.keys(chartData[0] ?? {}).find(
-			(key) => !seriesKeys.includes(key) && key !== LOADING_BAR_DATA_KEY
+			(key) => !configuredKeys.includes(key) && key !== LOADING_BAR_DATA_KEY
 		)
 	);
 	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
@@ -188,7 +193,7 @@
 	// The baseline and `nice` rounding belong to the value axis, which the layout picks.
 	/**
 	 * Grouped bars are positioned by `getBarPositions` rather than by a nested band scale, so the
-	 * series only ever `overlap` here — see plans/DEVIATIONS.md B-1b.
+	 * series only ever `overlap` here.
 	 */
 	const seriesLayout = $derived(
 		isPercent ? ('stackExpand' as const) : isStacked ? ('stack' as const) : ('overlap' as const)
@@ -224,7 +229,7 @@
 			else barKeyByToken.set(token, key);
 		},
 		registerXAxisDataKey: (token, key) => {
-			// Ignore a stale teardown from LayerChart's mount-time remount (DEVIATIONS.md A-3).
+			// Ignore a stale teardown from LayerChart's mount-time remount.
 			if (key === undefined && registeredXKeyToken !== token) return;
 			registeredXKeyToken = key === undefined ? null : token;
 			registeredXKey = key;
@@ -236,7 +241,13 @@
 	});
 </script>
 
-<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
+<ChartContainer
+	{config}
+	{initialDimension}
+	{accessibility}
+	bind:dimension={chartDimension}
+	class={className}
+>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!-- The reference tracks pointer enter/leave on the chart to drive the hover highlight. -->

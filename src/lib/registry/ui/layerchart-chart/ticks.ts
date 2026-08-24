@@ -128,6 +128,40 @@ export function rechartsValueAxisTicks(scale: AnyScale, count = 5): unknown[] {
 	);
 }
 
+/** Recharts' hidden 6px tick length still contributes to an auto-sized Y-axis. */
+export const RECHARTS_VALUE_AXIS_TICK_LENGTH = 6;
+
+/**
+ * Resolves Recharts' `width="auto"` gutter from already measured tick labels.
+ *
+ * Recharts rounds the widest label to the nearest pixel, then adds the configured tick margin and
+ * the default 6px tick length (even when `tickLine={false}`). Keeping this as a pure helper makes
+ * the browser-only canvas measurement easy to test independently.
+ */
+export function rechartsAutoYAxisWidth(
+	labelWidths: number[],
+	tickMargin = 8,
+	tickLength = RECHARTS_VALUE_AXIS_TICK_LENGTH
+): number {
+	return Math.round(Math.max(0, ...labelWidths) + tickMargin + tickLength);
+}
+
+/** Measures value-axis labels in the same 12px inherited font used by the chart container. */
+export function measureRechartsYAxisWidth(labels: string[], tickMargin = 8): number {
+	if (typeof document === 'undefined') return 42;
+
+	const canvas = document.createElement('canvas');
+	const context = canvas.getContext('2d');
+	if (!context) return 42;
+
+	const family = getComputedStyle(document.body).fontFamily;
+	context.font = `400 12px ${family}`;
+	return rechartsAutoYAxisWidth(
+		labels.map((label) => context.measureText(label).width),
+		tickMargin
+	);
+}
+
 /**
  * Keeps the second argument that LayerChart supplies to format functions at runtime.
  *

@@ -27,7 +27,7 @@
 	 * `strokeOpacity`, while `<Spline>` accepts `strokeOpacity` but has no `dashArray`. Passing the
 	 * declared name *and* the raw SVG attribute means whichever one a component does not declare
 	 * still reaches the element through its rest props, so the spokes and the rings end up styled
-	 * identically. See plans/DEVIATIONS.md U-4.
+	 * identically.
 	 */
 	const lineProps = $derived({
 		stroke,

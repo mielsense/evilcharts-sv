@@ -15,9 +15,9 @@
 	 * an `<svg>` and left every rect with a 0x0 box. React's renders no DOM at all. It is not needed
 	 * anyway — the rect never unmounts, and the value label animates its opacity instead of
 	 * mounting and unmounting, which is what the reference's enter/exit pair looks like.
-	 * See plans/DEVIATIONS.md BL-1.
 	 */
 	import { Bar as LayerBar, getChartContext } from 'layerchart';
+	import { animate, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { getBarPositions } from '$lib/registry/ui/layerchart-chart/index.js';
 
 	let {
@@ -33,18 +33,43 @@
 	} = $props();
 
 	const layer = getChartContext();
+	const shouldReduceMotion = useReducedMotion();
 
 	// Scale factor: collapsed = thin line, expanded = full width
 	const COLLAPSED_SCALE = 0.1;
 
+	function animateScaleX(target: number, reduced: boolean) {
+		return (node: SVGRectElement) => {
+			node.style.transformBox = 'fill-box';
+			node.style.transformOrigin = 'center';
+
+			if (reduced) {
+				node.style.transform = `scaleX(${target})`;
+				return undefined;
+			}
+
+			const controls = animate(
+				node,
+				{ scaleX: target },
+				{
+					type: 'spring',
+					stiffness: 200,
+					damping: 25
+				}
+			);
+
+			return () => controls.stop();
+		};
+	}
+
 	/**
 	 * Geometry per row, read off the chart scales — the reference gets it from Recharts' shape
-	 * props. Resolved in one derivation rather than with declaration tags (PITFALLS §1).
+	 * props. Resolved in one derivation rather than with declaration tags.
 	 */
 	const bars = $derived.by(() => {
 		const band = layer.xScale.bandwidth?.() ?? 0;
 		// One bar per category, sized by Recharts' own arithmetic — a 24.5px band yields a 19px bar
-		// with `barCategoryGap="10%"`, which is what the reference renders (PITFALLS §3).
+		// with `barCategoryGap="10%"`, which is what the reference renders.
 		const slot = getBarPositions({ bandSize: band, count: 1 })[0];
 
 		return rows.map((row, index) => {
@@ -73,14 +98,13 @@
 	<LayerBar data={bar.row} seriesKey={dataKey} fill="transparent" motion="none" tooltip />
 
 	<rect
-		class="origin-center transition-transform duration-300 ease-out motion-reduce:transition-none"
+		{@attach animateScaleX(bar.isActive ? 1 : COLLAPSED_SCALE, shouldReduceMotion.current)}
+		class="origin-center"
 		x={bar.x}
 		y={bar.y}
 		width={bar.width}
 		height={bar.height}
 		{fill}
-		style:transform={`scaleX(${bar.isActive ? 1 : COLLAPSED_SCALE})`}
-		style:transform-box="fill-box"
 	/>
 	<text
 		class="pointer-events-none font-mono transition-[opacity,transform,filter] duration-200 motion-reduce:transition-none"

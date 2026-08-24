@@ -18,6 +18,35 @@ export type PieSector = {
 	index: number;
 };
 
+/**
+ * Interpolates the angular spans exactly as Recharts' animated pie does.
+ *
+ * Existing sectors grow or shrink from their currently painted span. A sector added at a new
+ * index grows from zero. Target padding is applied between the interpolated spans rather than
+ * interpolated itself, matching `SectorsWithAnimation` in Recharts.
+ */
+export function interpolateSectors(
+	previous: PieSector[],
+	target: PieSector[],
+	progress: number
+): PieSector[] {
+	if (progress >= 1) return target;
+
+	let currentAngle = target[0]?.startAngle ?? 0;
+
+	return target.map((sector, index) => {
+		const previousSector = previous[index];
+		const previousSpan = previousSector ? previousSector.endAngle - previousSector.startAngle : 0;
+		const targetSpan = sector.endAngle - sector.startAngle;
+		const padding = index > 0 ? sector.startAngle - target[index - 1].endAngle : 0;
+		const startAngle = currentAngle + padding;
+		const endAngle = startAngle + previousSpan + (targetSpan - previousSpan) * progress;
+
+		currentAngle = endAngle;
+		return { ...sector, startAngle, endAngle };
+	});
+}
+
 /** `sign × min(|end − start|, 360)`, as Recharts' `parseDeltaAngle` computes it. */
 function parseDeltaAngle(startAngle: number, endAngle: number) {
 	const sign = Math.sign(endAngle - startAngle) || 1;

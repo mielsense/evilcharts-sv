@@ -6,7 +6,6 @@
 	 */
 	import { Arc, getChartContext } from 'layerchart';
 	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
-	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
 	import { useRadialChart } from './radial-chart-context.svelte.js';
 	import { untrack } from 'svelte';
 	import {
@@ -17,8 +16,10 @@
 		REVEAL_EASE,
 		getRings,
 		getVariantConfig,
+		interpolateRings,
 		resolveRadius,
-		toArcAngle
+		toArcAngle,
+		type RadialRing
 	} from './types.js';
 
 	let {
@@ -52,33 +53,10 @@
 	 * The intro, reproducing `<RadialBar>`'s own animation: each bar's `endAngle` sweeps out from
 	 * the chart's start angle over 1.5s with the CSS `ease` curve.
 	 */
-	const reveal = useMotionValue(0);
+	const reveal = useMotionValue(1);
+	let sourceRings = $state<RadialRing[]>([]);
+	let targetRings = $state<RadialRing[]>([]);
 	let previousLoading: boolean | undefined;
-
-	// `untrack`: `animate` reads the motion value, and a tracked read would re-run this effect
-	// on every frame — each run restarting the tween, so it crawled instead of playing once.
-	$effect(() => {
-		const loadingNow = chart.isLoading;
-		const action = polarIntroAction(previousLoading, loadingNow, shouldReduceMotion.current);
-		previousLoading = loadingNow;
-		let controls: ReturnType<typeof animate> | undefined;
-
-		untrack(() => {
-			if (action === 'reset') reveal.set(0);
-			if (action === 'finish') reveal.set(1);
-			if (action === 'animate') {
-				reveal.set(0);
-				controls = animate(reveal, 1, {
-					delay: REVEAL_BEGIN / 1000,
-					duration: REVEAL_DURATION / 1000,
-					ease: REVEAL_EASE
-				});
-			}
-		});
-		return () => controls?.stop();
-	});
-
-	const progress = $derived(shouldReduceMotion.current ? 1 : reveal.current);
 
 	// Push the value key up so the tooltip can read each bar's number.
 	$effect.pre(() => {
@@ -110,25 +88,66 @@
 		})
 	);
 
-	const startAngle = $derived(toArcAngle(variantConfig.startAngle));
+	// Recharts re-animates radial sectors whenever their geometry changes. Capture the currently
+	// painted angles before each new tween so rapid updates cannot jump back to an older target.
+	$effect(() => {
+		const loadingNow = chart.isLoading;
+		const nextRings = rings;
+		const reduceMotion = shouldReduceMotion.current;
+		let controls: ReturnType<typeof animate> | undefined;
+
+		untrack(() => {
+			if (loadingNow) {
+				sourceRings = [];
+				targetRings = [];
+				reveal.set(1);
+			} else {
+				const entering = previousLoading === undefined || previousLoading;
+				const currentRings = entering
+					? []
+					: interpolateRings(sourceRings, targetRings, reveal.get());
+
+				sourceRings = currentRings;
+				targetRings = nextRings;
+
+				if (reduceMotion) {
+					reveal.set(1);
+				} else {
+					reveal.set(0);
+					controls = animate(reveal, 1, {
+						delay: REVEAL_BEGIN / 1000,
+						duration: REVEAL_DURATION / 1000,
+						ease: REVEAL_EASE
+					});
+				}
+			}
+			previousLoading = loadingNow;
+		});
+
+		return () => controls?.stop();
+	});
+
+	const animatedRings = $derived(interpolateRings(sourceRings, targetRings, reveal.current));
+	const isAnimating = $derived(
+		!chart.isLoading && !shouldReduceMotion.current && reveal.current < 1
+	);
+
 	/**
 	 * The chart's full sweep, for the track behind each bar.
 	 *
 	 * LayerChart defaults `trackEndAngle` to the *arc's* own `endAngle`, so the track ended exactly
 	 * where the bar did and was completely hidden behind it. Recharts' background sector always
-	 * spans the whole arc. See plans/DEVIATIONS.md U-6.
+	 * spans the whole arc.
 	 */
 	const trackEndAngle = $derived(toArcAngle(variantConfig.endAngle));
 
 	/**
 	 * Everything each ring needs, resolved in one derivation rather than with declaration tags in
-	 * the `{#each}` — see plans/PITFALLS.md §1.
+	 * the `{#each}`.
 	 */
 	const bars = $derived(
-		rings.map((ring) => ({
+		animatedRings.map((ring) => ({
 			...ring,
-			// Sweep from the chart's start angle out to the bar's own end angle.
-			endAngle: startAngle + (ring.endAngle - startAngle) * progress,
 			fill: `url(#${chart.chartId}-radial-colors-${ring.name})`,
 			opacity:
 				isClickable && chart.selectedBar !== null && chart.selectedBar !== ring.name ? 0.15 : 1,
@@ -141,6 +160,12 @@
 		// Clicking the selected bar clears the selection, otherwise selects it
 		chart.selectBar(chart.selectedBar === name ? null : name, value);
 	}
+
+	function selectFromKeyboard(event: KeyboardEvent, name: string, value: number) {
+		if (!isClickable || (event.key !== 'Enter' && event.key !== ' ')) return;
+		event.preventDefault();
+		select(name, value);
+	}
 </script>
 
 <!-- The root renders the skeleton bar while loading, so the real bar steps aside -->
@@ -150,7 +175,8 @@
 			class={['drop-shadow-sm transition-opacity duration-200', isClickable && 'cursor-pointer']
 				.filter(Boolean)
 				.join(' ')}
-			{startAngle}
+			data-evil-animation-state={isAnimating ? 'running' : 'idle'}
+			startAngle={bar.startAngle}
 			endAngle={bar.endAngle}
 			innerRadius={bar.innerRadius}
 			outerRadius={bar.outerRadius}
@@ -162,6 +188,11 @@
 			data={bar.row}
 			tooltip
 			motion="none"
+			role={isClickable ? 'button' : 'presentation'}
+			tabindex={isClickable ? 0 : undefined}
+			aria-label={isClickable ? `${bar.name}: ${bar.value}` : undefined}
+			aria-pressed={isClickable ? chart.selectedBar === bar.name : undefined}
+			onkeydown={(event: KeyboardEvent) => selectFromKeyboard(event, bar.name, bar.value)}
 			onclick={() => select(bar.name, bar.value)}
 			{...forwardedRadialBarProps}
 		/>

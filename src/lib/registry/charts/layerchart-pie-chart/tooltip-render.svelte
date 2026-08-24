@@ -21,7 +21,6 @@
 	 * unconditionally pins the tooltip to that row forever: with `defaultIndex` set, hovering any
 	 * other category still reported the default one. The hovered row therefore takes precedence
 	 * here and `defaultRow` only fills in when nothing is hovered.
-	 * See plans/DEVIATIONS.md A-12.
 	 */
 	const defaultRow = $derived(
 		slot?.defaultIndex === undefined ? undefined : chart.data[slot.defaultIndex]
@@ -50,7 +49,7 @@
 		{#snippet children({ data })}
 			<!-- Read inline rather than through a `{const}`: a declaration tag in a snippet body does
 			     not re-derive when the snippet's argument changes, which froze the tooltip on the
-			     first sector it was shown for. See plans/DEVIATIONS.md A-6c. -->
+			     first sector it was shown for. -->
 			<ChartTooltipContent
 				active
 				hideLabel

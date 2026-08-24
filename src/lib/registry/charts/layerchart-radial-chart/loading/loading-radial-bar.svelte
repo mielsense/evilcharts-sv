@@ -32,7 +32,7 @@
 	// margin must not be subtracted a second time.
 	const maxRadius = $derived(Math.min(layer.width, layer.height) / 2);
 	const startAngle = $derived(toArcAngle(variantConfig.startAngle));
-	// The track spans the chart's whole sweep, not the bar's (DEVIATIONS U-6).
+	// The track spans the chart's whole sweep, not the bar's.
 	const trackEndAngle = $derived(toArcAngle(variantConfig.endAngle));
 
 	const rings = $derived(

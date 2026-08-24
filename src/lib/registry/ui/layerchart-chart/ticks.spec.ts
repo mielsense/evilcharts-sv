@@ -1,6 +1,11 @@
 import { scaleLinear, scalePoint } from 'd3-scale';
 import { describe, expect, it } from 'vitest';
-import { layerChartFormatter, rechartsValueAxisTicks, thinAxisTicks } from './ticks.js';
+import {
+	layerChartFormatter,
+	rechartsAutoYAxisWidth,
+	rechartsValueAxisTicks,
+	thinAxisTicks
+} from './ticks.js';
 
 describe('axis parity helpers', () => {
 	it('passes LayerChart tick indices through to Recharts-style formatters', () => {
@@ -81,6 +86,11 @@ describe('axis parity helpers', () => {
 		const scale = scaleLinear().domain([0, 1800]).range([124, 0]);
 
 		expect(rechartsValueAxisTicks(scale)).toEqual([0, 450, 900, 1350, 1800]);
+	});
+
+	it('matches Recharts auto Y-axis rounding, margin, and hidden tick length', () => {
+		expect(rechartsAutoYAxisWidth([7.57, 22.27, 27.59])).toBe(42);
+		expect(rechartsAutoYAxisWidth([7.57, 22.59, 27.45])).toBe(41);
 	});
 
 	it('does not reinterpret vertical minTickGap as numeric tick spacing', () => {

@@ -7,6 +7,7 @@
 	 * each axis' line props, so it is threaded into both.
 	 */
 	import { Grid as LayerGrid } from 'layerchart';
+	import { rechartsValueAxisTicks } from '../../ui/layerchart-chart/ticks.js';
 
 	let {
 		vertical = false,
@@ -24,5 +25,6 @@
 <LayerGrid
 	x={vertical ? { dashArray: strokeDasharray } : false}
 	y={horizontal ? { dashArray: strokeDasharray } : false}
+	yTicks={rechartsValueAxisTicks}
 	{...restProps}
 />

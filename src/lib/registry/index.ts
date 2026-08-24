@@ -10,11 +10,12 @@ import { examples } from './registry-example.js';
 import { charts } from './registry-chart.js';
 import { ui } from './registry-ui.js';
 import { blocks } from './registry-blocks.js';
+import { withNotice } from './registry-dependencies.js';
 
 export const registry: Registry = {
 	homepage: 'https://evilcharts-sv.vercel.app',
 	name: 'EvilCharts',
-	items: [...ui, ...charts, ...examples, ...blocks]
+	items: [...ui, ...charts, ...withNotice(examples), ...blocks]
 };
 
 export type { Registry, RegistryItem, RegistryItemFile, RegistryItemType } from './schema.js';

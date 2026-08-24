@@ -9,8 +9,7 @@ type RootComponent = typeof Root;
 // writes <EvilRadialChart.RadialBar/>, <EvilRadialChart.Tooltip/>, … from a single
 // import — no colliding named marker exports when several charts share one file.
 //
-// The explicit annotation is required for `svelte-package` to emit types; see
-// plans/DEVIATIONS.md F-1.
+// The explicit annotation is required for `svelte-package` to emit types.
 export const EvilRadialChart: RootComponent & {
 	RadialBar: typeof RadialBar;
 	Tooltip: typeof Tooltip;
@@ -22,4 +21,4 @@ export const EvilRadialChart: RootComponent & {
 });
 
 export type { RadialVariant } from './types.js';
-export type { ChartConfig } from '../../ui/layerchart-chart/index.js';
+export type { ChartAccessibility, ChartConfig } from '../../ui/layerchart-chart/index.js';

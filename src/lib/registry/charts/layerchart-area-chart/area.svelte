@@ -60,6 +60,11 @@
 
 	const chart = useAreaChart();
 	const id = $props.id(); // unique id scopes this area's style defs
+	const seriesToken = Symbol('area-series');
+	$effect.pre(() => {
+		chart.registerSeries(seriesToken, dataKey, true);
+		return () => chart.registerSeries(seriesToken, dataKey, false);
+	});
 	// Devices set to "reduce motion" skip the intro reveal entirely
 	const shouldReduceMotion = useReducedMotion();
 
@@ -101,8 +106,7 @@
 
 		The reveal mask goes on a wrapping `<g>` rather than on `<Area mask>`: LayerChart forwards
 		`mask` to the *fill* path only, so the top curve appeared instantly while the fill wiped in.
-		The reference puts the mask on the element's `style`, which covers both. See
-		plans/DEVIATIONS.md A-13.
+		The reference puts the mask on the element's `style`, which covers both.
 	-->
 	<g mask={maskId ? `url(#${maskId})` : undefined}>
 		<LayerArea

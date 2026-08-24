@@ -58,6 +58,11 @@
 	/** LayerChart's own context, for the scales the buffer line needs to measure against. */
 	const layer = getChartContext();
 	const id = $props.id(); // unique id scopes this line's style defs
+	const seriesToken = Symbol('line-series');
+	$effect.pre(() => {
+		chart.registerSeries(seriesToken, dataKey, true);
+		return () => chart.registerSeries(seriesToken, dataKey, false);
+	});
 	// Devices set to "reduce motion" skip the intro reveal entirely
 	const shouldReduceMotion = useReducedMotion();
 

@@ -95,12 +95,17 @@
 	 *
 	 * `<ChartDot>` defaults to a rect spanning `x=0 → 100%`, which is the plot in a cartesian chart
 	 * but starts at the *centre* here — every dot to the left of it vanished. Spanning the plot from
-	 * `−width/2` restores the reference's behaviour. See plans/DEVIATIONS.md U-7.
+	 * `−width/2` restores the reference's behaviour.
 	 */
 	const gradientX = $derived(-layer.width / 2);
 	const gradientWidth = $derived(layer.width);
 
 	const slots = setRadarSlotsContext();
+
+	$effect.pre(() => {
+		chart.registerRadar(id, dataKey);
+		return () => chart.registerRadar(id, undefined);
+	});
 
 	const isSelected = $derived(chart.selectedDataKey === null || chart.selectedDataKey === dataKey);
 	const isDimmed = $derived(isClickable && !isSelected);

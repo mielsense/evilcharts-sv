@@ -98,6 +98,47 @@ test.describe('EvilComposedChart examples', () => {
 		expect(firstX).toBeCloseTo(band.x + band.w / 2, 1);
 	});
 
+	test('the edge legend preserves the reference grid, bar, and line geometry', async ({ page }) => {
+		await page.goto('/preview/ex-composed-chart?w=632&h=360');
+		await page.waitForSelector('[data-preview-ready]');
+		await page.waitForTimeout(1600);
+
+		const gridY = await plot(page)
+			.locator('.lc-grid-y-line')
+			.evaluateAll((nodes) =>
+				nodes.map((node) => {
+					const box = (node as SVGGraphicsElement).getBBox();
+					const matrix = (node as SVGGraphicsElement).getCTM()!;
+					return new DOMPoint(box.x, box.y).matrixTransform(matrix).y;
+				})
+			);
+		expect(gridY.toSorted((a, b) => a - b)).toEqual([37, 86, 135, 184, 233]);
+
+		const firstBar = await bars(page)
+			.first()
+			.evaluate((node) => {
+				const box = (node as SVGGraphicsElement).getBBox();
+				const matrix = (node as SVGGraphicsElement).getCTM()!;
+				const point = new DOMPoint(box.x, box.y).matrixTransform(matrix);
+				return { x: point.x, y: point.y, width: box.width, height: box.height };
+			});
+		expect(firstBar.x).toBeCloseTo(9.9, 1);
+		expect(firstBar.y).toBeCloseTo(150.68, 1);
+		expect(firstBar.width).toBeCloseTo(39, 1);
+		expect(firstBar.height).toBeCloseTo(82.32, 1);
+
+		const firstLinePoint = await line(page)
+			.first()
+			.evaluate((node) => {
+				const match = node.getAttribute('d')!.match(/^M(-?[\d.]+),(-?[\d.]+)/)!;
+				const matrix = (node as SVGGraphicsElement).getCTM()!;
+				const point = new DOMPoint(Number(match[1]), Number(match[2])).matrixTransform(matrix);
+				return { x: point.x, y: point.y };
+			});
+		expect(firstLinePoint.x).toBeCloseTo(29.5, 1);
+		expect(firstLinePoint.y).toBeCloseTo(197.72, 1);
+	});
+
 	test('bars are rounded on every corner at the reference radius', async ({ page }) => {
 		await open(page, 'ex-composed-chart');
 		const shape = await bars(page)

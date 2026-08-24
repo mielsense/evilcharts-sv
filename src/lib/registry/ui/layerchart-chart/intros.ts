@@ -18,7 +18,7 @@ export function polarIntroAction(
  */
 export function getRevealAnimation(
 	durationSeconds: number,
-	ease: number[],
+	ease: [number, number, number, number],
 	startedAt: number,
 	now = Date.now()
 ) {

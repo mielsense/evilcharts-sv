@@ -5,12 +5,13 @@
 	 * grid, tooltip, legend, and the lines themselves — is composed as children,
 	 * so a consumer renders exactly the parts they need.
 	 */
-	import { Chart, Html, Svg } from 'layerchart';
-	import { scalePoint } from 'd3-scale';
+	import { Chart, Html, Svg, type ChartState } from 'layerchart';
+	import { scalePoint, type ScalePoint } from 'd3-scale';
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
 	import {
@@ -31,7 +32,7 @@
 	import TooltipCursor from './tooltip-cursor.svelte';
 	import TooltipRender from './tooltip-render.svelte';
 	import { LOADING_LINE_DATA_KEY, type CurveType, type LineAnimationType } from './types.js';
-	import { SvelteSet } from 'svelte/reactivity';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 	let {
 		config,
@@ -39,6 +40,7 @@
 		children,
 		class: className,
 		chartProps,
+		accessibility,
 		curveType = 'linear',
 		animationType = 'left-to-right',
 		defaultSelectedDataKey = null,
@@ -57,6 +59,7 @@
 		children: Snippet; // composed parts — <Line />, <XAxis />, <Legend />, …
 		class?: string; // extra classes for the chart container
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		curveType?: CurveType; // default curve interpolation for every <Line />
 		animationType?: LineAnimationType; // default intro reveal for every <Line />
 		defaultSelectedDataKey?: string | null; // series selected on first render
@@ -75,6 +78,9 @@
 	let introStartedAt = $state(Date.now());
 	let chartDimension = $state(untrack(() => initialDimension));
 	let previousLoading = untrack(() => isLoading);
+	let layerContext = $state<ChartState<Record<string, unknown>, ScalePoint<string>> | undefined>(
+		undefined
+	);
 
 	$effect(() => {
 		const loadingNow = isLoading;
@@ -93,7 +99,7 @@
 	const brush = new EvilBrushState({ data: () => data as Record<string, unknown>[] });
 
 	// The <Brush> child is config-only: its presence turns the footer on. The reference pulls it
-	// out of `children`; Svelte registers it into this context instead (SPEC §4.2).
+	// out of `children`; Svelte registers it into this context instead.
 	const brushSlot = setBrushSlotContext();
 	const showBrush = $derived(brushSlot.present);
 
@@ -103,34 +109,46 @@
 
 	/**
 	 * Which axes are rendered, so the plot area reserves the same space Recharts does.
-	 * See plans/DEVIATIONS.md A-7.
 	 */
 	// `SvelteSet`, not a plain `Set` in `$state`: `$state` proxies objects and arrays but not
 	// `Map`/`Set`, so `.add()` / `.delete()` would not notify and the padding would never
-	// pick up an axis. See plans/DEVIATIONS.md U-3.
-	const axesPresent = { x: new SvelteSet<string>(), y: new SvelteSet<string>() };
+	// pick up an axis.
+	const axesPresent = { x: new SvelteSet<string>(), y: new SvelteMap<string, number>() };
+	const renderedSeries = new SvelteMap<symbol, string>();
 
 	const CHART_MARGIN = 5; // Recharts' default <LineChart margin>
 	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
-	const Y_AXIS_WIDTH = 60; // Recharts' default <YAxis width>
-
-	const padding = $derived({
-		top: CHART_MARGIN,
-		right: CHART_MARGIN,
-		bottom: CHART_MARGIN + (axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0),
-		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
+	const EDGE_LEGEND_HEIGHT = 32;
+	let lineContext: ReturnType<typeof setLineChartContext>;
+	const edgeLegendPlacement = $derived.by(() => {
+		if (isLoading || !lineContext) return null;
+		const align = lineContext.slots.legend?.verticalAlign;
+		return align === 'top' || align === 'bottom' ? align : null;
 	});
 
-	const seriesKeys = $derived(Object.keys(config));
+	const padding = $derived({
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
+		right: CHART_MARGIN,
+		bottom:
+			CHART_MARGIN +
+			(axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
+			(edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
+		left: CHART_MARGIN + Math.max(0, ...axesPresent.y.values())
+	});
+
+	// Recharts derives its value domain, legend payload, and tooltip payload from the rendered
+	// `<Line />` children. Config only supplies presentation metadata; extra config entries must not
+	// create phantom marks or stretch the value scale.
+	const seriesKeys = $derived([...new Set(renderedSeries.values())]);
 	const displayData = $derived(showBrush && !isLoading ? brush.visibleData : data);
 	const chartData = $derived(
 		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
 	);
 
-	/** Category key for the x scale. See plans/DEVIATIONS.md A-1. */
+	/** Category key for the x scale, resolved from the mounted axis before falling back to data. */
 	const fallbackXKey = $derived(
 		Object.keys(chartData[0] ?? {}).find(
-			(key) => !seriesKeys.includes(key) && key !== LOADING_LINE_DATA_KEY
+			(key) => !seriesKeys.includes(key) && !(key in config) && key !== LOADING_LINE_DATA_KEY
 		)
 	);
 	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
@@ -141,7 +159,37 @@
 			: seriesKeys.map((key) => ({ key, value: key }))
 	);
 
-	setLineChartContext({
+	/** Resolve the nearest category exactly like Recharts, keeping the left row on a midpoint tie. */
+	function showCategoryTooltip(event: PointerEvent) {
+		if (isLoading || !layerContext || chartData.length === 0) return;
+
+		const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
+		const x = event.clientX - box.left;
+		const y = event.clientY - box.top;
+		const start = padding.left;
+		const end = box.width - padding.right;
+		const top = padding.top;
+		const bottom = box.height - padding.bottom;
+		if (x < start || x > end || y < top || y > bottom) {
+			layerContext.tooltip.hide();
+			return;
+		}
+
+		const step = chartData.length > 1 ? (end - start) / (chartData.length - 1) : 0;
+		let nearest = 0;
+		let nearestDistance = Number.POSITIVE_INFINITY;
+		for (let index = 0; index < chartData.length; index += 1) {
+			const distance = Math.abs(x - (start + index * step));
+			if (distance < nearestDistance - Number.EPSILON) {
+				nearest = index;
+				nearestDistance = distance;
+			}
+		}
+
+		layerContext.tooltip.show(event, chartData[nearest]);
+	}
+
+	lineContext = setLineChartContext({
 		config: () => config,
 		data: () => chartData,
 		xKey: () => xKey,
@@ -160,25 +208,34 @@
 			onSelectionChange?.(next);
 		},
 		registerXAxisDataKey: (token, key) => {
-			// Ignore a stale teardown from LayerChart's mount-time remount (DEVIATIONS.md A-3).
+			// Ignore a stale teardown from LayerChart's mount-time remount.
 			if (key === undefined && registeredXKeyToken !== token) return;
 			registeredXKeyToken = key === undefined ? null : token;
 			registeredXKey = key;
 		},
-		registerAxis: (token, axis, present) => {
-			if (present) axesPresent[axis].add(token);
-			else axesPresent[axis].delete(token);
+		registerSeries: (token, key, present) => {
+			if (present) renderedSeries.set(token, key);
+			else renderedSeries.delete(token);
+		},
+		registerAxis: (token, axis, present, size) => {
+			if (axis === 'x') {
+				if (present) axesPresent.x.add(token);
+				else axesPresent.x.delete(token);
+			} else if (present) axesPresent.y.set(token, size ?? 42);
+			else axesPresent.y.delete(token);
 		}
 	});
 </script>
 
-<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
+<ChartContainer
+	{config}
+	{initialDimension}
+	{accessibility}
+	bind:dimension={chartDimension}
+	class={className}
+>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
-	<!-- The tooltip runs in `band` mode, not `bisect-x`: the category axis is an ordinal point
-	     scale, and bisecting a domain of month names picks essentially at random. Band mode puts a
-	     hit rect one step wide over each point, which is how Recharts activates a category.
-	     See plans/DEVIATIONS.md A-9. -->
 	<Chart
 		width={chartDimension.width}
 		height={chartDimension.height}
@@ -191,9 +248,12 @@
 		yBaseline={0}
 		yNice
 		{padding}
-		tooltipContext={{ mode: 'quadtree-x' }}
-		class="h-full w-full"
+		bind:context={layerContext}
+		tooltipContext={{ mode: 'manual' }}
 		{...chartProps}
+		onpointermove={showCategoryTooltip}
+		onpointerleave={() => layerContext?.tooltip.hide()}
+		class="h-full w-full"
 	>
 		{#if renderStyle === 'dither'}
 			<Html pointerEvents={false} clip zIndex={0}>

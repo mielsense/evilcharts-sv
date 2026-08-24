@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
 import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
-import { ChartSlots } from './chart-slots.svelte.js';
+import { ChartSlots } from '../../ui/layerchart-chart/chart-slots.svelte.js';
 import type { ComposedAnimationType, CurveType } from './types.js';
 
 const COMPOSED_CHART_KEY = Symbol('evilcharts.composed-chart');
@@ -39,6 +39,8 @@ type Options = {
 	 * sub-band domain up front, so the bars announce themselves and the root derives it.
 	 */
 	registerBar: (token: string, dataKey: string | undefined) => void;
+	/** Registers every rendered graphical series, preserving child order for legend and tooltip. */
+	registerSeries: (token: string, dataKey: string | undefined) => void;
 	/**
 	 * Called by `<XAxis dataKey>` on mount.
 	 *
@@ -131,6 +133,10 @@ export class ComposedChartContext {
 
 	registerBar = (token: string, dataKey: string | undefined) => {
 		this.#options.registerBar(token, dataKey);
+	};
+
+	registerSeries = (token: string, dataKey: string | undefined) => {
+		this.#options.registerSeries(token, dataKey);
 	};
 
 	registerXAxisDataKey = (token: string, dataKey: string | undefined) => {

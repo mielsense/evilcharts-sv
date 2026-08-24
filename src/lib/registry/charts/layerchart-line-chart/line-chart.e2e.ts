@@ -113,6 +113,54 @@ test.describe('EvilLineChart examples', () => {
 		expect(await line.getAttribute('stroke-dasharray')).toBeNull();
 	});
 
+	test('reserves the original top legend band and value-axis ticks', async ({ page }) => {
+		await open(page, 'ex-solid-stroke-line-chart');
+		expect(await plot(page).locator('.lc-layout-svg-g').getAttribute('transform')).toBe(
+			'translate(47, 37)'
+		);
+		const labels = await plot(page).locator('.lc-axis.placement-left text').allTextContents();
+		expect(labels).toEqual(['0', '250', '500', '750', '1000']);
+		const plotOrigin = await plot(page)
+			.locator('.lc-layout-svg-g')
+			.evaluate((node) => (node as SVGGraphicsElement).getScreenCTM()!.e);
+		const rightEdges = await plot(page)
+			.locator('.lc-axis.placement-left text')
+			.evaluateAll(
+				(nodes, origin) => nodes.map((node) => node.getBoundingClientRect().right - origin),
+				plotOrigin
+			);
+		for (const edge of rightEdges) expect(edge).toBeCloseTo(-14, 0);
+	});
+
+	test('matches the original solid-line point geometry at the reference width', async ({
+		page
+	}) => {
+		await page.goto('/preview/ex-solid-stroke-line-chart?w=632&h=360');
+		await page.waitForSelector('[data-preview-ready]');
+		await page.waitForTimeout(1400);
+
+		const points = await visibleSplines(page)
+			.first()
+			.evaluate((node) => {
+				const values = [...node.getAttribute('d')!.matchAll(/[ML](-?[\d.]+),(-?[\d.]+)/g)];
+				const matrix = (node as SVGGraphicsElement).getCTM()!;
+				return values.map(([, x, y]) => {
+					const point = new DOMPoint(Number(x), Number(y)).matrixTransform(matrix);
+					return [point.x, point.y];
+				});
+			});
+
+		const expectedY = [
+			205.448, 68.744, 161.928, 131.976, 175.752, 93.064, 192.136, 56.2, 127.368, 156.808, 87.432,
+			223.624
+		];
+		expect(points).toHaveLength(12);
+		for (const [index, [x, y]] of points.entries()) {
+			expect(x).toBeCloseTo(47 + (546 * index) / 11, 2);
+			expect(y).toBeCloseTo(expectedY[index], 2);
+		}
+	});
+
 	test('the dashed stroke uses the reference 5 5 pattern', async ({ page }) => {
 		await open(page, 'ex-dashed-stroke-line-chart');
 		const dashed = visibleSplines(page).and(page.locator('[stroke-dasharray]')).first();
@@ -216,7 +264,11 @@ test.describe('EvilLineChart examples', () => {
 		const box = (await plot(page).boundingBox())!;
 		await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5);
 		await page.waitForTimeout(300);
-		await expect(page.locator('.min-w-32')).toContainText('Desktop');
+		const tooltip = page.locator('.min-w-32');
+		await expect(tooltip).toContainText('June');
+		await expect(tooltip).toContainText('Desktop');
+		await expect(tooltip).toContainText('781');
+		await expect(tooltip).toContainText('449');
 
 		const entries = page.locator('.select-none > button');
 		await entries.first().click();

@@ -9,6 +9,7 @@
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
 	import { ChartBackground, type BackgroundVariant } from '../../ui/layerchart-background/index.js';
@@ -33,6 +34,7 @@
 		children,
 		class: className,
 		chartProps,
+		accessibility,
 		variant = 'full',
 		max,
 		innerRadius = DEFAULT_INNER_RADIUS,
@@ -49,6 +51,7 @@
 		children: Snippet; // composed parts — <RadialBar />, <Tooltip />, <Legend />
 		class?: string; // extra classes for the chart container
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		variant?: RadialVariant; // arc shape — full circle or half circle
 		/**
 		 * Value a full sweep represents. Without it the scale is derived from the data, so the
@@ -117,7 +120,7 @@
 			onSelectionChange?.(barName === null ? null : { dataKey: barName, value: value ?? 0 });
 		},
 		registerValueKey: (token, key) => {
-			// Ignore a stale teardown from LayerChart's mount-time remount (DEVIATIONS.md A-3).
+			// Ignore a stale teardown from LayerChart's mount-time remount.
 			if (key === undefined && registeredValueToken !== token) return;
 			registeredValueToken = key === undefined ? null : token;
 			registeredValueKey = key;
@@ -125,7 +128,13 @@
 	});
 </script>
 
-<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
+<ChartContainer
+	{config}
+	{initialDimension}
+	{accessibility}
+	bind:dimension={chartDimension}
+	class={className}
+>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!--

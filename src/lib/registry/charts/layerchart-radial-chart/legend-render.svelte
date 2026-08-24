@@ -24,7 +24,6 @@
 	 * sorts on it: rows without a `name` all compare equal, so the sort is a no-op and the bars keep
 	 * data order. Using the `nameKey` value here would sort the legend alphabetically, which is
 	 * right for the pie (whose payload really does carry the sector name) but wrong here.
-	 * See plans/DEVIATIONS.md A-10.
 	 */
 	const payload = $derived<LegendPayloadItem[]>(
 		chart.data.map((row) => ({ value: row.name as string | undefined, payload: row }))

@@ -4,7 +4,7 @@
  * Recharts does **not** use `d3-sankey`: `chart/Sankey.js` carries its own layout with `align`,
  * `verticalAlign`, `sort` and a relaxation loop, and d3-sankey's numbers differ. Since node
  * positions have to match the reference pixel for pixel, the algorithm is ported here rather than
- * mapped onto LayerChart's d3-sankey wrapper. See plans/DEVIATIONS.md S-1.
+ * mapped onto LayerChart's d3-sankey wrapper.
  *
  * Everything below is a direct translation of `getNodesTree` → `getDepthTree` → `updateYOfTree` →
  * `resolveCollisions` → `relaxRightToLeft`/`relaxLeftToRight` → `updateYOfLinks` → `computeData`,

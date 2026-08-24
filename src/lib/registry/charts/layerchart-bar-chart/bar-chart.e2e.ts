@@ -103,8 +103,8 @@ test.describe('EvilBarChart examples', () => {
 		page
 	}) => {
 		for (const [width, height, expected] of [
-			[440, 256, 31.464],
-			[632, 360, 67.032]
+			[440, 256, 28.464],
+			[632, 360, 64.032]
 		] as const) {
 			await page.goto(`/preview/ex-bar-chart?w=${width}&h=${height}`);
 			await page.waitForSelector('[data-preview-ready]');
@@ -121,6 +121,24 @@ test.describe('EvilBarChart examples', () => {
 			expect(paintedHeight).toBeCloseTo(expected, 0);
 			expect(hitHeight - paintedHeight).toBeCloseTo(3, 1);
 		}
+	});
+
+	test('the edge legend leaves the same five-line value plot as Recharts', async ({ page }) => {
+		await page.goto('/preview/ex-bar-chart?w=632&h=360');
+		await page.waitForSelector('[data-preview-ready]');
+		await page.waitForTimeout(1600);
+
+		const y = await plot(page)
+			.locator('.lc-grid-y-line')
+			.evaluateAll((nodes) =>
+				nodes.map((node) => {
+					const box = (node as SVGGraphicsElement).getBBox();
+					const matrix = (node as SVGGraphicsElement).getCTM()!;
+					return new DOMPoint(box.x, box.y).matrixTransform(matrix).y;
+				})
+			);
+		expect(y).toHaveLength(5);
+		expect(y.toSorted((a, b) => a - b)).toEqual([37, 86, 135, 184, 233]);
 	});
 
 	test('each fill variant paints from its own pattern', async ({ page }) => {
@@ -187,6 +205,12 @@ test.describe('EvilBarChart examples', () => {
 		}));
 		// Horizontal bars are wider than they are tall.
 		expect(box.w).toBeGreaterThan(box.h);
+		await expect(page.locator('.select-none')).toHaveText(/Desktop/);
+		await expect(page.locator('.select-none')).not.toHaveText(/Mobile/);
+		const desktopColor = await page
+			.locator('[data-chart]')
+			.evaluate((node) => getComputedStyle(node).getPropertyValue('--color-desktop-0').trim());
+		expect(['#2563eb', '#3b82f6']).toContain(desktopColor);
 	});
 
 	test('the buffer bar hatches the last column', async ({ page }) => {

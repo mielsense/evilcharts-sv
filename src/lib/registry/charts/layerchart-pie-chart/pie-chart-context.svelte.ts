@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
 import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
-import { ChartSlots } from './chart-slots.svelte.js';
+import { ChartSlots } from '../../ui/layerchart-chart/chart-slots.svelte.js';
 
 const PIE_CHART_KEY = Symbol('evilcharts.pie-chart');
 

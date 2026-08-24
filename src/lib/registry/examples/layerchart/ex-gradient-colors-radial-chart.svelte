@@ -14,41 +14,36 @@
 		chrome: {
 			label: 'Chrome',
 			colors: {
-				// [!code highlight:2]
-				light: ['#93c5fd', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af'],
-				dark: ['#bfdbfe', '#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8']
+				light: ['#ff6b6b', '#feca57', '#48dbfb'], // Coral -> Gold -> Electric Blue // [!code highlight]
+				dark: ['#ff7979', '#ffeaa7', '#74b9ff'] // [!code highlight]
 			}
 		},
 		safari: {
 			label: 'Safari',
 			colors: {
-				// [!code highlight:2]
-				light: ['#6ee7b7', '#10b981', '#059669', '#047857', '#065f46'],
-				dark: ['#a7f3d0', '#34d399', '#10b981', '#059669', '#047857']
+				light: ['#a29bfe', '#fd79a8', '#fdcb6e'], // Lavender -> Pink -> Sunflower // [!code highlight]
+				dark: ['#b8b5ff', '#ff9ff3', '#ffeaa7'] // [!code highlight]
 			}
 		},
 		firefox: {
 			label: 'Firefox',
 			colors: {
-				// [!code highlight:2]
-				light: ['#fcd34d', '#f59e0b', '#d97706', '#b45309', '#92400e'],
-				dark: ['#fde68a', '#fbbf24', '#f59e0b', '#d97706', '#b45309']
+				light: ['#00d2d3', '#54a0ff', '#5f27cd'], // Turquoise -> Blue -> Purple // [!code highlight]
+				dark: ['#01e2e3', '#74b9ff', '#7c3aed'] // [!code highlight]
 			}
 		},
 		edge: {
 			label: 'Edge',
 			colors: {
-				// [!code highlight:2]
-				light: ['#c4b5fd', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
-				dark: ['#ddd6fe', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9']
+				light: ['#ff9f43', '#ee5a24', '#b71540'], // Tangerine -> Vermillion -> Wine // [!code highlight]
+				dark: ['#ffbe76', '#f0932b', '#e74c3c'] // [!code highlight]
 			}
 		},
 		other: {
 			label: 'Other',
 			colors: {
-				// [!code highlight:2]
-				light: ['#d1d5db', '#9ca3af', '#6b7280', '#4b5563', '#374151'],
-				dark: ['#e5e7eb', '#d1d5db', '#9ca3af', '#6b7280', '#4b5563']
+				light: ['#1dd1a1', '#10ac84', '#01a3a4'], // Mint -> Jungle -> Teal // [!code highlight]
+				dark: ['#55efc4', '#00b894', '#00cec9'] // [!code highlight]
 			}
 		}
 	} satisfies ChartConfig;

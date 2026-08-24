@@ -72,10 +72,10 @@ test.describe('EvilRadarChart examples', () => {
 				const matrix = (n as SVGGraphicsElement).getCTM();
 				return { x: matrix?.e, y: matrix?.f };
 			});
-		// The composed transform includes the 5px chart margin. The bottom legend then reserves
-		// 32px from the plot, so the web sits at the centre of the remaining drawing area.
+		// Recharts reserves the legend for radius calculation but keeps the polar origin at the
+		// centre of the full SVG surface.
 		expect(centre.x).toBeCloseTo(box.w / 2, 0);
-		expect(centre.y).toBeCloseTo((box.h - 32) / 2, 0);
+		expect(centre.y).toBeCloseTo(box.h / 2, 0);
 	});
 
 	test('mobile settled geometry reserves the edge legend before scaling the web', async ({
@@ -275,8 +275,18 @@ test.describe('EvilRadarChart examples', () => {
 		await open(page, 'ex-radar-chart');
 
 		const label = () => page.locator('.min-w-32 .font-medium').first().innerText();
-		const plotBox = (await plot(page).boundingBox())!;
-		const centre = { x: plotBox.x + plotBox.width / 2, y: plotBox.y + plotBox.height / 2 };
+		const [plotBox, groupCentre] = await Promise.all([
+			plot(page).boundingBox(),
+			plot(page)
+				.locator('.lc-group-g')
+				.first()
+				.evaluate((node) => {
+					const matrix = (node as SVGGraphicsElement).getScreenCTM()!;
+					return { x: matrix.e, y: matrix.f };
+				})
+		]);
+		if (!plotBox) throw new Error('radar plot is not visible');
+		const centre = groupCentre;
 		const radius = Math.min(plotBox.width, plotBox.height) * 0.3;
 
 		// Straight up is the first category; a third of the way round is the third.

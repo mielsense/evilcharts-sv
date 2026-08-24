@@ -2,15 +2,6 @@
 	import { EvilRadarChart } from '$lib/registry/charts/layerchart-radar-chart/index.js';
 	import { type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';
 
-	const data = [
-		{ skill: 'JavaScript', desktop: 186, mobile: 80 },
-		{ skill: 'TypeScript', desktop: 305, mobile: 200 },
-		{ skill: 'React', desktop: 237, mobile: 120 },
-		{ skill: 'Node.js', desktop: 173, mobile: 190 },
-		{ skill: 'CSS', desktop: 209, mobile: 130 },
-		{ skill: 'Python', desktop: 214, mobile: 140 }
-	];
-
 	const chartConfig = {
 		desktop: {
 			label: 'Desktop',
@@ -27,19 +18,10 @@
 			}
 		}
 	} satisfies ChartConfig;
-
-	// [!code highlight:2]
-	const isLoading = true;
 </script>
 
-<!-- While loading the chart wants an empty array, as the reference's comment spells out:
-     `data={isLoading ? [] : data}`. -->
-<EvilRadarChart
-	data={isLoading ? [] : data}
-	config={chartConfig}
-	class="h-full w-full p-4"
-	{isLoading}
->
+<!-- [!code highlight] -->
+<EvilRadarChart data={[]} config={chartConfig} class="h-full w-full p-4" isLoading={true}>
 	<EvilRadarChart.PolarGrid />
 	<EvilRadarChart.PolarAngleAxis dataKey="skill" />
 	<EvilRadarChart.Legend />

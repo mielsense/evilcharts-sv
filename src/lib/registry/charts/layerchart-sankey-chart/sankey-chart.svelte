@@ -9,6 +9,7 @@
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
 	import { ChartBackground, type BackgroundVariant } from '../../ui/layerchart-background/index.js';
@@ -33,6 +34,7 @@
 		config,
 		children,
 		class: className,
+		accessibility,
 		nodeWidth = DEFAULT_NODE_WIDTH,
 		nodePadding = DEFAULT_NODE_PADDING,
 		linkCurvature = DEFAULT_LINK_CURVATURE,
@@ -52,6 +54,7 @@
 		config: ChartConfig; // node colors + labels keyed by node name
 		children: Snippet; // composed parts — <Node />, <Link />, <Tooltip />, …
 		class?: string; // extra classes for the chart container
+		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		nodeWidth?: number; // width of each node in pixels
 		nodePadding?: number; // vertical gap between nodes in pixels
 		linkCurvature?: number; // link curve amount, 0 (straight) to 1 (maximum)
@@ -105,7 +108,6 @@
 	 *
 	 * Recharts runs its own sankey layout rather than d3-sankey, so it is ported in `layout.ts` and
 	 * driven from here — that is what makes the node rectangles land on the reference's pixels.
-	 * See plans/DEVIATIONS.md S-1.
 	 */
 	const laidOut = $derived(
 		computeSankey({
@@ -150,7 +152,13 @@
 	const hide = () => layerContext?.tooltip.hide();
 </script>
 
-<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
+<ChartContainer
+	{config}
+	{initialDimension}
+	{accessibility}
+	bind:dimension={chartDimension}
+	class={className}
+>
 	<LoadingIndicator {isLoading} />
 	{#if isLoading}
 		<LoadingSankey />

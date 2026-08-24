@@ -7,8 +7,7 @@ const LINE_SLOTS_KEY = Symbol('evilcharts.composed-line-slots');
  * Registry for the `<Dot />` / `<ActiveDot />` children of one `<Line />`.
  *
  * The reference resolves them with `React.Children.forEach`; Svelte cannot inspect a
- * snippet, so each slot registers itself here instead — the config-slot pattern from
- * plans/SPEC.md §4.2.
+ * snippet, so each slot registers itself here instead.
  */
 export class LineSlots {
 	#dotToken: string | null = null;
@@ -17,7 +16,7 @@ export class LineSlots {
 	dot = $state<{ variant?: DotVariant } | null>(null);
 	activeDot = $state<{ variant?: DotVariant } | null>(null);
 
-	/** Token-keyed so a remount's stale teardown cannot clear the live slot (DEVIATIONS.md A-3). */
+	/** Token-keyed so a remount's stale teardown cannot clear the live slot. */
 	registerDot(token: string, variant: DotVariant | undefined) {
 		this.#dotToken = token;
 		this.dot = { variant };

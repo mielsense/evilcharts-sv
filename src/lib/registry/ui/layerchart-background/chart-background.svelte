@@ -4,8 +4,7 @@
 	//
 	// The reference wraps this in Recharts' `<ZIndexLayer zIndex={-1}>`. LayerChart has no
 	// z-index layer, so each chart root renders the registered background slot as the *first*
-	// child inside its <Svg>, which paints it behind every other mark. See
-	// plans/DEVIATIONS.md U-5.
+	// child inside its <Svg>, which paints it behind every other mark.
 	import { PATTERN_MAP } from './pattern-map.js';
 	import type { BackgroundVariant } from './types.js';
 

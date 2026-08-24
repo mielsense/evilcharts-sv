@@ -6,7 +6,6 @@ import type { EvilBrushRange } from './types.js';
  * Port of the reference's `useEvilBrush`. React's `useDeferredValue` (used there to keep the
  * handles at pointer cadence while the expensive chart re-render lags) has no Svelte
  * counterpart and is not needed: Svelte updates only the marks that actually changed.
- * See plans/DEVIATIONS.md B-5.
  */
 export class EvilBrushState<TData extends Record<string, unknown>> {
 	#getData: () => TData[];

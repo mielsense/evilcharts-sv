@@ -26,7 +26,7 @@
 
 	/**
 	 * Column width and offset from Recharts' own arithmetic — its default `barCategoryGap="10%"`
-	 * leaves a gap either side, which `bandPadding={0}` alone would not (PITFALLS §3).
+	 * leaves a gap either side, which `bandPadding={0}` alone would not.
 	 */
 	const insets = $derived.by(() => {
 		const band = layer.xScale.bandwidth?.() ?? 0;

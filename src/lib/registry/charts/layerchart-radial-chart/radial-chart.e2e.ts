@@ -182,12 +182,29 @@ test.describe('EvilRadialChart examples', () => {
 		await expect(gradient).toHaveAttribute('y2', '1');
 	});
 
-	test('the multi-stop config emits one stop per colour', async ({ page }) => {
+	test('the gradient example keeps the original three-stop palettes in both themes', async ({
+		page
+	}) => {
 		await open(page, 'ex-gradient-colors-radial-chart');
-		const stops = await plot(page)
-			.locator('linearGradient[id$="-radial-colors-chrome"] stop')
-			.evaluateAll((nodes) => nodes.length);
-		expect(stops).toBe(5);
+		const chromeStops = plot(page).locator('linearGradient[id$="-radial-colors-chrome"] stop');
+		await expect(chromeStops).toHaveCount(3);
+
+		const stopColors = () =>
+			chromeStops.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).stopColor));
+
+		await page.evaluate(() => document.documentElement.classList.remove('dark'));
+		expect(await stopColors()).toEqual([
+			'rgb(255, 107, 107)',
+			'rgb(254, 202, 87)',
+			'rgb(72, 219, 251)'
+		]);
+
+		await page.evaluate(() => document.documentElement.classList.add('dark'));
+		expect(await stopColors()).toEqual([
+			'rgb(255, 121, 121)',
+			'rgb(255, 234, 167)',
+			'rgb(116, 185, 255)'
+		]);
 	});
 
 	test('the tracks are painted from the muted token and span the whole sweep', async ({ page }) => {
@@ -243,6 +260,18 @@ test.describe('EvilRadialChart examples', () => {
 		// The reference dims every unselected bar to 0.15.
 		expect(after[1]).toBe(1);
 		expect(after.filter((o) => o === 0.15)).toHaveLength(4);
+	});
+
+	test('keyboard activation selects and clears a radial bar', async ({ page }) => {
+		await open(page, 'ex-radial-chart');
+		const bar = plot(page).locator('[role="button"]').first();
+		await bar.focus();
+		await page.keyboard.press('Enter');
+		await expect(bar).toHaveAttribute('aria-pressed', 'true');
+		expect(Number(await bars(page).nth(1).getAttribute('opacity'))).toBe(0.15);
+
+		await page.keyboard.press('Space');
+		await expect(bar).toHaveAttribute('aria-pressed', 'false');
 	});
 
 	test('clicking a legend entry dims the other bars', async ({ page }) => {

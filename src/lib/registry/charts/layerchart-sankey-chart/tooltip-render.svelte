@@ -18,7 +18,7 @@
 	 * Row shown when nothing is hovered — the reference's `defaultIndex`, counted over the nodes.
 	 *
 	 * The hovered row takes precedence, because LayerChart resolves `dataProp ?? ctx.tooltip.data`
-	 * and an unconditional `data` pins the tooltip forever (DEVIATIONS A-12).
+	 * and an unconditional `data` pins the tooltip forever.
 	 */
 	const defaultRow = $derived.by(() => {
 		if (slot?.defaultIndex === undefined) return undefined;
@@ -60,7 +60,7 @@
 {#if slot && !chart.isLoading}
 	<ChartTooltip data={layer.tooltip.data ?? defaultRow}>
 		{#snippet children({ data })}
-			<!-- Read inline rather than through a `{const}` — see plans/DEVIATIONS.md A-6c. -->
+			<!-- Read inline so changes to the hovered item re-derive the tooltip content. -->
 			<ChartTooltipContent
 				active
 				hideLabel

@@ -4,6 +4,7 @@
 	 * chart layout, and forwards every LayerChart Grid prop for full control.
 	 */
 	import { Grid as LayerGrid } from 'layerchart';
+	import { rechartsValueAxisTicks } from '../../ui/layerchart-chart/ticks.js';
 	import { useBarChart } from './bar-chart-context.svelte.js';
 
 	let {
@@ -27,5 +28,6 @@
 <LayerGrid
 	x={showVertical ? { dashArray: strokeDasharray } : false}
 	y={showHorizontal ? { dashArray: strokeDasharray } : false}
+	{...chart.isHorizontal ? { xTicks: rechartsValueAxisTicks } : { yTicks: rechartsValueAxisTicks }}
 	{...restProps}
 />

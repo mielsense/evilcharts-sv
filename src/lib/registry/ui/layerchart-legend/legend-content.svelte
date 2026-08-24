@@ -45,7 +45,7 @@
 		itemConfig: ChartConfig[string] | undefined;
 		colorsCount: number;
 		isSelected: boolean;
-		/** Resolved here rather than with a declaration tag in the markup — see DEVIATIONS A-6c. */
+		/** Resolved before rendering so changes to the entry re-derive it. */
 		icon: ChartConfig[string]['icon'];
 	};
 
@@ -147,6 +147,7 @@
 				<button
 					type="button"
 					class={entryClass(entry.isSelected)}
+					aria-pressed={selected === entry.key}
 					onclick={() => select(entry.key)}
 				>
 					{@render indicator(entry)}

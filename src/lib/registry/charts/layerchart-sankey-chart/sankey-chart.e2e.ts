@@ -189,6 +189,18 @@ test.describe('EvilSankeyChart examples', () => {
 		expect(linkPaint.some((l) => l.o === 0.1 && l.stroke === 'none')).toBe(true);
 	});
 
+	test('keyboard activation selects and clears a node', async ({ page }) => {
+		await open(page, 'ex-sankey-chart');
+		const node = plot(page).locator('g[role="button"]').first();
+		await node.focus();
+		await page.keyboard.press('Enter');
+		await expect(node).toHaveAttribute('aria-pressed', 'true');
+		expect(Number(await nodes(page).nth(1).getAttribute('fill-opacity'))).toBe(0.15);
+
+		await page.keyboard.press('Space');
+		await expect(node).toHaveAttribute('aria-pressed', 'false');
+	});
+
 	test('hovering a node shows its own tooltip row', async ({ page }) => {
 		await open(page, 'ex-sankey-chart');
 

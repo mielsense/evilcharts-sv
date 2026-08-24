@@ -1,6 +1,7 @@
 export { default as ChartContainer } from './chart-container.svelte';
 export { default as ChartStyle } from './chart-style.svelte';
 export { default as LoadingIndicator } from './loading-indicator.svelte';
+export type { ChartAccessibility } from './accessibility.js';
 
 export {
 	THEMES,

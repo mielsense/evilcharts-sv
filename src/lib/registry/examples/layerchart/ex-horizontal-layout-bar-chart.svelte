@@ -15,15 +15,8 @@
 		desktop: {
 			label: 'Desktop',
 			colors: {
-				light: ['#047857'],
-				dark: ['#10b981']
-			}
-		},
-		mobile: {
-			label: 'Mobile',
-			colors: {
-				light: ['#be123c'],
-				dark: ['#f43f5e']
+				light: ['#2563eb'],
+				dark: ['#3b82f6']
 			}
 		}
 	} satisfies ChartConfig;

@@ -64,11 +64,42 @@ export type RadialRing = {
 	row: Record<string, unknown>;
 	index: number;
 	name: string;
+	/** Sweep start, in d3 radians. */
+	startAngle: number;
 	/** Sweep end, in d3 radians. */
 	endAngle: number;
 	innerRadius: number;
 	outerRadius: number;
 };
+
+/**
+ * Interpolates radial-bar angles as Recharts' `SectorsWithAnimation` does. Radii and row payloads
+ * come from the target immediately; only the start and end angles tween. A newly added ring grows
+ * from its target start angle.
+ */
+export function interpolateRings(
+	previous: RadialRing[],
+	target: RadialRing[],
+	progress: number
+): RadialRing[] {
+	if (progress >= 1) return target;
+
+	return target.map((ring, index) => {
+		const previousRing = previous[index];
+		if (!previousRing) {
+			return {
+				...ring,
+				endAngle: ring.startAngle + (ring.endAngle - ring.startAngle) * progress
+			};
+		}
+
+		return {
+			...ring,
+			startAngle: previousRing.startAngle + (ring.startAngle - previousRing.startAngle) * progress,
+			endAngle: previousRing.endAngle + (ring.endAngle - previousRing.endAngle) * progress
+		};
+	});
+}
 
 /**
  * Ring geometry for every row, matching Recharts' radial band layout.
@@ -122,6 +153,7 @@ export function getRings({
 			row,
 			index,
 			name: String(row[nameKey]),
+			startAngle,
 			endAngle: startAngle + (endAngle - startAngle) * (valueOf(row) / total),
 			innerRadius: bandCentre - barSize / 2,
 			outerRadius: bandCentre + barSize / 2

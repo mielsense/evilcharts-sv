@@ -3,8 +3,12 @@
 	 * The vertical value axis. Forwards every LayerChart Axis prop.
 	 * Hidden automatically while the chart is loading.
 	 */
-	import { Axis } from 'layerchart';
-	import { layerChartFormatter } from '../../ui/layerchart-chart/ticks.js';
+	import { Axis, getChartContext } from 'layerchart';
+	import {
+		layerChartFormatter,
+		measureRechartsYAxisWidth,
+		rechartsValueAxisTicks
+	} from '../../ui/layerchart-chart/ticks.js';
 	import type { ComponentProps } from 'svelte';
 	import { useLineChart } from './line-chart-context.svelte.js';
 
@@ -15,6 +19,7 @@
 		axisLine?: boolean;
 		tickMargin?: number;
 		minTickGap?: number;
+		width?: number | 'auto';
 	};
 
 	let {
@@ -22,28 +27,43 @@
 		axisLine = false,
 		tickMargin = 8,
 		minTickGap: _minTickGap = 8,
+		width = 'auto',
 		tickFormatter,
+		tickLabelProps,
 		dataKey: _dataKey,
 		...restProps
 	}: Props = $props();
 
 	const chart = useLineChart();
+	const layer = getChartContext();
 	const token = $props.id();
+	const format = $derived(
+		tickFormatter ? layerChartFormatter(tickFormatter) : (value: unknown) => String(value)
+	);
+	const tickValues = $derived(rechartsValueAxisTicks(layer.yScale));
+	const resolvedWidth = $derived(
+		width === 'auto'
+			? measureRechartsYAxisWidth(
+					tickValues.map((value, index) => format(value, index)),
+					tickMargin
+				)
+			: width
+	);
 
 	$effect.pre(() => {
-		chart.registerAxis(token, 'y', true);
+		chart.registerAxis(token, 'y', true, resolvedWidth);
 		return () => chart.registerAxis(token, 'y', false);
 	});
-
-	const format = $derived(tickFormatter ? layerChartFormatter(tickFormatter) : undefined);
 </script>
 
 {#if !chart.isLoading}
 	<Axis
 		placement="left"
+		ticks={rechartsValueAxisTicks}
 		rule={axisLine}
 		tickMarks={tickLine}
-		tickLength={tickMargin}
+		tickLength={6}
+		tickLabelProps={{ ...tickLabelProps, dx: -(6 + tickMargin) }}
 		{format}
 		{...restProps}
 	/>

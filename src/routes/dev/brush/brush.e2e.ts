@@ -207,6 +207,62 @@ test.describe('EvilBrush', () => {
 		expect(labels[1].trim()).toBe('30');
 	});
 
+	test('keyboard sliders move both handles without crossing', async ({ page }) => {
+		const brush = page.locator(BRUSH).first();
+		const start = brush.getByRole('slider', { name: 'Start of selected chart range' });
+		const end = brush.getByRole('slider', { name: 'End of selected chart range' });
+
+		await start.focus();
+		await page.keyboard.press('ArrowRight');
+		await expect(start).toHaveAttribute('aria-valuenow', '1');
+		await expect(start).toHaveAttribute('aria-valuemax', '27');
+
+		await end.focus();
+		await page.keyboard.press('Home');
+		await expect(end).toHaveAttribute('aria-valuenow', '3');
+		await expect(end).toHaveAttribute('aria-valuemin', '3');
+
+		await start.focus();
+		await page.keyboard.press('End');
+		await expect(start).toHaveAttribute('aria-valuenow', '1');
+	});
+
+	test('the selected window can be shifted from the keyboard', async ({ page }) => {
+		const brush = page.locator(BRUSH).first();
+		const end = brush.getByRole('slider', { name: 'End of selected chart range' });
+		await end.focus();
+		await page.keyboard.press('Home');
+		await expect(end).toHaveAttribute('aria-valuenow', '2');
+
+		const window = brush.getByRole('slider', { name: 'Selected chart range', exact: true });
+		await expect(window).toHaveAttribute('aria-valuemax', '27');
+		await window.focus();
+		await page.keyboard.press('ArrowRight');
+		await expect(window).toHaveAttribute('aria-valuenow', '1');
+		await expect(window).toHaveAttribute('aria-valuetext', 'June 2 to June 4');
+
+		await page.keyboard.press('End');
+		await expect(window).toHaveAttribute('aria-valuenow', '27');
+		await expect(window).toHaveAttribute('aria-valuemax', '27');
+		await expect(window).toHaveAttribute('aria-valuetext', 'June 28 to June 30');
+	});
+
+	test('reduced motion places keyboard changes without spring frames', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+		await page.reload();
+		await page.waitForSelector('[data-preview-ready]');
+
+		const brush = page.locator(BRUSH).first();
+		const end = brush.getByRole('slider', { name: 'End of selected chart range' });
+		await end.focus();
+		await page.keyboard.press('Home');
+		await expect(end).toHaveAttribute('aria-valuenow', '2');
+
+		const current = await selection(brush);
+		expect(current.left).toBe(0);
+		expect(current.width).toBeCloseTo((2 / 29) * 100, 5);
+	});
+
 	test('logs no console errors', async ({ page }) => {
 		await page.waitForTimeout(500);
 		expect((page as Page & { __errors?: string[] }).__errors).toEqual([]);

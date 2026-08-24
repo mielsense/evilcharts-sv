@@ -9,6 +9,7 @@
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
 	import LegendRender from './legend-render.svelte';
@@ -30,6 +31,7 @@
 		children,
 		class: className,
 		chartProps,
+		accessibility,
 		defaultSelectedSector = null,
 		onSelectionChange,
 		isLoading = false,
@@ -46,6 +48,7 @@
 		children: Snippet; // composed parts — <Pie />, <Tooltip />, <Legend />, …
 		class?: string; // extra classes for the chart container
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		defaultSelectedSector?: string | null; // sector selected on first render
 		onSelectionChange?: (selection: { dataKey: string; value: number } | null) => void; // fires when the selected sector changes
 		isLoading?: boolean; // shows the animated loading skeleton
@@ -113,7 +116,13 @@
 	});
 </script>
 
-<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
+<ChartContainer
+	{config}
+	{initialDimension}
+	{accessibility}
+	bind:dimension={chartDimension}
+	class={className}
+>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<Chart

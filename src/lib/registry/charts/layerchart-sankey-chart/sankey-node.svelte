@@ -53,9 +53,15 @@
 		// Clicking the selected node clears the selection, otherwise selects it
 		chart.selectNode(chart.selectedNode === nodeName ? null : nodeName);
 	}
+
+	function selectFromKeyboard(event: KeyboardEvent) {
+		if (!isClickable || (event.key !== 'Enter' && event.key !== ' ')) return;
+		event.preventDefault();
+		select();
+	}
 </script>
 
-<g>
+{#snippet nodeShape()}
 	<rect
 		x={shape.x}
 		y={shape.y}
@@ -148,4 +154,18 @@
 			</text>
 		{/if}
 	{/if}
-</g>
+{/snippet}
+
+{#if isClickable}
+	<g
+		role="button"
+		tabindex="0"
+		aria-label={`${nodeName}: ${valueFormatter(nodeValue)}`}
+		aria-pressed={chart.selectedNode === nodeName}
+		onkeydown={selectFromKeyboard}
+	>
+		{@render nodeShape()}
+	</g>
+{:else}
+	<g>{@render nodeShape()}</g>
+{/if}

@@ -17,7 +17,6 @@ export type ChartDotProps = {
 	 * horizontal gradient at its own x. That assumes the origin is the plot's left edge, which is
 	 * true in a cartesian chart but not inside a centred `<Group>` — there, `x="0"` starts at the
 	 * *centre* and every dot left of it disappeared. A radial chart passes its own plot span.
-	 * See plans/DEVIATIONS.md U-7.
 	 */
 	gradientX?: number | string;
 	gradientWidth?: number | string;

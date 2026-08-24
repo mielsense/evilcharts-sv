@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Development-only gallery. Renders every variant of the shared UI primitives so their
 	// geometry and colour can be eyeballed in both themes. The authoritative comparison against
-	// the reference happens through the chart examples (Plans 03 and 04), because the reference's
+	// the reference happens through the chart examples, because the reference's
 	// /docs/recharts/ui/* pages render full charts rather than bare primitives.
 	import { ChartContainer, type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';
 	import { ChartBackground } from '$lib/registry/ui/layerchart-background/index.js';

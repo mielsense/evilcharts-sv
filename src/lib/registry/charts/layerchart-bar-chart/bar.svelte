@@ -83,7 +83,7 @@
 	 * The chart runs with `bandPadding={0}`, so the band and the step are the same width — the
 	 * shape Recharts' arithmetic assumes. `getBarPositions` then divides it exactly as Recharts
 	 * does (category gap, inter-bar gaps, whole-pixel widths) and the result is applied as insets,
-	 * rather than letting LayerChart nest a second band scale. See plans/DEVIATIONS.md B-1b.
+	 * rather than letting LayerChart nest a second band scale.
 	 */
 	const bandSize = $derived(
 		(chart.isHorizontal ? layer.yScale.bandwidth?.() : layer.xScale.bandwidth?.()) ?? 0
@@ -119,7 +119,7 @@
 	 * The stripped variant's cap is a 2px strip floating 4px clear of the bar's top edge. LayerChart
 	 * re-centres a bar when given an explicit `height`/`width` (`Bar.shared` does
 	 * `y += (height - props.height) / 2`), so the cap is expressed as insets measured against the
-	 * value scale instead. See plans/DEVIATIONS.md C-1.
+	 * value scale instead.
 	 *
 	 * A stacked bar's segment runs from the running total below it to the total including it, which
 	 * is how LayerChart stacks the series — in config order.
@@ -167,7 +167,7 @@
 	 *
 	 * Template declaration tags inside a keyed `{#each}` do not reliably re-derive
 	 * when an outer value changes, which is what froze the tooltip and the selection dimming
-	 * elsewhere in this port. See plans/DEVIATIONS.md A-6, A-6b and A-6c.
+	 * elsewhere in this port.
 	 */
 	const rows = $derived(
 		chart.data.map((row, index) => {

@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import { cn } from '$lib/utils.js';
 	import { validateChartConfigColors, type ChartConfig } from './chart-config.js';
+	import type { ChartAccessibility } from './accessibility.js';
 	import { setChartContext } from './chart-context.svelte.js';
 	import ChartStyle from './chart-style.svelte';
 
@@ -15,6 +16,8 @@
 		dimension?: { width: number; height: number };
 		/** Optional content rendered below the chart (e.g. EvilBrush) */
 		footer?: Snippet;
+		/** Accessible name and optional description for the chart as an interactive group. */
+		accessibility?: ChartAccessibility;
 	};
 
 	let {
@@ -25,11 +28,18 @@
 		class: className,
 		children,
 		footer,
+		accessibility,
 		...restProps
 	}: Props = $props();
 
 	const uniqueId = $props.id();
 	const chartId = $derived(`chart-${id ?? uniqueId}`);
+	const descriptionId = $derived(`${chartId}-description`);
+	const describedBy = $derived(
+		[accessibility?.description ? descriptionId : undefined, accessibility?.describedBy]
+			.filter(Boolean)
+			.join(' ') || undefined
+	);
 	let measuredWidth = $state(0);
 	let measuredHeight = $state(0);
 	const resolvedDimension = $derived(
@@ -63,10 +73,14 @@
 <div
 	data-slot="chart"
 	data-chart={chartId}
+	role={accessibility ? 'group' : undefined}
+	aria-label={accessibility?.label}
+	aria-labelledby={accessibility?.labelledBy}
+	aria-describedby={describedBy}
 	class={cn(
 		'min-h-0 w-full flex-1',
 		// Reference equivalents, retargeted from Recharts' `.recharts-*` hooks onto
-		// LayerChart's `.lc-*` hooks. See plans/DEVIATIONS.md U-1.
+		// LayerChart's `.lc-*` hooks.
 		/*
 			The grid and rule overrides are gated on `:not([stroke])`, mirroring the reference's
 			`[&_.recharts-cartesian-grid_line[stroke='#ccc']]` / `[&_.recharts-polar-grid_[stroke='#ccc']]`
@@ -80,6 +94,9 @@
 	)}
 	{...restProps}
 >
+	{#if accessibility?.description}
+		<span id={descriptionId} class="sr-only">{accessibility.description}</span>
+	{/if}
 	<ChartStyle id={chartId} {config} />
 	<div
 		class="relative flex min-h-0 w-full flex-1 flex-col"

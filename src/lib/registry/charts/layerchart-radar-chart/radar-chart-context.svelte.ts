@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import type { ChartConfig } from '../../ui/layerchart-chart/chart-config.js';
 import type { DitherVariant, RenderStyle } from '../../ui/layerchart-dither/index.js';
-import { ChartSlots } from './chart-slots.svelte.js';
+import { ChartSlots } from '../../ui/layerchart-chart/chart-slots.svelte.js';
 
 const RADAR_CHART_KEY = Symbol('evilcharts.radar-chart');
 
@@ -19,6 +19,8 @@ type Options = {
 	ditherVariant: () => DitherVariant;
 	selectedDataKey: () => string | null;
 	selectDataKey: (dataKey: string | null) => void;
+	/** Called by each rendered `<Radar />` so config-only keys never become series. */
+	registerRadar: (token: string, dataKey: string | undefined) => void;
 	/**
 	 * Called by `<PolarAngleAxis dataKey>` on mount.
 	 *
@@ -74,6 +76,10 @@ export class RadarChartContext {
 
 	selectDataKey = (dataKey: string | null) => {
 		this.#options.selectDataKey(dataKey);
+	};
+
+	registerRadar = (token: string, dataKey: string | undefined) => {
+		this.#options.registerRadar(token, dataKey);
 	};
 
 	registerAngleDataKey = (token: string, dataKey: string | undefined) => {

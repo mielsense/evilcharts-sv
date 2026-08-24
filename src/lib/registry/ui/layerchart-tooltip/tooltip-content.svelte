@@ -73,7 +73,7 @@
 		itemConfig: ChartConfig[string] | undefined;
 		colorsCount: number;
 		isDimmed: boolean;
-		/** Resolved here rather than with a declaration tag in the markup — see DEVIATIONS A-6c. */
+		/** Resolved before rendering so changes to the row re-derive it. */
 		icon: ChartConfig[string]['icon'];
 	};
 

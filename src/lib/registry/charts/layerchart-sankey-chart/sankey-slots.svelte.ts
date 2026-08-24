@@ -24,9 +24,8 @@ export type LinkSlot = {
  * Registry for the chart's `<Node />` and `<Link />` children.
  *
  * The reference reads them with `React.Children.forEach` and hands the props to Recharts' `node` /
- * `link` render props; Svelte cannot inspect a snippet, so each slot registers itself here instead
- * — the config-slot pattern from plans/SPEC.md §4.2. Token-keyed so a remount's stale teardown
- * cannot clear the live slot (DEVIATIONS.md A-3).
+ * `link` render props; Svelte cannot inspect a snippet, so each slot registers itself here instead.
+ * Tokens prevent a remount's stale teardown from clearing the live slot.
  */
 export class SankeySlots {
 	#nodeToken: string | null = null;

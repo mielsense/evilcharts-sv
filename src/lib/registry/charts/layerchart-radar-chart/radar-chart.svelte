@@ -9,6 +9,7 @@
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
 	import { ChartBackground, type BackgroundVariant } from '../../ui/layerchart-background/index.js';
@@ -23,6 +24,7 @@
 		type RenderStyle
 	} from '../../ui/layerchart-dither/index.js';
 	import TooltipRender from './tooltip-render.svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 	import {
 		DEFAULT_OUTER_RADIUS_RATIO,
 		LOADING_POINTS,
@@ -37,6 +39,7 @@
 		children,
 		class: className,
 		chartProps,
+		accessibility,
 		backgroundVariant,
 		defaultSelectedDataKey = null,
 		onSelectionChange,
@@ -53,6 +56,7 @@
 		children: Snippet; // composed parts — <Radar />, <PolarGrid />, <Legend />, …
 		class?: string; // extra classes for the chart container
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		backgroundVariant?: BackgroundVariant; // background pattern drawn behind the chart
 		defaultSelectedDataKey?: string | null; // series selected on first render
 		onSelectionChange?: (selectedDataKey: string | null) => void; // fires when the selected series changes
@@ -79,6 +83,7 @@
 
 	/** LayerChart's chart state, so the pointer handlers below can drive the tooltip. */
 	let layerContext = $state<ChartState<Record<string, unknown>> | undefined>(undefined);
+	let polarGroup = $state<Element>();
 
 	const TAU = Math.PI * 2;
 
@@ -94,15 +99,16 @@
 	 *
 	 * Attached to the wrapper rather than an overlay inside the SVG so a pointer over a radar still
 	 * reaches it — an overlay would either sit under the polygons or swallow their clicks.
-	 * See plans/DEVIATIONS.md U-5.
 	 */
 	function showTooltip(event: PointerEvent) {
 		const rows = chartData;
 		if (rows.length === 0 || !layerContext) return;
 
-		const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
-		const dx = event.clientX - (box.x + box.width / 2);
-		const dy = event.clientY - (box.y + box.height / 2);
+		if (!(polarGroup instanceof SVGGraphicsElement)) return;
+		const matrix = polarGroup.getScreenCTM();
+		if (!matrix) return;
+		const dx = event.clientX - matrix.e;
+		const dy = event.clientY - matrix.f;
 
 		const angle = (Math.atan2(dx, -dy) + TAU) % TAU;
 		const step = TAU / rows.length;
@@ -120,13 +126,15 @@
 	let registeredAngleKey = $state<string | undefined>(undefined);
 	let registeredAngleToken: string | null = null;
 
-	const seriesKeys = $derived(Object.keys(config));
+	const configuredKeys = $derived(Object.keys(config));
+	const radarKeyByToken = new SvelteMap<string, string>();
+	const seriesKeys = $derived([...radarKeyByToken.values()]);
 	const chartData = $derived((isLoading ? loading.loadingData : data) as Record<string, unknown>[]);
 
 	/** Category key for the angle scale. Falls back the same way the cartesian charts do (A-1). */
 	const fallbackAngleKey = $derived(
 		Object.keys(chartData[0] ?? {}).find(
-			(key) => !seriesKeys.includes(key) && key !== LOADING_RADAR_DATA_KEY
+			(key) => !configuredKeys.includes(key) && key !== LOADING_RADAR_DATA_KEY
 		)
 	);
 	const angleKey = $derived(registeredAngleKey ?? fallbackAngleKey);
@@ -151,8 +159,12 @@
 			selectedDataKey = next;
 			onSelectionChange?.(next);
 		},
+		registerRadar: (token, key) => {
+			if (key === undefined) radarKeyByToken.delete(token);
+			else radarKeyByToken.set(token, key);
+		},
 		registerAngleDataKey: (token, key) => {
-			// Ignore a stale teardown from LayerChart's mount-time remount (DEVIATIONS.md A-3).
+			// Ignore a stale teardown from LayerChart's mount-time remount.
 			if (key === undefined && registeredAngleToken !== token) return;
 			registeredAngleToken = key === undefined ? null : token;
 			registeredAngleKey = key;
@@ -168,15 +180,22 @@
 		const align = radarContext.slots.legend?.verticalAlign;
 		return align === 'top' || align === 'bottom' ? align : null;
 	});
+	const edgeLegendInset = $derived(edgeLegendPlacement ? EDGE_LEGEND_HEIGHT / 2 : 0);
 	const padding = $derived({
-		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
+		top: CHART_MARGIN + edgeLegendInset,
 		right: CHART_MARGIN,
-		bottom: CHART_MARGIN + (edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
+		bottom: CHART_MARGIN + edgeLegendInset,
 		left: CHART_MARGIN
 	});
 </script>
 
-<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
+<ChartContainer
+	{config}
+	{initialDimension}
+	{accessibility}
+	bind:dimension={chartDimension}
+	class={className}
+>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!--
@@ -232,7 +251,7 @@
 				</Html>
 			{/if}
 			<Svg zIndex={1}>
-				<Group center>
+				<Group center bind:ref={polarGroup}>
 					{#if backgroundVariant}
 						<ChartBackground variant={backgroundVariant} />
 					{/if}

@@ -183,8 +183,7 @@
 					`stroke="none"` with the stroke moved onto `line`: LayerChart's `<Area stroke>`
 					outlines the *closed* path, so it also drew down both sides and along the baseline
 					and overhung the brush box, which `overflow-hidden` then clipped. Recharts strokes
-					only the top curve. Same split as the main area chart — see plans/DEVIATIONS.md
-					A-5.
+					only the top curve, matching the main area chart.
 				-->
 				<Area
 					seriesKey={dk}
