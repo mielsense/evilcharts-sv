@@ -213,6 +213,11 @@ Data key for bar names — string values used for labels and the legend.
 The composed chart parts — `<Legend />`, `<Tooltip />`, and a `<RadialBar />`.
 
 </ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
+
+</ApiRow>
   <ApiRow name="className" type="string">
 
 Extra CSS classes for the chart container.

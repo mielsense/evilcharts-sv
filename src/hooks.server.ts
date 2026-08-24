@@ -45,7 +45,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const wantsMarkdown =
 		pathname.startsWith('/docs') && accept.includes('text/markdown') && !pathname.endsWith('.md');
 
-	if (!wantsMarkdown) return resolve(event);
+	if (!wantsMarkdown) {
+		const response = await resolve(event);
+		if (pathname.startsWith('/docs')) response.headers.append('Vary', 'Accept');
+		return response;
+	}
 
 	const slug = pathname.replace(/^\/docs\/?/, '');
 	void ingest([{ event: 'docs_markdown_fetch', slug: slug || 'index', ...context }]);

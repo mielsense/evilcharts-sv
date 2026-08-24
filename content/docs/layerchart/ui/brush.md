@@ -29,7 +29,9 @@ Set `xDataKey` on the root so the handles can label themselves with the value un
 <Alert>
   <AlertContent>
 
-Drag either handle to resize the range, or drag the selected region itself to pan without changing its width. Handle labels fade in while the pointer is over the brush. Dragging is pointer-based, so mouse, touch, and pen all work.
+Drag either handle to resize the range, or drag the selected region itself to pan without changing its width. Handle labels fade in while the pointer is over the brush. Mouse, touch, and pen all work.
+
+The same controls are available from the keyboard. Tab to a start or end handle, use the arrow keys to move it by one data point, and use Home or End to reach its valid boundary. Tab to the selected window to shift the complete range with the arrow keys; Home and End move that window to the beginning or end. The handles never cross, and reduced-motion preferences disable the positioning springs.
 
 </AlertContent>
 </Alert>

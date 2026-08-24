@@ -2,8 +2,8 @@
  * Turns a docs page's markdown into text an agent can read: the custom components become plain
  * markdown and the registry sources are inlined.
  *
- * Ported from `evilcharts/src/lib/llm.ts`. Every component branch is kept, plus the ones D-4 added
- * to the map, so no raw component tag survives into the output.
+ * Ported from `evilcharts/src/lib/llm.ts`. Every reference and Svelte-specific component branch is
+ * handled so no raw component tag survives into the output.
  *
  * Server-only: it reads registry sources off disk.
  */
@@ -98,7 +98,7 @@ function getAttribute(tag: string, name: string) {
  *
  * The reference uses `/<Tag[\s\S]*?\/>/g`, which stops at the first `/>` — including one inside an
  * attribute value. Several docs pages title a preview with a tag (`title="<Bar bufferBar />"`), so
- * that leaves the rest of the opening tag behind as literal text. See plans/DEVIATIONS.md A-2.
+ * a quote-aware scan is required to avoid leaving part of the opening tag as literal text.
  */
 function replaceSelfClosingTag(
 	content: string,
@@ -138,9 +138,8 @@ function replaceSelfClosingTag(
 /**
  * Replaces every `<Tag …>…</Tag>` pair, scanning the opening tag's quotes properly.
  *
- * `<ApiRow type="(range: { … }) => void">` defeats the reference's `<ApiRow\s+([\s\S]*?)>` — the
- * `>` of the arrow ends the match early and the rest of the attribute leaks into the body.
- * See plans/DEVIATIONS.md A-2.
+ * `<ApiRow type="(range: { … }) => void">` defeats a non-greedy opening-tag expression because the
+ * arrow's `>` ends the match early and leaks the rest of the attribute into the body.
  */
 function replacePairedTag(
 	content: string,
@@ -251,7 +250,6 @@ function stripMdxComponentTags(content: string) {
  *
  * The reference reads `files[0]` — one `.tsx` per item. An item here is a directory of components,
  * so every file is inlined under its own fence, each labelled with the path a consumer will have.
- * See plans/DEVIATIONS.md A-2.
  */
 function renderRegistrySource(name: string, title?: string) {
 	const item = Index[name];

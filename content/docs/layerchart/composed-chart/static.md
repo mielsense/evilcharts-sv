@@ -261,6 +261,11 @@ Defines every bar and line series. Each key matches a data key in your data, wit
 The composed chart parts — `<Grid />`, `<XAxis />`, `<YAxis />`, `<Legend />`, `<Tooltip />`, and one or more `<Bar />` and `<Line />`.
 
 </ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
+
+</ApiRow>
   <ApiRow name="className" type="string">
 
 Extra CSS classes for the chart container.

@@ -12,7 +12,7 @@
  * tag, which works because mdsvex splices this string straight into Svelte source.
  *
  * Themes, `defaultColor: false` and the transformer set match the reference's `rehype-pretty-code`
- * configuration in `evilcharts/source.config.ts`. See plans/DEVIATIONS.md D-1.
+ * configuration in `evilcharts/source.config.ts`.
  *
  * Imported from `svelte.config.js`, which Node loads directly; the TypeScript is stripped natively
  * (Node >= 22.18).

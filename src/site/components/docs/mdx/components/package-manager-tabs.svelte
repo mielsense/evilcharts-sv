@@ -5,7 +5,7 @@
 	 * The reference repeats this markup verbatim in both
 	 * `evilcharts/src/components/docs/mdx/components/{cli-block,command-block}.tsx`; the two differ
 	 * only in their command prefixes and in `<CliBlock>` nudging the copy button up by `-mt-1`.
-	 * Factoring it out keeps the two ports from drifting. See plans/DEVIATIONS.md D-4.
+	 * Factoring it out keeps the two Svelte components from drifting.
 	 */
 	import { BunIcon, NpmIcon, PnpmIcon, YarnIcon } from '$site/assets/icons/index.js';
 	import { Tabs, TabsList, TabsPanel, TabsTab } from '$site/components/ui/tabs/index.js';

@@ -67,9 +67,11 @@ A compound component: `<EvilSankeyChart />` is the container; `<EvilSankeyChart.
 
 ```svelte
 <script lang="ts">
-	import { EvilSankeyChart } from '$lib/components/evilcharts/charts/layerchart-sankey-chart';
+	import {
+		EvilSankeyChart,
+		type SankeyData
+	} from '$lib/components/evilcharts/charts/layerchart-sankey-chart/index.js';
 	import { type ChartConfig } from '$lib/components/evilcharts/ui/layerchart-chart';
-	import type { SankeyData } from 'layerchart';
 </script>
 ```
 
@@ -237,6 +239,11 @@ Defines the chart's nodes. Each key matches a node name from your data and sets 
   <ApiRow name="children" type="Snippet" required>
 
 The composed parts — `<Node />`, `<Link />`, and `<Tooltip />`.
+
+</ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
 
 </ApiRow>
   <ApiRow name="className" type="string">

@@ -39,7 +39,7 @@ loading, brushes, responsive layout, and transparent SVG interaction targets kee
 | Shared primitives      | 7: chart, tooltip, legend, dot, brush, background, dither |
 | Documentation examples | 119                                                       |
 | Installable blocks     | 22                                                        |
-| Registry items total   | 156                                                       |
+| Registry items total   | 157                                                       |
 
 ## Install a chart
 
@@ -91,10 +91,13 @@ for the full API.
 - **Vitest** (browser + node) and **Playwright** for tests
 
 The original is built on React 19, Next.js 16, Recharts 3 / Apache ECharts 6, Base UI, Fumadocs and
-`motion/react`. Where a Svelte equivalent behaves differently, the difference is written down in
-`plans/DEVIATIONS.md` alongside the measurement that justified it.
+`motion/react`. The Svelte port preserves the original data, composition, geometry, styling and
+interaction behavior while translating those implementation details to the Svelte stack.
 
 ## Development
+
+Use Node 22.18 or newer (up to Node 24) and pnpm 10.22. The repository is a source registry and
+documentation site; it is not published as an npm package.
 
 ```bash
 pnpm install
@@ -108,6 +111,7 @@ pnpm lint             # prettier --check + eslint
 pnpm format           # prettier --write
 
 pnpm test:unit        # vitest (client browser project + server node project)
+pnpm test:registry    # fresh registry build plus output validation
 pnpm test:e2e         # playwright, against the production build
 pnpm test             # both
 
@@ -121,9 +125,9 @@ generated and gitignored.
 
 ## Deploying
 
-The site is built with `@sveltejs/adapter-vercel` and is almost entirely prerendered. `/mcp`'s
-`POST` is the one dynamic route. Any static-capable host works; the adapter is the only thing to
-swap.
+The site is built with `@sveltejs/adapter-vercel`. Landing and machine-readable assets are
+prerendered; docs stay dynamic so a canonical docs URL can return HTML or Markdown according to its
+`Accept` header, and `/mcp` serves JSON-RPC requests.
 
 Set `PUBLIC_APP_URL` to the deployment's own origin. It backs the canonical tags, the OG image URLs,
 the sitemap and every absolute URL the agent surfaces publish, so leaving it unset on a custom
@@ -188,8 +192,7 @@ JSON-RPC endpoint at <https://evilcharts-sv.vercel.app/mcp>.
 Bug reports and fixes are welcome. Two things to know first:
 
 - **Parity with the original is the goal.** A change that makes a chart diverge from
-  [evilcharts.com][upstream-site] needs a reason, and that reason belongs in
-  `plans/DEVIATIONS.md` with the measurement behind it.
+  [evilcharts.com][upstream-site] needs measured justification and focused regression coverage.
 - **New chart designs belong upstream.** If you have an idea for a new chart or variant, open it on
   the [original repository][upstream]. This port follows it.
 

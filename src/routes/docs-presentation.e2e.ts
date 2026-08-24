@@ -25,7 +25,7 @@ test('the introduction uses the Svelte accent and padded credits', async ({ page
 	const portNotice = page.locator('[data-slot="alert-description"]').first();
 	await expect(portNotice.locator(':scope > p')).toHaveCount(1);
 	await expect(portNotice).toContainText(
-		'This is a Svelte 5 port of EvilCharts, maintained by Mathis, with ordered-dither chart variants adapted from Dither Kit.'
+		'This is a Svelte 5 port of EvilCharts with ordered-dither chart variants adapted from Dither Kit.'
 	);
 	for (const name of ['EvilCharts', 'Dither Kit']) {
 		const link = portNotice.getByRole('link', { name });

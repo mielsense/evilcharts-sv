@@ -4,7 +4,7 @@
 	 *
 	 * The reference resolves the example through the generated `Index`, whose entries carry a
 	 * `React.lazy` component. Here the lazy lookup lives in `$lib/registry/components.ts` (Vite can
-	 * glob, Next cannot), and `__index__.ts` supplies the metadata. See plans/DEVIATIONS.md R-2.
+	 * glob, Next cannot), and `__index__.ts` supplies the metadata.
 	 */
 	import type { Component } from 'svelte';
 	import { getRegistryComponent } from '$lib/registry/components.js';

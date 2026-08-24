@@ -3,14 +3,11 @@
 	import { getRegistryComponent } from '$lib/registry/components.js';
 	import { cn } from '$lib/utils.js';
 	import type { Component } from 'svelte';
-
-	/** The reference's `ComponentPreview` box, measured on its running docs site. */
-	const REFERENCE_CARD_WIDTH = 630;
-	const REFERENCE_CARD_HEIGHT = 360;
+	import { parsePreviewDimension, PREVIEW_HEIGHT, PREVIEW_WIDTH } from './dimensions.js';
 
 	const name = $derived(page.params.name!);
-	const width = $derived(page.url.searchParams.get('w'));
-	const height = $derived(page.url.searchParams.get('h'));
+	const width = $derived(parsePreviewDimension(page.url.searchParams.get('w'), PREVIEW_WIDTH));
+	const height = $derived(parsePreviewDimension(page.url.searchParams.get('h'), PREVIEW_HEIGHT));
 
 	let resolved = $state<{ name: string; component: Component<Record<string, never>> | null }>({
 		name: '',
@@ -51,16 +48,16 @@
 	(`innerRadius={60}`, `cornerRadius={99}`, `barSize={14}`, `strokeWidth={5}`) while the outer
 	radius is a percentage of the plot, so those charts are only comparable at this size. `?w=`/`?h=`
 	override it for debugging; expect fixed-pixel geometry to read differently there — Recharts
-	behaves the same way, its docs card just never grows. See plans/DEVIATIONS.md P-1.
+	behaves the same way, and its docs card never grows.
 -->
 <div class="flex min-h-dvh w-full items-center justify-center bg-sidebar p-1">
 	<div
 		class={cn('w-full overflow-hidden rounded-[5px] border bg-background')}
-		style={`max-width:${width ?? REFERENCE_CARD_WIDTH}px`}
+		style:max-width={`${width}px`}
 	>
 		<div
 			class="flex w-full items-center justify-center overflow-y-auto"
-			style={`height:${height ?? REFERENCE_CARD_HEIGHT}px`}
+			style:height={`${height}px`}
 		>
 			<div
 				class="no-scrollbar h-full w-full [&>svg]:select-none"

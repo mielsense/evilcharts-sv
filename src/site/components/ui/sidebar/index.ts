@@ -4,7 +4,6 @@
  * Only the parts the docs shell mounts are ported. The reference's `SidebarInput`,
  * `SidebarFooter`, `SidebarSeparator`, `SidebarGroupAction`, `SidebarGroupContent`,
  * `SidebarMenuAction` and `SidebarMenuBadge` have no call site here.
- * See plans/DEVIATIONS.md D-2.
  */
 export { default as SidebarProvider } from './sidebar-provider.svelte';
 export { default as Sidebar } from './sidebar.svelte';

@@ -209,11 +209,11 @@ A negative `paddingAngle` with a high `cornerRadius` overlaps sectors into petal
 
 ### Labels
 
-<ComponentPreview class="mb-0" title="showLabels=&#123;true&#125;" name="ex-labels-pie-chart"  />
+<ComponentPreview class="mb-0" title="&lt;EvilPieChart.Label /&gt;" name="ex-labels-pie-chart"  />
 <Alert> 
   <AlertContent>
 
-Enable `showLabels` to draw a label on each sector. Use `labelKey` to change the data shown and `labelListProps` for further customization.
+Compose `<EvilPieChart.Label />` inside `<EvilPieChart.Pie>` to draw a label on each sector. Use `dataKey` to change the data shown and `labelListProps` for further customization.
 
 </AlertContent>
 </Alert>
@@ -269,6 +269,11 @@ Defines each sector's colors. Keys should match the values from your `nameKey` f
   <ApiRow name="children" type="Snippet" required>
 
 The composed chart parts — `<Legend />`, `<Tooltip />`, `<Background />`, and one `<Pie />`.
+
+</ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
 
 </ApiRow>
   <ApiRow name="className" type="string">

@@ -1,12 +1,9 @@
 import { error } from '@sveltejs/kit';
-import { findNeighbour, getPage, getPages } from '$site/lib/source.js';
-import type { EntryGenerator, PageLoad } from './$types.js';
+import { findNeighbour, getPage } from '$site/lib/source.js';
+import type { PageLoad } from './$types.js';
 
-/** Prerendered: the docs are static content, as they are in the reference's `generateStaticParams`. */
-export const prerender = true;
-
-export const entries: EntryGenerator = () =>
-	getPages().map((page) => ({ slug: page.slugs.join('/') }));
+/** Dynamic so the server hook can negotiate HTML and Markdown from the same canonical URL. */
+export const prerender = false;
 
 export const load: PageLoad = async ({ params }) => {
 	const slugs = params.slug ? params.slug.split('/') : [];
@@ -20,8 +17,8 @@ export const load: PageLoad = async ({ params }) => {
 		content: module.default,
 		/*
 			The raw markdown, for the "Copy Page" control. The reference passes it through
-			`processMdxForLLMs` first; that lives in Plan 13's agent surfaces, and this hands over the
-			same body either way.
+			`processMdxForLLMs` for machine-readable responses; the page control intentionally receives
+			the authored body instead.
 		*/
 		markdown: page.body,
 		data: page.data,

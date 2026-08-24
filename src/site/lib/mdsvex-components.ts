@@ -6,8 +6,8 @@
  * hook — Svelte resolves component names lexically — so this preprocessor runs *before* mdsvex,
  * scans each `.md` file for the component tags it actually uses, and prepends the matching import.
  *
- * The alternative was adding an import block to all twenty content pages by hand, which would
- * have made every one of them differ from its reference page. See plans/DEVIATIONS.md D-1.
+ * Generating imports here keeps the authored markdown aligned with the reference pages instead of
+ * adding a hand-maintained import block to every file.
  *
  * Imported from `svelte.config.js`, which Node loads directly; the TypeScript is stripped natively
  * (Node >= 22.18).

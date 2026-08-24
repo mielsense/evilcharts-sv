@@ -3,7 +3,7 @@
 </script>
 
 <svg
-	class="pointer-events-none absolute top-0 right-0 z-10 h-[44px] w-[310px] overflow-visible sm:top-[8.5px] sm:right-[8.5px]"
+	class="pointer-events-none absolute top-0 right-0 z-10 h-[44px] w-[310px] overflow-visible sm:top-[8.5px] sm:right-[8.5px] sm:w-[440px] lg:w-[580px]"
 	viewBox="0 0 400 44"
 	preserveAspectRatio="none"
 	fill="none"

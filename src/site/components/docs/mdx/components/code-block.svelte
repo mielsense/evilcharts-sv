@@ -5,7 +5,7 @@
 	 * The reference is an async server component that highlights inline. A Svelte component cannot
 	 * await, so the caller passes the already-highlighted `html` — `<ComponentSource>` fetches it
 	 * from `/api/source/[name]`, and the markdown's own fences are highlighted at build time by
-	 * `mdsvex-highlight.ts`. See plans/DEVIATIONS.md D-3.
+	 * `mdsvex-highlight.ts`.
 	 */
 	import LanguageIcon from '$site/assets/language/language-icon.svelte';
 	import { cn } from '$site/lib/utils.js';

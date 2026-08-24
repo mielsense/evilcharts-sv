@@ -38,8 +38,8 @@ const config = {
 	],
 	kit: {
 		/*
-			Pinned rather than `adapter-auto`, which resolves an adapter at build time on the host. The
-			site is almost entirely prerendered; `/mcp`'s POST is the one dynamic route.
+			Pinned rather than `adapter-auto`, which resolves an adapter at build time on the host. Landing
+			and machine-readable assets are prerendered; docs and `/mcp` remain dynamic.
 		*/
 		adapter: adapter({
 			// Pinned explicitly: the adapter otherwise derives the runtime from the *building* machine's

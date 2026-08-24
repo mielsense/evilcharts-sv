@@ -229,6 +229,11 @@ Defines the series — each key matches a data key with a color or color array.
 The composed chart parts — `<Grid />`, `<XAxis />`, `<YAxis />`, `<Legend />`, `<Tooltip />`, and one or more `<Area />`.
 
 </ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
+
+</ApiRow>
   <ApiRow name="className" type="string">
 
 Additional CSS classes for the chart container.

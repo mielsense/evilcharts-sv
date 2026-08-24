@@ -4,7 +4,7 @@
  * Ported from `evilcharts/src/lib/registry.ts`. Runs on the server only — the generated
  * `__index__.ts` carries the metadata, and the file bodies are read off disk at request time.
  *
- * Two things the reference does are dropped, both no-ops here (plans/DEVIATIONS.md R-4):
+ * Two no-op reference implementation details are intentionally omitted:
  *
  * - `ts-morph` round-trips each file through a `SourceFile` and reads `getFullText()` straight
  *   back out. Every transform behind it is commented out in the reference, so the parse changes
@@ -30,8 +30,40 @@ export type RegistryItemWithSources = Omit<RegistryItem, 'files'> & {
 	files: RegistryItemSource[];
 };
 
+export type RegistryItemSourceMeta = RegistryItemFile & {
+	/** Display path, relative to the item's own directory. */
+	path: string;
+};
+
 export function getRegistryItemMeta(name: string): RegistryItem | undefined {
 	return Index[name];
+}
+
+export function getRegistryItemSourceMeta(
+	name: string
+): (Omit<RegistryItem, 'files'> & { files: RegistryItemSourceMeta[] }) | null {
+	const item = Index[name];
+	if (!item) return null;
+
+	return { ...item, files: relativise(orderSourceFiles(item.files)) };
+}
+
+export async function getRegistryItemSourceFile(
+	name: string,
+	index: number
+): Promise<RegistryItemSource | null> {
+	const item = Index[name];
+	const files = item ? orderSourceFiles(item.files) : [];
+	const file = files[index];
+	if (!item || !file) return null;
+
+	const [relative] = relativise([file], path.dirname(files[0]?.path ?? file.path));
+	return {
+		...relative,
+		content: fixImports(
+			await readFile(path.join(process.cwd(), 'src/lib/registry', file.path), 'utf8')
+		)
+	};
 }
 
 export async function getRegistryItem(name: string): Promise<RegistryItemWithSources | null> {
@@ -40,7 +72,7 @@ export async function getRegistryItem(name: string): Promise<RegistryItemWithSou
 
 	// The reads are independent, so they go out together.
 	const files = await Promise.all(
-		item.files.map(async (file) => ({
+		orderSourceFiles(item.files).map(async (file) => ({
 			...file,
 			content: fixImports(
 				await readFile(path.join(process.cwd(), 'src/lib/registry', file.path), 'utf8')
@@ -49,6 +81,19 @@ export async function getRegistryItem(name: string): Promise<RegistryItemWithSou
 	);
 
 	return { ...item, files: relativise(files) };
+}
+
+/** Keep component source ahead of support types so adding a helper cannot change the default tab. */
+function orderSourceFiles<T extends RegistryItemFile>(files: T[]): T[] {
+	return files
+		.map((file, index) => ({ file, index }))
+		.sort((left, right) => {
+			const leftIsComponent = left.file.path.endsWith('.svelte');
+			const rightIsComponent = right.file.path.endsWith('.svelte');
+			if (leftIsComponent !== rightIsComponent) return leftIsComponent ? -1 : 1;
+			return left.index - right.index;
+		})
+		.map(({ file }) => file);
 }
 
 /**
@@ -64,8 +109,10 @@ export function fixImports(content: string): string {
 }
 
 /** Paths shown relative to the item's own directory, as the reference's `fixFilePaths` does. */
-function relativise(files: (RegistryItemFile & { content: string })[]): RegistryItemSource[] {
-	const root = files[0] ? path.dirname(files[0].path) : '';
+function relativise<T extends RegistryItemFile>(
+	files: T[],
+	root = files[0] ? path.dirname(files[0].path) : ''
+): (T & { path: string })[] {
 	return files.map((file) => ({ ...file, path: path.relative(root, file.path) }));
 }
 

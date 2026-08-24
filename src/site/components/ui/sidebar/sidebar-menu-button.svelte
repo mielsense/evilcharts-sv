@@ -5,7 +5,6 @@
 	 * Base UI's `render` prop becomes the shadcn-svelte `child` snippet, plus an `href` shortcut for
 	 * the common `render={<Link href=…/>}` case. The reference's optional `tooltip` (shown only
 	 * while collapsed) has no call site in the docs sidebar and is left out.
-	 * See plans/DEVIATIONS.md D-2.
 	 */
 	import type { Snippet } from 'svelte';
 	import { cn } from '$site/lib/utils.js';

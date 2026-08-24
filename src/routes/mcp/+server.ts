@@ -13,14 +13,29 @@ import type { RequestHandler } from './$types.js';
  * string literals.
  */
 type JsonRpcRequest = {
-	jsonrpc?: '2.0';
+	jsonrpc: '2.0';
 	id?: string | number | null;
-	method?: string;
+	method: string;
 	params?: {
 		name?: string;
 		arguments?: Record<string, unknown>;
 	};
 };
+
+const MAX_QUERY_LENGTH = 200;
+const MAX_QUERY_TERMS = 20;
+
+const agentDocs = getAgentDocPages();
+const searchCorpus = agentDocs.map((page) => {
+	const markdown = processMdxForLLMs(page.body).trim();
+	return {
+		page,
+		markdown,
+		haystack: [page.data.title, page.data.description, markdown].join(' ').toLowerCase(),
+		snippet: markdown.replace(/\s+/g, ' ').slice(0, 240)
+	};
+});
+const markdownByUrl = new Map(searchCorpus.map(({ page, markdown }) => [page.url, markdown]));
 
 const tools = [
 	{
@@ -58,10 +73,31 @@ function jsonRpcResult(id: JsonRpcRequest['id'], result: unknown) {
 }
 
 function jsonRpcError(id: JsonRpcRequest['id'], code: number, message: string) {
-	return json(
-		{ jsonrpc: '2.0', id, error: { code, message } },
-		{ status: code === -32601 ? 404 : 400 }
-	);
+	return json({ jsonrpc: '2.0', id: id ?? null, error: { code, message } });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function requestId(value: unknown): JsonRpcRequest['id'] {
+	if (!isRecord(value)) return null;
+	return typeof value.id === 'string' || typeof value.id === 'number' || value.id === null
+		? value.id
+		: null;
+}
+
+function isJsonRpcRequest(value: unknown): value is JsonRpcRequest {
+	if (!isRecord(value) || value.jsonrpc !== '2.0' || typeof value.method !== 'string') return false;
+	if (
+		value.id !== undefined &&
+		value.id !== null &&
+		typeof value.id !== 'string' &&
+		typeof value.id !== 'number'
+	) {
+		return false;
+	}
+	return value.params === undefined || isRecord(value.params);
 }
 
 function getPageByPath(path: string) {
@@ -70,11 +106,9 @@ function getPageByPath(path: string) {
 		.replace(/^\/docs\/?/, '')
 		.split('/')
 		.filter(Boolean);
-	const pages = getAgentDocPages();
-
 	return (
-		pages.find((page) => page.url === normalized) ??
-		pages.find((page) => page.slugs.join('/') === slug.join('/'))
+		agentDocs.find((page) => page.url === normalized) ??
+		agentDocs.find((page) => page.slugs.join('/') === slug.join('/'))
 	);
 }
 
@@ -82,7 +116,7 @@ function readDoc(path: string) {
 	const page = getPageByPath(path);
 	if (!page) throw new Error(`No documentation page found for path: ${path}`);
 
-	const markdown = processMdxForLLMs(page.body).trim();
+	const markdown = markdownByUrl.get(page.url) ?? '';
 
 	return `# ${page.data.title}
 
@@ -94,13 +128,10 @@ ${markdown}`;
 function searchDocs(query: string) {
 	const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
 
-	return getAgentDocPages()
-		.map((page) => {
-			const markdown = processMdxForLLMs(page.body);
-			const haystack = [page.data.title, page.data.description, markdown].join(' ').toLowerCase();
+	return searchCorpus
+		.map(({ page, haystack, snippet }) => {
 			const score = terms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0), 0);
-
-			return { page, score, snippet: markdown.replace(/\s+/g, ' ').slice(0, 240) };
+			return { page, score, snippet };
 		})
 		.filter((result) => result.score > 0)
 		.sort((a, b) => b.score - a.score)
@@ -116,11 +147,25 @@ function searchDocs(query: string) {
 
 function handleToolCall(request: JsonRpcRequest) {
 	const name = request.params?.name;
-	const args = request.params?.arguments ?? {};
+	const args = request.params?.arguments;
+	if (typeof name !== 'string' || !isRecord(args)) {
+		return jsonRpcError(request.id, -32602, 'tools/call requires a tool name and arguments object');
+	}
 
 	if (name === 'search_docs') {
-		const query = typeof args.query === 'string' ? args.query : '';
-		const results = query ? searchDocs(query) : [];
+		if (typeof args.query !== 'string' || args.query.trim().length === 0) {
+			return jsonRpcError(request.id, -32602, 'search_docs requires a non-empty query string');
+		}
+		const query = args.query.trim();
+		const terms = query.split(/\s+/).filter(Boolean);
+		if (query.length > MAX_QUERY_LENGTH || terms.length > MAX_QUERY_TERMS) {
+			return jsonRpcError(
+				request.id,
+				-32602,
+				`search_docs accepts at most ${MAX_QUERY_LENGTH} characters and ${MAX_QUERY_TERMS} terms`
+			);
+		}
+		const results = searchDocs(query);
 
 		return jsonRpcResult(request.id, {
 			content: [{ type: 'text', text: JSON.stringify(results, null, 2) }]
@@ -128,8 +173,19 @@ function handleToolCall(request: JsonRpcRequest) {
 	}
 
 	if (name === 'read_doc') {
-		const path = typeof args.path === 'string' ? args.path : '';
-		return jsonRpcResult(request.id, { content: [{ type: 'text', text: readDoc(path) }] });
+		if (typeof args.path !== 'string' || args.path.trim().length === 0) {
+			return jsonRpcError(request.id, -32602, 'read_doc requires a non-empty path string');
+		}
+		const path = args.path.trim();
+		try {
+			return jsonRpcResult(request.id, { content: [{ type: 'text', text: readDoc(path) }] });
+		} catch (error) {
+			return jsonRpcError(
+				request.id,
+				-32602,
+				error instanceof Error ? error.message : `No documentation page found for path: ${path}`
+			);
+		}
 	}
 
 	return jsonRpcError(request.id, -32602, `Unknown tool: ${name ?? 'missing'}`);
@@ -146,10 +202,19 @@ export const GET: RequestHandler = () =>
 	});
 
 export const POST: RequestHandler = async ({ request }) => {
-	const body = (await request.json()) as JsonRpcRequest;
+	let body: unknown;
+	try {
+		body = await request.json();
+	} catch {
+		return jsonRpcError(null, -32700, 'Parse error');
+	}
+
+	if (!isJsonRpcRequest(body)) {
+		return jsonRpcError(requestId(body), -32600, 'Invalid Request');
+	}
 
 	// A notification (no id) gets an acknowledgement and nothing else.
-	if (body.id === undefined || body.id === null) return new Response(null, { status: 202 });
+	if (body.id === undefined) return new Response(null, { status: 202 });
 
 	switch (body.method) {
 		case 'initialize':

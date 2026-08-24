@@ -9,6 +9,17 @@ function pageBody(url: string) {
 	return page!.body;
 }
 
+const CHART_DOCS = [
+	'/docs/layerchart/area-chart',
+	'/docs/layerchart/line-chart',
+	'/docs/layerchart/bar-chart',
+	'/docs/layerchart/composed-chart',
+	'/docs/layerchart/pie-chart',
+	'/docs/layerchart/radar-chart',
+	'/docs/layerchart/radial-chart',
+	'/docs/layerchart/sankey-chart'
+] as const;
+
 describe('copyable documentation', () => {
 	it('publishes a complete first Chart Config example', () => {
 		const firstSvelteFence = pageBody('/docs/chart-config').match(/```svelte\n([\s\S]*?)```/)?.[1];
@@ -51,6 +62,25 @@ describe('copyable documentation', () => {
 		}
 	});
 
+	it.each(CHART_DOCS)('documents the shared accessibility contract on %s', (url) => {
+		const page = pageBody(url);
+
+		expect(page).toContain('<ApiRow name="accessibility" type="ChartAccessibility">');
+		expect(page).toContain(
+			'It remains a group, so interactive legends and marks stay available to assistive technology.'
+		);
+	});
+
+	it('publishes accessible chart naming in the agent snapshot', () => {
+		const full = generateLlmsFullTxt();
+		const accessibilityRows = full.match(/### `accessibility`/g) ?? [];
+
+		expect(full).toContain("label: 'Monthly traffic'");
+		expect(full).toMatch(/`labelledBy` and\s+`describedBy`/);
+		expect(full).toContain('keeps `role="group"`');
+		expect(accessibilityRows).toHaveLength(CHART_DOCS.length);
+	});
+
 	it('carries the corrected shared docs into the full agent snapshot', () => {
 		const full = generateLlmsFullTxt();
 
@@ -75,6 +105,21 @@ describe('copyable documentation', () => {
 		expect(sankey).toContain(
 			'href="https://www.layerchart.com/docs/components/Sankey" _blank>LayerChart Sankey documentation'
 		);
+	});
+
+	it('publishes the Svelte Sankey type import and composed pie label API', () => {
+		const pie = pageBody('/docs/layerchart/pie-chart');
+		const sankey = pageBody('/docs/layerchart/sankey-chart');
+
+		expect(sankey).toMatch(
+			/import\s*\{[\s\S]*?EvilSankeyChart,[\s\S]*?type SankeyData[\s\S]*?\}\s*from '\$lib\/components\/evilcharts\/charts\/layerchart-sankey-chart\/index\.js';/
+		);
+		expect(sankey).not.toContain("import type { SankeyData } from 'layerchart';");
+
+		expect(pie).toContain('<EvilPieChart.Label');
+		expect(pie).toContain('Use `dataKey` to change the data shown');
+		expect(pie).not.toContain('Enable `showLabels`');
+		expect(pie).not.toContain('Use `labelKey`');
 	});
 
 	it('keeps the README registry inventory in sync with the built registry', () => {

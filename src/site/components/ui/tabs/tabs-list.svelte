@@ -3,7 +3,7 @@
 	 * Ported from `evilcharts/src/components/ui/tabs.tsx` (Base UI `Tabs.List` + `Tabs.Indicator`).
 	 *
 	 * The indicator's own class strings are the reference's; the `--active-tab-*` variables it reads
-	 * are measured here rather than supplied by the primitive. See plans/DEVIATIONS.md D-2.
+	 * are measured here rather than supplied by the primitive.
 	 */
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';

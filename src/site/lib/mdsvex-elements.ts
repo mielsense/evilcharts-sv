@@ -7,7 +7,7 @@
  * apart from `H2`, whose anchor + link icon + id are reproduced here node for node.
  *
  * See `evilcharts/src/components/docs/mdx/components/{headings,text,lists,table,hr,blockquote,
- * link,image}.tsx` and plans/DEVIATIONS.md D-1.
+ * link,image}.tsx` for the source component structure.
  *
  * Imported from `svelte.config.js`, which Node loads directly; the TypeScript is stripped natively
  * (Node >= 22.18).

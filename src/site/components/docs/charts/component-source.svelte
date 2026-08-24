@@ -2,11 +2,11 @@
 	/**
 	 * Ported from `evilcharts/src/components/docs/charts/component-source.tsx`.
 	 *
-	 * Two differences, both recorded in plans/DEVIATIONS.md D-3:
+	 * This Svelte source viewer differs from the reference in two ways:
 	 *
-	 * - The source arrives from `/api/source/[name]` rather than being read and highlighted inline,
-	 *   because a Svelte component cannot await. The route is prerendered, so the built site serves
-	 *   it as a static file.
+	 * - File metadata arrives from `/api/source/[name]`, then the active file is fetched from the
+	 *   prerendered `/api/source-file/[name]/[index]` route. Both responses are cached in the browser,
+	 *   so tabs load on demand and repeated documentation pages reuse the same payload.
 	 * - An item here is a *directory* of components where the reference is one `.tsx`, so a
 	 *   multi-file item gets one tab per file instead of only showing `files[0]`.
 	 *
@@ -16,6 +16,12 @@
 	import { cn } from '$site/lib/utils.js';
 	import CodeBlock from '$site/components/docs/mdx/components/code-block.svelte';
 	import CodeCollapsibleWrapper from './code-collapsible-wrapper.svelte';
+	import {
+		loadSourceFile,
+		loadSourceMetadata,
+		type SourceFile,
+		type SourceFileMeta
+	} from './component-source-cache.js';
 
 	let {
 		name,
@@ -31,16 +37,10 @@
 		class?: string;
 	} = $props();
 
-	type SourceFile = {
-		path: string;
-		target?: string;
-		language: string;
-		code: string;
-		html: string;
-	};
-
-	let files = $state<SourceFile[] | null>(null);
+	let files = $state<SourceFileMeta[] | null>(null);
+	let loadedFiles = $state<Record<string, SourceFile>>({});
 	let failed = $state(false);
+	const active = $state({ value: '' });
 
 	$effect(() => {
 		if (!name) return;
@@ -48,10 +48,35 @@
 		failed = false;
 		files = null;
 
-		fetch(`/api/source/${name}`)
-			.then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
-			.then((data: { files: SourceFile[] }) => {
-				if (!cancelled) files = data.files;
+		loadSourceMetadata(name)
+			.then((data) => {
+				if (!cancelled) {
+					files = data.files;
+					if (!data.files.some((file) => file.path === active.value)) {
+						active.value = data.files[0]?.path ?? '';
+					}
+				}
+			})
+			.catch(() => {
+				if (!cancelled) failed = true;
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	const selectedMeta = $derived(files?.find((file) => file.path === active.value));
+
+	$effect(() => {
+		const selected = selectedMeta;
+		if (!selected || loadedFiles[selected.url]) return;
+		let cancelled = false;
+		failed = false;
+
+		loadSourceFile(selected.url)
+			.then((file) => {
+				if (!cancelled) loadedFiles = { ...loadedFiles, [selected.url]: file };
 			})
 			.catch(() => {
 				if (!cancelled) failed = true;
@@ -63,13 +88,13 @@
 	});
 
 	/** A single-file item keeps the reference's behaviour exactly: no tabs, the given title. */
-	const single = $derived(files?.length === 1 ? files[0] : undefined);
+	const singleMeta = $derived(files?.length === 1 ? files[0] : undefined);
+	const single = $derived(singleMeta ? loadedFiles[singleMeta.url] : undefined);
 	const singleLanguage = $derived(
-		language ?? title?.split('.').pop() ?? single?.language ?? 'svelte'
+		language ?? title?.split('.').pop() ?? singleMeta?.language ?? 'svelte'
 	);
 
 	/** Tab labels are the file's path inside the item, which is what the reference's titles name. */
-	const active = $state({ value: '' });
 	$effect(() => {
 		if (files?.length && !files.some((file) => file.path === active.value)) {
 			active.value = files[0].path;
@@ -86,7 +111,7 @@
 			>{name}</code
 		> could not be loaded.
 	</p>
-{:else if !files}
+{:else if !files || (files.length === 1 && !single)}
 	<!-- Same height as a collapsed block, so the tab does not jump when the source lands. -->
 	<div
 		class={cn(
@@ -126,13 +151,20 @@
 			</TabsList>
 			{#each files as file (file.path)}
 				<TabsPanel value={file.path}>
-					<CodeBlock
-						code={file.code}
-						html={file.html}
-						language={file.language}
-						title={file.target ?? file.path}
-						class="rounded-md border bg-background"
-					/>
+					{#if loadedFiles[file.url]}
+						{const source = loadedFiles[file.url]}
+						<CodeBlock
+							code={source.code}
+							html={source.html}
+							language={source.language}
+							title={source.target ?? source.path}
+							class="rounded-md border bg-background"
+						/>
+					{:else}
+						<div
+							class="h-64 w-full animate-pulse rounded-md bg-muted/40 motion-reduce:animate-none"
+						></div>
+					{/if}
 				</TabsPanel>
 			{/each}
 		</div>

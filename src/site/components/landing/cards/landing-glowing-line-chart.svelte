@@ -4,7 +4,7 @@
 	 *
 	 * The reference's card asks for `variant="default"`, which only its ECharts dot offers; the
 	 * recharts dot this port derives from has `default | border | colored-border`. `default` is what
-	 * the reference's own recharts glowing-line example uses. See plans/DEVIATIONS.md L-3.
+	 * the reference's own recharts glowing-line example uses.
 	 */
 	import { EvilLineChart } from '$lib/registry/charts/layerchart-line-chart/index.js';
 	import { type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';

@@ -4,7 +4,7 @@
  * Ported from `evilcharts/src/lib/axiom.ts`. The reference wraps `@axiomhq/js`; that package is not
  * a dependency here, so the one call it makes — `POST /v1/datasets/<dataset>/ingest` — is issued
  * with `fetch` instead. Same contract: with no `AXIOM_TOKEN` (or no `AXIOM_DATASET`) this is a
- * no-op that never throws, and no request is made. See plans/DEVIATIONS.md A-4.
+ * no-op that never throws, and no request is made.
  *
  * Read through `$env/dynamic/private` so the values are resolved at runtime and never inlined into
  * a build artefact.

@@ -9,10 +9,8 @@
  * Pages are discovered by glob at build time:
  *
  * - the raw markdown is inlined (`?raw`) so the frontmatter, the table of contents and the agent
- *   surfaces (Plan 13) all read one source of truth without importing the compiled components;
+ *   surfaces all read one source of truth without importing the compiled components;
  * - the compiled components are imported lazily, so a docs page ships only its own charts.
- *
- * See plans/DEVIATIONS.md D-1.
  */
 import type { Component } from 'svelte';
 import GithubSlugger from 'github-slugger';

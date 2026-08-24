@@ -7,7 +7,6 @@
  * The reference's grid interleaves 22 LayerChart-equivalent cards with 18 ECharts blocks. This port
  * ships one provider, so the ECharts slots are dropped and the remaining 22 are re-flowed into the
  * same five columns at the same pitch — same canvas, same flight lengths.
- * See plans/DEVIATIONS.md L-2.
  */
 import { cubicBezier } from '@humanspeak/svelte-motion';
 
@@ -60,6 +59,8 @@ export const CARDS: StageCard[] = [
 ];
 
 export const FOCUS_INTERVAL_MS = 4600;
+/** A 3 x 3 neighbourhood covers the largest stage viewport without mounting all 22 charts. */
+export const LIVE_CARD_LIMIT = 9;
 export const START_INDEX = Math.max(
 	0,
 	CARDS.findIndex((card) => card.id === 'hatched-bar')

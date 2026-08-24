@@ -9,7 +9,7 @@
 	 *
 	 * The dropdown variant renders a `<details>`/`<summary>` pair rather than the reference's
 	 * Base UI dropdown — the docs never mount it (only the `list` variant is used), so a whole
-	 * dropdown primitive would be dead weight. See plans/DEVIATIONS.md D-4.
+	 * dropdown primitive would be dead weight.
 	 */
 	import Menu from '@lucide/svelte/icons/menu';
 	import type { TocEntry } from '$site/lib/source.js';

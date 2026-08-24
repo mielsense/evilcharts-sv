@@ -39,6 +39,19 @@ test('the landing stage completes a focus hop without runtime diagnostics', asyn
 	expect(diagnostics).toEqual([]);
 });
 
+test('the landing stage keeps every shell while bounding live chart modules', async ({ page }) => {
+	await page.goto('/');
+
+	await expect(page.locator('[data-stage-card]')).toHaveCount(22);
+	await expect(page.locator('[data-stage-live-chart]')).toHaveCount(9);
+	await expect(page.locator('[data-stage-focused] [data-stage-live-chart]')).toHaveCount(1);
+
+	await page.waitForTimeout(FIRST_FOCUS_HOP_WAIT_MS);
+	await expect(page.locator('[data-stage-card]')).toHaveCount(22);
+	await expect(page.locator('[data-stage-live-chart]')).toHaveCount(9);
+	await expect(page.locator('[data-stage-focused] [data-stage-live-chart]')).toHaveCount(1);
+});
+
 test('docs render decoded code and keep the desktop table-of-contents marker active', async ({
 	page
 }) => {

@@ -253,6 +253,11 @@ Defines the radar series. Each key matches a numeric data key and sets its color
 The composed parts of the chart — `<PolarGrid />`, `<PolarAngleAxis />`, `<PolarRadiusAxis />`, `<Tooltip />`, `<Legend />`, and one or more `<Radar />` series.
 
 </ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
+
+</ApiRow>
   <ApiRow name="className" type="string">
 
 Extra CSS classes for the chart container.

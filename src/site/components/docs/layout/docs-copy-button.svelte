@@ -6,7 +6,6 @@
 	 * `@mantine/hooks`' `useClipboard` becomes a local flag. The reference wraps the row in a
 	 * `<Popover>` with a bare `<PopoverAnchor/>` and no popover content at all — that pairing has no
 	 * effect, so it is dropped here. `@carbon/icons-react`'s `CaretDown` becomes Lucide's.
-	 * See plans/DEVIATIONS.md D-5.
 	 */
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import { CheckIcon, CopyIcon } from '$site/assets/icons/index.js';

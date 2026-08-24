@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { createFileTree, fixImports, getRegistryItem } from './registry.js';
+import {
+	createFileTree,
+	fixImports,
+	getRegistryItem,
+	getRegistryItemSourceFile,
+	getRegistryItemSourceMeta
+} from './registry.js';
 
 describe('fixImports', () => {
 	it.each([
@@ -54,6 +60,14 @@ describe('getRegistryItem', () => {
 		expect(item!.files.map((f) => f.path)).toContain('bar.svelte');
 		// Nested `defs/` files keep their subdirectory.
 		expect(item!.files.some((f) => f.path.startsWith('defs/'))).toBe(true);
+	});
+
+	it('keeps component files ahead of support types in metadata and indexed payloads', async () => {
+		const metadata = getRegistryItemSourceMeta('layerchart-chart');
+		expect(metadata?.files[0].path).toBe('animated-grow.svelte');
+
+		const firstFile = await getRegistryItemSourceFile('layerchart-chart', 0);
+		expect(firstFile?.path).toBe('animated-grow.svelte');
 	});
 });
 

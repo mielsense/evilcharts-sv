@@ -5,7 +5,6 @@
 	 * The commands are the shadcn-**svelte** CLI's, since that is what installs into a Svelte
 	 * project; the reference's are `shadcn@latest`. Registry item names are resolved to their
 	 * published URL, which is what `shadcn-svelte add` takes.
-	 * See plans/DEVIATIONS.md D-4.
 	 */
 	import type { PackageManager } from '$site/hooks/use-config.svelte.js';
 	import { SITE_URL } from '$site/lib/utils.js';

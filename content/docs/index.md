@@ -7,7 +7,7 @@ image: /og/og-image.png
 <Alert variant="svelte" title="EvilCharts for Svelte">
   <AlertContent variant="svelte">
 
-<p>This is a <code>Svelte 5</code> port of <a href="https://github.com/legions-developer/evilcharts" target="_blank" rel="noreferrer" class="text-svelte underline underline-offset-4">EvilCharts</a>, maintained by <a href="https://github.com/mielsense" target="_blank" rel="noreferrer" class="text-svelte">Mathis</a>, with ordered-dither chart variants adapted from <a href="https://github.com/Boring-Software-Inc/dither-kit" target="_blank" rel="noreferrer" class="text-svelte underline underline-offset-4">Dither Kit</a>.</p>
+<p>This is a <code>Svelte 5</code> port of <a href="https://github.com/legions-developer/evilcharts" target="_blank" rel="noreferrer" class="text-svelte underline underline-offset-4">EvilCharts</a> with ordered-dither chart variants adapted from <a href="https://github.com/Boring-Software-Inc/dither-kit" target="_blank" rel="noreferrer" class="text-svelte underline underline-offset-4">Dither Kit</a>.</p>
 
 </AlertContent>
 </Alert>
@@ -53,6 +53,30 @@ every chart type.
 
 You install one chart at a time from this port's registry, so you only ship what you choose. For
 example: `npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/layerchart-area-chart.json`.
+
+## Accessibility
+
+Give each chart an accessible name with the root `accessibility` prop. Add a description when the
+chart needs context that its name does not provide.
+
+```svelte
+<EvilAreaChart
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Monthly traffic',
+		description: 'Desktop and mobile visits from January through December.'
+	}}
+>
+	<EvilAreaChart.Legend isClickable />
+	<EvilAreaChart.Area dataKey="desktop" isClickable />
+	<EvilAreaChart.Area dataKey="mobile" isClickable />
+</EvilAreaChart>
+```
+
+If visible text already names or describes the chart, pass its element IDs as `labelledBy` and
+`describedBy`. The chart wrapper keeps `role="group"`, so interactive legends and chart marks
+remain available to assistive technology.
 
 ### LayerChart
 

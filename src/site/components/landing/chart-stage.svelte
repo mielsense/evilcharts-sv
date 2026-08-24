@@ -10,7 +10,7 @@
 	import { animate, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { untrack, type Component } from 'svelte';
 	import { cn } from '$site/lib/utils.js';
-	import * as Cards from './cards/index.js';
+	import { loadLandingCard } from './cards/loaders.js';
 	import CardShell from './card-shell.svelte';
 	import {
 		CANVAS_H,
@@ -22,14 +22,13 @@
 		flightZoomOutFor,
 		FOCUS_INTERVAL_MS,
 		hopDistance,
+		LIVE_CARD_LIMIT,
 		MIN_HOP_DISTANCE,
 		shuffled,
 		START_INDEX
 	} from './chart-stage.svelte.js';
 
 	let { class: className }: { class?: string } = $props();
-
-	const cardComponents = Cards as unknown as Record<string, Component<Record<string, never>>>;
 
 	let viewportEl = $state<HTMLDivElement | null>(null);
 	let canvasEl = $state<HTMLDivElement | null>(null);
@@ -43,6 +42,7 @@
 		mount-time tween reads as the camera lurching into place.
 	*/
 	let engaged = $state(false);
+	let cardComponents = $state<Record<string, Component<Record<string, never>>>>({});
 
 	let queue: number[] = [];
 	let lastPick = START_INDEX;
@@ -95,6 +95,27 @@
 	);
 	const focus = $derived(CARDS[active]);
 	const prevFocus = $derived(CARDS[prevActive]);
+	const liveCardIndexes = $derived.by(() =>
+		CARDS.map((_, index) => index)
+			.sort((a, b) => hopDistance(a, active) - hopDistance(b, active))
+			.slice(0, LIVE_CARD_LIMIT)
+	);
+
+	$effect(() => {
+		const wanted = liveCardIndexes;
+		let cancelled = false;
+
+		Promise.all(wanted.map((index) => loadLandingCard(CARDS[index].card))).then((components) => {
+			if (cancelled) return;
+			cardComponents = Object.fromEntries(
+				wanted.map((index, position) => [CARDS[index].card, components[position]])
+			);
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	});
 
 	// Estimated flight length, used only for the highlight timing below — the flight itself measures
 	// its true start from the live transform.
@@ -184,7 +205,9 @@
 			{#each CARDS as card, index (card.id)}
 				{const isFocused = index === active}
 				{const isLifted = isFocused || (!reducedMotion.current && hovered === index)}
-				{const Card = cardComponents[card.card]}
+				{const Card = $derived(
+					liveCardIndexes.includes(index) ? cardComponents[card.card] : undefined
+				)}
 				<div
 					role="presentation"
 					data-stage-card={card.id}
@@ -209,7 +232,11 @@
 					}}
 				>
 					<CardShell title={card.title}>
-						<Card />
+						{#if Card}
+							<div data-stage-live-chart class="size-full">
+								<Card />
+							</div>
+						{/if}
 					</CardShell>
 				</div>
 			{/each}

@@ -54,6 +54,10 @@ Add a chart with the CLI. Replace `{chart-name}` with a registry name such as
   </Step>
 </Steps>
 
+After installation, give each chart root an accessible name. The shared `accessibility` prop accepts
+a direct `label` or the ID of visible text through `labelledBy`. See
+<Link href="/docs#accessibility">Accessibility</Link> for the complete example.
+
 ## Use with AI agents
 
 Evil Charts for Svelte is available through Context7 MCP. Give your coding agent the exact library

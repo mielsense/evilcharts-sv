@@ -7,7 +7,6 @@ import { getContext, setContext } from 'svelte';
  * (`evilcharts/src/components/docs/mdx/components/steps.tsx`). A Svelte parent cannot rewrite its
  * children, so each `<Step>` registers itself here, reads back its own index, and emits the same
  * wrapper and connector itself. The rendered DOM is identical.
- * See plans/DEVIATIONS.md D-4.
  */
 export class StepsState {
 	ids = $state<string[]>([]);

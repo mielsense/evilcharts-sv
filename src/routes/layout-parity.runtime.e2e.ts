@@ -175,8 +175,22 @@ test('the docs attribution header stays inside its responsive container', async 
 	await page.goto('/docs/chart-config');
 	const header = page.locator('[data-sidebar="header"]').filter({ hasText: 'Based on EvilCharts' });
 	const headerActions = header.locator(':scope > div').last();
+	const decorativeBorder = page.locator('svg[viewBox="0 0 400 44"]');
 	const attribution = header.getByRole('link', { name: 'Based on EvilCharts' });
 	const author = header.getByRole('link', { name: 'Built by Mathis' });
+	const expectNotchBeforeActions = async () => {
+		const [actionsBox, borderBox] = await Promise.all([
+			headerActions.boundingBox(),
+			decorativeBorder.boundingBox()
+		]);
+		expect(actionsBox).not.toBeNull();
+		expect(borderBox).not.toBeNull();
+
+		// The curve ends at x=64 in the SVG's 400-unit viewBox. Keep the filled header
+		// surface clear of every control while its trailing edge masks the panel border.
+		const curveEnd = borderBox!.x + borderBox!.width * (64 / 400);
+		expect(curveEnd).toBeLessThanOrEqual(actionsBox!.x - 8);
+	};
 
 	for (const width of [640, 768, 940, 996]) {
 		await page.setViewportSize({ width, height: 800 });
@@ -191,6 +205,7 @@ test('the docs attribution header stays inside its responsive container', async 
 		expect(actionsBox).not.toBeNull();
 		expect(actionsBox!.x).toBeGreaterThanOrEqual(headerBox!.x);
 		expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width);
+		await expectNotchBeforeActions();
 		await expect
 			.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
 			.toBeLessThanOrEqual(width);
@@ -217,6 +232,7 @@ test('the docs attribution header stays inside its responsive container', async 
 		expect(await attribution.evaluate((element) => element.scrollWidth)).toBe(
 			await attribution.evaluate((element) => element.clientWidth)
 		);
+		await expectNotchBeforeActions();
 		await expect
 			.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
 			.toBeLessThanOrEqual(width);
@@ -224,5 +240,6 @@ test('the docs attribution header stays inside its responsive container', async 
 
 	await page.setViewportSize({ width: 320, height: 568 });
 	await expect(attribution).toBeHidden();
+	await expectNotchBeforeActions();
 	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });

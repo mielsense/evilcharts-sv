@@ -1,6 +1,6 @@
 ---
 title: Line Chart
-description: Line charts with interactive dots, gradients, patterns, and reveal variants
+description: Beautifully designed Svelte 5 line charts
 image: /og/line-chart.png
 links:
   github: https://github.com/mielsense/evilcharts-sv/tree/main/src/lib/registry/charts/layerchart-line-chart
@@ -228,6 +228,11 @@ Defines the chart's series. Each key matches a data key, with a color or color a
   <ApiRow name="children" type="Snippet" required>
 
 The composed chart parts — `<Grid />`, `<XAxis />`, `<YAxis />`, `<Legend />`, `<Tooltip />`, and one or more `<Line />`.
+
+</ApiRow>
+  <ApiRow name="accessibility" type="ChartAccessibility">
+
+Names and optionally describes the chart wrapper. It remains a group, so interactive legends and marks stay available to assistive technology.
 
 </ApiRow>
   <ApiRow name="className" type="string">

@@ -4,7 +4,6 @@
 	 *
 	 * The reference draws these from `@hugeicons/core-free-icons`. That package is not a dependency
 	 * here, so the nearest Lucide glyph stands in for each — same size, same position, same switch.
-	 * See plans/DEVIATIONS.md D-3.
 	 */
 	import Braces from '@lucide/svelte/icons/braces';
 	import FileCode from '@lucide/svelte/icons/file-code';

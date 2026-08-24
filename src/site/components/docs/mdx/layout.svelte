@@ -4,7 +4,7 @@
 	 *
 	 * Fumadocs supplies its MDX component map through a provider; mdsvex has no such hook, so the
 	 * map is injected as context here and the markdown's bare tags are resolved by
-	 * `mdx/index.ts`. See plans/DEVIATIONS.md D-1.
+	 * `mdx/index.ts`.
 	 */
 	import type { Snippet } from 'svelte';
 

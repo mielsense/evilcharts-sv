@@ -9,7 +9,6 @@ export type TabsOrientation = 'horizontal' | 'vertical';
  * `--active-tab-{width,height,left,bottom}` CSS variables, which `<Tabs.Indicator>` then reads.
  * bits-ui has no indicator primitive, so the box is measured here and the same four variables are
  * published — keeping the reference's indicator class strings working unchanged.
- * See plans/DEVIATIONS.md D-2.
  */
 export class TabsState {
 	value = $state('');
