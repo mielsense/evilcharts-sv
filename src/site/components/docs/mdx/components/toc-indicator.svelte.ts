@@ -31,6 +31,11 @@ export type PathData = {
 	itemCenterDistances: number[];
 };
 
+export type HeadingPosition = {
+	id: string;
+	top: number;
+};
+
 function getXForDepth(depth: number, minDepth: number): number {
 	return STARTING_MARGIN + (depth - minDepth) * DEPTH_INDENT;
 }
@@ -102,4 +107,21 @@ export function sameRows(a: RowMetrics[], b: RowMetrics[]): boolean {
 export function getActiveDistance(activeIndex: number, itemCenterDistances: number[]): number {
 	const isValidIndex = activeIndex >= 0 && activeIndex < itemCenterDistances.length;
 	return isValidIndex ? itemCenterDistances[activeIndex] : 0;
+}
+
+export function selectActiveHeading(
+	itemIds: string[],
+	positions: HeadingPosition[],
+	offset: number
+): string | null {
+	const topById = Object.fromEntries(positions.map((position) => [position.id, position.top]));
+	let active: string | null = null;
+
+	for (const id of itemIds) {
+		const top = topById[id];
+		if (top === undefined || top > offset) break;
+		active = id;
+	}
+
+	return active;
 }

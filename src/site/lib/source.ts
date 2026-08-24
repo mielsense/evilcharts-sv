@@ -258,11 +258,29 @@ export const pageTree: PageTree = {
 
 /** Every page in tree order, which is what prev/next walks. */
 export function flattenTree(items: PageTreeItem[] = pageTree.children): { url: string }[] {
-	return items.flatMap((item) =>
-		item.type === 'page'
-			? [{ url: item.url }]
-			: [...(item.index ? [{ url: item.index.url }] : []), ...flattenTree(item.children)]
-	);
+	const seen = new Set<string>();
+	const flattened: { url: string }[] = [];
+
+	const append = (entries: PageTreeItem[]) => {
+		for (const item of entries) {
+			if (item.type === 'folder') {
+				if (item.index && !seen.has(item.index.url)) {
+					seen.add(item.index.url);
+					flattened.push({ url: item.index.url });
+				}
+				append(item.children);
+				continue;
+			}
+
+			if (!seen.has(item.url)) {
+				seen.add(item.url);
+				flattened.push({ url: item.url });
+			}
+		}
+	};
+
+	append(items);
+	return flattened;
 }
 
 /** Fumadocs' `findNeighbour(tree, url)`. */

@@ -48,61 +48,67 @@ const FRAME_CLASS = 'dark:bg-primary-foreground group relative mt-4 rounded-[8px
 /** `<CodeBlock withWrapper>`'s outer box. */
 const TITLED_FRAME_CLASS = 'dark:bg-primary-foreground rounded-[10px] bg-[#F5F5F5] p-1 mt-4';
 
-/**
- * Curly braces are Svelte template syntax, so Shiki's HTML has to be escaped before mdsvex splices
- * it into a component. Shiki already escapes `&`, `<` and `>`.
- */
-function escapeForSvelte(html: string): string {
-	return html.replaceAll('{', '&#123;').replaceAll('}', '&#125;');
-}
-
 /** `title="src/foo.ts"` out of a fence's info string. */
 export function parseMeta(meta: string | null | undefined): { title?: string } {
 	const match = /title="([^"]*)"|title='([^']*)'/.exec(meta ?? '');
 	return match ? { title: match[1] ?? match[2] } : {};
 }
 
+/** Restore the single entity-encoding pass mdsvex applies to fenced Svelte source. */
+export function decodeFenceSource(code: string): string {
+	const named: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+
+	return code.replace(/&(#(?:x[\da-f]+|\d+)|amp|lt|gt|quot|apos);/gi, (entity, name: string) => {
+		if (!name.startsWith('#')) return named[name.toLowerCase()] ?? entity;
+
+		const hexadecimal = name[1].toLowerCase() === 'x';
+		const value = Number.parseInt(name.slice(hexadecimal ? 2 : 1), hexadecimal ? 16 : 10);
+		return Number.isSafeInteger(value) ? String.fromCodePoint(value) : entity;
+	});
+}
+
 async function renderFence(code: string, lang: string | null | undefined, meta: string | null) {
 	const language = LANGUAGE_ALIASES[lang ?? ''] ?? lang ?? 'text';
 	const { title } = parseMeta(meta);
+	const source = decodeFenceSource(code);
 
-	const html = escapeForSvelte(
-		await codeToHtml(code, {
-			lang: language,
-			themes: { light: 'min-light', dark: 'vesper' },
-			// Both themes ship as CSS variables so the docs switch without re-highlighting.
-			defaultColor: false,
-			transformers: [
-				...transformers,
-				{
-					name: 'evilcharts-mdx-pre',
-					pre(node) {
-						node.properties.class = PRE_CLASS;
-					}
+	const html = await codeToHtml(source, {
+		lang: language,
+		themes: { light: 'min-light', dark: 'vesper' },
+		// Both themes ship as CSS variables so the docs switch without re-highlighting.
+		defaultColor: false,
+		transformers: [
+			...transformers,
+			{
+				name: 'evilcharts-mdx-pre',
+				pre(node) {
+					node.properties.class = PRE_CLASS;
+					delete node.properties.tabindex;
 				}
-			]
-		})
-	);
+			}
+		]
+	});
+	// Shiki returns trusted build-time HTML from repository-owned markdown. Keeping it in a string
+	// prevents mdsvex and Svelte from encoding the highlighted entities a second time.
+	const highlighted = `{@html ${JSON.stringify(html)}}`;
 
-	const cleaned = stripCodeAnnotations(code);
+	const cleaned = stripCodeAnnotations(source);
 	const copyCode = `code={${JSON.stringify(cleaned)}}`;
 
 	if (title) {
 		return [
-			`<div class="${TITLED_FRAME_CLASS}">`,
-			'<div class="flex h-7 justify-between px-1">',
-			`<figcaption class="text-muted-foreground dark:text-muted-foreground/80 -mt-1 flex items-center gap-1.5 text-xs [&amp;_svg]:size-3.5" data-language="${language}" data-rehype-pretty-code-title="">`,
+			`<figure class="${TITLED_FRAME_CLASS}" data-rehype-pretty-code-figure="">`,
+			`<figcaption class="text-muted-foreground dark:text-muted-foreground/80 flex h-7 items-center justify-between px-1 text-xs [&amp;_svg]:size-3.5" data-language="${language}" data-rehype-pretty-code-title="">`,
+			'<span class="-mt-1 flex items-center gap-1.5">',
 			`<LanguageIcon language="${language}" />`,
 			`<span class="font-mono">${title}</span>`,
-			'</figcaption>',
+			'</span>',
 			`<CopyButton ${copyCode} />`,
-			'</div>',
-			'<figure data-rehype-pretty-code-figure="">',
+			'</figcaption>',
 			'<div class="bg-background rounded-md border">',
-			html,
+			highlighted,
 			'</div>',
-			'</figure>',
-			'</div>'
+			'</figure>'
 		].join('\n');
 	}
 
@@ -116,7 +122,7 @@ async function renderFence(code: string, lang: string | null | undefined, meta: 
 
 	return [
 		`<div class="${FRAME_CLASS}">`,
-		html,
+		highlighted,
 		`<CopyButton withBlurBg class={${JSON.stringify(copyClass)}} ${copyCode} />`,
 		'</div>'
 	].join('\n');

@@ -20,8 +20,9 @@
 <SidebarHeader
 	class="pointer-events-none fixed top-0 z-50 flex h-14 w-full flex-row justify-between border-b bg-background p-0 sm:sticky sm:h-[35px] sm:border-b-0 sm:bg-transparent"
 >
-	<div class="pointer-events-auto flex items-center pl-3">
+	<div class="pointer-events-auto flex min-w-0 items-center gap-1.5 pl-3">
 		<SidebarTrigger class="sidebar:hidden" />
+		<span class="truncate text-[11px] font-medium text-[#ff3e00] sm:hidden">Svelte 5 port</span>
 	</div>
 	<div class="pointer-events-auto relative z-10 flex h-full items-center gap-2 pl-6">
 		<!--
@@ -46,7 +47,7 @@
 			<span class="text-muted">|</span>
 		{/if}
 		<ThemeSwitcher />
-		<a href="https://x.com/legionsdev" target="_blank" rel="noreferrer">
+		<a class="hidden sm:block" href="https://x.com/legionsdev" target="_blank" rel="noreferrer">
 			<Button class="group" size="sm" variant="ghost">
 				<span class="text-xs text-muted-foreground group-hover:text-primary">
 					Built by Gurbinder

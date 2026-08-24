@@ -15,7 +15,9 @@
 	import type { TocEntry } from '$site/lib/source.js';
 	import { cn } from '$site/lib/utils.js';
 	import TocIndicator from './toc-indicator.svelte';
-	import { sameRows, type RowMetrics } from './toc-indicator.svelte.js';
+	import { sameRows, selectActiveHeading, type RowMetrics } from './toc-indicator.svelte.js';
+
+	const ACTIVE_HEADING_OFFSET = 96;
 
 	let {
 		toc,
@@ -42,7 +44,9 @@
 		// Read so a changed toc re-measures.
 		void toc.length;
 
+		let measureFrame = 0;
 		const measure = () => {
+			measureFrame = 0;
 			const originY = origin.getBoundingClientRect().top;
 			const next = [...container.children].map((child) => {
 				const rect = child.getBoundingClientRect();
@@ -51,34 +55,62 @@
 			// Bail when nothing moved: the observer fires on our own re-render too.
 			if (!sameRows(rows, next)) rows = next;
 		};
+		const scheduleMeasure = () => {
+			if (!measureFrame) measureFrame = requestAnimationFrame(measure);
+		};
 
-		measure();
+		scheduleMeasure();
 
-		const observer = new ResizeObserver(measure);
+		const observer = new ResizeObserver(scheduleMeasure);
 		observer.observe(container);
 		for (const child of container.children) observer.observe(child);
-		return () => observer.disconnect();
+		return () => {
+			observer.disconnect();
+			if (measureFrame) cancelAnimationFrame(measureFrame);
+		};
 	});
 
-	/** The reference's `useActiveItem`: the last heading to enter the top 40% of the viewport. */
+	/** Follow headings inside the nested docs scroller using a stable offset below its header. */
 	$effect(() => {
 		const ids = itemIds;
-		if (ids.length === 0) return;
+		const anchor = wrapper;
+		if (ids.length === 0 || !anchor) return;
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const entry of entries) {
-					if (entry.isIntersecting) activeHeading = entry.target.id;
-				}
-			},
-			{ rootMargin: '0% 0% -60% 0%' }
-		);
-
-		for (const id of ids) {
-			const element = document.getElementById(id);
-			if (element) observer.observe(element);
+		let parent = anchor.parentElement;
+		let scrollRoot: HTMLElement | null = null;
+		while (parent) {
+			const overflowY = getComputedStyle(parent).overflowY;
+			if (/(auto|scroll)/.test(overflowY) && parent.scrollHeight > parent.clientHeight) {
+				scrollRoot = parent;
+				break;
+			}
+			parent = parent.parentElement;
 		}
-		return () => observer.disconnect();
+
+		let activeFrame = 0;
+		const updateActiveHeading = () => {
+			activeFrame = 0;
+			const rootTop = scrollRoot?.getBoundingClientRect().top ?? 0;
+			const positions = ids.flatMap((id) => {
+				const element = document.getElementById(id);
+				return element ? [{ id, top: element.getBoundingClientRect().top - rootTop }] : [];
+			});
+			activeHeading = selectActiveHeading(ids, positions, ACTIVE_HEADING_OFFSET);
+		};
+		const scheduleActiveHeading = () => {
+			if (!activeFrame) activeFrame = requestAnimationFrame(updateActiveHeading);
+		};
+
+		const scrollTarget: HTMLElement | Window = scrollRoot ?? window;
+		scrollTarget.addEventListener('scroll', scheduleActiveHeading, { passive: true });
+		window.addEventListener('resize', scheduleActiveHeading, { passive: true });
+		scheduleActiveHeading();
+
+		return () => {
+			scrollTarget.removeEventListener('scroll', scheduleActiveHeading);
+			window.removeEventListener('resize', scheduleActiveHeading);
+			if (activeFrame) cancelAnimationFrame(activeFrame);
+		};
 	});
 
 	const activeIndex = $derived(activeHeading ? itemIds.indexOf(activeHeading) : -1);

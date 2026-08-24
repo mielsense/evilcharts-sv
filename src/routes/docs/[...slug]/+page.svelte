@@ -50,7 +50,7 @@
 
 <div class="relative mt-10 flex sm:mt-0">
 	<div class="docs-container flex flex-col py-12 pb-32">
-		<div class="flex flex-row items-start gap-4">
+		<div class="flex flex-col items-start gap-6 min-[360px]:flex-row min-[360px]:gap-4">
 			<div class="flex flex-1 flex-col gap-1">
 				<h1 class="scroll-m-20 text-3xl font-semibold tracking-tight xl:text-4xl">
 					{data.data.title}
@@ -100,7 +100,7 @@
 					</div>
 				{/if}
 			</div>
-			<div>
+			<div class="shrink-0">
 				<DocsCopyPage mdx={data.markdown} url={absoluteUrl(data.url)} path={data.url} />
 			</div>
 		</div>

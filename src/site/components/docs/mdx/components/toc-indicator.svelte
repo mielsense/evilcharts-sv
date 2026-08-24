@@ -110,8 +110,8 @@
 		<div
 			id="gradient-tail-of-toc-indicator"
 			class="absolute top-0 left-0"
-			style={`width:80px;height:80px;offset-path:${cssOffsetPath};offset-rotate:0deg;` +
-				`rotate:${tailRotate.current}deg;margin-left:0.2px;margin-top:${tailMarginTop.current}px;` +
+			style={`width:80px;height:80px;offset-path:${cssOffsetPath};offset-anchor:50% 50%;offset-rotate:0deg;` +
+				`transform:rotate(${tailRotate.current}deg);margin-left:0.2px;margin-top:${tailMarginTop.current}px;` +
 				`offset-distance:${offsetDistancePercent};opacity:${isActive ? 1 : 0}`}
 		>
 			<svg width="80" height="80" viewBox="0 0 80 80" class="overflow-visible">
@@ -138,7 +138,7 @@
 	-->
 	<div
 		class="absolute top-0 left-0 size-[6px] rounded-[1px] bg-primary"
-		style={`offset-path:${cssOffsetPath};offset-rotate:0deg;rotate:45deg;margin-left:0.2px;` +
+		style={`offset-path:${cssOffsetPath};offset-anchor:50% 50%;offset-rotate:0deg;transform:rotate(45deg);margin-left:0.2px;` +
 			`offset-distance:${offsetDistancePercent};opacity:${isActive ? 1 : 0}`}
 	></div>
 </div>
