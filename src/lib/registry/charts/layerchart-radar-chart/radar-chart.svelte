@@ -29,7 +29,8 @@
 		defaultSelectedDataKey = null,
 		onSelectionChange,
 		isLoading = false,
-		loadingPoints
+		loadingPoints,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		config: ChartConfig; // series colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -41,10 +42,12 @@
 		onSelectionChange?: (selectedDataKey: string | null) => void; // fires when the selected series changes
 		isLoading?: boolean; // shows the animated loading skeleton
 		loadingPoints?: number; // number of points in the loading skeleton
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
+	let chartDimension = $state(untrack(() => initialDimension));
 
 	/** LayerChart's chart state, so the pointer handlers below can drive the tooltip. */
 	let layerContext = $state<ChartState<Record<string, unknown>> | undefined>(undefined);
@@ -126,7 +129,7 @@
 	});
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!--
@@ -150,6 +153,8 @@
 		role="presentation"
 	>
 		<Chart
+			width={chartDimension.width}
+			height={chartDimension.height}
 			bind:context={layerContext}
 			data={chartData}
 			x={angleKey}
@@ -181,5 +186,6 @@
 			<TooltipRender />
 		</Chart>
 	</div>
+	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
 </ChartContainer>

@@ -11,6 +11,8 @@
 		children?: Snippet;
 		/** Size used before the container has been measured. */
 		initialDimension?: { width: number; height: number };
+		/** @internal Resolved fallback-or-measured size used by chart roots. */
+		dimension?: { width: number; height: number };
 		/** Optional content rendered below the chart (e.g. EvilBrush) */
 		footer?: Snippet;
 	};
@@ -19,6 +21,7 @@
 		id,
 		config,
 		initialDimension = { width: 320, height: 200 },
+		dimension = $bindable(),
 		class: className,
 		children,
 		footer,
@@ -27,6 +30,17 @@
 
 	const uniqueId = $props.id();
 	const chartId = $derived(`chart-${id ?? uniqueId}`);
+	let measuredWidth = $state(0);
+	let measuredHeight = $state(0);
+	const resolvedDimension = $derived(
+		measuredWidth > 0 && measuredHeight > 0
+			? { width: measuredWidth, height: measuredHeight }
+			: initialDimension
+	);
+
+	$effect(() => {
+		dimension = resolvedDimension;
+	});
 
 	// Validate chart config at runtime
 	$effect.pre(() => {
@@ -41,7 +55,7 @@
 			return chartId;
 		},
 		get initialDimension() {
-			return initialDimension;
+			return resolvedDimension;
 		}
 	});
 </script>
@@ -67,7 +81,11 @@
 	{...restProps}
 >
 	<ChartStyle id={chartId} {config} />
-	<div class="flex min-h-0 w-full flex-1 flex-col">
+	<div
+		class="flex min-h-0 w-full flex-1 flex-col"
+		bind:clientWidth={measuredWidth}
+		bind:clientHeight={measuredHeight}
+	>
 		{@render children?.()}
 	</div>
 	{@render footer?.()}

@@ -45,7 +45,8 @@
 		onSelectionChange,
 		isLoading = false,
 		loadingBars,
-		xDataKey
+		xDataKey,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		config: ChartConfig; // series colors + labels for bars and lines
 		data: TData[]; // rows rendered by the chart
@@ -61,6 +62,7 @@
 		isLoading?: boolean; // shows the animated loading skeleton
 		loadingBars?: number; // number of bars in the loading skeleton
 		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
@@ -69,7 +71,15 @@
 	 * Anchors the intro to a fixed moment so it plays exactly once — re-renders read elapsed
 	 * time from here instead of replaying.
 	 */
-	const introStartedAt = Date.now();
+	let introStartedAt = $state(Date.now());
+	let chartDimension = $state(untrack(() => initialDimension));
+	let previousLoading = untrack(() => isLoading);
+
+	$effect(() => {
+		const loadingNow = isLoading;
+		if (previousLoading && !loadingNow) introStartedAt = Date.now();
+		previousLoading = loadingNow;
+	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
@@ -169,7 +179,7 @@
 	});
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!-- The reference clears the hovered column when the pointer leaves the chart. -->
@@ -179,6 +189,8 @@
 		role="presentation"
 	>
 		<Chart
+			width={chartDimension.width}
+			height={chartDimension.height}
 			data={chartData}
 			x={xKey}
 			{series}
@@ -205,6 +217,7 @@
 			<TooltipRender />
 		</Chart>
 	</div>
+	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
 
 	{#snippet footer()}

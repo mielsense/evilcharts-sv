@@ -8,6 +8,7 @@
 	 * `x` accessor, so it is registered into the chart context on mount.
 	 */
 	import { Axis } from 'layerchart';
+	import { layerChartFormatter } from '../../ui/layerchart-chart/ticks.js';
 	import type { ComponentProps } from 'svelte';
 	import { useRadarChart } from './radar-chart-context.svelte.js';
 
@@ -27,7 +28,7 @@
 		return () => chart.registerAngleDataKey(token, undefined);
 	});
 
-	const format = $derived(tickFormatter ? (value: unknown) => tickFormatter(value, 0) : undefined);
+	const format = $derived(tickFormatter ? layerChartFormatter(tickFormatter) : undefined);
 </script>
 
 {#if !chart.isLoading}

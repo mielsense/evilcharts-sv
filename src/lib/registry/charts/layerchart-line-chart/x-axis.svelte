@@ -8,7 +8,7 @@
 	 * root's `x` accessor, so it is registered into the chart context on mount.
 	 */
 	import { Axis } from 'layerchart';
-	import { dropOverflowingLeadTick } from '../../ui/layerchart-chart/ticks.js';
+	import { layerChartFormatter, thinAxisTicks } from '../../ui/layerchart-chart/ticks.js';
 	import type { ComponentProps } from 'svelte';
 	import { useLineChart } from './line-chart-context.svelte.js';
 
@@ -33,6 +33,13 @@
 
 	const chart = useLineChart();
 	const token = $props.id();
+	const format = $derived(tickFormatter ? layerChartFormatter(tickFormatter) : undefined);
+	const ticks = $derived(
+		thinAxisTicks({
+			minGap: minTickGap,
+			format: (value, index) => tickFormatter?.(value, index) ?? String(value)
+		})
+	);
 
 	$effect.pre(() => {
 		chart.registerXAxisDataKey(token, dataKey);
@@ -47,12 +54,11 @@
 {#if !chart.isLoading}
 	<Axis
 		placement="bottom"
-		ticks={dropOverflowingLeadTick}
+		{ticks}
 		rule={axisLine}
 		tickMarks={tickLine}
 		tickLength={tickMargin}
-		tickSpacing={minTickGap}
-		format={tickFormatter ? (value: unknown) => tickFormatter(value, 0) : undefined}
+		{format}
 		{...restProps}
 	/>
 {/if}

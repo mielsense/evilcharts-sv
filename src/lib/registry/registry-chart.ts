@@ -25,7 +25,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-brush',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: ['layerchart', '@humanspeak/svelte-motion', 'd3-scale'],
 		type: 'registry:component',
 		files: [
 			{
@@ -46,7 +46,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-brush',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: ['layerchart', '@humanspeak/svelte-motion', 'd3-scale'],
 		type: 'registry:component',
 		files: [
 			{
@@ -145,7 +145,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-dot',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: ['layerchart', '@humanspeak/svelte-motion', 'd3-shape'],
 		type: 'registry:component',
 		files: [
 			{

@@ -44,7 +44,9 @@
 		defaultSelectedNode = null,
 		onSelectionChange,
 		isLoading = false,
-		chartProps
+		sankeyProps,
+		chartProps,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		data: SankeyData; // nodes + links rendered by the chart
 		config: ChartConfig; // node colors + labels keyed by node name
@@ -61,10 +63,16 @@
 		defaultSelectedNode?: string | null; // node selected on first render
 		onSelectionChange?: (selection: { dataKey: string; value: number } | null) => void; // fires when the selected node changes
 		isLoading?: boolean; // shows the animated loading skeleton
+		sankeyProps?: Record<string, unknown>; // canonical escape hatch, matching the original API
+		/** @deprecated Use `sankeyProps`. */
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
+	const forwardedSankeyProps = $derived({ ...(chartProps ?? {}), ...(sankeyProps ?? {}) });
+
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+	let chartDimension = $state(untrack(() => initialDimension));
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedNode)`.
 	let selectedNode = $state<string | null>(untrack(() => defaultSelectedNode));
@@ -142,7 +150,7 @@
 	const hide = () => layerContext?.tooltip.hide();
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	{#if isLoading}
 		<LoadingSankey />
@@ -152,6 +160,8 @@
 			same plot box its layout measures against.
 		-->
 		<Chart
+			width={chartDimension.width}
+			height={chartDimension.height}
 			bind:context={layerContext}
 			data={data.nodes}
 			padding={{
@@ -162,7 +172,7 @@
 			}}
 			tooltipContext={{ mode: 'manual' }}
 			class="h-full w-full"
-			{...chartProps}
+			{...forwardedSankeyProps}
 		>
 			<Svg>
 				{#if backgroundVariant}

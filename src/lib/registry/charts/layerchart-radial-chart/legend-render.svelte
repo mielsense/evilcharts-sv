@@ -1,15 +1,20 @@
 <script lang="ts">
 	/** Renders the registered `<Legend />` slot as an HTML box outside the plot area. */
-	import { ChartLegendContent, type LegendPayloadItem } from '../../ui/layerchart-legend/index.js';
+	import {
+		ChartLegendContent,
+		resolveLegendPlacement,
+		type LegendPayloadItem,
+		type LegendVerticalAlign
+	} from '../../ui/layerchart-legend/index.js';
 	import { useRadialChart } from './radial-chart-context.svelte.js';
 
-	let { placement }: { placement: 'top' | 'bottom' } = $props();
+	let { placement }: { placement: LegendVerticalAlign } = $props();
 
 	const chart = useRadialChart();
 
 	const slot = $derived(chart.slots.legend);
 	// Recharts defaults the radial legend to the bottom, unlike the cartesian charts.
-	const resolvedPlacement = $derived(slot?.verticalAlign === 'top' ? 'top' : 'bottom');
+	const resolvedPlacement = $derived(resolveLegendPlacement(slot?.verticalAlign, 'bottom'));
 
 	/**
 	 * One entry per bar, carrying the row so `nameKey` can resolve its label and colours.
@@ -36,5 +41,8 @@
 		isClickable={slot.isClickable}
 		selected={chart.selectedBar}
 		onSelectChange={(name) => chart.selectBar(name)}
+		class={placement === 'middle'
+			? 'pointer-events-auto absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-4'
+			: undefined}
 	/>
 {/if}

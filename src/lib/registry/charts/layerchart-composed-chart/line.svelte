@@ -171,7 +171,7 @@
 
 	<defs>
 		{#if revealType !== 'none'}
-			<RevealMask {id} type={revealType} />
+			<RevealMask {id} type={revealType} introStartedAt={chart.introStartedAt} />
 		{/if}
 		<HorizontalColorGradient {id} {dataKey} config={chart.config} />
 		{#if glow}

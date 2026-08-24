@@ -7,7 +7,8 @@
 	 * labels on each sector.
 	 */
 	import { Arc, getChartContext } from 'layerchart';
-	import { animate, useMotionValue } from '@humanspeak/svelte-motion';
+	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
 	import type { Snippet } from 'svelte';
 	import ColorGradient from './defs/radial-color-gradient.svelte';
 	import GlowFilter from './defs/glow-filter.svelte';
@@ -45,6 +46,7 @@
 		isClickable = false,
 		glowingSectors = [],
 		children,
+		pieProps,
 		arcProps
 	}: {
 		variant?: PieVariant; // fill style for the pie's sectors
@@ -57,8 +59,12 @@
 		isClickable?: boolean; // lets sectors be selected by clicking them
 		glowingSectors?: string[]; // sector names that render with a soft outer glow
 		children?: Snippet; // optional <Label /> composition for sector labels
+		pieProps?: Record<string, unknown>; // canonical escape hatch, matching the original EvilCharts API
+		/** @deprecated Use `pieProps`. */
 		arcProps?: Record<string, unknown>; // escape hatch for raw LayerChart Arc props
 	} = $props();
+
+	const forwardedPieProps = $derived({ ...(arcProps ?? {}), ...(pieProps ?? {}) });
 
 	const chart = usePieChart();
 	/** LayerChart's own context, for the plot box the radii are measured against. */
@@ -66,6 +72,7 @@
 	const id = $props.id(); // unique id scopes this pie's style defs
 
 	const slots = setPieSlotsContext();
+	const shouldReduceMotion = useReducedMotion();
 
 	const resolvedInner = $derived(toArcRadius(innerRadius));
 	const resolvedOuter = $derived(toArcRadius(outerRadius));
@@ -76,18 +83,29 @@
 	 * easing curve as `<Pie animationBegin animationDuration animationEasing>`.
 	 */
 	const progress = useMotionValue(0);
+	let previousLoading: boolean | undefined;
 
 	// `untrack`: `animate` reads the motion value, and a tracked read would re-run this effect
 	// on every frame — each run restarting the tween, so it crawled instead of playing once.
 	$effect(() => {
-		const controls = untrack(() =>
-			animate(progress, 1, {
-				delay: ANIMATION_BEGIN / 1000,
-				duration: ANIMATION_DURATION / 1000,
-				ease: ANIMATION_EASE
-			})
-		);
-		return () => controls.stop();
+		const loadingNow = chart.isLoading;
+		const action = polarIntroAction(previousLoading, loadingNow, shouldReduceMotion.current);
+		previousLoading = loadingNow;
+		let controls: ReturnType<typeof animate> | undefined;
+
+		untrack(() => {
+			if (action === 'reset') progress.set(0);
+			if (action === 'finish') progress.set(1);
+			if (action === 'animate') {
+				progress.set(0);
+				controls = animate(progress, 1, {
+					delay: ANIMATION_BEGIN / 1000,
+					duration: ANIMATION_DURATION / 1000,
+					ease: ANIMATION_EASE
+				});
+			}
+		});
+		return () => controls?.stop();
 	});
 
 	/**
@@ -192,7 +210,7 @@
 			tooltip
 			motion="none"
 			onclick={() => select(sector.name)}
-			{...arcProps}
+			{...forwardedPieProps}
 		/>
 	{/each}
 

@@ -49,13 +49,14 @@ export function thinAxisTicks({
 	charWidth = 6.6
 }: {
 	/** Renders a domain value the way the axis will, so its width can be estimated. */
-	format: (value: unknown) => string;
+	format: (value: unknown, index: number) => string;
 	/** Recharts' `minTickGap`, which defaults to 5. */
 	minGap?: number;
 	/** Estimated advance per character, in pixels. */
 	charWidth?: number;
 }) {
 	return (scale: AnyScale): unknown[] => {
+		const domain = scale.domain() as unknown[];
 		const values = dropOverflowingLeadTick(scale);
 		if (values.length < 2) return values;
 
@@ -66,7 +67,13 @@ export function thinAxisTicks({
 
 		const centreOf = (value: unknown) =>
 			Number((scale as (v: unknown) => number)(value)) + bandOffset;
-		const halfWidthOf = (value: unknown) => (format(value).length * charWidth) / 2;
+		const halfWidthOf = (value: unknown) =>
+			(format(
+				value,
+				domain.findIndex((candidate) => Object.is(candidate, value))
+			).length *
+				charWidth) /
+			2;
 
 		// Walk from the end, as `preserveEnd` does, keeping a tick only when it clears the last kept.
 		const kept: unknown[] = [];
@@ -85,4 +92,17 @@ export function thinAxisTicks({
 
 		return kept.reverse();
 	};
+}
+
+/**
+ * Keeps the second argument that LayerChart supplies to format functions at runtime.
+ *
+ * Its public `FormatType` currently describes a single-argument callback even though Axis invokes
+ * it as `format(tick, index)`. Recharts exposes that index, so this adapter keeps the runtime value
+ * while remaining assignable to LayerChart's narrower callback type.
+ */
+export function layerChartFormatter(
+	formatter: (value: unknown, index: number) => string
+): (value: unknown, index?: number) => string {
+	return (value, index = 0) => formatter(value, index);
 }

@@ -7,6 +7,7 @@
 	import { Axis } from 'layerchart';
 	import type { ComponentProps } from 'svelte';
 	import { axisValueToPercentFormatter } from '../../ui/layerchart-chart/format.js';
+	import { layerChartFormatter } from '../../ui/layerchart-chart/ticks.js';
 	import { useAreaChart } from './area-chart-context.svelte.js';
 
 	type Props = Omit<ComponentProps<typeof Axis>, 'placement' | 'format'> & {
@@ -22,7 +23,7 @@
 		tickLine = false,
 		axisLine = false,
 		tickMargin = 8,
-		minTickGap = 8,
+		minTickGap: _minTickGap = 8,
 		tickFormatter,
 		dataKey: _dataKey,
 		...restProps
@@ -40,7 +41,7 @@
 		chart.isExpanded
 			? (value: unknown) => axisValueToPercentFormatter(Number(value))
 			: tickFormatter
-				? (value: unknown) => tickFormatter(value, 0)
+				? layerChartFormatter(tickFormatter)
 				: undefined
 	);
 </script>
@@ -51,7 +52,6 @@
 		rule={axisLine}
 		tickMarks={tickLine}
 		tickLength={tickMargin}
-		tickSpacing={minTickGap}
 		{format}
 		{...restProps}
 	/>

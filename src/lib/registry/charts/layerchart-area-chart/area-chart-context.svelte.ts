@@ -15,6 +15,7 @@ type Options = {
 	seriesKeys: () => string[];
 	curveType: () => CurveType;
 	animationType: () => AreaAnimationType;
+	introStartedAt: () => number;
 	isStacked: () => boolean;
 	isExpanded: () => boolean;
 	isLoading: () => boolean;
@@ -71,6 +72,9 @@ export class AreaChartContext {
 	}
 	get animationType() {
 		return this.#options.animationType();
+	}
+	get introStartedAt() {
+		return this.#options.introStartedAt();
 	}
 	get isStacked() {
 		return this.#options.isStacked();

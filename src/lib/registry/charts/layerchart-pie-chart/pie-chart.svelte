@@ -25,7 +25,8 @@
 		chartProps,
 		defaultSelectedSector = null,
 		onSelectionChange,
-		isLoading = false
+		isLoading = false,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		config: ChartConfig; // sector colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -37,10 +38,12 @@
 		defaultSelectedSector?: string | null; // sector selected on first render
 		onSelectionChange?: (selection: { dataKey: string; value: number } | null) => void; // fires when the selected sector changes
 		isLoading?: boolean; // shows the animated loading skeleton
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedSector)`.
 	let selectedSector = $state<string | null>(untrack(() => defaultSelectedSector));
+	let chartDimension = $state(untrack(() => initialDimension));
 
 	const rows = $derived(data as Record<string, unknown>[]);
 
@@ -77,10 +80,18 @@
 	});
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
-	<Chart data={rows} x={dataKey} {padding} class="h-full w-full" {...chartProps}>
+	<Chart
+		width={chartDimension.width}
+		height={chartDimension.height}
+		data={rows}
+		x={dataKey}
+		{padding}
+		class="h-full w-full"
+		{...chartProps}
+	>
 		<Svg>
 			<!--
 				The pie is centred in the plot box, which is how Recharts places it: `cx`/`cy` both
@@ -92,5 +103,6 @@
 		</Svg>
 		<TooltipRender />
 	</Chart>
+	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
 </ChartContainer>

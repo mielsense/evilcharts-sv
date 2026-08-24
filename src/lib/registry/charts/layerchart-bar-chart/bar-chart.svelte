@@ -49,7 +49,8 @@
 		onSelectionChange,
 		isLoading = false,
 		loadingBars,
-		xDataKey
+		xDataKey,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		config: ChartConfig; // series colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -68,9 +69,11 @@
 		isLoading?: boolean; // shows the animated loading skeleton
 		loadingBars?: number; // number of bars in the loading skeleton
 		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+	let chartDimension = $state(untrack(() => initialDimension));
 
 	/**
 	 * Anchors the grow-in to a fixed moment so it plays exactly once — re-renders read elapsed
@@ -196,7 +199,7 @@
 	});
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!-- The reference tracks pointer enter/leave on the chart to drive the hover highlight. -->
@@ -207,6 +210,8 @@
 		role="presentation"
 	>
 		<Chart
+			width={chartDimension.width}
+			height={chartDimension.height}
 			bind:context={layerContext}
 			data={chartData}
 			x={isHorizontal ? undefined : xKey}
@@ -236,6 +241,7 @@
 			<TooltipRender />
 		</Chart>
 	</div>
+	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
 
 	{#snippet footer()}

@@ -1,16 +1,19 @@
 <script lang="ts">
 	/** Renders the registered `<Legend />` slot as an HTML box outside the plot area. */
-	import { ChartLegendContent, type LegendPayloadItem } from '../../ui/layerchart-legend/index.js';
+	import {
+		ChartLegendContent,
+		resolveLegendPlacement,
+		type LegendPayloadItem,
+		type LegendVerticalAlign
+	} from '../../ui/layerchart-legend/index.js';
 	import { useLineChart } from './line-chart-context.svelte.js';
 
-	let { placement }: { placement: 'top' | 'bottom' } = $props();
+	let { placement }: { placement: LegendVerticalAlign } = $props();
 
 	const chart = useLineChart();
 
 	const slot = $derived(chart.slots.legend);
-	const resolvedPlacement = $derived(
-		chart.slots.legend?.verticalAlign === 'bottom' ? 'bottom' : 'top'
-	);
+	const resolvedPlacement = $derived(resolveLegendPlacement(slot?.verticalAlign, 'top'));
 
 	const payload = $derived<LegendPayloadItem[]>(
 		chart.seriesKeys.map((key) => ({ dataKey: key, value: key }))
@@ -26,5 +29,8 @@
 		isClickable={slot.isClickable}
 		selected={chart.selectedDataKey}
 		onSelectChange={chart.selectDataKey}
+		class={placement === 'middle'
+			? 'pointer-events-auto absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-4'
+			: undefined}
 	/>
 {/if}

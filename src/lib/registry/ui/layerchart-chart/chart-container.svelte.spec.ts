@@ -2,6 +2,7 @@ import { render } from 'vitest-browser-svelte';
 import { describe, expect, it } from 'vitest';
 import ChartContainer from './chart-container.svelte';
 import type { ChartConfig } from './chart-config.js';
+import DimensionHarness from './chart-container-dimension.spec.svelte';
 
 const config: ChartConfig = {
 	desktop: { label: 'Desktop', colors: { light: ['#047857'], dark: ['#10b981'] } },
@@ -55,5 +56,17 @@ describe('ChartContainer', () => {
 		expect(() =>
 			render(ChartContainer, { config: { desktop: { colors: {} } } as unknown as ChartConfig })
 		).toThrow(/must have at least one theme key \(light, dark\)/);
+	});
+
+	it('uses initialDimension at zero size, then yields to a real container measurement', async () => {
+		const { container } = render(DimensionHarness);
+		const output = container.querySelector('output')!;
+		await expect.poll(() => output.textContent).toBe('640x360');
+
+		container.querySelector('button')!.click();
+		await expect
+			.poll(() => container.querySelector<HTMLElement>('[data-test="dimension-host"]')!.offsetWidth)
+			.toBe(480);
+		await expect.poll(() => output.textContent).toBe('480x240');
 	});
 });

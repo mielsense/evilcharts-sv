@@ -40,7 +40,8 @@
 		defaultSelectedDataKey = null,
 		onSelectionChange,
 		isLoading = false,
-		backgroundVariant
+		backgroundVariant,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		config: ChartConfig; // bar colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -61,9 +62,11 @@
 		onSelectionChange?: (selection: { dataKey: string; value: number } | null) => void; // fires when the selected bar changes
 		isLoading?: boolean; // shows the animated loading skeleton
 		backgroundVariant?: BackgroundVariant; // background pattern behind the chart
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+	let chartDimension = $state(untrack(() => initialDimension));
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
 	let selectedBar = $state<string | null>(untrack(() => defaultSelectedDataKey));
@@ -122,7 +125,7 @@
 	});
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!--
@@ -130,7 +133,15 @@
 		`padding` is Recharts' default `<RadialBarChart margin>`, which its maximum radius measures
 		against.
 	-->
-	<Chart bind:context={layerContext} data={rows} {padding} class="h-full w-full" {...chartProps}>
+	<Chart
+		width={chartDimension.width}
+		height={chartDimension.height}
+		bind:context={layerContext}
+		data={rows}
+		{padding}
+		class="h-full w-full"
+		{...chartProps}
+	>
 		<Svg>
 			<!--
 				Recharts places the arc centre with `cx`/`cy`: the middle for `full`, and 70% down for
@@ -151,5 +162,6 @@
 		</Svg>
 		<TooltipRender />
 	</Chart>
+	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
 </ChartContainer>

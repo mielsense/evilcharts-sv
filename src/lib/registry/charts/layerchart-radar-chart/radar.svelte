@@ -9,6 +9,7 @@
 	import { curveLinearClosed } from 'd3-shape';
 	import type { Snippet } from 'svelte';
 	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
 	import ColorGradient from './defs/color-gradient.svelte';
 	import FillGradient from './defs/fill-gradient.svelte';
@@ -57,18 +58,29 @@
 	 * origin that is exactly a uniform scale, so one tween drives the whole shape and its dots.
 	 */
 	const reveal = useMotionValue(0);
+	let previousLoading: boolean | undefined;
 
 	// `untrack`: `animate` reads the motion value, and a tracked read would re-run this effect
 	// on every frame — each run restarting the tween, so it crawled instead of playing once.
 	$effect(() => {
-		const controls = untrack(() =>
-			animate(reveal, 1, {
-				delay: REVEAL_BEGIN / 1000,
-				duration: REVEAL_DURATION / 1000,
-				ease: REVEAL_EASE
-			})
-		);
-		return () => controls.stop();
+		const loadingNow = chart.isLoading;
+		const action = polarIntroAction(previousLoading, loadingNow, shouldReduceMotion.current);
+		previousLoading = loadingNow;
+		let controls: ReturnType<typeof animate> | undefined;
+
+		untrack(() => {
+			if (action === 'reset') reveal.set(0);
+			if (action === 'finish') reveal.set(1);
+			if (action === 'animate') {
+				reveal.set(0);
+				controls = animate(reveal, 1, {
+					delay: REVEAL_BEGIN / 1000,
+					duration: REVEAL_DURATION / 1000,
+					ease: REVEAL_EASE
+				});
+			}
+		});
+		return () => controls?.stop();
 	});
 
 	const scale = $derived(shouldReduceMotion.current ? 1 : reveal.current);

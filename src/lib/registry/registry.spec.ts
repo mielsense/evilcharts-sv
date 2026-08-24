@@ -7,6 +7,25 @@ const REGISTRY_DIR = path.join(process.cwd(), 'src/lib/registry');
 
 const names = new Set(registry.items.map((item) => item.name));
 
+const FRAMEWORK_IMPORTS = new Set(['svelte', 'svelte/elements', 'svelte/reactivity']);
+
+function packageName(specifier: string): string {
+	if (!specifier.startsWith('@')) return specifier.split('/')[0];
+	return specifier.split('/').slice(0, 2).join('/');
+}
+
+/** Every source file an item ships, with directory entries walked. */
+function sourcesOf(item: (typeof registry.items)[number]): string[] {
+	const walk = (dir: string): string[] =>
+		readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+			entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]
+		);
+	return item.files.flatMap((file) => {
+		const absolute = path.join(REGISTRY_DIR, file.path);
+		return statSync(absolute).isDirectory() ? walk(absolute) : [absolute];
+	});
+}
+
 describe('registry manifests', () => {
 	it('holds one item per source file group', () => {
 		// 6 primitives + 8 charts + 113 examples + 4 blocks, exactly as the reference's recharts half.
@@ -53,14 +72,41 @@ describe('registry manifests', () => {
 		}
 	});
 
-	it('declares only the substituted dependencies', () => {
-		const declared = new Set(registry.items.flatMap((i) => i.dependencies ?? []));
-		// `recharts`, `motion` and `@number-flow/react` must never survive the port.
-		expect([...declared].sort()).toEqual([
-			'@humanspeak/svelte-motion',
-			'@number-flow/svelte',
-			'layerchart'
-		]);
+	it('declares every package imported directly by an installable item', () => {
+		const itemByName = new Map(registry.items.map((item) => [item.name, item]));
+
+		const availablePackages = (itemName: string, seen = new Set<string>()): Set<string> => {
+			if (seen.has(itemName)) return new Set();
+			seen.add(itemName);
+			const item = itemByName.get(itemName);
+			if (!item) return new Set();
+
+			const packages = new Set(item.dependencies ?? []);
+			for (const dependency of item.registryDependencies ?? []) {
+				const dependencyName = dependency.slice('@evilcharts/'.length);
+				for (const pkg of availablePackages(dependencyName, seen)) packages.add(pkg);
+			}
+			return packages;
+		};
+
+		for (const item of registry.items.filter((entry) => !entry.name.startsWith('ex-'))) {
+			const available = availablePackages(item.name);
+			for (const file of sourcesOf(item)) {
+				if (/\.(spec|e2e)\.(ts|svelte)$/.test(file)) continue;
+				const source = readFileSync(file, 'utf8');
+				const imports = source.matchAll(/(?:from\s+|import\s*)['"]([^'"]+)['"]/g);
+
+				for (const [, specifier] of imports) {
+					if (specifier.startsWith('.') || specifier.startsWith('$lib/')) continue;
+					if (FRAMEWORK_IMPORTS.has(specifier) || specifier.startsWith('svelte/')) continue;
+					const pkg = packageName(specifier);
+					expect(
+						available,
+						`${item.name} imports ${pkg} from ${path.relative(REGISTRY_DIR, file)}`
+					).toContain(pkg);
+				}
+			}
+		}
 	});
 
 	it('targets a consumer path for everything but the examples', () => {
@@ -78,18 +124,6 @@ describe('registry manifests', () => {
 });
 
 describe('registry sources', () => {
-	/** Every source file an item ships, with directory entries walked. */
-	function sourcesOf(item: (typeof registry.items)[number]): string[] {
-		const walk = (dir: string): string[] =>
-			readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
-				entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]
-			);
-		return item.files.flatMap((file) => {
-			const absolute = path.join(REGISTRY_DIR, file.path);
-			return statSync(absolute).isDirectory() ? walk(absolute) : [absolute];
-		});
-	}
-
 	const sources = registry.items.flatMap(sourcesOf).filter((f) => /\.(svelte|ts)$/.test(f));
 
 	it('never reaches out of the registry', () => {

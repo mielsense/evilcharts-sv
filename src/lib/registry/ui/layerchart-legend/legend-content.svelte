@@ -135,7 +135,8 @@
 			align === 'left' && 'justify-start',
 			align === 'center' && 'justify-center',
 			align === 'right' && 'justify-end',
-			verticalAlign === 'top' ? 'pb-4' : 'pt-4',
+			verticalAlign === 'top' && 'pb-4',
+			verticalAlign === 'bottom' && 'pt-4',
 			className
 		)}
 	>

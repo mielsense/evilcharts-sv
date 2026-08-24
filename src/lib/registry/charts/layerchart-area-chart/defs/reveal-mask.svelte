@@ -12,16 +12,23 @@
 	 * "edges-in" needs two rects — each half grows inward from an opposite edge.
 	 */
 	import { motion } from '@humanspeak/svelte-motion';
+	import { getRevealAnimation } from '../../../ui/layerchart-chart/intros.js';
 	import { REVEAL_DURATION, REVEAL_EASE, SINGLE_REVEAL_ORIGIN } from '../types.js';
 	import type { RevealAnimationType } from '../types.js';
 
-	let { id, type }: { id: string; type: RevealAnimationType } = $props();
+	let {
+		id,
+		type,
+		introStartedAt
+	}: { id: string; type: RevealAnimationType; introStartedAt: number } = $props();
 
-	const reveal = {
-		initial: { scaleX: 0 },
-		animate: { scaleX: 1 },
-		transition: { duration: REVEAL_DURATION, ease: REVEAL_EASE }
-	};
+	const reveal = $derived(
+		getRevealAnimation(REVEAL_DURATION, REVEAL_EASE, introStartedAt) ?? {
+			initial: { scaleX: 1 },
+			animate: { scaleX: 1 },
+			transition: { duration: 0, ease: REVEAL_EASE }
+		}
+	);
 </script>
 
 <mask

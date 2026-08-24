@@ -10,6 +10,13 @@ export type ChartLegendVariant =
 export type LegendAlign = 'left' | 'center' | 'right';
 export type LegendVerticalAlign = 'top' | 'middle' | 'bottom';
 
+export function resolveLegendPlacement(
+	requested: LegendVerticalAlign | undefined,
+	fallback: 'top' | 'bottom'
+): LegendVerticalAlign {
+	return requested ?? fallback;
+}
+
 /**
  * One legend entry.
  *

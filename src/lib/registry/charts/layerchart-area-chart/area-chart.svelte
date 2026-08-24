@@ -45,7 +45,8 @@
 		onSelectionChange,
 		isLoading = false,
 		loadingPoints,
-		xDataKey
+		xDataKey,
+		initialDimension = { width: 320, height: 200 }
 	}: {
 		config: ChartConfig; // series colors + labels
 		data: TData[]; // rows rendered by the chart
@@ -60,9 +61,19 @@
 		isLoading?: boolean; // shows the animated loading skeleton
 		loadingPoints?: number; // number of points in the loading skeleton
 		xDataKey?: keyof TData & string; // x-axis key — also used by the <Brush /> footer
+		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
+	let introStartedAt = $state(Date.now());
+	let chartDimension = $state(untrack(() => initialDimension));
+	let previousLoading = untrack(() => isLoading);
+
+	$effect(() => {
+		const loadingNow = isLoading;
+		if (previousLoading && !loadingNow) introStartedAt = Date.now();
+		previousLoading = loadingNow;
+	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
@@ -149,6 +160,7 @@
 		seriesKeys: () => seriesKeys,
 		curveType: () => curveType,
 		animationType: () => animationType,
+		introStartedAt: () => introStartedAt,
 		isStacked: () => isStacked,
 		isExpanded: () => isExpanded,
 		isLoading: () => isLoading,
@@ -171,7 +183,7 @@
 	});
 </script>
 
-<ChartContainer {config} class={className}>
+<ChartContainer {config} {initialDimension} bind:dimension={chartDimension} class={className}>
 	<LoadingIndicator {isLoading} />
 	<LegendRender placement="top" />
 	<!-- The tooltip runs in `band` mode, not `bisect-x`: the category axis is an ordinal point
@@ -179,6 +191,8 @@
 	     hit rect one step wide over each point, which is how Recharts activates a category.
 	     See plans/DEVIATIONS.md A-9. -->
 	<Chart
+		width={chartDimension.width}
+		height={chartDimension.height}
 		data={chartData}
 		x={xKey}
 		{series}
@@ -201,6 +215,7 @@
 		</Svg>
 		<TooltipRender />
 	</Chart>
+	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
 
 	{#snippet footer()}

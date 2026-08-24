@@ -16,7 +16,7 @@ export const ui: RegistryItem[] = [
 	{
 		name: 'layerchart-chart',
 		type: 'registry:component',
-		dependencies: ['layerchart'],
+		dependencies: ['layerchart', 'd3-shape'],
 		files: [
 			{
 				path: 'ui/layerchart-chart',
@@ -65,7 +65,7 @@ export const ui: RegistryItem[] = [
 		name: 'layerchart-brush',
 		type: 'registry:component',
 		registryDependencies: ['@evilcharts/layerchart-chart'],
-		dependencies: ['layerchart'],
+		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
 		files: [
 			{
 				path: 'ui/layerchart-brush',

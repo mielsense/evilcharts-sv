@@ -4,6 +4,7 @@
 	 * Hidden automatically while the chart is loading.
 	 */
 	import { Axis } from 'layerchart';
+	import { layerChartFormatter } from '../../ui/layerchart-chart/ticks.js';
 	import type { ComponentProps } from 'svelte';
 	import { useComposedChart } from './composed-chart-context.svelte.js';
 
@@ -20,7 +21,7 @@
 		tickLine = false,
 		axisLine = false,
 		tickMargin = 8,
-		minTickGap = 8,
+		minTickGap: _minTickGap = 8,
 		tickFormatter,
 		dataKey: _dataKey,
 		...restProps
@@ -34,7 +35,7 @@
 		return () => chart.registerAxis(token, 'y', false);
 	});
 
-	const format = $derived(tickFormatter ? (value: unknown) => tickFormatter(value, 0) : undefined);
+	const format = $derived(tickFormatter ? layerChartFormatter(tickFormatter) : undefined);
 </script>
 
 {#if !chart.isLoading}
@@ -43,7 +44,6 @@
 		rule={axisLine}
 		tickMarks={tickLine}
 		tickLength={tickMargin}
-		tickSpacing={minTickGap}
 		{format}
 		{...restProps}
 	/>

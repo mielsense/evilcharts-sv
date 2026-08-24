@@ -15,6 +15,7 @@ type Options = {
 	seriesKeys: () => string[];
 	curveType: () => CurveType;
 	animationType: () => LineAnimationType;
+	introStartedAt: () => number;
 	isLoading: () => boolean;
 	chartId: () => string;
 	selectedDataKey: () => string | null;
@@ -69,6 +70,9 @@ export class LineChartContext {
 	}
 	get animationType() {
 		return this.#options.animationType();
+	}
+	get introStartedAt() {
+		return this.#options.introStartedAt();
 	}
 	get isLoading() {
 		return this.#options.isLoading();

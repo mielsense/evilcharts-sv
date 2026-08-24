@@ -6,6 +6,7 @@
 	 */
 	import { Arc, getChartContext } from 'layerchart';
 	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { polarIntroAction } from '../../ui/layerchart-chart/intros.js';
 	import { useRadialChart } from './radial-chart-context.svelte.js';
 	import { untrack } from 'svelte';
 	import {
@@ -26,6 +27,7 @@
 		barSize = DEFAULT_BAR_SIZE,
 		showBackground = true,
 		isClickable = false,
+		radialBarProps,
 		arcProps
 	}: {
 		dataKey: string; // value key — determines each bar's size
@@ -33,8 +35,12 @@
 		barSize?: number; // thickness of each radial bar
 		showBackground?: boolean; // renders the unfilled track behind each bar
 		isClickable?: boolean; // lets bars be selected by clicking them
+		radialBarProps?: Record<string, unknown>; // canonical escape hatch, matching the original API
+		/** @deprecated Use `radialBarProps`. */
 		arcProps?: Record<string, unknown>; // escape hatch for raw LayerChart Arc props
 	} = $props();
+
+	const forwardedRadialBarProps = $derived({ ...(arcProps ?? {}), ...(radialBarProps ?? {}) });
 
 	const chart = useRadialChart();
 	const layer = getChartContext();
@@ -47,18 +53,29 @@
 	 * the chart's start angle over 1.5s with the CSS `ease` curve.
 	 */
 	const reveal = useMotionValue(0);
+	let previousLoading: boolean | undefined;
 
 	// `untrack`: `animate` reads the motion value, and a tracked read would re-run this effect
 	// on every frame — each run restarting the tween, so it crawled instead of playing once.
 	$effect(() => {
-		const controls = untrack(() =>
-			animate(reveal, 1, {
-				delay: REVEAL_BEGIN / 1000,
-				duration: REVEAL_DURATION / 1000,
-				ease: REVEAL_EASE
-			})
-		);
-		return () => controls.stop();
+		const loadingNow = chart.isLoading;
+		const action = polarIntroAction(previousLoading, loadingNow, shouldReduceMotion.current);
+		previousLoading = loadingNow;
+		let controls: ReturnType<typeof animate> | undefined;
+
+		untrack(() => {
+			if (action === 'reset') reveal.set(0);
+			if (action === 'finish') reveal.set(1);
+			if (action === 'animate') {
+				reveal.set(0);
+				controls = animate(reveal, 1, {
+					delay: REVEAL_BEGIN / 1000,
+					duration: REVEAL_DURATION / 1000,
+					ease: REVEAL_EASE
+				});
+			}
+		});
+		return () => controls?.stop();
 	});
 
 	const progress = $derived(shouldReduceMotion.current ? 1 : reveal.current);
@@ -146,7 +163,7 @@
 			tooltip
 			motion="none"
 			onclick={() => select(bar.name, bar.value)}
-			{...arcProps}
+			{...forwardedRadialBarProps}
 		/>
 	{/each}
 {/if}
