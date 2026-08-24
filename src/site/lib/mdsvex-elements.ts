@@ -49,6 +49,9 @@ const CLASSES: Record<string, string> = {
 /** The `div` the reference's `Table` wraps every table in. */
 const TABLE_WRAPPER_CLASS = 'no-scrollbar my-6 w-full overflow-y-auto rounded-lg border';
 
+const INLINE_CODE_CLASS =
+	'bg-background relative mx-1 rounded-sm border px-[0.3rem] py-px font-mono text-[11px] text-(--color-vesper-type) outline-none';
+
 /** Lucide's `link` glyph, as the reference's `H2` renders it. */
 const LINK_ICON_CLASS =
 	'absolute top-[5px] -left-5 hidden size-4 translate-x-0.5 opacity-0 duration-200 ease-in-out group-hover:-translate-x-0.5 group-hover:opacity-100 lg:block';
@@ -126,6 +129,7 @@ export function mdsvexElements() {
 			if (!tag) return;
 
 			if (CLASSES[tag]) addClass(node, CLASSES[tag]);
+			if (tag === 'code' && parent?.tagName !== 'pre') addClass(node, INLINE_CODE_CLASS);
 
 			// `H2` renders an anchor around the heading, with a link glyph that appears on hover.
 			if (tag === 'h2' && parent?.children && index !== undefined) {
@@ -146,7 +150,11 @@ export function mdsvexElements() {
 				parent.children[index] = {
 					type: 'element',
 					tagName: 'div',
-					properties: { class: TABLE_WRAPPER_CLASS },
+					properties: {
+						class: headingText(node).includes('Original project')
+							? `${TABLE_WRAPPER_CLASS} p-2`
+							: TABLE_WRAPPER_CLASS
+					},
 					children: [node]
 				};
 				return 'skip';

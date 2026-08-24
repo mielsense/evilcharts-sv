@@ -12,22 +12,39 @@
 		href,
 		class: className,
 		_blank = false,
+		accent = false,
 		children
-	}: { href: string; class?: string; _blank?: boolean; children?: Snippet } = $props();
+	}: {
+		href: string;
+		class?: string;
+		_blank?: boolean;
+		accent?: boolean;
+		children?: Snippet;
+	} = $props();
 </script>
 
 <!-- eslint-disable svelte/no-navigation-without-resolve -- hrefs here come from content or
      props: in-page anchors, docs routes and external links, none of which `resolve()` covers. -->
 
-<a {href} target={_blank ? '_blank' : '_self'} class={cn(className, 'group hover:text-primary')}>
+<a
+	{href}
+	target={_blank ? '_blank' : '_self'}
+	class={cn(className, 'group hover:text-primary', accent && 'text-svelte')}
+>
 	<span
-		class="underline decoration-primary/50 decoration-1 underline-offset-4 transition-colors duration-100 group-hover:decoration-primary"
+		class={cn(
+			'underline decoration-primary/50 decoration-1 underline-offset-4 transition-colors duration-100 group-hover:decoration-primary',
+			accent && 'decoration-svelte/60 group-hover:decoration-svelte'
+		)}
 	>
 		{@render children?.()}
 	</span>
 	<!-- Lucide's `link` glyph, inline: the reference renders `<LinkIcon>` here. -->
 	<svg
-		class="mb-0.5 ml-0.5 inline size-2.5 text-muted-foreground duration-100 group-hover:text-primary"
+		class={cn(
+			'mb-0.5 ml-0.5 inline size-2.5 text-muted-foreground duration-100 group-hover:text-primary',
+			accent && 'text-svelte/70'
+		)}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 24 24"
 		fill="none"

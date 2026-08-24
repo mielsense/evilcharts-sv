@@ -28,6 +28,7 @@
 	const Icon = $derived(
 		{
 			default: AlertIcon,
+			svelte: AlertIcon,
 			warning: WarningIcon,
 			info: InfoIcon,
 			error: WarningIcon,

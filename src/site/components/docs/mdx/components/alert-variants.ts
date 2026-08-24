@@ -6,6 +6,7 @@ export const alertVariants = tv({
 	variants: {
 		variant: {
 			default: 'text-primary dark:bg-primary-foreground bg-[#F5F5F5]',
+			svelte: 'text-svelte dark:bg-primary-foreground bg-svelte/10',
 			warning: 'text-amber-500 dark:bg-primary-foreground bg-amber-500/10',
 			info: 'text-blue-500 dark:bg-primary-foreground bg-blue-500/10',
 			error: 'text-red-500 dark:bg-primary-foreground bg-red-500/10',
@@ -20,6 +21,7 @@ export const alertContentVariants = tv({
 	variants: {
 		variant: {
 			default: 'border-muted-foreground/20 dark:border-border',
+			svelte: 'border-svelte/25 dark:border-svelte/20',
 			warning: 'border-amber-500/20 dark:border-border',
 			info: 'border-blue-500/20 dark:border-border',
 			error: 'border-red-500/20 dark:border-border',
@@ -29,11 +31,12 @@ export const alertContentVariants = tv({
 	defaultVariants: { variant: 'default' }
 });
 
-export type AlertVariant = 'default' | 'warning' | 'info' | 'error' | 'success';
+export type AlertVariant = 'default' | 'svelte' | 'warning' | 'info' | 'error' | 'success';
 
 /** The reference's `getAlertTitle`. */
 export const ALERT_TITLES: Record<AlertVariant, string> = {
 	default: 'Note',
+	svelte: 'Svelte 5 port',
 	warning: 'Warning',
 	info: 'Note',
 	error: 'Error',
