@@ -6,14 +6,15 @@
  * `@humanspeak/svelte-motion`. `registryDependencies` are kept exactly as the reference declares
  * them, per chart.
  *
- * Each `path` is a **directory**; `scripts/build-registry.ts` expands it. See
- * plans/DEVIATIONS.md R-1.
+ * Each `path` is a **directory**; `scripts/build-registry.ts` expands it into one entry per source
+ * file while skipping tests.
  */
 import type { RegistryItem } from './schema.js';
+import { PACKAGE, withNotice } from './registry-dependencies.js';
 
 const TARGET_BASE_PATH = '$lib/components/evilcharts/charts';
 
-export const charts: RegistryItem[] = [
+const chartItems: RegistryItem[] = [
 	{
 		name: 'layerchart-area-chart',
 		description: 'Area chart component',
@@ -26,7 +27,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-brush',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion', 'd3-scale'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion, PACKAGE.d3Scale, PACKAGE.d3ScaleTypes],
 		type: 'registry:component',
 		files: [
 			{
@@ -48,7 +49,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-brush',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion', 'd3-scale'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion, PACKAGE.d3Scale, PACKAGE.d3ScaleTypes],
 		type: 'registry:component',
 		files: [
 			{
@@ -69,7 +70,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-brush',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion],
 		type: 'registry:component',
 		files: [
 			{
@@ -91,7 +92,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-brush',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion],
 		type: 'registry:component',
 		files: [
 			{
@@ -111,7 +112,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-legend',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion],
 		type: 'registry:component',
 		files: [
 			{
@@ -130,7 +131,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-legend',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion],
 		type: 'registry:component',
 		files: [
 			{
@@ -151,7 +152,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-dot',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion', 'd3-shape'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion, PACKAGE.d3Shape],
 		type: 'registry:component',
 		files: [
 			{
@@ -169,7 +170,7 @@ export const charts: RegistryItem[] = [
 			'@evilcharts/layerchart-tooltip',
 			'@evilcharts/layerchart-background'
 		],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion],
 		type: 'registry:component',
 		files: [
 			{
@@ -180,3 +181,5 @@ export const charts: RegistryItem[] = [
 		]
 	}
 ];
+
+export const charts: RegistryItem[] = withNotice(chartItems);

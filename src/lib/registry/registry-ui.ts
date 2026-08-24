@@ -6,13 +6,14 @@
  *
  * Each `path` is a **directory**: a Svelte primitive is a folder of `.svelte` files plus an
  * `index.ts` barrel, where the reference is a single `.tsx`. `scripts/build-registry.ts` expands a
- * directory into one file entry per source file, skipping tests. See plans/DEVIATIONS.md R-1.
+ * directory into one file entry per source file, skipping tests.
  */
 import type { RegistryItem } from './schema.js';
+import { PACKAGE, withNotice } from './registry-dependencies.js';
 
 const TARGET_BASE_PATH = '$lib/components/evilcharts/ui';
 
-export const ui: RegistryItem[] = [
+const primitives: RegistryItem[] = [
 	{
 		name: 'layerchart-dither',
 		description: 'Independent ordered-dither renderer inspired by Dither Kit',
@@ -28,7 +29,7 @@ export const ui: RegistryItem[] = [
 	{
 		name: 'layerchart-chart',
 		type: 'registry:component',
-		dependencies: ['layerchart', 'd3-shape'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.d3Shape, PACKAGE.d3ShapeTypes],
 		files: [
 			{
 				path: 'ui/layerchart-chart',
@@ -40,7 +41,7 @@ export const ui: RegistryItem[] = [
 	{
 		name: 'layerchart-tooltip',
 		type: 'registry:component',
-		dependencies: ['layerchart'],
+		dependencies: [PACKAGE.layerchart],
 		files: [
 			{
 				path: 'ui/layerchart-tooltip',
@@ -52,7 +53,7 @@ export const ui: RegistryItem[] = [
 	{
 		name: 'layerchart-legend',
 		type: 'registry:component',
-		dependencies: ['layerchart'],
+		dependencies: [PACKAGE.layerchart],
 		files: [
 			{
 				path: 'ui/layerchart-legend',
@@ -64,7 +65,7 @@ export const ui: RegistryItem[] = [
 	{
 		name: 'layerchart-dot',
 		type: 'registry:component',
-		dependencies: ['layerchart'],
+		dependencies: [PACKAGE.layerchart],
 		files: [
 			{
 				path: 'ui/layerchart-dot',
@@ -77,7 +78,7 @@ export const ui: RegistryItem[] = [
 		name: 'layerchart-brush',
 		type: 'registry:component',
 		registryDependencies: ['@evilcharts/layerchart-chart'],
-		dependencies: ['layerchart', '@humanspeak/svelte-motion'],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion],
 		files: [
 			{
 				path: 'ui/layerchart-brush',
@@ -89,7 +90,7 @@ export const ui: RegistryItem[] = [
 	{
 		name: 'layerchart-background',
 		type: 'registry:component',
-		dependencies: ['layerchart'],
+		dependencies: [PACKAGE.layerchart],
 		files: [
 			{
 				path: 'ui/layerchart-background',
@@ -98,4 +99,20 @@ export const ui: RegistryItem[] = [
 			}
 		]
 	}
+];
+
+export const ui: RegistryItem[] = [
+	{
+		name: 'evilcharts-notice',
+		description: 'EvilCharts SV upstream attribution and MIT licence notice',
+		type: 'registry:file',
+		files: [
+			{
+				path: 'NOTICE.md',
+				type: 'registry:file',
+				target: '$lib/components/evilcharts/NOTICE.md'
+			}
+		]
+	},
+	...withNotice(primitives)
 ];

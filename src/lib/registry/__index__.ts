@@ -3,11 +3,19 @@
 import type { RegistryItem } from './schema.js';
 
 export const Index: Record<string, RegistryItem> = {
+	'evilcharts-notice': {
+		name: 'evilcharts-notice',
+		description: "EvilCharts SV upstream attribution and MIT licence notice",
+		type: 'registry:file',
+		registryDependencies: [],
+		dependencies: [],
+		files: [{"path":"NOTICE.md","type":"registry:file","target":"$lib/components/evilcharts/NOTICE.md"}]
+	},
 	'layerchart-dither': {
 		name: 'layerchart-dither',
 		description: "Independent ordered-dither renderer inspired by Dither Kit",
 		type: 'registry:component',
-		registryDependencies: [],
+		registryDependencies: ["@evilcharts/evilcharts-notice"],
 		dependencies: [],
 		files: [{"path":"ui/layerchart-dither/backing-size.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/backing-size.ts"},{"path":"ui/layerchart-dither/bayer.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/bayer.ts"},{"path":"ui/layerchart-dither/color.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/color.ts"},{"path":"ui/layerchart-dither/dither-canvas.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/dither-canvas.svelte"},{"path":"ui/layerchart-dither/dither-dom-layer.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/dither-dom-layer.svelte"},{"path":"ui/layerchart-dither/dom-marks.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/dom-marks.ts"},{"path":"ui/layerchart-dither/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/index.ts"},{"path":"ui/layerchart-dither/invalidation.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/invalidation.ts"},{"path":"ui/layerchart-dither/paint.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/paint.ts"},{"path":"ui/layerchart-dither/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dither/types.ts"}]
 	},
@@ -15,119 +23,119 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'layerchart-chart',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: [],
-		dependencies: ["layerchart","d3-shape"],
-		files: [{"path":"ui/layerchart-chart/animated-grow.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/animated-grow.svelte"},{"path":"ui/layerchart-chart/bar-geometry.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/bar-geometry.ts"},{"path":"ui/layerchart-chart/chart-config.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-config.ts"},{"path":"ui/layerchart-chart/chart-container.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-container.svelte"},{"path":"ui/layerchart-chart/chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-context.svelte.ts"},{"path":"ui/layerchart-chart/chart-style.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-style.svelte"},{"path":"ui/layerchart-chart/colors.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/colors.ts"},{"path":"ui/layerchart-chart/curves.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/curves.ts"},{"path":"ui/layerchart-chart/format.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/format.ts"},{"path":"ui/layerchart-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/index.ts"},{"path":"ui/layerchart-chart/intros.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/intros.ts"},{"path":"ui/layerchart-chart/loading-indicator.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/loading-indicator.svelte"},{"path":"ui/layerchart-chart/loading.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/loading.ts"},{"path":"ui/layerchart-chart/payload.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/payload.ts"},{"path":"ui/layerchart-chart/ticks.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/ticks.ts"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice"],
+		dependencies: ["layerchart@^2.3.0","d3-shape@^3.2.0","@types/d3-shape@^3.2.0"],
+		files: [{"path":"ui/layerchart-chart/accessibility.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/accessibility.ts"},{"path":"ui/layerchart-chart/animated-grow.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/animated-grow.svelte"},{"path":"ui/layerchart-chart/bar-geometry.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/bar-geometry.ts"},{"path":"ui/layerchart-chart/chart-config.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-config.ts"},{"path":"ui/layerchart-chart/chart-container.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-container.svelte"},{"path":"ui/layerchart-chart/chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-context.svelte.ts"},{"path":"ui/layerchart-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-slots.svelte.ts"},{"path":"ui/layerchart-chart/chart-style.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/chart-style.svelte"},{"path":"ui/layerchart-chart/colors.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/colors.ts"},{"path":"ui/layerchart-chart/curves.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/curves.ts"},{"path":"ui/layerchart-chart/format.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/format.ts"},{"path":"ui/layerchart-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/index.ts"},{"path":"ui/layerchart-chart/intros.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/intros.ts"},{"path":"ui/layerchart-chart/loading-indicator.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/loading-indicator.svelte"},{"path":"ui/layerchart-chart/loading.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/loading.ts"},{"path":"ui/layerchart-chart/payload.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/payload.ts"},{"path":"ui/layerchart-chart/ticks.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-chart/ticks.ts"}]
 	},
 	'layerchart-tooltip': {
 		name: 'layerchart-tooltip',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: [],
-		dependencies: ["layerchart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice"],
+		dependencies: ["layerchart@^2.3.0"],
 		files: [{"path":"ui/layerchart-tooltip/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/index.ts"},{"path":"ui/layerchart-tooltip/styles.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/styles.ts"},{"path":"ui/layerchart-tooltip/tooltip-content.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/tooltip-content.svelte"},{"path":"ui/layerchart-tooltip/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/tooltip.svelte"},{"path":"ui/layerchart-tooltip/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/types.ts"}]
 	},
 	'layerchart-legend': {
 		name: 'layerchart-legend',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: [],
-		dependencies: ["layerchart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice"],
+		dependencies: ["layerchart@^2.3.0"],
 		files: [{"path":"ui/layerchart-legend/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-legend/index.ts"},{"path":"ui/layerchart-legend/legend-content.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-legend/legend-content.svelte"},{"path":"ui/layerchart-legend/legend-indicator.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-legend/legend-indicator.svelte"},{"path":"ui/layerchart-legend/styles.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-legend/styles.ts"},{"path":"ui/layerchart-legend/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-legend/types.ts"}]
 	},
 	'layerchart-dot': {
 		name: 'layerchart-dot',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: [],
-		dependencies: ["layerchart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice"],
+		dependencies: ["layerchart@^2.3.0"],
 		files: [{"path":"ui/layerchart-dot/chart-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dot/chart-dot.svelte"},{"path":"ui/layerchart-dot/colored-border-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dot/colored-border-dot.svelte"},{"path":"ui/layerchart-dot/default-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dot/default-dot.svelte"},{"path":"ui/layerchart-dot/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dot/index.ts"},{"path":"ui/layerchart-dot/primary-border-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dot/primary-border-dot.svelte"},{"path":"ui/layerchart-dot/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-dot/types.ts"}]
 	},
 	'layerchart-brush': {
 		name: 'layerchart-brush',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"ui/layerchart-brush/brush-handle.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/brush-handle.svelte"},{"path":"ui/layerchart-brush/brush-slot.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/brush-slot.svelte.ts"},{"path":"ui/layerchart-brush/brush.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/brush.svelte"},{"path":"ui/layerchart-brush/clamp.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/clamp.ts"},{"path":"ui/layerchart-brush/evil-brush.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/evil-brush.svelte"},{"path":"ui/layerchart-brush/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/index.ts"},{"path":"ui/layerchart-brush/mini-bars.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/mini-bars.svelte"},{"path":"ui/layerchart-brush/mini-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/mini-chart.svelte"},{"path":"ui/layerchart-brush/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/types.ts"},{"path":"ui/layerchart-brush/use-brush-drag.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/use-brush-drag.svelte.ts"},{"path":"ui/layerchart-brush/use-evil-brush.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-brush/use-evil-brush.svelte.ts"}]
 	},
 	'layerchart-background': {
 		name: 'layerchart-background',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: [],
-		dependencies: ["layerchart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice"],
+		dependencies: ["layerchart@^2.3.0"],
 		files: [{"path":"ui/layerchart-background/chart-background.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/chart-background.svelte"},{"path":"ui/layerchart-background/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/index.ts"},{"path":"ui/layerchart-background/pattern-map.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/pattern-map.ts"},{"path":"ui/layerchart-background/patterns/bubbles.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/bubbles.svelte"},{"path":"ui/layerchart-background/patterns/cross-hatch.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/cross-hatch.svelte"},{"path":"ui/layerchart-background/patterns/diagonal-lines.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/diagonal-lines.svelte"},{"path":"ui/layerchart-background/patterns/dots.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/dots.svelte"},{"path":"ui/layerchart-background/patterns/falling-triangles.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/falling-triangles.svelte"},{"path":"ui/layerchart-background/patterns/four-pointed-star.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/four-pointed-star.svelte"},{"path":"ui/layerchart-background/patterns/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/grid.svelte"},{"path":"ui/layerchart-background/patterns/overlapping-circles.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/overlapping-circles.svelte"},{"path":"ui/layerchart-background/patterns/plus.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/plus.svelte"},{"path":"ui/layerchart-background/patterns/tiny-checkers.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/tiny-checkers.svelte"},{"path":"ui/layerchart-background/patterns/wiggle-lines.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/patterns/wiggle-lines.svelte"},{"path":"ui/layerchart-background/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-background/types.ts"}]
 	},
 	'layerchart-area-chart': {
 		name: 'layerchart-area-chart',
 		description: "Area chart component",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
-		files: [{"path":"charts/layerchart-area-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/active-dot.svelte"},{"path":"charts/layerchart-area-chart/area-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area-chart-context.svelte.ts"},{"path":"charts/layerchart-area-chart/area-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area-chart.svelte"},{"path":"charts/layerchart-area-chart/area-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area-slots.svelte.ts"},{"path":"charts/layerchart-area-chart/area.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area.svelte"},{"path":"charts/layerchart-area-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-area-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-area-chart/defs/dotted-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/dotted-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/gradient-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/hatched-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/lines-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/lines-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/reveal-mask.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/reveal-mask.svelte"},{"path":"charts/layerchart-area-chart/defs/reverse-gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/reverse-gradient-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/solid-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/solid-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/unselected-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/unselected-pattern.svelte"},{"path":"charts/layerchart-area-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/dot.svelte"},{"path":"charts/layerchart-area-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/grid.svelte"},{"path":"charts/layerchart-area-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/helpers.ts"},{"path":"charts/layerchart-area-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/index.ts"},{"path":"charts/layerchart-area-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/legend-render.svelte"},{"path":"charts/layerchart-area-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/legend.svelte"},{"path":"charts/layerchart-area-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-area-chart/loading/loading-area.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/loading-area.svelte"},{"path":"charts/layerchart-area-chart/loading/loading-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/loading-pattern.svelte"},{"path":"charts/layerchart-area-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-area-chart/tooltip-cursor.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/tooltip-cursor.svelte"},{"path":"charts/layerchart-area-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/tooltip-render.svelte"},{"path":"charts/layerchart-area-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/tooltip.svelte"},{"path":"charts/layerchart-area-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/types.ts"},{"path":"charts/layerchart-area-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/x-axis.svelte"},{"path":"charts/layerchart-area-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/y-axis.svelte"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2","@types/d3-scale@^4.0.9"],
+		files: [{"path":"charts/layerchart-area-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/active-dot.svelte"},{"path":"charts/layerchart-area-chart/area-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area-chart-context.svelte.ts"},{"path":"charts/layerchart-area-chart/area-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area-chart.svelte"},{"path":"charts/layerchart-area-chart/area-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area-slots.svelte.ts"},{"path":"charts/layerchart-area-chart/area.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/area.svelte"},{"path":"charts/layerchart-area-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-area-chart/defs/dotted-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/dotted-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/gradient-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/hatched-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/lines-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/lines-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/reveal-mask.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/reveal-mask.svelte"},{"path":"charts/layerchart-area-chart/defs/reverse-gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/reverse-gradient-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/solid-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/solid-pattern.svelte"},{"path":"charts/layerchart-area-chart/defs/unselected-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/defs/unselected-pattern.svelte"},{"path":"charts/layerchart-area-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/dot.svelte"},{"path":"charts/layerchart-area-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/grid.svelte"},{"path":"charts/layerchart-area-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/helpers.ts"},{"path":"charts/layerchart-area-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/index.ts"},{"path":"charts/layerchart-area-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/legend-render.svelte"},{"path":"charts/layerchart-area-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/legend.svelte"},{"path":"charts/layerchart-area-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-area-chart/loading/loading-area.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/loading-area.svelte"},{"path":"charts/layerchart-area-chart/loading/loading-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/loading-pattern.svelte"},{"path":"charts/layerchart-area-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-area-chart/rendered-series-parity.test.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/rendered-series-parity.test.svelte"},{"path":"charts/layerchart-area-chart/tooltip-cursor.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/tooltip-cursor.svelte"},{"path":"charts/layerchart-area-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/tooltip-render.svelte"},{"path":"charts/layerchart-area-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/tooltip.svelte"},{"path":"charts/layerchart-area-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/types.ts"},{"path":"charts/layerchart-area-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/x-axis.svelte"},{"path":"charts/layerchart-area-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-area-chart/y-axis.svelte"}]
 	},
 	'layerchart-line-chart': {
 		name: 'layerchart-line-chart',
 		description: "Line chart component",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
-		files: [{"path":"charts/layerchart-line-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/active-dot.svelte"},{"path":"charts/layerchart-line-chart/buffer-line.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/buffer-line.svelte.ts"},{"path":"charts/layerchart-line-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-line-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-line-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-line-chart/defs/reveal-mask.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/defs/reveal-mask.svelte"},{"path":"charts/layerchart-line-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/dot.svelte"},{"path":"charts/layerchart-line-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/grid.svelte"},{"path":"charts/layerchart-line-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/helpers.ts"},{"path":"charts/layerchart-line-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/index.ts"},{"path":"charts/layerchart-line-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/legend-render.svelte"},{"path":"charts/layerchart-line-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/legend.svelte"},{"path":"charts/layerchart-line-chart/line-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line-chart-context.svelte.ts"},{"path":"charts/layerchart-line-chart/line-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line-chart.svelte"},{"path":"charts/layerchart-line-chart/line-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line-slots.svelte.ts"},{"path":"charts/layerchart-line-chart/line.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line.svelte"},{"path":"charts/layerchart-line-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-line-chart/loading/loading-line.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/loading-line.svelte"},{"path":"charts/layerchart-line-chart/loading/loading-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/loading-pattern.svelte"},{"path":"charts/layerchart-line-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-line-chart/tooltip-cursor.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/tooltip-cursor.svelte"},{"path":"charts/layerchart-line-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/tooltip-render.svelte"},{"path":"charts/layerchart-line-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/tooltip.svelte"},{"path":"charts/layerchart-line-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/types.ts"},{"path":"charts/layerchart-line-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/x-axis.svelte"},{"path":"charts/layerchart-line-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/y-axis.svelte"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2","@types/d3-scale@^4.0.9"],
+		files: [{"path":"charts/layerchart-line-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/active-dot.svelte"},{"path":"charts/layerchart-line-chart/buffer-line.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/buffer-line.svelte.ts"},{"path":"charts/layerchart-line-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-line-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-line-chart/defs/reveal-mask.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/defs/reveal-mask.svelte"},{"path":"charts/layerchart-line-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/dot.svelte"},{"path":"charts/layerchart-line-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/grid.svelte"},{"path":"charts/layerchart-line-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/helpers.ts"},{"path":"charts/layerchart-line-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/index.ts"},{"path":"charts/layerchart-line-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/legend-render.svelte"},{"path":"charts/layerchart-line-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/legend.svelte"},{"path":"charts/layerchart-line-chart/line-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line-chart-context.svelte.ts"},{"path":"charts/layerchart-line-chart/line-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line-chart.svelte"},{"path":"charts/layerchart-line-chart/line-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line-slots.svelte.ts"},{"path":"charts/layerchart-line-chart/line.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/line.svelte"},{"path":"charts/layerchart-line-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-line-chart/loading/loading-line.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/loading-line.svelte"},{"path":"charts/layerchart-line-chart/loading/loading-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/loading-pattern.svelte"},{"path":"charts/layerchart-line-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-line-chart/tooltip-cursor.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/tooltip-cursor.svelte"},{"path":"charts/layerchart-line-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/tooltip-render.svelte"},{"path":"charts/layerchart-line-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/tooltip.svelte"},{"path":"charts/layerchart-line-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/types.ts"},{"path":"charts/layerchart-line-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/x-axis.svelte"},{"path":"charts/layerchart-line-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-line-chart/y-axis.svelte"}]
 	},
 	'layerchart-bar-chart': {
 		name: 'layerchart-bar-chart',
 		description: "Bar chart component",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
-		files: [{"path":"charts/layerchart-bar-chart/bar-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/bar-chart-context.svelte.ts"},{"path":"charts/layerchart-bar-chart/bar-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/bar-chart.svelte"},{"path":"charts/layerchart-bar-chart/bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/bar.svelte"},{"path":"charts/layerchart-bar-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-bar-chart/defs/buffer-hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/buffer-hatched-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-bar-chart/defs/duotone-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/duotone-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/duotone-reverse-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/duotone-reverse-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-bar-chart/defs/gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/gradient-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/hatched-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/stripped-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/stripped-pattern.svelte"},{"path":"charts/layerchart-bar-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/grid.svelte"},{"path":"charts/layerchart-bar-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/helpers.ts"},{"path":"charts/layerchart-bar-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/index.ts"},{"path":"charts/layerchart-bar-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/legend-render.svelte"},{"path":"charts/layerchart-bar-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/legend.svelte"},{"path":"charts/layerchart-bar-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-bar-chart/loading/loading-bar-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/loading-bar-pattern.svelte"},{"path":"charts/layerchart-bar-chart/loading/loading-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/loading-bar.svelte"},{"path":"charts/layerchart-bar-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-bar-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/tooltip-render.svelte"},{"path":"charts/layerchart-bar-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/tooltip.svelte"},{"path":"charts/layerchart-bar-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/types.ts"},{"path":"charts/layerchart-bar-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/x-axis.svelte"},{"path":"charts/layerchart-bar-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/y-axis.svelte"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
+		files: [{"path":"charts/layerchart-bar-chart/bar-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/bar-chart-context.svelte.ts"},{"path":"charts/layerchart-bar-chart/bar-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/bar-chart.svelte"},{"path":"charts/layerchart-bar-chart/bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/bar.svelte"},{"path":"charts/layerchart-bar-chart/defs/buffer-hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/buffer-hatched-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-bar-chart/defs/duotone-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/duotone-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/duotone-reverse-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/duotone-reverse-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-bar-chart/defs/gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/gradient-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/hatched-pattern.svelte"},{"path":"charts/layerchart-bar-chart/defs/stripped-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/defs/stripped-pattern.svelte"},{"path":"charts/layerchart-bar-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/grid.svelte"},{"path":"charts/layerchart-bar-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/helpers.ts"},{"path":"charts/layerchart-bar-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/index.ts"},{"path":"charts/layerchart-bar-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/legend-render.svelte"},{"path":"charts/layerchart-bar-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/legend.svelte"},{"path":"charts/layerchart-bar-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-bar-chart/loading/loading-bar-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/loading-bar-pattern.svelte"},{"path":"charts/layerchart-bar-chart/loading/loading-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/loading-bar.svelte"},{"path":"charts/layerchart-bar-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-bar-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/tooltip-render.svelte"},{"path":"charts/layerchart-bar-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/tooltip.svelte"},{"path":"charts/layerchart-bar-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/types.ts"},{"path":"charts/layerchart-bar-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/x-axis.svelte"},{"path":"charts/layerchart-bar-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-bar-chart/y-axis.svelte"}]
 	},
 	'layerchart-composed-chart': {
 		name: 'layerchart-composed-chart',
 		description: "Composed chart component combining bar and line charts",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
-		files: [{"path":"charts/layerchart-composed-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/active-dot.svelte"},{"path":"charts/layerchart-composed-chart/bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/bar.svelte"},{"path":"charts/layerchart-composed-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-composed-chart/composed-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/composed-chart-context.svelte.ts"},{"path":"charts/layerchart-composed-chart/composed-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/composed-chart.svelte"},{"path":"charts/layerchart-composed-chart/defs/bar-glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/bar-glow-filter.svelte"},{"path":"charts/layerchart-composed-chart/defs/color-stops.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/color-stops.svelte"},{"path":"charts/layerchart-composed-chart/defs/duotone-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/duotone-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/duotone-reverse-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/duotone-reverse-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/gradient-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/hatched-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/horizontal-color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/horizontal-color-gradient.svelte"},{"path":"charts/layerchart-composed-chart/defs/line-glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/line-glow-filter.svelte"},{"path":"charts/layerchart-composed-chart/defs/reveal-mask.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/reveal-mask.svelte"},{"path":"charts/layerchart-composed-chart/defs/stripped-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/stripped-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/vertical-color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/vertical-color-gradient.svelte"},{"path":"charts/layerchart-composed-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/dot.svelte"},{"path":"charts/layerchart-composed-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/grid.svelte"},{"path":"charts/layerchart-composed-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/helpers.ts"},{"path":"charts/layerchart-composed-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/index.ts"},{"path":"charts/layerchart-composed-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/legend-render.svelte"},{"path":"charts/layerchart-composed-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/legend.svelte"},{"path":"charts/layerchart-composed-chart/line-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/line-slots.svelte.ts"},{"path":"charts/layerchart-composed-chart/line.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/line.svelte"},{"path":"charts/layerchart-composed-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-composed-chart/loading/loading-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/loading-bar.svelte"},{"path":"charts/layerchart-composed-chart/loading/loading-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/loading-pattern.svelte"},{"path":"charts/layerchart-composed-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-composed-chart/tooltip-cursor.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/tooltip-cursor.svelte"},{"path":"charts/layerchart-composed-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/tooltip-render.svelte"},{"path":"charts/layerchart-composed-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/tooltip.svelte"},{"path":"charts/layerchart-composed-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/types.ts"},{"path":"charts/layerchart-composed-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/x-axis.svelte"},{"path":"charts/layerchart-composed-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/y-axis.svelte"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-brush","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
+		files: [{"path":"charts/layerchart-composed-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/active-dot.svelte"},{"path":"charts/layerchart-composed-chart/bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/bar.svelte"},{"path":"charts/layerchart-composed-chart/composed-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/composed-chart-context.svelte.ts"},{"path":"charts/layerchart-composed-chart/composed-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/composed-chart.svelte"},{"path":"charts/layerchart-composed-chart/defs/bar-glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/bar-glow-filter.svelte"},{"path":"charts/layerchart-composed-chart/defs/color-stops.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/color-stops.svelte"},{"path":"charts/layerchart-composed-chart/defs/duotone-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/duotone-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/duotone-reverse-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/duotone-reverse-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/gradient-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/gradient-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/hatched-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/hatched-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/horizontal-color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/horizontal-color-gradient.svelte"},{"path":"charts/layerchart-composed-chart/defs/line-glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/line-glow-filter.svelte"},{"path":"charts/layerchart-composed-chart/defs/reveal-mask.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/reveal-mask.svelte"},{"path":"charts/layerchart-composed-chart/defs/stripped-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/stripped-pattern.svelte"},{"path":"charts/layerchart-composed-chart/defs/vertical-color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/defs/vertical-color-gradient.svelte"},{"path":"charts/layerchart-composed-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/dot.svelte"},{"path":"charts/layerchart-composed-chart/grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/grid.svelte"},{"path":"charts/layerchart-composed-chart/helpers.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/helpers.ts"},{"path":"charts/layerchart-composed-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/index.ts"},{"path":"charts/layerchart-composed-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/legend-render.svelte"},{"path":"charts/layerchart-composed-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/legend.svelte"},{"path":"charts/layerchart-composed-chart/line-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/line-slots.svelte.ts"},{"path":"charts/layerchart-composed-chart/line.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/line.svelte"},{"path":"charts/layerchart-composed-chart/loading/gradient-stops.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/gradient-stops.ts"},{"path":"charts/layerchart-composed-chart/loading/loading-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/loading-bar.svelte"},{"path":"charts/layerchart-composed-chart/loading/loading-pattern.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/loading-pattern.svelte"},{"path":"charts/layerchart-composed-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-composed-chart/tooltip-cursor.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/tooltip-cursor.svelte"},{"path":"charts/layerchart-composed-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/tooltip-render.svelte"},{"path":"charts/layerchart-composed-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/tooltip.svelte"},{"path":"charts/layerchart-composed-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/types.ts"},{"path":"charts/layerchart-composed-chart/x-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/x-axis.svelte"},{"path":"charts/layerchart-composed-chart/y-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-composed-chart/y-axis.svelte"}]
 	},
 	'layerchart-pie-chart': {
 		name: 'layerchart-pie-chart',
 		description: "Pie chart component with donut, gradient, and glow effects",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
-		files: [{"path":"charts/layerchart-pie-chart/background.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/background.svelte"},{"path":"charts/layerchart-pie-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-pie-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-pie-chart/defs/radial-color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/defs/radial-color-gradient.svelte"},{"path":"charts/layerchart-pie-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/index.ts"},{"path":"charts/layerchart-pie-chart/label.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/label.svelte"},{"path":"charts/layerchart-pie-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/legend-render.svelte"},{"path":"charts/layerchart-pie-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/legend.svelte"},{"path":"charts/layerchart-pie-chart/loading/loading-sector.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/loading/loading-sector.svelte"},{"path":"charts/layerchart-pie-chart/pie-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie-chart-context.svelte.ts"},{"path":"charts/layerchart-pie-chart/pie-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie-chart.svelte"},{"path":"charts/layerchart-pie-chart/pie-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie-slots.svelte.ts"},{"path":"charts/layerchart-pie-chart/pie.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie.svelte"},{"path":"charts/layerchart-pie-chart/sectors.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/sectors.ts"},{"path":"charts/layerchart-pie-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/tooltip-render.svelte"},{"path":"charts/layerchart-pie-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/tooltip.svelte"},{"path":"charts/layerchart-pie-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/types.ts"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
+		files: [{"path":"charts/layerchart-pie-chart/background.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/background.svelte"},{"path":"charts/layerchart-pie-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-pie-chart/defs/radial-color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/defs/radial-color-gradient.svelte"},{"path":"charts/layerchart-pie-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/index.ts"},{"path":"charts/layerchart-pie-chart/label.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/label.svelte"},{"path":"charts/layerchart-pie-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/legend-render.svelte"},{"path":"charts/layerchart-pie-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/legend.svelte"},{"path":"charts/layerchart-pie-chart/loading/loading-sector.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/loading/loading-sector.svelte"},{"path":"charts/layerchart-pie-chart/pie-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie-chart-context.svelte.ts"},{"path":"charts/layerchart-pie-chart/pie-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie-chart.svelte"},{"path":"charts/layerchart-pie-chart/pie-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie-slots.svelte.ts"},{"path":"charts/layerchart-pie-chart/pie.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/pie.svelte"},{"path":"charts/layerchart-pie-chart/sectors.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/sectors.ts"},{"path":"charts/layerchart-pie-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/tooltip-render.svelte"},{"path":"charts/layerchart-pie-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/tooltip.svelte"},{"path":"charts/layerchart-pie-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-pie-chart/types.ts"}]
 	},
 	'layerchart-radial-chart': {
 		name: 'layerchart-radial-chart',
 		description: "Radial bar chart component with full and semi-circle variants",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
-		files: [{"path":"charts/layerchart-radial-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-radial-chart/defs/color-gradient-style.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/defs/color-gradient-style.svelte"},{"path":"charts/layerchart-radial-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/index.ts"},{"path":"charts/layerchart-radial-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/legend-render.svelte"},{"path":"charts/layerchart-radial-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/legend.svelte"},{"path":"charts/layerchart-radial-chart/loading/loading-radial-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/loading/loading-radial-bar.svelte"},{"path":"charts/layerchart-radial-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-radial-chart/radial-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/radial-bar.svelte"},{"path":"charts/layerchart-radial-chart/radial-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/radial-chart-context.svelte.ts"},{"path":"charts/layerchart-radial-chart/radial-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/radial-chart.svelte"},{"path":"charts/layerchart-radial-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/tooltip-render.svelte"},{"path":"charts/layerchart-radial-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/tooltip.svelte"},{"path":"charts/layerchart-radial-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/types.ts"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
+		files: [{"path":"charts/layerchart-radial-chart/defs/color-gradient-style.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/defs/color-gradient-style.svelte"},{"path":"charts/layerchart-radial-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/index.ts"},{"path":"charts/layerchart-radial-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/legend-render.svelte"},{"path":"charts/layerchart-radial-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/legend.svelte"},{"path":"charts/layerchart-radial-chart/loading/loading-radial-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/loading/loading-radial-bar.svelte"},{"path":"charts/layerchart-radial-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-radial-chart/radial-bar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/radial-bar.svelte"},{"path":"charts/layerchart-radial-chart/radial-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/radial-chart-context.svelte.ts"},{"path":"charts/layerchart-radial-chart/radial-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/radial-chart.svelte"},{"path":"charts/layerchart-radial-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/tooltip-render.svelte"},{"path":"charts/layerchart-radial-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/tooltip.svelte"},{"path":"charts/layerchart-radial-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radial-chart/types.ts"}]
 	},
 	'layerchart-radar-chart': {
 		name: 'layerchart-radar-chart',
 		description: "Radar chart component with filled and lines variants",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-shape"],
-		files: [{"path":"charts/layerchart-radar-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/active-dot.svelte"},{"path":"charts/layerchart-radar-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-radar-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-radar-chart/defs/color-stops.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/color-stops.svelte"},{"path":"charts/layerchart-radar-chart/defs/fill-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/fill-gradient.svelte"},{"path":"charts/layerchart-radar-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-radar-chart/defs/stroke-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/stroke-gradient.svelte"},{"path":"charts/layerchart-radar-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/dot.svelte"},{"path":"charts/layerchart-radar-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/index.ts"},{"path":"charts/layerchart-radar-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/legend-render.svelte"},{"path":"charts/layerchart-radar-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/legend.svelte"},{"path":"charts/layerchart-radar-chart/loading/loading-radar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/loading/loading-radar.svelte"},{"path":"charts/layerchart-radar-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-radar-chart/polar-angle-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/polar-angle-axis.svelte"},{"path":"charts/layerchart-radar-chart/polar-grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/polar-grid.svelte"},{"path":"charts/layerchart-radar-chart/polar-radius-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/polar-radius-axis.svelte"},{"path":"charts/layerchart-radar-chart/radar-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar-chart-context.svelte.ts"},{"path":"charts/layerchart-radar-chart/radar-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar-chart.svelte"},{"path":"charts/layerchart-radar-chart/radar-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar-slots.svelte.ts"},{"path":"charts/layerchart-radar-chart/radar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar.svelte"},{"path":"charts/layerchart-radar-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/tooltip-render.svelte"},{"path":"charts/layerchart-radar-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/tooltip.svelte"},{"path":"charts/layerchart-radar-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/types.ts"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-dither","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-legend","@evilcharts/layerchart-dot","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-shape@^3.2.0"],
+		files: [{"path":"charts/layerchart-radar-chart/active-dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/active-dot.svelte"},{"path":"charts/layerchart-radar-chart/defs/color-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/color-gradient.svelte"},{"path":"charts/layerchart-radar-chart/defs/color-stops.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/color-stops.svelte"},{"path":"charts/layerchart-radar-chart/defs/fill-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/fill-gradient.svelte"},{"path":"charts/layerchart-radar-chart/defs/glow-filter.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/glow-filter.svelte"},{"path":"charts/layerchart-radar-chart/defs/stroke-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/defs/stroke-gradient.svelte"},{"path":"charts/layerchart-radar-chart/dot.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/dot.svelte"},{"path":"charts/layerchart-radar-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/index.ts"},{"path":"charts/layerchart-radar-chart/legend-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/legend-render.svelte"},{"path":"charts/layerchart-radar-chart/legend.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/legend.svelte"},{"path":"charts/layerchart-radar-chart/loading/loading-radar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/loading/loading-radar.svelte"},{"path":"charts/layerchart-radar-chart/loading/use-loading-data.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/loading/use-loading-data.svelte.ts"},{"path":"charts/layerchart-radar-chart/polar-angle-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/polar-angle-axis.svelte"},{"path":"charts/layerchart-radar-chart/polar-grid.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/polar-grid.svelte"},{"path":"charts/layerchart-radar-chart/polar-radius-axis.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/polar-radius-axis.svelte"},{"path":"charts/layerchart-radar-chart/radar-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar-chart-context.svelte.ts"},{"path":"charts/layerchart-radar-chart/radar-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar-chart.svelte"},{"path":"charts/layerchart-radar-chart/radar-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar-slots.svelte.ts"},{"path":"charts/layerchart-radar-chart/radar.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/radar.svelte"},{"path":"charts/layerchart-radar-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/tooltip-render.svelte"},{"path":"charts/layerchart-radar-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/tooltip.svelte"},{"path":"charts/layerchart-radar-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-radar-chart/types.ts"}]
 	},
 	'layerchart-sankey-chart': {
 		name: 'layerchart-sankey-chart',
 		description: "Sankey chart component for visualizing flow data with nodes and links",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-background"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
-		files: [{"path":"charts/layerchart-sankey-chart/chart-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/chart-slots.svelte.ts"},{"path":"charts/layerchart-sankey-chart/defs/link-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/defs/link-gradient.svelte"},{"path":"charts/layerchart-sankey-chart/defs/link-stroke-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/defs/link-stroke-gradient.svelte"},{"path":"charts/layerchart-sankey-chart/defs/node-color-gradients.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/defs/node-color-gradients.svelte"},{"path":"charts/layerchart-sankey-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/index.ts"},{"path":"charts/layerchart-sankey-chart/layout.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/layout.ts"},{"path":"charts/layerchart-sankey-chart/link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/link.svelte"},{"path":"charts/layerchart-sankey-chart/loading/loading-link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/loading/loading-link.svelte"},{"path":"charts/layerchart-sankey-chart/loading/loading-node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/loading/loading-node.svelte"},{"path":"charts/layerchart-sankey-chart/loading/loading-sankey.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/loading/loading-sankey.svelte"},{"path":"charts/layerchart-sankey-chart/node-label.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/node-label.svelte"},{"path":"charts/layerchart-sankey-chart/node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/node.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-chart-context.svelte.ts"},{"path":"charts/layerchart-sankey-chart/sankey-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-chart.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-link.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-node.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-slots.svelte.ts"},{"path":"charts/layerchart-sankey-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/tooltip-render.svelte"},{"path":"charts/layerchart-sankey-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/tooltip.svelte"},{"path":"charts/layerchart-sankey-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/types.ts"}]
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart","@evilcharts/layerchart-tooltip","@evilcharts/layerchart-background"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
+		files: [{"path":"charts/layerchart-sankey-chart/defs/link-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/defs/link-gradient.svelte"},{"path":"charts/layerchart-sankey-chart/defs/link-stroke-gradient.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/defs/link-stroke-gradient.svelte"},{"path":"charts/layerchart-sankey-chart/defs/node-color-gradients.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/defs/node-color-gradients.svelte"},{"path":"charts/layerchart-sankey-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/index.ts"},{"path":"charts/layerchart-sankey-chart/layout.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/layout.ts"},{"path":"charts/layerchart-sankey-chart/link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/link.svelte"},{"path":"charts/layerchart-sankey-chart/loading/loading-link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/loading/loading-link.svelte"},{"path":"charts/layerchart-sankey-chart/loading/loading-node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/loading/loading-node.svelte"},{"path":"charts/layerchart-sankey-chart/loading/loading-sankey.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/loading/loading-sankey.svelte"},{"path":"charts/layerchart-sankey-chart/node-label.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/node-label.svelte"},{"path":"charts/layerchart-sankey-chart/node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/node.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-chart-context.svelte.ts"},{"path":"charts/layerchart-sankey-chart/sankey-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-chart.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-link.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-node.svelte"},{"path":"charts/layerchart-sankey-chart/sankey-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/sankey-slots.svelte.ts"},{"path":"charts/layerchart-sankey-chart/tooltip-render.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/tooltip-render.svelte"},{"path":"charts/layerchart-sankey-chart/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/tooltip.svelte"},{"path":"charts/layerchart-sankey-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/layerchart-sankey-chart/types.ts"}]
 	},
 	'ex-area-chart': {
 		name: 'ex-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-area-chart.svelte","type":"registry:block"}]
 	},
@@ -135,7 +143,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-brush-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-brush-area-chart.svelte","type":"registry:block"}]
 	},
@@ -143,7 +151,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-area-chart.svelte","type":"registry:block"}]
 	},
@@ -151,7 +159,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-bump-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-bump-area-chart.svelte","type":"registry:block"}]
 	},
@@ -159,7 +167,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-area-chart.svelte","type":"registry:block"}]
 	},
@@ -167,7 +175,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-default-type-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-default-type-area-chart.svelte","type":"registry:block"}]
 	},
@@ -175,7 +183,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-stacked-type-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-stacked-type-area-chart.svelte","type":"registry:block"}]
 	},
@@ -183,7 +191,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-expanded-type-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-expanded-type-area-chart.svelte","type":"registry:block"}]
 	},
@@ -191,7 +199,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bump-curve-type-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bump-curve-type-area-chart.svelte","type":"registry:block"}]
 	},
@@ -199,7 +207,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-step-curve-type-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-step-curve-type-area-chart.svelte","type":"registry:block"}]
 	},
@@ -207,7 +215,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-monotoney-curve-type-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-monotoney-curve-type-area-chart.svelte","type":"registry:block"}]
 	},
@@ -215,7 +223,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-solid-stroke-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-solid-stroke-area-chart.svelte","type":"registry:block"}]
 	},
@@ -223,7 +231,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dashed-stroke-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dashed-stroke-area-chart.svelte","type":"registry:block"}]
 	},
@@ -231,7 +239,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-animated-dashed-stroke-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-animated-dashed-stroke-area-chart.svelte","type":"registry:block"}]
 	},
@@ -239,7 +247,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-area-variant-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-area-variant-area-chart.svelte","type":"registry:block"}]
 	},
@@ -247,7 +255,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-reverse-area-variant-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-reverse-area-variant-area-chart.svelte","type":"registry:block"}]
 	},
@@ -255,7 +263,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-solid-area-variant-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-solid-area-variant-area-chart.svelte","type":"registry:block"}]
 	},
@@ -263,7 +271,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dotted-area-variant-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dotted-area-variant-area-chart.svelte","type":"registry:block"}]
 	},
@@ -271,7 +279,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-lines-area-variant-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-lines-area-variant-area-chart.svelte","type":"registry:block"}]
 	},
@@ -279,7 +287,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-hatched-area-variant-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-hatched-area-variant-area-chart.svelte","type":"registry:block"}]
 	},
@@ -287,7 +295,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-line-chart.svelte","type":"registry:block"}]
 	},
@@ -295,7 +303,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dot-default-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dot-default-line-chart.svelte","type":"registry:block"}]
 	},
@@ -303,7 +311,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dot-border-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dot-border-line-chart.svelte","type":"registry:block"}]
 	},
@@ -311,7 +319,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dot-colored-border-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dot-colored-border-line-chart.svelte","type":"registry:block"}]
 	},
@@ -319,7 +327,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-line-chart.svelte","type":"registry:block"}]
 	},
@@ -327,7 +335,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-bump-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-bump-line-chart.svelte","type":"registry:block"}]
 	},
@@ -335,7 +343,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-line-chart.svelte","type":"registry:block"}]
 	},
@@ -343,7 +351,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bump-curve-type-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bump-curve-type-line-chart.svelte","type":"registry:block"}]
 	},
@@ -351,7 +359,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-step-curve-type-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-step-curve-type-line-chart.svelte","type":"registry:block"}]
 	},
@@ -359,7 +367,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-monotoney-curve-type-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-monotoney-curve-type-line-chart.svelte","type":"registry:block"}]
 	},
@@ -367,7 +375,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-solid-stroke-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-solid-stroke-line-chart.svelte","type":"registry:block"}]
 	},
@@ -375,7 +383,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dashed-stroke-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dashed-stroke-line-chart.svelte","type":"registry:block"}]
 	},
@@ -383,7 +391,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-animated-dashed-stroke-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-animated-dashed-stroke-line-chart.svelte","type":"registry:block"}]
 	},
@@ -391,7 +399,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-desktop-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-desktop-line-chart.svelte","type":"registry:block"}]
 	},
@@ -399,7 +407,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-mobile-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-mobile-line-chart.svelte","type":"registry:block"}]
 	},
@@ -407,7 +415,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-buffer-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-buffer-line-chart.svelte","type":"registry:block"}]
 	},
@@ -415,7 +423,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-dots-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-dots-line-chart.svelte","type":"registry:block"}]
 	},
@@ -423,7 +431,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-grid-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-grid-line-chart.svelte","type":"registry:block"}]
 	},
@@ -431,7 +439,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-cross-hatch-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-cross-hatch-line-chart.svelte","type":"registry:block"}]
 	},
@@ -439,7 +447,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-diagonal-lines-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-diagonal-lines-line-chart.svelte","type":"registry:block"}]
 	},
@@ -447,7 +455,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-plus-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-plus-line-chart.svelte","type":"registry:block"}]
 	},
@@ -455,7 +463,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-falling-triangles-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-falling-triangles-line-chart.svelte","type":"registry:block"}]
 	},
@@ -463,7 +471,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-4-pointed-star-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-4-pointed-star-line-chart.svelte","type":"registry:block"}]
 	},
@@ -471,7 +479,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-tiny-checkers-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-tiny-checkers-line-chart.svelte","type":"registry:block"}]
 	},
@@ -479,7 +487,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-overlapping-circles-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-overlapping-circles-line-chart.svelte","type":"registry:block"}]
 	},
@@ -487,7 +495,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-wiggle-lines-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-wiggle-lines-line-chart.svelte","type":"registry:block"}]
 	},
@@ -495,7 +503,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bg-bubbles-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bg-bubbles-line-chart.svelte","type":"registry:block"}]
 	},
@@ -503,7 +511,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-buffer-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-buffer-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -511,7 +519,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -519,7 +527,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -527,7 +535,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -535,7 +543,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-default-variant-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-default-variant-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -543,7 +551,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-hatched-variant-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-hatched-variant-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -551,7 +559,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-duotone-variant-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-duotone-variant-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -559,7 +567,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-duotone-reverse-variant-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-duotone-reverse-variant-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -567,7 +575,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-variant-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-variant-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -575,7 +583,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-stripped-variant-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-stripped-variant-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -583,7 +591,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-stacked-type-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-stacked-type-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -591,7 +599,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-percent-type-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-percent-type-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -599,7 +607,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-horizontal-layout-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-horizontal-layout-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -607,7 +615,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-hover-highlight-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-hover-highlight-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -615,7 +623,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-desktop-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-desktop-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -623,7 +631,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-mobile-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-mobile-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -631,7 +639,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -639,7 +647,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -647,7 +655,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -655,7 +663,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-hatched-variant-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-hatched-variant-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -663,7 +671,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-duotone-variant-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-duotone-variant-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -671,7 +679,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-variant-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-variant-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -679,7 +687,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-stripped-variant-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-stripped-variant-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -687,7 +695,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dashed-stroke-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dashed-stroke-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -695,7 +703,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-animated-dashed-stroke-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-animated-dashed-stroke-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -703,7 +711,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-bump-curve-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-bump-curve-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -711,7 +719,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dots-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dots-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -719,7 +727,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-hover-highlight-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-hover-highlight-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -727,7 +735,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -735,7 +743,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -743,7 +751,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -751,7 +759,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-donut-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-donut-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -759,7 +767,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-padded-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-padded-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -767,7 +775,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-overlapping-padded-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-overlapping-padded-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -775,7 +783,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-labels-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-labels-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -783,7 +791,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -791,7 +799,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -799,7 +807,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-radial-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-radial-chart.svelte","type":"registry:block"}]
 	},
@@ -807,7 +815,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-semi-variant-radial-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-semi-variant-radial-chart.svelte","type":"registry:block"}]
 	},
@@ -815,7 +823,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-radial-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-radial-chart.svelte","type":"registry:block"}]
 	},
@@ -823,7 +831,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-radial-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-radial-chart.svelte","type":"registry:block"}]
 	},
@@ -831,7 +839,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -839,7 +847,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-lines-variant-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-lines-variant-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -847,7 +855,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-circle-grid-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-circle-grid-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -855,7 +863,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -863,7 +871,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -871,7 +879,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-glowing-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-glowing-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -879,7 +887,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -887,7 +895,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-gradient-colors-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-gradient-colors-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -895,7 +903,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-loading-state-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-loading-state-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -903,7 +911,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-solid-link-variant-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-solid-link-variant-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -911,7 +919,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-source-link-variant-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-source-link-variant-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -919,7 +927,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-labeled-nodes-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-labeled-nodes-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -927,7 +935,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-outside-labels-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-outside-labels-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -935,7 +943,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-solid-labeled-nodes-sankey-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-solid-labeled-nodes-sankey-chart.svelte","type":"registry:block"}]
 	},
@@ -943,7 +951,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-tooltip-default-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-tooltip-default-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -951,7 +959,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-tooltip-frosted-glass-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-tooltip-frosted-glass-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -959,7 +967,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-square-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-square-line-chart.svelte","type":"registry:block"}]
 	},
@@ -967,7 +975,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-circle-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-circle-line-chart.svelte","type":"registry:block"}]
 	},
@@ -975,7 +983,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-circle-outline-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-circle-outline-line-chart.svelte","type":"registry:block"}]
 	},
@@ -983,7 +991,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-rounded-square-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-rounded-square-line-chart.svelte","type":"registry:block"}]
 	},
@@ -991,7 +999,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-rounded-square-outline-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-rounded-square-outline-line-chart.svelte","type":"registry:block"}]
 	},
@@ -999,7 +1007,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-vertical-bar-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-vertical-bar-line-chart.svelte","type":"registry:block"}]
 	},
@@ -1007,7 +1015,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-legend-horizontal-bar-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-legend-horizontal-bar-line-chart.svelte","type":"registry:block"}]
 	},
@@ -1015,7 +1023,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-chart-config-default-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-chart-config-default-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -1023,7 +1031,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-chart-config-icons-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-chart-config-icons-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -1031,7 +1039,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dither-area-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dither-area-chart.svelte","type":"registry:block"}]
 	},
@@ -1039,7 +1047,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dither-line-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dither-line-chart.svelte","type":"registry:block"}]
 	},
@@ -1047,7 +1055,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dither-bar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-bar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dither-bar-chart.svelte","type":"registry:block"}]
 	},
@@ -1055,7 +1063,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dither-composed-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dither-composed-chart.svelte","type":"registry:block"}]
 	},
@@ -1063,7 +1071,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dither-pie-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dither-pie-chart.svelte","type":"registry:block"}]
 	},
@@ -1071,7 +1079,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'ex-dither-radar-chart',
 		description: "",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
 		dependencies: [],
 		files: [{"path":"examples/layerchart/ex-dither-radar-chart.svelte","type":"registry:block"}]
 	},
@@ -1079,176 +1087,176 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'latency-area-chart',
 		description: "Selectable P99, P95, P75 and P50 latency dashboard",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2"],
 		files: [{"path":"blocks/layerchart/b-latency-area-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/latency-area-chart.svelte"}]
 	},
 	'portfolio-area-chart': {
 		name: 'portfolio-area-chart',
 		description: "Portfolio comparison with stepped dotted areas and return metrics",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2"],
 		files: [{"path":"blocks/layerchart/b-portfolio-area-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/portfolio-area-chart.svelte"}]
 	},
 	'benchmark-area-chart': {
 		name: 'benchmark-area-chart',
 		description: "Weekly signups benchmark with actual and target series",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2"],
 		files: [{"path":"blocks/layerchart/b-benchmark-area-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/benchmark-area-chart.svelte"}]
 	},
 	'audience-area-chart': {
 		name: 'audience-area-chart',
 		description: "Audience reach card with a compact total and gradient trend",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-area-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-area-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2"],
 		files: [{"path":"blocks/layerchart/b-audience-area-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/audience-area-chart.svelte"}]
 	},
 	'payouts-line-chart': {
 		name: 'payouts-line-chart',
 		description: "Payout trend with monthly, yearly and city totals",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2"],
 		files: [{"path":"blocks/layerchart/b-payouts-line-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/payouts-line-chart.svelte"}]
 	},
 	'shipments-line-chart': {
 		name: 'shipments-line-chart',
 		description: "Current and previous week shipment comparison",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-line-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","d3-scale"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-line-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","d3-scale@^4.0.2"],
 		files: [{"path":"blocks/layerchart/b-shipments-line-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/shipments-line-chart.svelte"}]
 	},
 	'revenue-composed-chart': {
 		name: 'revenue-composed-chart',
 		description: "Annual revenue bars with a monthly profit trend and margin summary",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-revenue-composed-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/revenue-composed-chart.svelte"}]
 	},
 	'signups-composed-chart': {
 		name: 'signups-composed-chart',
 		description: "Weekly signup bars measured against a stepped target line",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-composed-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-composed-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-signups-composed-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/signups-composed-chart.svelte"}]
 	},
 	'monospace-bar-chart': {
 		name: 'monospace-bar-chart',
 		description: "Monospace bar chart component",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-monospace-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/monospace-bar-chart.svelte"},{"path":"blocks/layerchart/b-monospace-bar-chart-bar.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/monospace-bar-chart-bar.svelte"}]
 	},
 	'hover-trace-bar-chart': {
 		name: 'hover-trace-bar-chart',
 		description: "Bar chart with active value line and animated marker",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","@number-flow/svelte"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","@number-flow/svelte"],
 		files: [{"path":"blocks/layerchart/b-hover-trace-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-bar-chart.svelte"},{"path":"blocks/layerchart/b-hover-trace-bar-chart-bar.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-bar-chart-bar.svelte"},{"path":"blocks/layerchart/b-hover-trace-bar-chart-trace.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-bar-chart-trace.svelte"}]
 	},
 	'grid-bar-chart': {
 		name: 'grid-bar-chart',
 		description: "Bar chart where each bar is composed of stacked 10x10px squares",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-chart"],
-		dependencies: ["layerchart"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
+		dependencies: ["layerchart@^2.3.0"],
 		files: [{"path":"blocks/layerchart/b-grid-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/grid-bar-chart.svelte"},{"path":"blocks/layerchart/b-grid-bar-chart-bar.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/grid-bar-chart-bar.svelte"}]
 	},
 	'isometric-bar-chart': {
 		name: 'isometric-bar-chart',
 		description: "Bar chart with isometric 3D-extruded bars and a highlighted max value",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-isometric-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/isometric-bar-chart.svelte"},{"path":"blocks/layerchart/b-isometric-bar-chart-bar.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/isometric-bar-chart-bar.svelte"},{"path":"blocks/layerchart/b-isometric-bar-chart-defs.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/isometric-bar-chart-defs.svelte"}]
 	},
 	'market-share-pie-chart': {
 		name: 'market-share-pie-chart',
 		description: "Interactive market-share donut with a selectable value breakdown",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-market-share-pie-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/market-share-pie-chart.svelte"}]
 	},
 	'progress-rings-pie-chart': {
 		name: 'progress-rings-pie-chart',
 		description: "Research summary with paired dotted progress rings",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-progress-rings-pie-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/progress-rings-pie-chart.svelte"}]
 	},
 	'revenue-mix-pie-chart': {
 		name: 'revenue-mix-pie-chart',
 		description: "Revenue-channel donut with order total and compact breakdown",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-revenue-mix-pie-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/revenue-mix-pie-chart.svelte"}]
 	},
 	'reliability-score-pie-chart': {
 		name: 'reliability-score-pie-chart',
 		description: "Segmented reliability gauge with score band and threshold scale",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-pie-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-pie-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-reliability-score-pie-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/reliability-score-pie-chart.svelte"}]
 	},
 	'capability-radar-chart': {
 		name: 'capability-radar-chart',
 		description: "Team capability dashboard comparing current and target performance",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radar-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radar-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-capability-radar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/capability-radar-chart.svelte"}]
 	},
 	'budget-radial-chart': {
 		name: 'budget-radial-chart',
 		description: "Quarterly budget dashboard with allocation rings and ledger rows",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-budget-radial-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/budget-radial-chart.svelte"}]
 	},
 	'ride-radial-chart': {
 		name: 'ride-radial-chart',
 		description: "Cycling activity dashboard with goal, radial metrics, and effort splits",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion","@lucide/svelte"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","@lucide/svelte"],
 		files: [{"path":"blocks/layerchart/b-ride-radial-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/ride-radial-chart.svelte"}]
 	},
 	'cache-tiers-radial-chart': {
 		name: 'cache-tiers-radial-chart',
 		description: "Cache operations summary with semi-radial tiers and health counters",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-radial-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-cache-tiers-radial-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/cache-tiers-radial-chart.svelte"}]
 	},
 	'allocation-sankey-chart': {
 		name: 'allocation-sankey-chart',
 		description: "Fund-allocation flow with position, AUM, and hedging metrics",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-allocation-sankey-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/allocation-sankey-chart.svelte"}]
 	},
 	'pipeline-sankey-chart': {
 		name: 'pipeline-sankey-chart',
 		description: "Revenue pipeline flow with a central booked-value summary",
 		type: 'registry:block',
-		registryDependencies: ["@evilcharts/layerchart-sankey-chart"],
-		dependencies: ["layerchart","@humanspeak/svelte-motion"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-sankey-chart"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4"],
 		files: [{"path":"blocks/layerchart/b-pipeline-sankey-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/pipeline-sankey-chart.svelte"}]
 	}
 };

@@ -14,8 +14,10 @@ const names = new Set(registry.items.map((item) => item.name));
 const FRAMEWORK_IMPORTS = new Set(['svelte', 'svelte/elements', 'svelte/reactivity']);
 
 function packageName(specifier: string): string {
-	if (!specifier.startsWith('@')) return specifier.split('/')[0];
-	return specifier.split('/').slice(0, 2).join('/');
+	if (!specifier.startsWith('@')) return specifier.split('@')[0].split('/')[0];
+	const slash = specifier.indexOf('/');
+	const version = specifier.indexOf('@', slash);
+	return version === -1 ? specifier : specifier.slice(0, version);
 }
 
 /** Every source file an item ships, with directory entries walked. */
@@ -66,7 +68,13 @@ describe('registry manifests', () => {
 			const absolute = path.join(REGISTRY_DIR, file.path);
 			expect(existsSync(absolute), file.path).toBe(true);
 			// Directory entries are expanded by the build script; both shapes are legal here.
-			expect(statSync(absolute).isDirectory() || /\.(svelte|ts)$/.test(file.path)).toBe(true);
+			expect(statSync(absolute).isDirectory() || /\.(svelte|ts|md)$/.test(file.path)).toBe(true);
+		}
+	});
+
+	it('ships the attribution notice with every installable component and block', () => {
+		for (const item of registry.items.filter((entry) => entry.name !== 'evilcharts-notice')) {
+			expect(item.registryDependencies, item.name).toContain('@evilcharts/evilcharts-notice');
 		}
 	});
 
@@ -88,7 +96,7 @@ describe('registry manifests', () => {
 			const item = itemByName.get(itemName);
 			if (!item) return new Set();
 
-			const packages = new Set(item.dependencies ?? []);
+			const packages = new Set((item.dependencies ?? []).map(packageName));
 			for (const dependency of item.registryDependencies ?? []) {
 				const dependencyName = dependency.slice('@evilcharts/'.length);
 				for (const pkg of availablePackages(dependencyName, seen)) packages.add(pkg);

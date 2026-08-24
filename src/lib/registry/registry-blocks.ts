@@ -9,6 +9,7 @@
  * entry point because the flat block directory also drives the docs preview lookup.
  */
 import type { RegistryItem } from './schema.js';
+import { withNotice } from './registry-dependencies.js';
 
 const TARGET_BASE_PATH = '$lib/components/evilcharts/blocks';
 
@@ -21,7 +22,7 @@ function files(...names: string[]): RegistryItem['files'] {
 	}));
 }
 
-export const blocks: RegistryItem[] = [
+const blockItems: RegistryItem[] = [
 	{
 		name: 'latency-area-chart',
 		description: 'Selectable P99, P95, P75 and P50 latency dashboard',
@@ -203,3 +204,5 @@ export const blocks: RegistryItem[] = [
 		files: files('b-pipeline-sankey-chart')
 	}
 ];
+
+export const blocks: RegistryItem[] = withNotice(blockItems);

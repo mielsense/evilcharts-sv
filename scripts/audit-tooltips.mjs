@@ -1,9 +1,9 @@
 /**
- * Sweeps every chart example with a real pointer and reports anything that looks like the bug
- * classes in plans/PITFALLS.md: a tooltip that never appears, one whose contents never change as
- * the pointer moves, or a colour swatch that renders transparent.
+ * Sweeps every chart example with a real pointer and reports console errors, tooltip content that
+ * never changes while the pointer moves, and transparent tooltip colour swatches.
  *
- * Usage: node scripts/audit-tooltips.mjs [filter]
+ * Prerequisite: run `pnpm build && pnpm preview` so the site is available on port 4173.
+ * Usage: `pnpm qa:tooltips -- [filter]`
  */
 import { chromium } from 'playwright';
 import { readdirSync } from 'node:fs';

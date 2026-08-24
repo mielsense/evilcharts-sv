@@ -5,7 +5,7 @@
  * 'shadcn/schema'`). That package is the React CLI and is not a dependency here, so the shapes are
  * declared locally against shadcn-**svelte**'s published schema at
  * https://shadcn-svelte.com/schema/registry-item.json — the CLI that installs this registry.
- * See plans/DEVIATIONS.md R-1.
+ * Registry directories are expanded into individual installable files during generation.
  */
 
 export type RegistryItemType =

@@ -1,8 +1,10 @@
 /**
  * Screenshot one example from the React reference docs, for side-by-side comparison.
  *
- * Usage: node scripts/visual-ref.mjs <docsPath> <exampleTitle> [tickLabel]
- * e.g.   node scripts/visual-ref.mjs recharts/area-chart "Basic Chart" Aug
+ * Prerequisite: run the original EvilCharts docs on port 3000 from the ignored `evilcharts/`
+ * reference checkout.
+ * Usage: `pnpm qa:visual:reference -- <docsPath> <exampleTitle> [tickLabel]`
+ * Example: `pnpm qa:visual:reference -- recharts/area-chart "Basic Chart" Aug`
  *
  * The docs page mounts every preview but there are several on a page, so the card is located by
  * its title and only that card is captured.

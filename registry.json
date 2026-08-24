@@ -4,6 +4,18 @@
   "name": "EvilCharts",
   "items": [
     {
+      "name": "evilcharts-notice",
+      "description": "EvilCharts SV upstream attribution and MIT licence notice",
+      "type": "registry:file",
+      "files": [
+        {
+          "path": "src/lib/registry/NOTICE.md",
+          "type": "registry:file",
+          "target": "$lib/components/evilcharts/NOTICE.md"
+        }
+      ]
+    },
+    {
       "name": "layerchart-dither",
       "description": "Independent ordered-dither renderer inspired by Dither Kit",
       "type": "registry:component",
@@ -58,16 +70,25 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-dither/types.ts"
         }
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice"
       ]
     },
     {
       "name": "layerchart-chart",
       "type": "registry:component",
       "dependencies": [
-        "layerchart",
-        "d3-shape"
+        "layerchart@^2.3.0",
+        "d3-shape@^3.2.0",
+        "@types/d3-shape@^3.2.0"
       ],
       "files": [
+        {
+          "path": "src/lib/registry/ui/layerchart-chart/accessibility.ts",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/layerchart-chart/accessibility.ts"
+        },
         {
           "path": "src/lib/registry/ui/layerchart-chart/animated-grow.svelte",
           "type": "registry:component",
@@ -92,6 +113,11 @@
           "path": "src/lib/registry/ui/layerchart-chart/chart-context.svelte.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-chart/chart-context.svelte.ts"
+        },
+        {
+          "path": "src/lib/registry/ui/layerchart-chart/chart-slots.svelte.ts",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/layerchart-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/ui/layerchart-chart/chart-style.svelte",
@@ -143,13 +169,16 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-chart/ticks.ts"
         }
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice"
       ]
     },
     {
       "name": "layerchart-tooltip",
       "type": "registry:component",
       "dependencies": [
-        "layerchart"
+        "layerchart@^2.3.0"
       ],
       "files": [
         {
@@ -177,13 +206,16 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-tooltip/types.ts"
         }
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice"
       ]
     },
     {
       "name": "layerchart-legend",
       "type": "registry:component",
       "dependencies": [
-        "layerchart"
+        "layerchart@^2.3.0"
       ],
       "files": [
         {
@@ -211,13 +243,16 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-legend/types.ts"
         }
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice"
       ]
     },
     {
       "name": "layerchart-dot",
       "type": "registry:component",
       "dependencies": [
-        "layerchart"
+        "layerchart@^2.3.0"
       ],
       "files": [
         {
@@ -250,17 +285,21 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-dot/types.ts"
         }
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice"
       ]
     },
     {
       "name": "layerchart-brush",
       "type": "registry:component",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "files": [
         {
@@ -324,7 +363,7 @@
       "name": "layerchart-background",
       "type": "registry:component",
       "dependencies": [
-        "layerchart"
+        "layerchart@^2.3.0"
       ],
       "files": [
         {
@@ -402,12 +441,16 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-background/types.ts"
         }
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice"
       ]
     },
     {
       "name": "layerchart-area-chart",
       "description": "Area chart component",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-dither",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
@@ -417,9 +460,10 @@
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2",
+        "@types/d3-scale@^4.0.9"
       ],
       "type": "registry:component",
       "files": [
@@ -447,11 +491,6 @@
           "path": "src/lib/registry/charts/layerchart-area-chart/area.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-area-chart/area.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-area-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-area-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/charts/layerchart-area-chart/defs/color-gradient.svelte",
@@ -549,6 +588,11 @@
           "target": "$lib/components/evilcharts/charts/layerchart-area-chart/loading/use-loading-data.svelte.ts"
         },
         {
+          "path": "src/lib/registry/charts/layerchart-area-chart/rendered-series-parity.test.svelte",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/charts/layerchart-area-chart/rendered-series-parity.test.svelte"
+        },
+        {
           "path": "src/lib/registry/charts/layerchart-area-chart/tooltip-cursor.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-area-chart/tooltip-cursor.svelte"
@@ -584,6 +628,7 @@
       "name": "layerchart-line-chart",
       "description": "Line chart component",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-dither",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
@@ -593,9 +638,10 @@
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2",
+        "@types/d3-scale@^4.0.9"
       ],
       "type": "registry:component",
       "files": [
@@ -608,11 +654,6 @@
           "path": "src/lib/registry/charts/layerchart-line-chart/buffer-line.svelte.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-line-chart/buffer-line.svelte.ts"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-line-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-line-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/charts/layerchart-line-chart/defs/color-gradient.svelte",
@@ -735,6 +776,7 @@
       "name": "layerchart-bar-chart",
       "description": "Bar chart component",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-dither",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
@@ -743,8 +785,8 @@
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "type": "registry:component",
       "files": [
@@ -762,11 +804,6 @@
           "path": "src/lib/registry/charts/layerchart-bar-chart/bar.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-bar-chart/bar.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-bar-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-bar-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/charts/layerchart-bar-chart/defs/buffer-hatched-pattern.svelte",
@@ -884,6 +921,7 @@
       "name": "layerchart-composed-chart",
       "description": "Composed chart component combining bar and line charts",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-dither",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
@@ -893,8 +931,8 @@
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "type": "registry:component",
       "files": [
@@ -907,11 +945,6 @@
           "path": "src/lib/registry/charts/layerchart-composed-chart/bar.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-composed-chart/bar.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-composed-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-composed-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/charts/layerchart-composed-chart/composed-chart-context.svelte.ts",
@@ -1074,6 +1107,7 @@
       "name": "layerchart-pie-chart",
       "description": "Pie chart component with donut, gradient, and glow effects",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-dither",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
@@ -1081,8 +1115,8 @@
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "type": "registry:component",
       "files": [
@@ -1090,11 +1124,6 @@
           "path": "src/lib/registry/charts/layerchart-pie-chart/background.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-pie-chart/background.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-pie-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-pie-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/charts/layerchart-pie-chart/defs/glow-filter.svelte",
@@ -1177,22 +1206,18 @@
       "name": "layerchart-radial-chart",
       "description": "Radial bar chart component with full and semi-circle variants",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
         "@evilcharts/layerchart-legend",
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "type": "registry:component",
       "files": [
-        {
-          "path": "src/lib/registry/charts/layerchart-radial-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-radial-chart/chart-slots.svelte.ts"
-        },
         {
           "path": "src/lib/registry/charts/layerchart-radial-chart/defs/color-gradient-style.svelte",
           "type": "registry:component",
@@ -1259,6 +1284,7 @@
       "name": "layerchart-radar-chart",
       "description": "Radar chart component with filled and lines variants",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-dither",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
@@ -1267,9 +1293,9 @@
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-shape"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-shape@^3.2.0"
       ],
       "type": "registry:component",
       "files": [
@@ -1277,11 +1303,6 @@
           "path": "src/lib/registry/charts/layerchart-radar-chart/active-dot.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-radar-chart/active-dot.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-radar-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-radar-chart/chart-slots.svelte.ts"
         },
         {
           "path": "src/lib/registry/charts/layerchart-radar-chart/defs/color-gradient.svelte",
@@ -1394,21 +1415,17 @@
       "name": "layerchart-sankey-chart",
       "description": "Sankey chart component for visualizing flow data with nodes and links",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart",
         "@evilcharts/layerchart-tooltip",
         "@evilcharts/layerchart-background"
       ],
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "type": "registry:component",
       "files": [
-        {
-          "path": "src/lib/registry/charts/layerchart-sankey-chart/chart-slots.svelte.ts",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-sankey-chart/chart-slots.svelte.ts"
-        },
         {
           "path": "src/lib/registry/charts/layerchart-sankey-chart/defs/link-gradient.svelte",
           "type": "registry:component",
@@ -1509,6 +1526,7 @@
     {
       "name": "ex-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1522,6 +1540,7 @@
     {
       "name": "ex-brush-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1535,6 +1554,7 @@
     {
       "name": "ex-gradient-colors-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1548,6 +1568,7 @@
     {
       "name": "ex-gradient-colors-bump-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1561,6 +1582,7 @@
     {
       "name": "ex-loading-state-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1574,6 +1596,7 @@
     {
       "name": "ex-default-type-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1587,6 +1610,7 @@
     {
       "name": "ex-stacked-type-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1600,6 +1624,7 @@
     {
       "name": "ex-expanded-type-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1613,6 +1638,7 @@
     {
       "name": "ex-bump-curve-type-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1626,6 +1652,7 @@
     {
       "name": "ex-step-curve-type-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1639,6 +1666,7 @@
     {
       "name": "ex-monotoney-curve-type-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1652,6 +1680,7 @@
     {
       "name": "ex-solid-stroke-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1665,6 +1694,7 @@
     {
       "name": "ex-dashed-stroke-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1678,6 +1708,7 @@
     {
       "name": "ex-animated-dashed-stroke-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1691,6 +1722,7 @@
     {
       "name": "ex-gradient-area-variant-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1704,6 +1736,7 @@
     {
       "name": "ex-gradient-reverse-area-variant-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1717,6 +1750,7 @@
     {
       "name": "ex-solid-area-variant-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1730,6 +1764,7 @@
     {
       "name": "ex-dotted-area-variant-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1743,6 +1778,7 @@
     {
       "name": "ex-lines-area-variant-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1756,6 +1792,7 @@
     {
       "name": "ex-hatched-area-variant-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -1769,6 +1806,7 @@
     {
       "name": "ex-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1782,6 +1820,7 @@
     {
       "name": "ex-dot-default-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1795,6 +1834,7 @@
     {
       "name": "ex-dot-border-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1808,6 +1848,7 @@
     {
       "name": "ex-dot-colored-border-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1821,6 +1862,7 @@
     {
       "name": "ex-gradient-colors-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1834,6 +1876,7 @@
     {
       "name": "ex-gradient-colors-bump-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1847,6 +1890,7 @@
     {
       "name": "ex-loading-state-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1860,6 +1904,7 @@
     {
       "name": "ex-bump-curve-type-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1873,6 +1918,7 @@
     {
       "name": "ex-step-curve-type-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1886,6 +1932,7 @@
     {
       "name": "ex-monotoney-curve-type-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1899,6 +1946,7 @@
     {
       "name": "ex-solid-stroke-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1912,6 +1960,7 @@
     {
       "name": "ex-dashed-stroke-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1925,6 +1974,7 @@
     {
       "name": "ex-animated-dashed-stroke-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1938,6 +1988,7 @@
     {
       "name": "ex-glowing-desktop-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1951,6 +2002,7 @@
     {
       "name": "ex-glowing-mobile-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1964,6 +2016,7 @@
     {
       "name": "ex-buffer-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1977,6 +2030,7 @@
     {
       "name": "ex-bg-dots-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -1990,6 +2044,7 @@
     {
       "name": "ex-bg-grid-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2003,6 +2058,7 @@
     {
       "name": "ex-bg-cross-hatch-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2016,6 +2072,7 @@
     {
       "name": "ex-bg-diagonal-lines-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2029,6 +2086,7 @@
     {
       "name": "ex-bg-plus-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2042,6 +2100,7 @@
     {
       "name": "ex-bg-falling-triangles-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2055,6 +2114,7 @@
     {
       "name": "ex-bg-4-pointed-star-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2068,6 +2128,7 @@
     {
       "name": "ex-bg-tiny-checkers-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2081,6 +2142,7 @@
     {
       "name": "ex-bg-overlapping-circles-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2094,6 +2156,7 @@
     {
       "name": "ex-bg-wiggle-lines-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2107,6 +2170,7 @@
     {
       "name": "ex-bg-bubbles-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2120,6 +2184,7 @@
     {
       "name": "ex-buffer-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2133,6 +2198,7 @@
     {
       "name": "ex-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2146,6 +2212,7 @@
     {
       "name": "ex-gradient-colors-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2159,6 +2226,7 @@
     {
       "name": "ex-loading-state-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2172,6 +2240,7 @@
     {
       "name": "ex-default-variant-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2185,6 +2254,7 @@
     {
       "name": "ex-hatched-variant-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2198,6 +2268,7 @@
     {
       "name": "ex-duotone-variant-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2211,6 +2282,7 @@
     {
       "name": "ex-duotone-reverse-variant-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2224,6 +2296,7 @@
     {
       "name": "ex-gradient-variant-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2237,6 +2310,7 @@
     {
       "name": "ex-stripped-variant-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2250,6 +2324,7 @@
     {
       "name": "ex-stacked-type-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2263,6 +2338,7 @@
     {
       "name": "ex-percent-type-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2276,6 +2352,7 @@
     {
       "name": "ex-horizontal-layout-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2289,6 +2366,7 @@
     {
       "name": "ex-hover-highlight-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2302,6 +2380,7 @@
     {
       "name": "ex-glowing-desktop-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2315,6 +2394,7 @@
     {
       "name": "ex-glowing-mobile-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2328,6 +2408,7 @@
     {
       "name": "ex-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2341,6 +2422,7 @@
     {
       "name": "ex-gradient-colors-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2354,6 +2436,7 @@
     {
       "name": "ex-loading-state-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2367,6 +2450,7 @@
     {
       "name": "ex-hatched-variant-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2380,6 +2464,7 @@
     {
       "name": "ex-duotone-variant-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2393,6 +2478,7 @@
     {
       "name": "ex-gradient-variant-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2406,6 +2492,7 @@
     {
       "name": "ex-stripped-variant-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2419,6 +2506,7 @@
     {
       "name": "ex-dashed-stroke-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2432,6 +2520,7 @@
     {
       "name": "ex-animated-dashed-stroke-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2445,6 +2534,7 @@
     {
       "name": "ex-bump-curve-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2458,6 +2548,7 @@
     {
       "name": "ex-dots-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2471,6 +2562,7 @@
     {
       "name": "ex-hover-highlight-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2484,6 +2576,7 @@
     {
       "name": "ex-glowing-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -2497,6 +2590,7 @@
     {
       "name": "ex-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2510,6 +2604,7 @@
     {
       "name": "ex-gradient-colors-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2523,6 +2618,7 @@
     {
       "name": "ex-donut-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2536,6 +2632,7 @@
     {
       "name": "ex-padded-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2549,6 +2646,7 @@
     {
       "name": "ex-overlapping-padded-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2562,6 +2660,7 @@
     {
       "name": "ex-labels-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2575,6 +2674,7 @@
     {
       "name": "ex-loading-state-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2588,6 +2688,7 @@
     {
       "name": "ex-glowing-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -2601,6 +2702,7 @@
     {
       "name": "ex-radial-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -2614,6 +2716,7 @@
     {
       "name": "ex-semi-variant-radial-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -2627,6 +2730,7 @@
     {
       "name": "ex-gradient-colors-radial-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -2640,6 +2744,7 @@
     {
       "name": "ex-loading-state-radial-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -2653,6 +2758,7 @@
     {
       "name": "ex-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -2666,6 +2772,7 @@
     {
       "name": "ex-lines-variant-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -2679,6 +2786,7 @@
     {
       "name": "ex-circle-grid-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -2692,6 +2800,7 @@
     {
       "name": "ex-gradient-colors-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -2705,6 +2814,7 @@
     {
       "name": "ex-loading-state-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -2718,6 +2828,7 @@
     {
       "name": "ex-glowing-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -2731,6 +2842,7 @@
     {
       "name": "ex-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2744,6 +2856,7 @@
     {
       "name": "ex-gradient-colors-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2757,6 +2870,7 @@
     {
       "name": "ex-loading-state-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2770,6 +2884,7 @@
     {
       "name": "ex-solid-link-variant-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2783,6 +2898,7 @@
     {
       "name": "ex-source-link-variant-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2796,6 +2912,7 @@
     {
       "name": "ex-labeled-nodes-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2809,6 +2926,7 @@
     {
       "name": "ex-outside-labels-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2822,6 +2940,7 @@
     {
       "name": "ex-solid-labeled-nodes-sankey-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -2835,6 +2954,7 @@
     {
       "name": "ex-tooltip-default-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2848,6 +2968,7 @@
     {
       "name": "ex-tooltip-frosted-glass-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2861,6 +2982,7 @@
     {
       "name": "ex-legend-square-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2874,6 +2996,7 @@
     {
       "name": "ex-legend-circle-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2887,6 +3010,7 @@
     {
       "name": "ex-legend-circle-outline-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2900,6 +3024,7 @@
     {
       "name": "ex-legend-rounded-square-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2913,6 +3038,7 @@
     {
       "name": "ex-legend-rounded-square-outline-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2926,6 +3052,7 @@
     {
       "name": "ex-legend-vertical-bar-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2939,6 +3066,7 @@
     {
       "name": "ex-legend-horizontal-bar-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -2952,6 +3080,7 @@
     {
       "name": "ex-chart-config-default-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2965,6 +3094,7 @@
     {
       "name": "ex-chart-config-icons-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -2978,6 +3108,7 @@
     {
       "name": "ex-dither-area-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -2991,6 +3122,7 @@
     {
       "name": "ex-dither-line-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -3004,6 +3136,7 @@
     {
       "name": "ex-dither-bar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
       ],
       "type": "registry:block",
@@ -3017,6 +3150,7 @@
     {
       "name": "ex-dither-composed-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -3030,6 +3164,7 @@
     {
       "name": "ex-dither-pie-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -3043,6 +3178,7 @@
     {
       "name": "ex-dither-radar-chart",
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -3057,11 +3193,12 @@
       "name": "latency-area-chart",
       "description": "Selectable P99, P95, P75 and P50 latency dashboard",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -3077,11 +3214,12 @@
       "name": "portfolio-area-chart",
       "description": "Portfolio comparison with stepped dotted areas and return metrics",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -3097,11 +3235,12 @@
       "name": "benchmark-area-chart",
       "description": "Weekly signups benchmark with actual and target series",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -3117,11 +3256,12 @@
       "name": "audience-area-chart",
       "description": "Audience reach card with a compact total and gradient trend",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-area-chart"
       ],
       "type": "registry:block",
@@ -3137,11 +3277,12 @@
       "name": "payouts-line-chart",
       "description": "Payout trend with monthly, yearly and city totals",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -3157,11 +3298,12 @@
       "name": "shipments-line-chart",
       "description": "Current and previous week shipment comparison",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
-        "d3-scale"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
+        "d3-scale@^4.0.2"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-line-chart"
       ],
       "type": "registry:block",
@@ -3177,10 +3319,11 @@
       "name": "revenue-composed-chart",
       "description": "Annual revenue bars with a monthly profit trend and margin summary",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -3196,10 +3339,11 @@
       "name": "signups-composed-chart",
       "description": "Weekly signup bars measured against a stepped target line",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-composed-chart"
       ],
       "type": "registry:block",
@@ -3215,10 +3359,11 @@
       "name": "monospace-bar-chart",
       "description": "Monospace bar chart component",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart"
       ],
       "type": "registry:block",
@@ -3239,11 +3384,12 @@
       "name": "hover-trace-bar-chart",
       "description": "Bar chart with active value line and animated marker",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
         "@number-flow/svelte"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart"
       ],
       "type": "registry:block",
@@ -3269,9 +3415,10 @@
       "name": "grid-bar-chart",
       "description": "Bar chart where each bar is composed of stacked 10x10px squares",
       "dependencies": [
-        "layerchart"
+        "layerchart@^2.3.0"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart"
       ],
       "type": "registry:block",
@@ -3292,10 +3439,11 @@
       "name": "isometric-bar-chart",
       "description": "Bar chart with isometric 3D-extruded bars and a highlighted max value",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-chart"
       ],
       "type": "registry:block",
@@ -3321,10 +3469,11 @@
       "name": "market-share-pie-chart",
       "description": "Interactive market-share donut with a selectable value breakdown",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -3340,10 +3489,11 @@
       "name": "progress-rings-pie-chart",
       "description": "Research summary with paired dotted progress rings",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -3359,10 +3509,11 @@
       "name": "revenue-mix-pie-chart",
       "description": "Revenue-channel donut with order total and compact breakdown",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -3378,10 +3529,11 @@
       "name": "reliability-score-pie-chart",
       "description": "Segmented reliability gauge with score band and threshold scale",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-pie-chart"
       ],
       "type": "registry:block",
@@ -3397,10 +3549,11 @@
       "name": "capability-radar-chart",
       "description": "Team capability dashboard comparing current and target performance",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radar-chart"
       ],
       "type": "registry:block",
@@ -3416,10 +3569,11 @@
       "name": "budget-radial-chart",
       "description": "Quarterly budget dashboard with allocation rings and ledger rows",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -3435,11 +3589,12 @@
       "name": "ride-radial-chart",
       "description": "Cycling activity dashboard with goal, radial metrics, and effort splits",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion",
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
         "@lucide/svelte"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -3455,10 +3610,11 @@
       "name": "cache-tiers-radial-chart",
       "description": "Cache operations summary with semi-radial tiers and health counters",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-radial-chart"
       ],
       "type": "registry:block",
@@ -3474,10 +3630,11 @@
       "name": "allocation-sankey-chart",
       "description": "Fund-allocation flow with position, AUM, and hedging metrics",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",
@@ -3493,10 +3650,11 @@
       "name": "pipeline-sankey-chart",
       "description": "Revenue pipeline flow with a central booked-value summary",
       "dependencies": [
-        "layerchart",
-        "@humanspeak/svelte-motion"
+        "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4"
       ],
       "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-sankey-chart"
       ],
       "type": "registry:block",

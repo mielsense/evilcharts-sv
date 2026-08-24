@@ -7,7 +7,7 @@
  *   2. root `registry.json` — the shadcn registry manifest
  *   3. `static/r/<name>.json` — one registry-item file per item, with the sources inlined
  *
- * Two differences from the reference, both recorded in plans/DEVIATIONS.md R-3:
+ * The Svelte registry builder intentionally differs from the reference in two ways:
  *
  * - The reference shells out to `shadcn build` for step 3. The Svelte port writes the equivalent
  *   `registry-item.json` payload directly and performs the two transformations the CLI normally
@@ -135,8 +135,8 @@ function consumerSource(source: string): string {
 		.replaceAll('$lib/registry/charts/', '$lib/components/evilcharts/charts/')
 		.replaceAll('$lib/registry/ui/', '$lib/components/evilcharts/ui/')
 		.replaceAll('$lib/registry/blocks/', '$lib/components/evilcharts/blocks/')
-		.replaceAll('../../charts/', '$lib/components/evilcharts/charts/')
-		.replaceAll('../../ui/', '$lib/components/evilcharts/ui/')
+		.replace(/(['"])\.\.\/\.\.\/charts\//g, '$1$lib/components/evilcharts/charts/')
+		.replace(/(['"])\.\.\/\.\.\/ui\//g, '$1$lib/components/evilcharts/ui/')
 		.replace(/(from\s+['"]\.\/)b-/g, '$1');
 }
 

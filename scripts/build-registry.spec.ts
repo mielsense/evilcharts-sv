@@ -6,13 +6,13 @@ import { registry } from '../src/lib/registry/index.js';
 const ROOT = process.cwd();
 const ITEMS_DIR = path.join(ROOT, 'static/r');
 
-/**
- * These assert the *output* of `pnpm registry:build`, which `pnpm build` runs first. They are
- * skipped when the artifacts are absent so a bare `vitest` on a clean checkout still passes.
- */
 const built = existsSync(ITEMS_DIR) && existsSync(path.join(ROOT, 'registry.json'));
 
-describe.skipIf(!built)('registry build output', () => {
+describe('registry build output', () => {
+	it('is generated before validation', () => {
+		expect(built).toBe(true);
+	});
+
 	const manifest = built
 		? JSON.parse(readFileSync(path.join(ROOT, 'registry.json'), 'utf8'))
 		: { items: [] };
@@ -26,7 +26,7 @@ describe.skipIf(!built)('registry build output', () => {
 	it('expands every directory entry into concrete source files', () => {
 		for (const item of manifest.items) {
 			for (const file of item.files) {
-				expect(file.path, item.name).toMatch(/^src\/lib\/registry\/.+\.(svelte|ts)$/);
+				expect(file.path, item.name).toMatch(/^src\/lib\/registry\/.+\.(svelte|ts|md)$/);
 				expect(existsSync(path.join(ROOT, file.path)), file.path).toBe(true);
 				// Tests never ship.
 				expect(file.path).not.toMatch(/\.(spec|e2e)\.(ts|svelte)$/);
@@ -35,6 +35,27 @@ describe.skipIf(!built)('registry build output', () => {
 		// A chart is a directory of components, so it must expand to more than one file.
 		const area = manifest.items.find((i: { name: string }) => i.name === 'layerchart-area-chart');
 		expect(area.files.length).toBeGreaterThan(5);
+	});
+
+	it('publishes the shared chart accessibility contract as installable source', () => {
+		const chart = manifest.items.find((item: { name: string }) => item.name === 'layerchart-chart');
+		const source = chart.files.find(
+			(file: { path: string }) =>
+				file.path === 'src/lib/registry/ui/layerchart-chart/accessibility.ts'
+		);
+
+		expect(source).toEqual({
+			path: 'src/lib/registry/ui/layerchart-chart/accessibility.ts',
+			type: 'registry:component',
+			target: '$lib/components/evilcharts/ui/layerchart-chart/accessibility.ts'
+		});
+
+		const item = JSON.parse(readFileSync(path.join(ITEMS_DIR, 'layerchart-chart.json'), 'utf8'));
+		const builtSource = item.files.find(
+			(file: { path: string }) =>
+				file.path === 'src/lib/registry/ui/layerchart-chart/accessibility.ts'
+		);
+		expect(builtSource.content).toContain('export type ChartAccessibility');
 	});
 
 	it.each(registry.items.map((i) => i.name))('%s validates against the item schema', (name) => {

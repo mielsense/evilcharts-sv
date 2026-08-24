@@ -1,7 +1,8 @@
 /**
  * Hover a chart preview with a real mouse and write a screenshot plus the tooltip text.
  *
- * Usage: node scripts/visual-check.mjs <example> [tickLabel ...]
+ * Prerequisite: run `pnpm build && pnpm preview` so the site is available on port 4173.
+ * Usage: `pnpm qa:visual -- <example> [tickLabel ...] [--light]`
  *
  * The DOM-only checks in the e2e suites cannot see a tooltip that reports the wrong row, so this
  * drives an actual pointer and saves a PNG to /tmp/visual/ for inspection.
@@ -14,7 +15,7 @@ const [example, ...rest] = process.argv.slice(2);
 const light = rest.includes('--light');
 const labels = rest.filter((a) => !a.startsWith('--'));
 if (!example) {
-	console.error('usage: node scripts/visual-check.mjs <example> [tickLabel ...]');
+	console.error('usage: pnpm qa:visual -- <example> [tickLabel ...] [--light]');
 	process.exit(1);
 }
 

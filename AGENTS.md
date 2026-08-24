@@ -89,8 +89,9 @@ pnpm registry:fresh
 ```
 
 Use the full Playwright suite for shared chart primitives, layout, navigation, animation, docs
-rendering, or registry-wide changes. A production build validates registry generation, SvelteKit,
-the packaged library, and `publint` together.
+rendering, or registry-wide changes. This repository publishes a source registry, not an npm
+package: a production build validates registry generation and SvelteKit, while `pnpm test:registry`
+installs representative generated items into an isolated consumer and runs strict `svelte-check`.
 
 ## Definition of done
 
