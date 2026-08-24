@@ -6,7 +6,13 @@ describe('DitherDomLayer', () => {
 	it('maps transformed SVG paths into plot-local canvas coordinates', async () => {
 		const { container } = render(Harness);
 		const canvas = container.querySelector<HTMLCanvasElement>('[data-slot="dither-canvas"]')!;
-		await expect.poll(() => canvas.width).toBe(180);
+		await expect
+			.poll(() => {
+				const cssWidth = canvas.parentElement?.getBoundingClientRect().width ?? 0;
+				const pixelRatio = Math.min(window.devicePixelRatio, 2);
+				return cssWidth > 0 && canvas.width === Math.floor(cssWidth * pixelRatio);
+			})
+			.toBe(true);
 
 		const context = canvas.getContext('2d')!;
 		await expect
