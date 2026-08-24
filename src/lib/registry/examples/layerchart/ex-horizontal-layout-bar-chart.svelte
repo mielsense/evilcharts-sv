@@ -3,18 +3,12 @@
 	import { type ChartConfig } from '$lib/registry/ui/layerchart-chart/index.js';
 
 	const data = [
-		{ month: 'January', desktop: 342, mobile: 184 },
-		{ month: 'February', desktop: 876, mobile: 491 },
-		{ month: 'March', desktop: 512, mobile: 290 },
-		{ month: 'April', desktop: 629, mobile: 391 },
-		{ month: 'May', desktop: 458, mobile: 309 },
-		{ month: 'June', desktop: 781, mobile: 449 },
-		{ month: 'July', desktop: 394, mobile: 234 },
-		{ month: 'August', desktop: 925, mobile: 557 },
-		{ month: 'September', desktop: 647, mobile: 367 },
-		{ month: 'October', desktop: 532, mobile: 357 },
-		{ month: 'November', desktop: 803, mobile: 515 },
-		{ month: 'December', desktop: 271, mobile: 149 }
+		{ month: 'January', desktop: 186 },
+		{ month: 'February', desktop: 305 },
+		{ month: 'March', desktop: 237 },
+		{ month: 'April', desktop: 173 },
+		{ month: 'May', desktop: 209 },
+		{ month: 'June', desktop: 214 }
 	];
 
 	const chartConfig = {

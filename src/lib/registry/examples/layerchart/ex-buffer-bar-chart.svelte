@@ -13,8 +13,8 @@
 		{ month: 'August', desktop: 925, mobile: 557 },
 		{ month: 'September', desktop: 647, mobile: 367 },
 		{ month: 'October', desktop: 532, mobile: 357 },
-		{ month: 'November', desktop: 803, mobile: 515 },
-		{ month: 'December', desktop: 271, mobile: 149 }
+		{ month: 'November', desktop: 503, mobile: 215 },
+		{ month: 'December', desktop: 971, mobile: 749 }
 	];
 
 	const chartConfig = {
