@@ -262,7 +262,7 @@
 				height={brushSlot.slot?.height}
 				formatLabel={brushSlot.slot?.formatLabel}
 				skipStyle
-				class="mt-6"
+				class="mt-1 translate-y-[18px]"
 				startIndex={brush.brushProps.startIndex}
 				endIndex={brush.brushProps.endIndex}
 				onChange={(range) => {
