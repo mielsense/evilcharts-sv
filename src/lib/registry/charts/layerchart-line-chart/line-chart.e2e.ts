@@ -119,9 +119,43 @@ test.describe('EvilLineChart examples', () => {
 		expect(await dashed.getAttribute('stroke-dasharray')).toBe('5 5');
 	});
 
-	test('the animated dashed stroke carries the keyframe class', async ({ page }) => {
+	test('the animated dash moves without changing its pattern or path geometry', async ({
+		page
+	}) => {
 		await open(page, 'ex-animated-dashed-stroke-line-chart');
-		await expect(plot(page).locator('path.evil-line-animated-dash').first()).toBeAttached();
+		const stroke = plot(page).locator('path.evil-line-animated-dash').first();
+		const samples: Array<{ dasharray: string; dashoffset: string; path: string | null }> = [];
+
+		for (let index = 0; index < 6; index += 1) {
+			samples.push(
+				await stroke.evaluate((node) => {
+					const style = getComputedStyle(node);
+					return {
+						dasharray: style.strokeDasharray,
+						dashoffset: style.strokeDashoffset,
+						path: node.getAttribute('d')
+					};
+				})
+			);
+			await page.waitForTimeout(120);
+		}
+
+		expect(new Set(samples.map(({ dasharray }) => dasharray))).toEqual(new Set(['5px, 5px']));
+		expect(new Set(samples.map(({ dashoffset }) => dashoffset)).size).toBeGreaterThan(1);
+		expect(new Set(samples.map(({ path }) => path)).size).toBe(1);
+	});
+
+	test('the animated dash stops for reduced motion', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+		await open(page, 'ex-animated-dashed-stroke-line-chart');
+		const style = await plot(page)
+			.locator('path.evil-line-animated-dash')
+			.first()
+			.evaluate((node) => {
+				const computed = getComputedStyle(node);
+				return { animation: computed.animationName, dasharray: computed.strokeDasharray };
+			});
+		expect(style).toEqual({ animation: 'none', dasharray: '5px, 5px' });
 	});
 
 	test('a glowing line references its own blur filter', async ({ page }) => {

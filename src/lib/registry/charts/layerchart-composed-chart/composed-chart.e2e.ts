@@ -130,26 +130,57 @@ test.describe('EvilComposedChart examples', () => {
 		await expect(gradient).toHaveAttribute('y2', '1');
 	});
 
-	test('the dashed stroke variants set the reference dash pattern', async ({ page }) => {
+	test('the animated dash moves without changing its pattern or path geometry', async ({
+		page
+	}) => {
 		await open(page, 'ex-dashed-stroke-composed-chart');
 		await expect(line(page).first()).toHaveAttribute('stroke-dasharray', '5 5');
 
 		await open(page, 'ex-animated-dashed-stroke-composed-chart');
-		// The animated variant drives the dash from CSS keyframes (DEVIATIONS A-4).
+		// The animated variant moves a fixed dash pattern instead of shrinking it to zero.
 		const animated = line(page).first();
 		await expect(animated).toHaveClass(/evil-composed-animated-dash/);
-		const timing = await animated.evaluate((n) => {
-			const s = getComputedStyle(n);
+		const samples: Array<{ dasharray: string; dashoffset: string; path: string | null }> = [];
+		for (let index = 0; index < 6; index += 1) {
+			samples.push(
+				await animated.evaluate((node) => {
+					const style = getComputedStyle(node);
+					return {
+						dasharray: style.strokeDasharray,
+						dashoffset: style.strokeDashoffset,
+						path: node.getAttribute('d')
+					};
+				})
+			);
+			await page.waitForTimeout(120);
+		}
+		const timing = await animated.evaluate((node) => {
+			const style = getComputedStyle(node);
 			return {
-				name: s.animationName,
-				duration: s.animationDuration,
-				timing: s.animationTimingFunction
+				name: style.animationName,
+				duration: style.animationDuration,
+				timing: style.animationTimingFunction
 			};
 		});
 		// Svelte scopes component-local `@keyframes` names, so match on the suffix.
-		expect(timing.name).toMatch(/evil-composed-dash, .*evil-composed-dash-offset$/);
-		expect(timing.duration).toBe('1s, 1s');
-		expect(timing.timing).toBe('linear, linear');
+		expect(timing.name).toMatch(/evil-composed-dash-offset$/);
+		expect(timing.duration).toBe('1s');
+		expect(timing.timing).toBe('linear');
+		expect(new Set(samples.map(({ dasharray }) => dasharray))).toEqual(new Set(['5px, 5px']));
+		expect(new Set(samples.map(({ dashoffset }) => dashoffset)).size).toBeGreaterThan(1);
+		expect(new Set(samples.map(({ path }) => path)).size).toBe(1);
+	});
+
+	test('the animated dash stops for reduced motion', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+		await open(page, 'ex-animated-dashed-stroke-composed-chart');
+		const style = await line(page)
+			.first()
+			.evaluate((node) => {
+				const computed = getComputedStyle(node);
+				return { animation: computed.animationName, dasharray: computed.strokeDasharray };
+			});
+		expect(style).toEqual({ animation: 'none', dasharray: '5px, 5px' });
 	});
 
 	test('the stripped variant is a square body plus a 2px cap', async ({ page }) => {

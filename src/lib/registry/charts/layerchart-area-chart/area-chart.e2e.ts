@@ -85,6 +85,55 @@ test.describe('EvilAreaChart examples', () => {
 		expect(await lines.first().getAttribute('stroke-dasharray')).toBe('3 3');
 	});
 
+	test('the animated dash moves without changing the stroke pattern or area fill', async ({
+		page
+	}) => {
+		await open(page, 'ex-animated-dashed-stroke-area-chart');
+		const stroke = plot(page).locator('path.evil-animated-dash').first();
+		const fill = plot(page).locator('path.lc-area-path').first();
+		const samples: Array<{
+			dasharray: string;
+			dashoffset: string;
+			path: string | null;
+			fillOpacity: string;
+		}> = [];
+
+		for (let index = 0; index < 6; index += 1) {
+			samples.push(
+				await stroke.evaluate((node, fillSelector) => {
+					const fillNode = node.closest('svg')!.querySelector(fillSelector)!;
+					const strokeStyle = getComputedStyle(node);
+					return {
+						dasharray: strokeStyle.strokeDasharray,
+						dashoffset: strokeStyle.strokeDashoffset,
+						path: node.getAttribute('d'),
+						fillOpacity: getComputedStyle(fillNode).fillOpacity
+					};
+				}, 'path.lc-area-path')
+			);
+			await page.waitForTimeout(120);
+		}
+
+		expect(new Set(samples.map(({ dasharray }) => dasharray))).toEqual(new Set(['3px, 3px']));
+		expect(new Set(samples.map(({ dashoffset }) => dashoffset)).size).toBeGreaterThan(1);
+		expect(new Set(samples.map(({ path }) => path)).size).toBe(1);
+		expect(new Set(samples.map(({ fillOpacity }) => fillOpacity)).size).toBe(1);
+		await expect(fill).toBeVisible();
+	});
+
+	test('the animated dash stops for reduced motion', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+		await open(page, 'ex-animated-dashed-stroke-area-chart');
+		const style = await plot(page)
+			.locator('path.evil-animated-dash')
+			.first()
+			.evaluate((node) => {
+				const computed = getComputedStyle(node);
+				return { animation: computed.animationName, dasharray: computed.strokeDasharray };
+			});
+		expect(style).toEqual({ animation: 'none', dasharray: '3px, 3px' });
+	});
+
 	test('settled area geometry reserves the top legend at mobile and desktop widths', async ({
 		page
 	}) => {

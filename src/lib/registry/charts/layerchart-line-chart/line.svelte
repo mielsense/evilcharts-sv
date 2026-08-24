@@ -205,23 +205,9 @@
 
 <style>
 	/*
-		Animated dashed-stroke effect. The reference nests two SMIL `<animate>` elements inside the
-		Recharts `<Line>`; LayerChart's path takes no children, so the same two tracks are expressed
-		as CSS keyframes with identical values, duration and linear timing.
-		See plans/DEVIATIONS.md A-4.
+		Move a fixed dash pattern along the stroke. Animating the dash lengths makes the visible dash
+		shrink to zero every half-cycle, which reads as a flicker instead of directional motion.
 	*/
-	@keyframes evil-line-dash {
-		0% {
-			stroke-dasharray: 5 5;
-		}
-		50% {
-			stroke-dasharray: 0 5;
-		}
-		100% {
-			stroke-dasharray: 5 5;
-		}
-	}
-
 	@keyframes evil-line-dash-offset {
 		from {
 			stroke-dashoffset: 0;
@@ -232,9 +218,7 @@
 	}
 
 	:global(.evil-line-animated-dash) {
-		animation:
-			evil-line-dash 1s linear infinite,
-			evil-line-dash-offset 1s linear infinite;
+		animation: evil-line-dash-offset 1s linear infinite;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
