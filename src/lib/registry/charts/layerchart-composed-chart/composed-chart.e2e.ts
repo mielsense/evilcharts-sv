@@ -390,9 +390,7 @@ test.describe('EvilComposedChart examples', () => {
 	});
 
 	test('the tooltip paints its colour indicator from the chart variables', async ({ page }) => {
-		// LayerChart portals its tooltip to `document.body` by default, which would put it outside
-		// the `[data-chart]` element that scopes `--color-*` and leave every swatch transparent.
-		// See plans/DEVIATIONS.md U-2.
+		// The portaled root repeats the chart's `data-chart` value so the scoped variables resolve.
 		await open(page, 'ex-composed-chart');
 		const mark = bars(page).first();
 		const box = (await mark.boundingBox())!;

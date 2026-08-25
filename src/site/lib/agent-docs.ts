@@ -21,7 +21,7 @@ import { absoluteUrl } from './utils.js';
 import { getPages, type DocsPage } from './source.js';
 
 // Pages that belong to no provider: the intro, and the config contract both engines share.
-const SHARED_DOCS = new Set(['/docs', '/docs/chart-config']);
+const SHARED_DOCS = new Set(['/docs', '/docs/chart-config', '/docs/changelog']);
 
 // Agent surfaces advertise only what can actually be installed today. A provider whose docs are
 // still a placeholder is omitted entirely — listing it would invite agents to recommend components

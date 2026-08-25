@@ -300,15 +300,21 @@ test.describe('EvilBarChart examples', () => {
 		expect(await bars(page).count()).toBeLessThan(before);
 	});
 
-	test('the tooltip paints its colour indicator from the chart variables', async ({ page }) => {
-		// LayerChart portals its tooltip to `document.body` by default, which would put it outside
-		// the `[data-chart]` element that scopes `--color-*` and leave every swatch transparent.
-		// See plans/DEVIATIONS.md U-2.
+	test('the tooltip escapes overflow without losing chart colour variables', async ({ page }) => {
 		await open(page, 'ex-bar-chart');
 		const mark = bars(page).first();
 		const box = (await mark.boundingBox())!;
 		await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
 		await page.waitForTimeout(400);
+
+		const chart = page.locator('[data-chart]').first();
+		const tooltipRoot = page.locator('body > .lc-tooltip-root');
+		await expect(tooltipRoot).toBeVisible();
+		await expect(tooltipRoot).toHaveAttribute(
+			'data-chart',
+			(await chart.getAttribute('data-chart'))!
+		);
+
 		const swatch = page.locator('.min-w-32 .shrink-0').first();
 		await expect(swatch).toBeVisible();
 		const paint = await swatch.evaluate((n) => {

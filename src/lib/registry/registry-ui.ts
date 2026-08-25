@@ -41,6 +41,7 @@ const primitives: RegistryItem[] = [
 	{
 		name: 'layerchart-tooltip',
 		type: 'registry:component',
+		registryDependencies: ['@evilcharts/layerchart-chart'],
 		dependencies: [PACKAGE.layerchart],
 		files: [
 			{

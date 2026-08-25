@@ -19,7 +19,7 @@ describe('getAgentDocPages', () => {
 		expect(urls).toContain('/docs');
 		expect(urls).toContain('/docs/chart-config');
 		for (const url of urls) {
-			const shared = url === '/docs' || url === '/docs/chart-config';
+			const shared = ['/docs', '/docs/chart-config', '/docs/changelog'].includes(url);
 			const inProvider = available.some((id) => url.startsWith(`/docs/${id}/`));
 			expect(shared || inProvider, url).toBe(true);
 		}

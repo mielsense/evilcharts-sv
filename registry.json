@@ -177,6 +177,10 @@
     {
       "name": "layerchart-tooltip",
       "type": "registry:component",
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
+        "@evilcharts/layerchart-chart"
+      ],
       "dependencies": [
         "layerchart@^2.3.0"
       ],
@@ -206,9 +210,6 @@
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-tooltip/types.ts"
         }
-      ],
-      "registryDependencies": [
-        "@evilcharts/evilcharts-notice"
       ]
     },
     {

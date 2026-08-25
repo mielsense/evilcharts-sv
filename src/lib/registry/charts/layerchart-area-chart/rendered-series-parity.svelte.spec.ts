@@ -7,6 +7,11 @@ describe('Area and Line rendered-series parity', () => {
 		it(`${family} ignores config-only series and includes mark-only series`, async () => {
 			const { container } = render(Harness);
 			const chart = container.querySelector(`[data-test="${family}"]`)!;
+			const chartId = chart.querySelector<HTMLElement>('[data-chart]')!.dataset.chart!;
+			const tooltip = () =>
+				document.querySelector<HTMLElement>(
+					`body > .lc-tooltip-root[data-chart="${chartId}"] .min-w-32`
+				);
 
 			await expect.poll(() => chart.querySelector('.select-none')?.children.length ?? 0).toBe(2);
 			const legendText = chart.querySelector('.select-none')?.textContent ?? '';
@@ -20,10 +25,8 @@ describe('Area and Line rendered-series parity', () => {
 			// A 10,000-valued phantom series would flatten these 1→20 marks below one pixel.
 			expect(marks[0].getBBox().height).toBeGreaterThan(100);
 
-			await expect
-				.poll(() => chart.querySelector('.min-w-32')?.textContent ?? '')
-				.toContain('Desktop');
-			const tooltipText = chart.querySelector('.min-w-32')?.textContent ?? '';
+			await expect.poll(() => tooltip()?.textContent ?? '').toContain('Desktop');
+			const tooltipText = tooltip()?.textContent ?? '';
 			expect(tooltipText).toContain('January');
 			expect(tooltipText).toContain('mobile');
 			expect(tooltipText).not.toContain('Phantom');

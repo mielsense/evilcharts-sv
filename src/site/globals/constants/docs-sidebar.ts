@@ -14,6 +14,7 @@ export type SidebarOptionId =
 	| 'get-started'
 	| 'installation'
 	| 'components'
+	| 'changelog'
 	| 'background'
 	| 'tooltip'
 	| 'legend'
@@ -31,7 +32,8 @@ export function getStartedOptions(provider: Provider): SidebarOption[] {
 	return [
 		{ id: 'get-started', name: 'Get Started', url: '/docs' },
 		{ id: 'installation', name: 'Installation', url: `/docs/${provider}/installation` },
-		{ id: 'components', name: 'Components', url: `/docs/${provider}/components` }
+		{ id: 'components', name: 'Components', url: `/docs/${provider}/components` },
+		{ id: 'changelog', name: 'Changelog', url: '/docs/changelog' }
 	];
 }
 

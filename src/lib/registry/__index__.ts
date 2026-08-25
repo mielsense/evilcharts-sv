@@ -31,7 +31,7 @@ export const Index: Record<string, RegistryItem> = {
 		name: 'layerchart-tooltip',
 		description: "",
 		type: 'registry:component',
-		registryDependencies: ["@evilcharts/evilcharts-notice"],
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
 		dependencies: ["layerchart@^2.3.0"],
 		files: [{"path":"ui/layerchart-tooltip/index.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/index.ts"},{"path":"ui/layerchart-tooltip/styles.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/styles.ts"},{"path":"ui/layerchart-tooltip/tooltip-content.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/tooltip-content.svelte"},{"path":"ui/layerchart-tooltip/tooltip.svelte","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/tooltip.svelte"},{"path":"ui/layerchart-tooltip/types.ts","type":"registry:component","target":"$lib/components/evilcharts/ui/layerchart-tooltip/types.ts"}]
 	},

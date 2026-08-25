@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { findNeighbour, flattenTree } from './source.js';
 
 describe('docs neighbours', () => {
+	it('publishes the changelog in the docs tree', () => {
+		const urls = flattenTree().map((page) => page.url);
+
+		expect(urls).toContain('/docs/changelog');
+	});
+
 	it('contains each canonical URL once', () => {
 		const urls = flattenTree().map((page) => page.url);
 
