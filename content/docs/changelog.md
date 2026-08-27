@@ -11,6 +11,7 @@ This page records changes to the Svelte port, its registry, and its documentatio
   Area chart domain headroom, Radial chart ring placement, and Pie chart legend clearance.
 - Area loading curves now remain static while the shimmer crosses the plot, matching the original.
 - Radial loading bars now tween between values with the original 1.5-second ease-in-out motion.
+- Radial plots now reserve the full edge-legend band so outer rings cannot overlap the legend.
 
 ## 2026-08-25
 

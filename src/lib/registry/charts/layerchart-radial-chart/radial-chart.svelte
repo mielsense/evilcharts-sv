@@ -95,14 +95,21 @@
 		y: (layerContext?.height ?? 0) * variantConfig.cy
 	});
 
-	const padding = {
-		top: CHART_MARGIN,
+	const EDGE_LEGEND_HEIGHT = 32;
+	let radialContext: ReturnType<typeof setRadialChartContext>;
+	const edgeLegendPlacement = $derived.by(() => {
+		if (isLoading || !radialContext) return null;
+		const align = radialContext.slots.legend?.verticalAlign;
+		return align === 'top' || align === 'bottom' ? align : null;
+	});
+	const padding = $derived({
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
 		right: CHART_MARGIN,
-		bottom: CHART_MARGIN,
+		bottom: CHART_MARGIN + (edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
 		left: CHART_MARGIN
-	};
+	});
 
-	setRadialChartContext({
+	radialContext = setRadialChartContext({
 		config: () => config,
 		data: () => rows,
 		// The skeleton rows carry their own `name` key.
