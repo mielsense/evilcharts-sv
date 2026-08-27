@@ -12,18 +12,20 @@
 </script>
 
 <!--
-	The reference disables area geometry animation. Random data refreshes only after the shimmer has
-	exited the plot, so the visible curve stays still while the highlight moves across it.
+	Keep the skeleton geometry fixed while the same shimmer crosses the fill and its top stroke.
 -->
 <Area
 	y={LOADING_AREA_DATA_KEY}
 	curve={resolveCurve(curveType)}
 	fillOpacity={0.05}
 	fill="currentColor"
-	stroke="currentColor"
-	strokeOpacity={0.5}
 	motion="none"
-	line
+	line={{
+		stroke: 'currentColor',
+		strokeOpacity: 0.5,
+		motion: 'none',
+		mask: `url(#${chartId}-loading-mask)`
+	}}
 	mask={`url(#${chartId}-loading-mask)`}
 />
 <defs>
