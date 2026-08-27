@@ -145,9 +145,13 @@ export function getRings({
 
 	const total = max != null && max > 0 ? max : Math.max(0, ...rows.map(valueOf)) || 1;
 	const step = (outerRadius - innerRadius) / rows.length;
+	// Recharts centres a fixed-size bar by flooring the leftover space at the start of each radial
+	// band. Keeping the fractional half-gap would shift every ring slightly outward (0.13px in the
+	// loading example at 630x360).
+	const bandOffset = Math.floor((step - barSize) / 2);
 
 	return rows.map((row, index) => {
-		const bandCentre = innerRadius + step * (index + 0.5);
+		const ringInnerRadius = innerRadius + step * index + bandOffset;
 
 		return {
 			row,
@@ -155,8 +159,8 @@ export function getRings({
 			name: String(row[nameKey]),
 			startAngle,
 			endAngle: startAngle + (endAngle - startAngle) * (valueOf(row) / total),
-			innerRadius: bandCentre - barSize / 2,
-			outerRadius: bandCentre + barSize / 2
+			innerRadius: ringInnerRadius,
+			outerRadius: ringInnerRadius + barSize
 		};
 	});
 }

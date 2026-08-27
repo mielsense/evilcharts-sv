@@ -299,8 +299,20 @@ test.describe('EvilAreaChart examples', () => {
 		await open(page, 'ex-loading-state-area-chart');
 		await expect(page.getByText('Loading')).toBeVisible();
 		// The skeleton draws one area; the configured series step aside.
-		await expect(plot(page).locator('path.lc-area-path')).toHaveCount(1);
+		const skeleton = plot(page).locator('path.lc-area-path');
+		await expect(skeleton).toHaveCount(1);
 		await expect(page.locator('[id$="-loading-mask"]')).toBeAttached();
+		await expect(skeleton).toHaveAttribute('d', /\S+/);
+		const geometry = await skeleton.evaluate((node) => {
+			const box = (node as SVGGraphicsElement).getBBox();
+			return {
+				width: box.width,
+				transform: node.closest('.lc-layout-svg-g')?.getAttribute('transform')
+			};
+		});
+		expect(geometry.width).toBeGreaterThan(580);
+		// The implicit Recharts value domain leaves 5% headroom above positive loading values.
+		expect(geometry.transform).toBe('translate(5, 21)');
 	});
 
 	test('the brush example renders its footer and filters the plot', async ({ page }) => {

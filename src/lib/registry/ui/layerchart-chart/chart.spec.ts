@@ -112,6 +112,7 @@ describe('getLoadingData', () => {
 		const data = getLoadingData();
 		expect(data).toHaveLength(10);
 		expect(data.every((d) => d.loading >= 0 && d.loading < 70)).toBe(true);
+		expect(data.map((d) => d.__loadingCategory)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 	});
 
 	it('honours point count and bounds', () => {

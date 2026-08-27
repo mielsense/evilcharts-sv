@@ -98,6 +98,7 @@ test.describe('EvilRadialChart examples', () => {
 		// `innerRadius="30%"`, `outerRadius="100%"`, five rows, `barSize={14}`.
 		const inner = maxRadius * 0.3;
 		const step = (maxRadius - inner) / 5;
+		const bandOffset = Math.floor((step - 14) / 2);
 
 		const measured = await tracks(page).evaluateAll((nodes) =>
 			nodes.map((n) => {
@@ -113,9 +114,9 @@ test.describe('EvilRadialChart examples', () => {
 		expect(measured).toHaveLength(5);
 		measured.forEach((ring, index) => {
 			// Row 0 is the innermost ring, which is how Recharts stacks them.
-			const centre = inner + step * (index + 0.5);
-			expect(ring.outer, `ring ${index} outer`).toBeCloseTo(centre + 7, 1);
-			expect(ring.inner, `ring ${index} inner`).toBeCloseTo(centre - 7, 1);
+			const ringInner = inner + step * index + bandOffset;
+			expect(ring.outer, `ring ${index} outer`).toBeCloseTo(ringInner + 14, 1);
+			expect(ring.inner, `ring ${index} inner`).toBeCloseTo(ringInner, 1);
 		});
 	});
 
@@ -336,6 +337,23 @@ test.describe('EvilRadialChart examples', () => {
 		);
 		expect(skeleton).toHaveLength(5);
 		expect(skeleton.every((s) => s.fill === 'currentColor' && s.o === '0.25')).toBe(true);
+
+		const loadingRadii = await tracks(page).evaluateAll((nodes) =>
+			nodes.map((node) => {
+				const radii = [...(node.getAttribute('d') || '').matchAll(/A([\d.]+),\1,/g)]
+					.map((match) => Number(match[1]))
+					.filter((radius) => radius > 10);
+				return { inner: Math.min(...radii), outer: Math.max(...radii) };
+			})
+		);
+		// Recharts floors the leading half-gap when it centres a 14px bar in each radial band.
+		expect(loadingRadii).toEqual([
+			{ inner: 51.7, outer: 65.7 },
+			{ inner: 73.96, outer: 87.96 },
+			{ inner: 96.22, outer: 110.22 },
+			{ inner: 118.48, outer: 132.48 },
+			{ inner: 140.74, outer: 154.74 }
+		]);
 	});
 
 	test('the bars sweep out from the start angle on mount', async ({ page }) => {

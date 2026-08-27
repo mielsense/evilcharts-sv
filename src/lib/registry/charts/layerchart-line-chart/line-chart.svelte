@@ -10,6 +10,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
+		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
 		type ChartAccessibility,
 		type ChartConfig
@@ -131,9 +132,9 @@
 		right: CHART_MARGIN,
 		bottom:
 			CHART_MARGIN +
-			(axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
+			(!isLoading && axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
 			(edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
-		left: CHART_MARGIN + Math.max(0, ...axesPresent.y.values())
+		left: CHART_MARGIN + (isLoading ? 0 : Math.max(0, ...axesPresent.y.values()))
 	});
 
 	// Recharts derives its value domain, legend payload, and tooltip payload from the rendered
@@ -151,7 +152,9 @@
 			(key) => !seriesKeys.includes(key) && !(key in config) && key !== LOADING_LINE_DATA_KEY
 		)
 	);
-	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
+	const xKey = $derived(
+		isLoading ? LOADING_CATEGORY_DATA_KEY : (xDataKey ?? registeredXKey ?? fallbackXKey)
+	);
 
 	const series = $derived(
 		isLoading

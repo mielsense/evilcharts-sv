@@ -9,6 +9,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
+		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
 		type ChartAccessibility,
 		type ChartConfig
@@ -161,9 +162,9 @@
 		right: CHART_MARGIN,
 		bottom:
 			CHART_MARGIN +
-			(axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
+			(!isLoading && axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
 			(edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
-		left: CHART_MARGIN + (axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
+		left: CHART_MARGIN + (!isLoading && axesPresent.y.size > 0 ? Y_AXIS_WIDTH : 0)
 	});
 
 	const configuredKeys = $derived(Object.keys(config));
@@ -182,7 +183,9 @@
 			(key) => !configuredKeys.includes(key) && key !== LOADING_BAR_DATA_KEY
 		)
 	);
-	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
+	const xKey = $derived(
+		isLoading ? LOADING_CATEGORY_DATA_KEY : (xDataKey ?? registeredXKey ?? fallbackXKey)
+	);
 
 	const series = $derived(
 		isLoading

@@ -369,6 +369,16 @@ test.describe('EvilComposedChart examples', () => {
 		// example passes.
 		expect(skeleton.length).toBe(12);
 		expect(skeleton.every((b) => b.fill === 'currentColor' && b.o === '0.15')).toBe(true);
+
+		const geometry = await bars(page).evaluateAll((nodes) => ({
+			x: nodes.map((n) => Number(n.getAttribute('x'))),
+			width: Number(nodes[0]?.getAttribute('width')),
+			transform: nodes[0]?.closest('.lc-layout-svg-g')?.getAttribute('transform')
+		}));
+		expect(new Set(geometry.x).size).toBe(12);
+		expect(geometry.x.at(-1)! - geometry.x[0]).toBeGreaterThan(500);
+		expect(geometry.width).toBeCloseTo(39, 0);
+		expect(geometry.transform).toBe('translate(5, 5)');
 	});
 
 	test('the brush footer filters the plot', async ({ page }) => {

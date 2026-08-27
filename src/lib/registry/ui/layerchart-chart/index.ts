@@ -15,7 +15,7 @@ export { setChartContext, useChart, type ChartContextValue } from './chart-conte
 export { distributeColors, getColorsCount } from './colors.js';
 export { getPayloadConfigFromPayload } from './payload.js';
 export { axisValueToPercentFormatter } from './format.js';
-export { getLoadingData } from './loading.js';
+export { getLoadingData, LOADING_CATEGORY_DATA_KEY } from './loading.js';
 export { resolveCurve, CURVE_TYPES, type CurveType } from './curves.js';
 export { getBarPositions, type BarSlot, type BarInsets } from './bar-geometry.js';
 export { dropOverflowingLeadTick, rechartsValueAxisTicks, thinAxisTicks } from './ticks.js';

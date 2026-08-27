@@ -291,6 +291,18 @@ test.describe('EvilLineChart examples', () => {
 		await expect(page.getByText('Loading')).toBeVisible();
 		await expect(visibleSplines(page)).toHaveCount(1);
 		await expect(page.locator('[id$="-loading-mask"]')).toBeAttached();
+
+		const skeleton = visibleSplines(page).first();
+		await expect(skeleton).toHaveAttribute('d', /\S+/);
+		const geometry = await skeleton.evaluate((node) => {
+			const box = (node as SVGGraphicsElement).getBBox();
+			return {
+				width: box.width,
+				transform: node.closest('.lc-layout-svg-g')?.getAttribute('transform')
+			};
+		});
+		expect(geometry.width).toBeGreaterThan(580);
+		expect(geometry.transform).toBe('translate(5, 5)');
 	});
 
 	test('the tooltip paints its colour indicator from the chart variables', async ({ page }) => {

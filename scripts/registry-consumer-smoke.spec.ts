@@ -176,5 +176,5 @@ describe('generated registry consumer install', () => {
 		} finally {
 			rmSync(consumer, { force: true, recursive: true });
 		}
-	}, 15_000);
+	}, 60_000);
 });

@@ -280,6 +280,16 @@ test.describe('EvilBarChart examples', () => {
 		await expect(page.locator('[id$="-loading-mask"]')).toBeAttached();
 		const fills = await bars(page).evaluateAll((nodes) => nodes.map((n) => n.getAttribute('fill')));
 		expect(fills.every((f) => f === 'currentColor')).toBe(true);
+		const geometry = await bars(page).evaluateAll((nodes) => ({
+			x: nodes.map((n) => Number(n.getAttribute('x'))),
+			width: Number(nodes[0]?.getAttribute('width')),
+			transform: nodes[0]?.closest('.lc-layout-svg-g')?.getAttribute('transform')
+		}));
+		expect(geometry.x).toHaveLength(12);
+		expect(new Set(geometry.x).size).toBe(12);
+		expect(geometry.x.at(-1)! - geometry.x[0]).toBeGreaterThan(500);
+		expect(geometry.width).toBeCloseTo(39, 0);
+		expect(geometry.transform).toBe('translate(5, 5)');
 	});
 
 	test('the brush footer filters the plot', async ({ page }) => {

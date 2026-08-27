@@ -264,6 +264,12 @@ test.describe('EvilPieChart examples', () => {
 			.locator('.lc-pie-arc')
 			.evaluateAll((nodes) => nodes.map((n) => Number(getComputedStyle(n.parentElement!).opacity)));
 		expect(opacities.some((o) => o > 0.15 && o <= 0.5)).toBe(true);
+
+		// Recharts keeps a 24px empty legend band while loading, yielding the reference 117.6px radius.
+		const radius = await sectors(page)
+			.first()
+			.evaluate((node) => Number(node.getAttribute('d')?.match(/^M([\d.]+),/)?.[1]));
+		expect(radius).toBeCloseTo(117.6, 1);
 	});
 
 	test('the tooltip reports the sector under the pointer', async ({ page }) => {

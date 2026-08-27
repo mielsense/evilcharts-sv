@@ -10,6 +10,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
+		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
 		type ChartAccessibility,
 		type ChartConfig
@@ -133,6 +134,12 @@
 
 	const CHART_MARGIN = 5; // Recharts' default <AreaChart margin>
 	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
+	// Recharts expands an implicit positive value domain by 5% above its maximum. Its hidden
+	// loading axis still applies that domain, so the skeleton starts below the chart margin while
+	// its zero baseline remains on the bottom margin.
+	const loadingDomainHeadroom = $derived(
+		Math.round(Math.max(0, chartDimension.height - CHART_MARGIN * 2) * 0.05)
+	);
 	// Recharts reserves a 32px edge-legend band before resolving the value scale.
 	const EDGE_LEGEND_HEIGHT = 32;
 	let areaContext: ReturnType<typeof setAreaChartContext>;
@@ -143,13 +150,16 @@
 	});
 
 	const padding = $derived({
-		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
+		top:
+			CHART_MARGIN +
+			(isLoading ? loadingDomainHeadroom : 0) +
+			(edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
 		right: CHART_MARGIN,
 		bottom:
 			CHART_MARGIN +
-			(axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
+			(!isLoading && axesPresent.x.size > 0 ? X_AXIS_HEIGHT : 0) +
 			(edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
-		left: CHART_MARGIN + Math.max(0, ...axesPresent.y.values())
+		left: CHART_MARGIN + (isLoading ? 0 : Math.max(0, ...axesPresent.y.values()))
 	});
 
 	// Recharts derives its value domain, legend payload, and tooltip payload from the rendered
@@ -175,7 +185,9 @@
 			(key) => !seriesKeys.includes(key) && !(key in config) && key !== LOADING_AREA_DATA_KEY
 		)
 	);
-	const xKey = $derived(xDataKey ?? registeredXKey ?? fallbackXKey);
+	const xKey = $derived(
+		isLoading ? LOADING_CATEGORY_DATA_KEY : (xDataKey ?? registeredXKey ?? fallbackXKey)
+	);
 
 	const series = $derived(
 		isLoading

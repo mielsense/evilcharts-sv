@@ -76,16 +76,19 @@
 	/** Recharts' default `<PieChart margin>`, which is what its maximum radius measures against. */
 	const CHART_MARGIN = 5;
 	const EDGE_LEGEND_HEIGHT = 32;
+	// An empty Recharts legend wrapper still reserves 24px while the loading pie is visible.
+	const LOADING_EDGE_LEGEND_HEIGHT = 24;
 	let pieContext: ReturnType<typeof setPieChartContext>;
 	const edgeLegendPlacement = $derived.by(() => {
-		if (isLoading || !pieContext) return null;
+		if (!pieContext) return null;
 		const align = pieContext.slots.legend?.verticalAlign;
 		return align === 'top' || align === 'bottom' ? align : null;
 	});
+	const edgeLegendHeight = $derived(isLoading ? LOADING_EDGE_LEGEND_HEIGHT : EDGE_LEGEND_HEIGHT);
 	const padding = $derived({
-		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? EDGE_LEGEND_HEIGHT : 0),
+		top: CHART_MARGIN + (edgeLegendPlacement === 'top' ? edgeLegendHeight : 0),
 		right: CHART_MARGIN,
-		bottom: CHART_MARGIN + (edgeLegendPlacement === 'bottom' ? EDGE_LEGEND_HEIGHT : 0),
+		bottom: CHART_MARGIN + (edgeLegendPlacement === 'bottom' ? edgeLegendHeight : 0),
 		left: CHART_MARGIN
 	});
 
