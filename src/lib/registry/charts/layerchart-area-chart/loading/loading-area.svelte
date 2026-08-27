@@ -8,13 +8,13 @@
 	import { LOADING_AREA_DATA_KEY, type CurveType } from '../types.js';
 	import LoadingPattern from './loading-pattern.svelte';
 
-	let {
-		chartId,
-		curveType,
-		onShimmerExit
-	}: { chartId: string; curveType: CurveType; onShimmerExit: () => void } = $props();
+	let { chartId, curveType }: { chartId: string; curveType: CurveType } = $props();
 </script>
 
+<!--
+	The reference disables area geometry animation. Random data refreshes only after the shimmer has
+	exited the plot, so the visible curve stays still while the highlight moves across it.
+-->
 <Area
 	y={LOADING_AREA_DATA_KEY}
 	curve={resolveCurve(curveType)}
@@ -27,5 +27,5 @@
 	mask={`url(#${chartId}-loading-mask)`}
 />
 <defs>
-	<LoadingPattern {chartId} {onShimmerExit} />
+	<LoadingPattern {chartId} />
 </defs>

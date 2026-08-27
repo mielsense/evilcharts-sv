@@ -46,6 +46,44 @@ describe('chart loading parity', () => {
 		return container.querySelectorAll('.select-none > button').length;
 	}
 
+	async function samplePathFrames(container: HTMLElement, selector: string, duration = 2100) {
+		const frames = new Set<string>();
+		const startedAt = performance.now();
+
+		while (performance.now() - startedAt < duration) {
+			const path = container.querySelector<SVGPathElement>(selector);
+			const pathData = path?.getAttribute('d');
+			if (pathData) frames.add(pathData);
+			await new Promise((resolve) => setTimeout(resolve, 50));
+		}
+
+		return frames;
+	}
+
+	it('keeps area geometry static while radial loading geometry interpolates', async () => {
+		const area = render(Harness, { family: 'area' });
+		const radial = render(Harness, { family: 'radial' });
+
+		await expect
+			.poll(() => area.container.querySelector('.lc-area-path')?.getAttribute('d'))
+			.toBeTruthy();
+		await expect
+			.poll(() =>
+				radial.container.querySelector('path.lc-arc-line[fill="currentColor"]')?.getAttribute('d')
+			)
+			.toBeTruthy();
+
+		const [areaFrames, radialFrames] = await Promise.all([
+			samplePathFrames(area.container, '.lc-area-path'),
+			samplePathFrames(radial.container, 'path.lc-arc-line[fill="currentColor"]')
+		]);
+
+		// Only the area shimmer moves; its silhouette stays fixed for the loading session. Radial
+		// sectors, however, continuously tween their angles.
+		expect(areaFrames.size).toBe(1);
+		expect(radialFrames.size).toBeGreaterThan(3);
+	}, 6000);
+
 	it.each(FAMILIES)(
 		'replaces the %s loading skeleton with live controls without remounting the chart root',
 		async (family) => {

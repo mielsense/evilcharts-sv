@@ -5,10 +5,13 @@ description: Changes to EvilCharts for Svelte, its registry, and its documentati
 
 This page records changes to the Svelte port, its registry, and its documentation.
 
-## Unreleased
-
-### Fixed
+## 2026-08-27
 
 - Loading states now match the original chart geometry, including cartesian category spacing,
   Area chart domain headroom, Radial chart ring placement, and Pie chart legend clearance.
+- Area loading curves now remain static while the shimmer crosses the plot, matching the original.
+- Radial loading bars now tween between values with the original 1.5-second ease-in-out motion.
+
+## 2026-08-25
+
 - Tooltips now escape cards with `overflow: hidden` while keeping chart-scoped series colors.

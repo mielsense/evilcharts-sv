@@ -4,28 +4,28 @@
 	 * <RadialBar />, with animated values and a muted fill.
 	 */
 	import { Arc, getChartContext } from 'layerchart';
-	import { cubicBezier, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { animate, useMotionValue, useReducedMotion } from '@humanspeak/svelte-motion';
+	import { untrack } from 'svelte';
 	import {
 		DEFAULT_BAR_SIZE,
 		DEFAULT_CORNER_RADIUS,
 		LOADING_ANIMATION_DURATION,
 		getRings,
 		getVariantConfig,
+		interpolateRings,
 		resolveRadius,
-		toArcAngle
+		toArcAngle,
+		type RadialRing
 	} from '../types.js';
 	import { useRadialChart } from '../radial-chart-context.svelte.js';
 
 	const chart = useRadialChart();
 	const layer = getChartContext();
 
-	/**
-	 * Recharts' `animationEasing="ease-in-out"` is the CSS `ease-in-out` curve. LayerChart's
-	 * `motion={{ type: 'tween' }}` takes an easing *function*, and the motion library solves the
-	 * curve for us.
-	 */
-	const easeInOut = cubicBezier(0.42, 0, 0.58, 1);
 	const shouldReduceMotion = useReducedMotion();
+	const progress = useMotionValue(1);
+	let sourceRings = $state<RadialRing[]>([]);
+	let targetRings = $state<RadialRing[]>([]);
 
 	const variantConfig = $derived(getVariantConfig(chart.variant));
 	// `layer.width` / `layer.height` are the plot box, already inside the chart's `padding`, so the
@@ -48,13 +48,45 @@
 			max: chart.max
 		})
 	);
+
+	/**
+	 * Recharts interpolates the previous and next sector angles whenever the random loading rows
+	 * change. LayerChart's Arc motion only drives its `value` scale; an explicit `endAngle` bypasses
+	 * it, so the loading rings need the same angle interpolation used by the live RadialBar.
+	 */
+	$effect(() => {
+		const nextRings = rings;
+		const reduceMotion = shouldReduceMotion.current;
+		let controls: ReturnType<typeof animate> | undefined;
+
+		untrack(() => {
+			const currentRings =
+				targetRings.length === 0 ? [] : interpolateRings(sourceRings, targetRings, progress.get());
+
+			sourceRings = currentRings;
+			targetRings = nextRings;
+
+			if (reduceMotion) {
+				progress.set(1);
+			} else {
+				progress.set(0);
+				controls = animate(progress, 1, {
+					duration: LOADING_ANIMATION_DURATION / 1000,
+					ease: [0.42, 0, 0.58, 1]
+				});
+			}
+		});
+
+		return () => controls?.stop();
+	});
+
+	const animatedRings = $derived(interpolateRings(sourceRings, targetRings, progress.current));
 </script>
 
-{#each rings as ring (ring.index)}
+{#each animatedRings as ring (ring.index)}
 	<!--
-		The reference leaves Recharts' own animation on for the skeleton
-		(`animationDuration={LOADING_ANIMATION_DURATION} animationEasing="ease-in-out"`), so each bar
-		tweens to its new length whenever the data is regenerated.
+		The reference leaves Recharts' own animation on for the skeleton, so each bar tweens to its new
+		length whenever the data is regenerated.
 	-->
 	<Arc
 		{startAngle}
@@ -66,8 +98,6 @@
 		fillOpacity={0.25}
 		track
 		{trackEndAngle}
-		motion={shouldReduceMotion.current
-			? 'none'
-			: { type: 'tween', duration: LOADING_ANIMATION_DURATION, easing: easeInOut }}
+		motion="none"
 	/>
 {/each}
