@@ -1,9 +1,14 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { EChartsCoreOption, EChartsType, SetOptionOpts } from 'echarts/core';
+	import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
 	import * as echarts from 'echarts/core';
 	import { cn } from '$lib/utils.js';
 	import type { EChartsRenderer } from './types.js';
+
+	// Register renderers in the module that calls `echarts.init`. Keeping this beside the runtime
+	// use prevents production tree-shaking from dropping a side-effect-only barrel registration.
+	echarts.use([CanvasRenderer, SVGRenderer]);
 
 	export type EChartsEventHandler = (params: unknown) => void;
 
