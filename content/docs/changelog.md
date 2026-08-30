@@ -16,12 +16,20 @@ This page records changes to the Svelte port, its registry, and its documentatio
 - Added a provider switcher so readers can move between matching LayerChart and ECharts pages.
 - Fixed production renderer registration so Canvas and SVG charts still initialize after
   tree-shaking.
-- Aligned ECharts legends, area-brush gradients, and radial chart clearance with the original
-  provider layouts.
-- Kept the LayerChart area loading curve fixed while one shared shimmer mask animates its
-  Line-style top stroke and the gradient fill beneath it as a single unit.
-- Synchronized Area loading with Line loading so its data changes only after the shimmer has left
-  the plot, keeping both the top stroke and gradient fill continuous.
+- Aligned ECharts legends, brushes, basic Area geometry, loading states, and radial chart clearance
+  with the original provider layouts.
+- Kept Area loading geometry fixed while its Line-style top stroke and translucent fill use the same
+  travelling shimmer mask; loading data changes only after that mask leaves the plot.
+- Matched the data and chart configuration of all 113 upstream LayerChart examples and mirrored
+  the same examples in the ECharts provider, apart from the six documented dither additions.
+- Preserved chart-owned animation lifecycles when consumer ECharts options are merged and made
+  loading, dashed-stroke, hover, and landing motion respect reduced-motion preferences.
+- Added keyboard controls for clickable series and ECharts brush ranges without duplicating an
+  existing clickable legend.
+- Aligned shared theme tokens and legend spacing with the original, and made generated chart CSS
+  safe for arbitrary chart IDs and data keys.
+- Corrected ECharts documentation snippets, added accessible names to primary examples, and
+  removed unused development and type-only code.
 
 ## 2026-08-27
 

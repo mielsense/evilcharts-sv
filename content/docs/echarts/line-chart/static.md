@@ -112,7 +112,12 @@ Finally, create `echarts-brush` in the same `ui` folder and paste the zoom brush
 The ECharts line chart is composable, sharing the LayerChart sibling's API shape. `<EChartsLineChart>` is the container, and every part hangs off it as a compound member — `<EChartsLineChart.Grid>`, `<EChartsLineChart.XAxis>`, `<EChartsLineChart.YAxis>`, `<EChartsLineChart.Legend>`, `<EChartsLineChart.Tooltip>`, and one or more `<EChartsLineChart.Line>` — so a single import gives you the whole chart. Each `<Line>` carries its own `strokeVariant`, `curveType`, `glowing`, `enableBufferLine`, and `isClickable`, so one chart can mix stroke styles and make only some series interactive.
 
 ```svelte
-import { EChartsLineChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-line-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsLineChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-line-chart/index.js';
+</script>
 ```
 
 ```svelte

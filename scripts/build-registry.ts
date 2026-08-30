@@ -39,6 +39,7 @@ function isSource(file: string) {
 	return (
 		/\.(svelte|ts)$/.test(file) &&
 		!/\.spec\.(ts|svelte)$/.test(file) &&
+		!/\.test\.(ts|svelte)$/.test(file) &&
 		!/\.e2e\.ts$/.test(file) &&
 		!file.endsWith('.snap')
 	);

@@ -165,6 +165,11 @@
           "target": "$lib/components/evilcharts/ui/layerchart-chart/payload.ts"
         },
         {
+          "path": "src/lib/registry/ui/layerchart-chart/selectable-series-controls.svelte",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/layerchart-chart/selectable-series-controls.svelte"
+        },
+        {
           "path": "src/lib/registry/ui/layerchart-chart/ticks.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-chart/ticks.ts"
@@ -485,9 +490,19 @@
           "target": "$lib/components/evilcharts/ui/echarts-chart/loading-indicator.svelte"
         },
         {
+          "path": "src/lib/registry/ui/echarts-chart/merge-options.ts",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/echarts-chart/merge-options.ts"
+        },
+        {
           "path": "src/lib/registry/ui/echarts-chart/registrations.svelte.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/echarts-chart/registrations.svelte.ts"
+        },
+        {
+          "path": "src/lib/registry/ui/echarts-chart/selectable-series-controls.svelte",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/echarts-chart/selectable-series-controls.svelte"
         },
         {
           "path": "src/lib/registry/ui/echarts-chart/shared-slots.svelte.ts",
@@ -627,6 +642,11 @@
         "echarts@^6.1.0"
       ],
       "files": [
+        {
+          "path": "src/lib/registry/ui/echarts-brush/brush-controls.svelte",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/echarts-brush/brush-controls.svelte"
+        },
         {
           "path": "src/lib/registry/ui/echarts-brush/brush.svelte",
           "type": "registry:component",
@@ -784,11 +804,6 @@
           "path": "src/lib/registry/charts/layerchart-area-chart/loading/use-loading-data.svelte.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-area-chart/loading/use-loading-data.svelte.ts"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-area-chart/rendered-series-parity.test.svelte",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-area-chart/rendered-series-parity.test.svelte"
         },
         {
           "path": "src/lib/registry/charts/layerchart-area-chart/tooltip-cursor.svelte",

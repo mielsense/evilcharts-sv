@@ -79,7 +79,13 @@ Create `echarts-tooltip` in the same `ui` folder and paste the tooltip surface a
 The ECharts sankey chart is composable, sharing the LayerChart sibling's API shape. `<EChartsSankeyChart>` is the container, and every part hangs off it as a compound member — `<EChartsSankeyChart.Node>`, `<EChartsSankeyChart.NodeLabel>`, `<EChartsSankeyChart.Link>`, and `<EChartsSankeyChart.Tooltip>` — so a single import gives you the whole chart. Because nodes and links are intrinsic to the flow data, `<Node>` and `<Link>` always render and just configure the diagram; `<NodeLabel>` and `<Tooltip>` follow presence semantics — omit one and it does not render.
 
 ```svelte
-import { EChartsSankeyChart, type ChartConfig, type SankeyData } from "$lib/components/evilcharts/charts/echarts-sankey-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsSankeyChart,
+		type ChartConfig,
+		type SankeyData
+	} from '$lib/components/evilcharts/charts/echarts-sankey-chart/index.js';
+</script>
 ```
 
 ```svelte

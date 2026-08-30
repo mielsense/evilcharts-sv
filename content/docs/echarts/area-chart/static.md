@@ -112,7 +112,12 @@ Finally, create `echarts-brush` in the same `ui` folder and paste the zoom brush
 The ECharts area chart is composable. `<EChartsAreaChart>` is the container, and every part hangs off it as a compound member — `<EChartsAreaChart.Grid>`, `<EChartsAreaChart.XAxis>`, `<EChartsAreaChart.YAxis>`, `<EChartsAreaChart.Legend>`, `<EChartsAreaChart.Tooltip>`, `<EChartsAreaChart.Brush>`, and one or more `<EChartsAreaChart.Area>` — so a single import gives you the whole chart. Each `<Area>` sets its own `variant`, `strokeVariant`, and `isClickable`, so one chart can mix fills, strokes, and selective interactivity.
 
 ```svelte
-import { EChartsAreaChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-area-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsAreaChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-area-chart/index.js';
+</script>
 ```
 
 ```svelte

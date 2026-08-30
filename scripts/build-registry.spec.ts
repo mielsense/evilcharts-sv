@@ -29,7 +29,7 @@ describe('registry build output', () => {
 				expect(file.path, item.name).toMatch(/^src\/lib\/registry\/.+\.(svelte|ts|md)$/);
 				expect(existsSync(path.join(ROOT, file.path)), file.path).toBe(true);
 				// Tests never ship.
-				expect(file.path).not.toMatch(/\.(spec|e2e)\.(ts|svelte)$/);
+				expect(file.path).not.toMatch(/\.(spec|test|e2e)\.(ts|svelte)$/);
 			}
 		}
 		// A chart is a directory of components, so it must expand to more than one file.
