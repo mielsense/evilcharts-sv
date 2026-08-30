@@ -42,4 +42,5 @@ export { default as ChartLegendIcon } from './chart-legend-icon.svelte';
 export { default as ChartConfigIcon } from './chart-config-icon.svelte';
 export { default as ReactIcon } from './react-icon.svelte';
 export { default as SvelteIcon } from './svelte-icon.svelte';
+export { default as LayerChartIcon } from './layerchart-icon.svelte';
 export { default as EChartsIcon } from './e-charts-icon.svelte';

@@ -1,7 +1,7 @@
 MIT License
 
 This project is a Svelte port of EvilCharts (https://github.com/legions-developer/evilcharts).
-The Svelte port was created by Mathis (https://github.com/mielsense). The original work is
+The Svelte port was created by miel (mielsense, https://github.com/mielsense). The original work is
 Copyright (c) 2026 Gurbinder and is licensed under the MIT License, reproduced below. The design,
 component API, documentation, and examples in this repository derive from that project.
 
@@ -11,7 +11,7 @@ metadata declares the MIT license. No Dither Kit source is redistributed here, a
 not affiliated with or endorsed by Boring Software.
 
 Copyright (c) 2026 Gurbinder
-Copyright (c) 2026 Mathis and EvilCharts Svelte contributors (Svelte port)
+Copyright (c) 2026 miel (mielsense) and EvilCharts Svelte contributors (Svelte port)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { CheckIcon, EChartsIcon, SvelteIcon } from '$site/assets/icons/index.js';
+	import { CheckIcon, EChartsIcon, LayerChartIcon } from '$site/assets/icons/index.js';
 	import {
 		DropdownMenu,
 		DropdownMenuContent,
@@ -44,20 +44,16 @@
 
 	const sidebar = useSidebar();
 
-	// LayerChart renders through Svelte, so it gets the framework mark; the reference gives
-	// Recharts the React logo in React blue for the same reason.
 	const PROVIDER_ICONS: Record<Provider, Component<Record<string, unknown>>> = {
-		layerchart: SvelteIcon as Component<Record<string, unknown>>,
+		layerchart: LayerChartIcon as Component<Record<string, unknown>>,
 		echarts: EChartsIcon as Component<Record<string, unknown>>
 	};
 	const PROVIDER_TINT: Record<Provider, string> = {
-		layerchart: 'text-[#FF3E00]',
+		layerchart: 'text-foreground',
 		echarts: 'text-[#E43861]'
 	};
 
-	// Menu display order only — PROVIDERS' order elsewhere (redirects, llms.txt sections) is
-	// intentionally untouched.
-	const MENU_ORDER: Provider[] = ['echarts', 'layerchart'];
+	const MENU_ORDER: Provider[] = ['layerchart', 'echarts'];
 
 	const displayed = $derived(PROVIDER_META[activeProvider]);
 	const DisplayedIcon = $derived(PROVIDER_ICONS[activeProvider]);

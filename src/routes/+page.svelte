@@ -2,19 +2,17 @@
 	/**
 	 * Ported from `evilcharts/src/app/page.tsx`.
 	 *
-	 * The hero names the people responsible for the Svelte port and the original React project.
+	 * The hero links the upstream design and ordered-dither inspiration without making a
+	 * maintenance claim.
 	 */
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import EvilChartWordmark from '$site/assets/logos/evilchart-wordmark.svelte';
 	import ChartStage from '$site/components/landing/chart-stage.svelte';
 	import { Button } from '$site/components/ui/button/index.js';
 	import {
-		PORT_AUTHOR,
-		PORT_AUTHOR_URL,
 		PORT_REPO_URL,
 		SITE_DESCRIPTION,
 		SITE_TITLE,
-		UPSTREAM_AUTHOR,
 		UPSTREAM_NAME,
 		UPSTREAM_REPO_URL
 	} from '$site/globals/constants/site.js';
@@ -63,26 +61,21 @@
 				</a>
 			</h1>
 			<p class="text-[15px] text-muted-foreground">
-				A Svelte 5 port of EvilCharts with LayerChart and Apache ECharts providers, plus
-				ordered-dither styles inspired by Dither Kit. Install each chart as source through
-				shadcn-svelte.
-			</p>
-			<p class="text-[13px] leading-relaxed text-muted-foreground/80">
+				A Svelte 5 port of
 				<a
-					class="underline decoration-[#ff3e00]/50 decoration-1 underline-offset-4 hover:decoration-[#ff3e00]"
-					href={PORT_AUTHOR_URL}
-					target="_blank"
-					rel="noreferrer">{PORT_AUTHOR}</a
-				>
-				built and maintains this Svelte 5 port. {UPSTREAM_AUTHOR} created the original
-				<a
-					class="underline decoration-primary/50 decoration-1 underline-offset-4 hover:decoration-primary"
+					class="text-[#ff3e00] underline decoration-[#ff3e00]/50 decoration-1 underline-offset-4 hover:decoration-[#ff3e00]"
 					href={UPSTREAM_REPO_URL}
 					target="_blank"
 					rel="noreferrer">{UPSTREAM_NAME}</a
 				>
-				design and React implementation. This independent port keeps that credit and the original MIT
-				license.
+				with LayerChart and Apache ECharts providers. It also includes ordered-dither styles inspired
+				by
+				<a
+					class="text-[#ff3e00] underline decoration-[#ff3e00]/50 decoration-1 underline-offset-4 hover:decoration-[#ff3e00]"
+					href="https://github.com/Boring-Software-Inc/dither-kit"
+					target="_blank"
+					rel="noreferrer">Dither Kit</a
+				>. Install each chart as source through shadcn-svelte.
 			</p>
 			<div class="flex flex-wrap items-center gap-3">
 				<Button href="/docs">
