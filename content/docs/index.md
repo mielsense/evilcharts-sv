@@ -123,8 +123,13 @@ Install the portable skill from this repository:
 npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
 ```
 
-The skill gives an agent the provider rules, registry command, and API documentation routes. The
-separate Context7 index and MCP endpoint remain available for live documentation lookup.
+The skill is a working guide for coding agents. It covers all eight chart families, both providers,
+their compound components, registry installation, example and block selection, accessibility,
+motion, ordered dither, and the rule for mixing provider-specific roots safely. It also directs the
+agent to the exact current Markdown page before it chooses props or imports.
+
+Use it when asking an agent to add, customize, migrate, or debug a chart. The separate Context7
+index and MCP endpoint remain available for live documentation lookup.
 
 ## Credits and licence
 

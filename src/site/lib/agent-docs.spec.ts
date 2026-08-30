@@ -142,7 +142,7 @@ describe('generateSkillMd', () => {
 		expect(text).toContain(
 			'Never mix compound parts from different providers inside one chart root'
 		);
-		expect(text).toContain('/r/{provider}-{chart-name}.json');
+		expect(text).toContain('/r/{item-name}.json');
 		expect(text).toContain('npx shadcn-svelte@latest add');
 		expect(text.toLowerCase()).not.toContain('recharts');
 	});
@@ -161,7 +161,7 @@ describe('generateSkillMd', () => {
 
 		const previewSkill = generateSkillMd(previewOrigin);
 		expect(previewSkill).toContain(`${previewOrigin}/llms.txt`);
-		expect(previewSkill).toContain(`${previewOrigin}/r/{provider}-{chart-name}.json`);
+		expect(previewSkill).toContain(`${previewOrigin}/r/{item-name}.json`);
 		expect(previewSkill).not.toContain(productionOrigin);
 		expect(previewSkill).toContain('https://github.com/mielsense/evilcharts-sv');
 	});
