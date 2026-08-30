@@ -162,6 +162,7 @@ describe('analytics metadata', () => {
 		).toEqual({});
 		expect(
 			sanitizeAnalyticsContext({
+				userAgent: null,
 				country: 'éa',
 				referer: `https://source.example.test/${'oversized-marker'.repeat(64)}`
 			})
