@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getPages } from './source.js';
+import { getPages } from './source.server.js';
 
 const SVELTE_FENCE = /```svelte\s*\n([\s\S]*?)```/g;
 const INSTANCE_SCRIPT = /<script\b[^>]*>[\s\S]*?<\/script>/g;

@@ -15,9 +15,11 @@ const FRAMEWORK_IMPORTS = new Set(['svelte', 'svelte/elements', 'svelte/reactivi
 
 function packageName(specifier: string): string {
 	if (!specifier.startsWith('@')) return specifier.split('@')[0].split('/')[0];
-	const slash = specifier.indexOf('/');
-	const version = specifier.indexOf('@', slash);
-	return version === -1 ? specifier : specifier.slice(0, version);
+	const scopeSlash = specifier.indexOf('/');
+	const subpathSlash = specifier.indexOf('/', scopeSlash + 1);
+	const version = specifier.indexOf('@', scopeSlash + 1);
+	const ends = [subpathSlash, version].filter((index) => index !== -1);
+	return ends.length === 0 ? specifier : specifier.slice(0, Math.min(...ends));
 }
 
 /** Every source file an item ships, with directory entries walked. */
@@ -110,7 +112,7 @@ describe('registry manifests', () => {
 			return packages;
 		};
 
-		for (const item of registry.items.filter((entry) => !entry.name.startsWith('ex-'))) {
+		for (const item of registry.items) {
 			const available = availablePackages(item.name);
 			for (const file of sourcesOf(item)) {
 				if (/\.(spec|e2e)\.(ts|svelte)$/.test(file)) continue;
@@ -126,6 +128,22 @@ describe('registry manifests', () => {
 						`${item.name} imports ${pkg} from ${path.relative(REGISTRY_DIR, file)}`
 					).toContain(pkg);
 				}
+			}
+		}
+	});
+
+	it('pins every consumer package to the version range exercised by this repository', () => {
+		const packageJson = JSON.parse(
+			readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
+		) as {
+			dependencies: Record<string, string>;
+		};
+
+		for (const item of registry.items) {
+			for (const dependency of item.dependencies ?? []) {
+				const name = packageName(dependency);
+				expect(packageJson.dependencies[name], `${item.name} -> ${name}`).toBeDefined();
+				expect(dependency, item.name).toBe(`${name}@${packageJson.dependencies[name]}`);
 			}
 		}
 	});

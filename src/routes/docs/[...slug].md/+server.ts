@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getPage, getPages } from '$site/lib/source.js';
+import { getPage, getPages } from '$site/lib/source.server.js';
 import { processMdxForLLMs } from '$site/lib/llm.js';
 import type { EntryGenerator, RequestHandler } from './$types.js';
 

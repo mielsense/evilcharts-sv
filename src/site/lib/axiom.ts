@@ -57,8 +57,8 @@ export function isAxiomConfigured(): boolean {
 }
 
 /**
- * Sends one or more events. Returns a promise the caller can hand to `platform.waitUntil` where the
- * runtime offers it, mirroring the reference's `event.waitUntil(axiom.flush())`.
+ * Sends one or more events. Returns a promise the caller hands to Vercel's `waitUntil`, mirroring
+ * the reference's `event.waitUntil(axiom.flush())` without delaying the response.
  *
  * Failures are swallowed: analytics must never break a page.
  */

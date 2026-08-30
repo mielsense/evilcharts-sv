@@ -54,6 +54,7 @@ const ROOT_ITEMS = [
 	'monospace-echarts-bar-chart',
 	'ex-horizontal-layout-bar-chart',
 	'ex-horizontal-layout-echarts-bar-chart',
+	'ex-chart-config-icons-bar-chart',
 	'ex-chart-config-icons-echarts-bar-chart',
 	'ex-dither-area-chart',
 	'ex-dither-echarts-area-chart'
@@ -151,6 +152,7 @@ describe('generated registry consumer install', () => {
 	import EChartsMonospaceBarChart from '$lib/components/evilcharts/blocks/monospace-echarts-bar-chart.svelte';
 	import HorizontalBarChart from '$lib/examples/ex-horizontal-layout-bar-chart.svelte';
 	import EChartsHorizontalBarChart from '$lib/examples/ex-horizontal-layout-echarts-bar-chart.svelte';
+	import ConfigIconsBarChart from '$lib/examples/ex-chart-config-icons-bar-chart.svelte';
 	import EChartsConfigIconsBarChart from '$lib/examples/ex-chart-config-icons-echarts-bar-chart.svelte';
 	import DitherAreaChart from '$lib/examples/ex-dither-area-chart.svelte';
 	import EChartsDitherAreaChart from '$lib/examples/ex-dither-echarts-area-chart.svelte';
@@ -165,6 +167,7 @@ describe('generated registry consumer install', () => {
 <EChartsMonospaceBarChart />
 <HorizontalBarChart />
 <EChartsHorizontalBarChart />
+<ConfigIconsBarChart />
 <EChartsConfigIconsBarChart />
 <DitherAreaChart />
 <EChartsDitherAreaChart />

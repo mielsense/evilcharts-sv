@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findNeighbour, flattenTree } from './source.js';
+import { findNeighbour, flattenTree } from './source.server.js';
 
 describe('docs neighbours', () => {
 	it('publishes the changelog in the docs tree', () => {

@@ -9,7 +9,9 @@ export const PACKAGE = {
 	d3Scale: 'd3-scale@^4.0.2',
 	d3ScaleTypes: '@types/d3-scale@^4.0.9',
 	d3Shape: 'd3-shape@^3.2.0',
-	d3ShapeTypes: '@types/d3-shape@^3.2.0'
+	d3ShapeTypes: '@types/d3-shape@^3.2.0',
+	lucide: '@lucide/svelte@^1.33.0',
+	numberFlow: '@number-flow/svelte@^0.4.2'
 } as const;
 
 /** Every independently installable item carries the upstream attribution into the consumer. */
@@ -28,6 +30,10 @@ export function withNotice(items: RegistryItem[]): RegistryItem[] {
 					return PACKAGE.d3Scale;
 				case 'd3-shape':
 					return PACKAGE.d3Shape;
+				case '@lucide/svelte':
+					return PACKAGE.lucide;
+				case '@number-flow/svelte':
+					return PACKAGE.numberFlow;
 				default:
 					return dependency;
 			}

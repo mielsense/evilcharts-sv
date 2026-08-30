@@ -89,7 +89,8 @@ function requestId(value: unknown): JsonRpcRequest['id'] {
 	if (typeof value.id === 'string') {
 		return value.id.length <= MAX_STRING_ID_LENGTH ? value.id : null;
 	}
-	return typeof value.id === 'number' || value.id === null ? value.id : null;
+	if (typeof value.id === 'number') return Number.isFinite(value.id) ? value.id : null;
+	return null;
 }
 
 function isJsonRpcRequest(value: unknown): value is JsonRpcRequest {
@@ -103,6 +104,7 @@ function isJsonRpcRequest(value: unknown): value is JsonRpcRequest {
 		return false;
 	}
 	if (typeof value.id === 'string' && value.id.length > MAX_STRING_ID_LENGTH) return false;
+	if (typeof value.id === 'number' && !Number.isFinite(value.id)) return false;
 	return value.params === undefined || isRecord(value.params);
 }
 

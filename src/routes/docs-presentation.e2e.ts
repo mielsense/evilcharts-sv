@@ -37,6 +37,44 @@ test('markdown fences and chart source tabs use syntax token colors', async ({ p
 	expect((await tokenColors(chartSource)).length).toBeGreaterThan(2);
 });
 
+test('client navigation swaps the selected compiled docs page without reloading', async ({
+	page
+}) => {
+	await page.addInitScript(() => {
+		(window as Window & { __docsLoads?: number }).__docsLoads =
+			((window as Window & { __docsLoads?: number }).__docsLoads ?? 0) + 1;
+	});
+	await page.goto('/docs/layerchart/area-chart');
+	await expect(page.getByRole('heading', { level: 1, name: 'Area Chart' })).toBeVisible();
+
+	await page.getByRole('link', { name: /^Line Chart Beautifully designed Svelte 5/ }).click();
+
+	await expect(page).toHaveURL(/\/docs\/layerchart\/line-chart$/);
+	await expect(page.getByRole('heading', { level: 1, name: 'Line Chart' })).toBeVisible();
+	await expect(page.getByText(/^The line chart is composable\./)).toBeVisible();
+	await expect(
+		page.evaluate(() => (window as Window & { __docsLoads?: number }).__docsLoads)
+	).resolves.toBe(1);
+});
+
+test('unknown docs routes keep the docs shell and offer a useful recovery path', async ({
+	page
+}) => {
+	const response = await page.goto('/docs/not-a-real-page');
+
+	expect(response?.status()).toBe(404);
+	await expect(page).toHaveTitle(`404 — Evil Charts`);
+	await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'This docs page doesn’t exist.' })
+	).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Browse documentation' })).toHaveAttribute(
+		'href',
+		'/docs'
+	);
+	await expect(page.getByRole('link', { name: 'EvilCharts docs home' })).toBeVisible();
+});
+
 test('the introduction uses the Svelte accent and padded credits', async ({ page }) => {
 	await page.goto('/docs');
 

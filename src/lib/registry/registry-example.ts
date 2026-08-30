@@ -5,8 +5,8 @@
  * `layerchart` provider, and ECharts demos retain their provider-specific names. Every entry ships
  * one file and names the chart it demonstrates as a registry dependency.
  *
- * Like the reference, examples declare no `dependencies`: the packages they reach for beyond their
- * chart (icons, for instance) are already present in any shadcn-svelte project.
+ * Examples declare direct npm dependencies when they reach beyond their chart root. Registry
+ * installation must not rely on packages that happen to exist in the documentation site.
  */
 import type { RegistryItem } from './schema.js';
 
@@ -975,6 +975,7 @@ const layerchartExamples: RegistryItem[] = [
 	},
 	{
 		name: 'ex-chart-config-icons-bar-chart',
+		dependencies: ['@lucide/svelte'],
 		registryDependencies: ['@evilcharts/layerchart-bar-chart'],
 		type: 'registry:block',
 		files: [
