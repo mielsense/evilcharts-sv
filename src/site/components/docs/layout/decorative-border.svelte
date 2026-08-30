@@ -1,5 +1,5 @@
 <script lang="ts">
-	/** Ported verbatim from the reference's `src/components/docs/layout/decorative-border-svg.tsx`. */
+	/** Adapted from the reference's `src/components/docs/layout/decorative-border-svg.tsx`. */
 </script>
 
 <svg
@@ -8,7 +8,7 @@
 	preserveAspectRatio="none"
 	fill="none"
 >
-	<!-- Top path to mask to mask border-->
+	<!-- Top path to mask the panel border. -->
 	<path
 		d="M 400 0 L 1.5 0"
 		stroke="var(--sidebar)"
@@ -29,13 +29,13 @@
 	<!-- main path with fill -->
 	<path
 		class="text-[#E5E5E5] dark:text-[#1B1B1B]"
-		d="M -8 0 q 10 0 20 10 l 24 24 q 10 10 20 10 L 390 44 q 10 0 10 10 l 0 -54 Z"
+		d="M -8 0 q 10 0 20 10 l 22 24 q 10 10 20 10 L 390 44 q 10 0 10 10 l 0 -54 Z"
 		fill="var(--sidebar)"
 	/>
 	<!-- main path with border -->
 	<path
 		class="text-[#E5E5E5] dark:text-[#1B1B1B]"
-		d="M -8 0 q 10 0 20 10 l 24 24 q 10 10 20 10 L 390 44 q 10 0 10 10 v 10 "
+		d="M -8 0 q 10 0 20 10 l 22 24 q 10 10 20 10 L 390 44 q 10 0 10 10 v 10 "
 		stroke="currentColor"
 		stroke-width="1"
 		vector-effect="non-scaling-stroke"
