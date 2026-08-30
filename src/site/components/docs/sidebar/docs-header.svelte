@@ -65,10 +65,10 @@
 			<span class="text-muted">|</span>
 		{/if}
 		<ThemeSwitcher />
-		<a class="hidden sm:block" href={PORT_AUTHOR_URL} target="_blank" rel="noreferrer">
+		<a class="hidden xl:block" href={PORT_AUTHOR_URL} target="_blank" rel="noreferrer">
 			<Button class="group" size="sm" variant="ghost">
-				<span class="text-xs text-muted-foreground group-hover:text-primary">
-					Built by {PORT_AUTHOR}
+				<span class="text-[11px] text-muted-foreground group-hover:text-primary">
+					Svelte port by {PORT_AUTHOR}
 				</span>
 			</Button>
 		</a>

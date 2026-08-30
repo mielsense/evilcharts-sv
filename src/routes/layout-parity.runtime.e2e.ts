@@ -16,7 +16,7 @@ test('client-side docs navigation resets the docs scroll container', async ({ pa
 		.toBeGreaterThan(1000);
 
 	await page.getByRole('link', { name: 'Installation', exact: true }).click();
-	await expect(page).toHaveURL(/\/docs\/echarts\/installation$/);
+	await expect(page).toHaveURL(/\/docs\/layerchart\/installation$/);
 	await expect.poll(() => scrollRoot.evaluate((element) => element.scrollTop)).toBe(0);
 });
 
@@ -193,7 +193,7 @@ test('the docs attribution header stays inside its responsive container', async 
 	const headerActions = header.locator(':scope > div').last();
 	const decorativeBorder = page.locator('svg[viewBox="0 0 400 44"]');
 	const attribution = header.getByRole('link', { name: 'Based on EvilCharts' });
-	const author = header.getByRole('link', { name: 'Built by Mathis' });
+	const author = header.getByRole('link', { name: 'Svelte port by miel' });
 	const expectNotchBeforeActions = async () => {
 		const [actionsBox, borderBox] = await Promise.all([
 			headerActions.boundingBox(),
@@ -208,10 +208,10 @@ test('the docs attribution header stays inside its responsive container', async 
 		expect(curveEnd).toBeLessThanOrEqual(actionsBox!.x - 8);
 	};
 
-	for (const width of [640, 768, 940, 996]) {
+	for (const width of [640]) {
 		await page.setViewportSize({ width, height: 800 });
 		await expect(attribution).toBeHidden();
-		await expect(author).toBeVisible();
+		await expect(author).toBeHidden();
 
 		const [headerBox, actionsBox] = await Promise.all([
 			header.boundingBox(),
@@ -227,7 +227,50 @@ test('the docs attribution header stays inside its responsive container', async 
 			.toBeLessThanOrEqual(width);
 	}
 
-	for (const width of [1024, 1280]) {
+	for (const width of [768, 940, 996]) {
+		await page.setViewportSize({ width, height: 800 });
+		await expect(attribution).toBeHidden();
+		await expect(author).toBeHidden();
+
+		const [headerBox, actionsBox] = await Promise.all([
+			header.boundingBox(),
+			headerActions.boundingBox()
+		]);
+		expect(headerBox).not.toBeNull();
+		expect(actionsBox).not.toBeNull();
+		expect(actionsBox!.x).toBeGreaterThanOrEqual(headerBox!.x);
+		expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width);
+		await expectNotchBeforeActions();
+		await expect
+			.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+			.toBeLessThanOrEqual(width);
+	}
+
+	for (const width of [1024]) {
+		await page.setViewportSize({ width, height: 800 });
+		await expect(attribution).toBeVisible();
+		await expect(author).toBeHidden();
+
+		const [headerBox, attributionBox, actionsBox] = await Promise.all([
+			header.boundingBox(),
+			attribution.boundingBox(),
+			headerActions.boundingBox()
+		]);
+		expect(headerBox).not.toBeNull();
+		expect(attributionBox).not.toBeNull();
+		expect(actionsBox).not.toBeNull();
+		expect(attributionBox!.x).toBeGreaterThanOrEqual(headerBox!.x);
+		expect(attributionBox!.x + attributionBox!.width).toBeLessThanOrEqual(
+			headerBox!.x + headerBox!.width
+		);
+		expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(headerBox!.x + headerBox!.width);
+		await expectNotchBeforeActions();
+		await expect
+			.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+			.toBeLessThanOrEqual(width);
+	}
+
+	for (const width of [1280]) {
 		await page.setViewportSize({ width, height: 800 });
 		await expect(attribution).toBeVisible();
 		await expect(author).toBeVisible();

@@ -3,13 +3,13 @@
 EvilCharts SV is a Svelte 5 port of EvilCharts:
 https://github.com/legions-developer/evilcharts.
 
-The Svelte port was created by Mathis: https://github.com/mielsense.
+The Svelte port was created by miel: https://github.com/mielsense.
 
 The optional ordered-dither renderer is an independent implementation inspired by Dither Kit:
 https://github.com/Boring-Software-Inc/dither-kit. No Dither Kit source is redistributed.
 
 Copyright (c) 2026 Gurbinder
-Copyright (c) 2026 Mathis and EvilCharts Svelte contributors
+Copyright (c) 2026 miel and EvilCharts Svelte contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,

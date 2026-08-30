@@ -105,6 +105,27 @@ parts into a typed ECharts option.
 Start with <Link href="/docs/echarts/installation">ECharts installation</Link>, then browse the
 matching chart pages under the ECharts provider.
 
+### Which provider?
+
+Provider selection is a per-chart choice. Start with LayerChart for inspectable, themeable Svelte
+SVG charts and design-led dashboards. Move an individual chart to ECharts for dense data, frequent
+updates, or an existing ECharts option workflow.
+
+One app or dashboard may mix both providers by rendering separate provider-specific chart roots.
+Each compound chart root must use parts from that same provider. Install only one implementation
+of a chart unless the app intentionally renders both.
+
+## Install the agent skill
+
+Install the portable skill from this repository:
+
+```bash
+npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
+```
+
+The skill gives an agent the provider rules, registry command, and API documentation routes. The
+separate Context7 index and MCP endpoint remain available for live documentation lookup.
+
 ## Credits and licence
 
 |                  |                                                                                                                |
@@ -112,9 +133,11 @@ matching chart pages under the ECharts provider.
 | Original project | <Link href="https://github.com/legions-developer/evilcharts" _blank={true}>legions-developer/evilcharts</Link> |
 | Original site    | <Link href="https://evilcharts.com" _blank={true}>evilcharts.com</Link>                                        |
 | Original author  | <Link href="https://x.com/legionsdev" _blank={true}>Gurbinder</Link>                                           |
+| LayerChart       | <Link href="https://www.layerchart.com/" _blank={true}>LayerChart</Link>                                       |
+| Apache ECharts   | <Link href="https://echarts.apache.org/" _blank={true}>Apache ECharts</Link>                                   |
 | Licence          | MIT, for both the original and this port                                                                       |
 | Svelte port      | <Link href="https://github.com/mielsense/evilcharts-sv" _blank={true}>mielsense/evilcharts-sv</Link>           |
-| Port author      | <Link href="https://github.com/mielsense" _blank={true}>Mathis</Link>                                          |
+| Port author      | <Link href="https://github.com/mielsense" _blank={true}>miel</Link>                                            |
 
 Substantially all of the design, component API, documentation prose and example data in this port
 derive from the original project. The Svelte translation uses LayerChart,

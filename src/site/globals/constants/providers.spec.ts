@@ -8,9 +8,9 @@ import {
 } from './providers.js';
 
 describe('chart providers', () => {
-	it('ships both providers and leads shared pages with ECharts', () => {
+	it('ships both providers and leads shared pages with LayerChart', () => {
 		expect(PROVIDERS).toEqual(['layerchart', 'echarts']);
-		expect(DEFAULT_PROVIDER).toBe('echarts');
+		expect(DEFAULT_PROVIDER).toBe('layerchart');
 		for (const provider of PROVIDERS) expect(PROVIDER_META[provider].available).toBe(true);
 	});
 

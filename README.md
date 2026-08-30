@@ -6,7 +6,7 @@ are styled for [shadcn-svelte][shadcn-svelte] and installed as source in your pr
 
 > ### This is an unofficial port
 >
-> [Mathis (`mielsense`)][porter] built and maintains this Svelte 5 port. [Gurbinder
+> [miel (`mielsense`)][porter] created this Svelte 5 port. [Gurbinder
 > (`legions-developer`)][author] created the original [EvilCharts][upstream] design and React
 > implementation. This independent port preserves that credit and the original MIT license.
 >
@@ -179,6 +179,15 @@ The docs are published for machines as well as people:
 
 A request to any `/docs/…` page with `Accept: text/markdown` is served its markdown mirror.
 
+### Install the agent skill
+
+```bash
+npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
+```
+
+The skill gives an agent the provider rules, registry install command, and current API routes. It
+does not replace the separate Context7 and MCP documentation options below.
+
 ### Context7
 
 Evil Charts for Svelte is indexed on Context7 as
@@ -208,7 +217,7 @@ Bug reports and fixes are welcome. Two things to know first:
 ## Licence
 
 MIT. See [`LICENSE`](./LICENSE). It preserves the original project's copyright and identifies
-Mathis as the author of the Svelte port. The Dither Kit inspiration and source boundary are also
+miel as the author of the Svelte port. The Dither Kit inspiration and source boundary are also
 recorded there; this project is not affiliated with Boring Software.
 
 [author]: https://x.com/legionsdev

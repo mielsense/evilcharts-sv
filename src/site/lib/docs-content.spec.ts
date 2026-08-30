@@ -24,6 +24,27 @@ const CHART_DOCS = ['layerchart', 'echarts'].flatMap((provider) =>
 );
 
 describe('copyable documentation', () => {
+	it('publishes provider credits and the per-chart mixing boundary', () => {
+		const introduction = pageBody('/docs');
+
+		expect(introduction).toContain('href="https://www.layerchart.com/"');
+		expect(introduction).toContain('href="https://echarts.apache.org/"');
+		expect(introduction).toContain('per-chart choice');
+		expect(introduction).toContain('mix both providers');
+		expect(introduction).toContain('must use parts from that same provider');
+	});
+
+	it('advertises the portable agent skill separately from Context7 and MCP', () => {
+		const introduction = pageBody('/docs');
+		const readme = readFileSync('README.md', 'utf8');
+		const command = 'npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte';
+
+		for (const content of [introduction, readme]) {
+			expect(content).toContain('Install the agent skill');
+			expect(content).toContain(command);
+		}
+	});
+
 	it('resolves every ECharts preview, source panel, and concrete install command', () => {
 		const providerPages = getPages().filter((page) => page.url.startsWith('/docs/echarts/'));
 		const registry = JSON.parse(readFileSync('registry.json', 'utf8')) as {

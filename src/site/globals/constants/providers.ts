@@ -12,7 +12,7 @@ export type Provider = (typeof PROVIDERS)[number];
 // Which engine the docs lead with for a first-time reader — the switcher falls back to
 // this on shared pages when there's no remembered provider yet. Agent surfaces don't use
 // it; they cite whichever provider is actually installable (see lib/agent-docs.ts).
-export const DEFAULT_PROVIDER: Provider = 'echarts';
+export const DEFAULT_PROVIDER: Provider = 'layerchart';
 
 interface ProviderMeta {
 	/** Folder name under content/docs, and the URL segment. */
