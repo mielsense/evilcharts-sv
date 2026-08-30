@@ -24,5 +24,10 @@ export const EvilSankeyChart: RootComponent & {
 });
 
 export type { LinkVariant, NodeLabelPosition } from './types.js';
-export type { SankeyData } from './layout.js';
+export {
+	SANKEY_VALIDATION_ERROR_CODE,
+	SANKEY_VALIDATION_ERROR_MESSAGE,
+	SankeyValidationError,
+	type SankeyData
+} from './layout.js';
 export type { ChartAccessibility, ChartConfig } from '../../ui/layerchart-chart/index.js';

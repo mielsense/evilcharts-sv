@@ -71,10 +71,18 @@ const centerY = (node: LaidOutNode) => node.y + node.dy / 2;
 
 const getValue = (entry: { value?: number } | undefined) => (entry && entry.value) || 0;
 
-const getSumOfIds = (links: LaidOutLink[], ids: number[]) =>
-	ids.reduce((result, id) => result + getValue(links[id]), 0);
+const getScaledValue = (entry: { value?: number } | undefined, valueScale: number) =>
+	getValue(entry) / valueScale;
 
-const getSumWithWeightedSource = (tree: LaidOutNode[], links: LaidOutLink[], ids: number[]) =>
+const getSumOfIds = (links: LaidOutLink[], ids: number[], valueScale: number) =>
+	ids.reduce((result, id) => result + getScaledValue(links[id], valueScale), 0);
+
+const getSumWithWeightedSource = (
+	tree: LaidOutNode[],
+	links: LaidOutLink[],
+	ids: number[],
+	valueScale: number
+) =>
 	ids.reduce((result, id) => {
 		const link = links[id];
 		if (link == null) return result;
@@ -82,10 +90,15 @@ const getSumWithWeightedSource = (tree: LaidOutNode[], links: LaidOutLink[], ids
 		const sourceNode = tree[link.source];
 		if (sourceNode == null) return result;
 
-		return result + centerY(sourceNode) * getValue(links[id]);
+		return result + centerY(sourceNode) * getScaledValue(link, valueScale);
 	}, 0);
 
-const getSumWithWeightedTarget = (tree: LaidOutNode[], links: LaidOutLink[], ids: number[]) =>
+const getSumWithWeightedTarget = (
+	tree: LaidOutNode[],
+	links: LaidOutLink[],
+	ids: number[],
+	valueScale: number
+) =>
 	ids.reduce((result, id) => {
 		const link = links[id];
 		if (link == null) return result;
@@ -93,24 +106,48 @@ const getSumWithWeightedTarget = (tree: LaidOutNode[], links: LaidOutLink[], ids
 		const targetNode = tree[link.target];
 		if (targetNode == null) return result;
 
-		return result + centerY(targetNode) * getValue(links[id]);
+		return result + centerY(targetNode) * getScaledValue(link, valueScale);
 	}, 0);
 
 const ascendingY = (a: LaidOutNode, b: LaidOutNode) => a.y - b.y;
 
-const INVALID_DATA_MESSAGE =
+export const SANKEY_VALIDATION_ERROR_CODE = 'INVALID_SANKEY_DATA' as const;
+export const SANKEY_VALIDATION_ERROR_MESSAGE =
 	'Sankey data must use integer in-range link endpoints, finite non-negative values, and contain no directed cycles.';
+
+/** Recognizable validation failure emitted before Sankey layout state is built. */
+export class SankeyValidationError extends RangeError {
+	readonly code = SANKEY_VALIDATION_ERROR_CODE;
+
+	constructor() {
+		super(SANKEY_VALIDATION_ERROR_MESSAGE);
+		this.name = 'SankeyValidationError';
+	}
+}
 
 type NodeConnections = Pick<
 	LaidOutNode,
 	'sourceNodes' | 'sourceLinks' | 'targetNodes' | 'targetLinks'
 >;
 
+function throwValidationError(): never {
+	throw new SankeyValidationError();
+}
+
+function getRepresentableSum(links: SankeyInputLink[], ids: number[]) {
+	let sum = 0;
+	for (const id of ids) {
+		sum += links[id].value;
+		if (!Number.isFinite(sum)) throwValidationError();
+	}
+	return sum;
+}
+
 /**
  * Rejects invalid graph input before any layout state is built.
  *
- * `computeSankey` exposes one stable `RangeError` contract for malformed links and cycles so
- * consumers never receive partial geometry.
+ * `computeSankey` exposes one stable `SankeyValidationError` contract for malformed links,
+ * unrepresentable aggregates or scales, and cycles so consumers never receive partial geometry.
  */
 function validateData(data: SankeyData) {
 	const connections: NodeConnections[] = data.nodes.map(() => ({
@@ -120,6 +157,8 @@ function validateData(data: SankeyData) {
 		targetLinks: []
 	}));
 	const incomingLinkCounts = data.nodes.map(() => 0);
+	let maximumValue = 0;
+	let minimumPositiveValue = Number.POSITIVE_INFINITY;
 
 	for (let linkIndex = 0; linkIndex < data.links.length; linkIndex++) {
 		const link = data.links[linkIndex];
@@ -133,14 +172,20 @@ function validateData(data: SankeyData) {
 		const hasValidValue = Number.isFinite(link.value) && link.value >= 0;
 
 		if (!hasValidEndpoints || !hasValidValue || link.source === link.target) {
-			throw new RangeError(INVALID_DATA_MESSAGE);
+			throwValidationError();
 		}
+		maximumValue = Math.max(maximumValue, link.value);
+		if (link.value > 0) minimumPositiveValue = Math.min(minimumPositiveValue, link.value);
 
 		connections[link.source].targetNodes.push(link.target);
 		connections[link.source].targetLinks.push(linkIndex);
 		connections[link.target].sourceNodes.push(link.source);
 		connections[link.target].sourceLinks.push(linkIndex);
 		incomingLinkCounts[link.target] += 1;
+	}
+
+	if (maximumValue > 0 && minimumPositiveValue / maximumValue === 0) {
+		throwValidationError();
 	}
 
 	const queue: number[] = [];
@@ -160,18 +205,33 @@ function validateData(data: SankeyData) {
 	}
 
 	if (topologicalOrder.length !== data.nodes.length) {
-		throw new RangeError(INVALID_DATA_MESSAGE);
+		throwValidationError();
 	}
 
-	return { connections, topologicalOrder };
+	const nodeValues = connections.map((connection) =>
+		Math.max(
+			getRepresentableSum(data.links, connection.sourceLinks),
+			getRepresentableSum(data.links, connection.targetLinks)
+		)
+	);
+
+	return {
+		connections,
+		nodeValues,
+		topologicalOrder,
+		// Geometry depends on relative flow. Scaling by the largest value keeps multiplication and
+		// division finite without changing the original values retained in renderer payloads.
+		valueScale: maximumValue > 0 ? maximumValue : 1
+	};
 }
 
 function getNodesTree(
-	{ nodes, links }: SankeyData,
+	{ nodes }: SankeyData,
 	width: number,
 	nodeWidth: number,
 	align: 'left' | 'justify',
 	connections: NodeConnections[],
+	nodeValues: number[],
 	topologicalOrder: number[]
 ) {
 	const tree = nodes.map((entry, index) => {
@@ -180,10 +240,7 @@ function getNodesTree(
 		return {
 			...entry,
 			...result,
-			value: Math.max(
-				getSumOfIds(links as LaidOutLink[], result.sourceLinks),
-				getSumOfIds(links as LaidOutLink[], result.targetLinks)
-			),
+			value: nodeValues[index],
 			depth: 0,
 			x: 0,
 			dx: nodeWidth,
@@ -239,11 +296,12 @@ function updateYOfTree(
 	height: number,
 	nodePadding: number,
 	links: SankeyInputLink[],
+	valueScale: number,
 	verticalAlign: 'justify' | 'top'
 ): LaidOutLink[] {
 	let yRatio: number | undefined;
 	for (const nodes of depthTree) {
-		const totalValue = nodes.reduce((sum, node) => sum + getValue(node), 0);
+		const totalValue = nodes.reduce((sum, node) => sum + getScaledValue(node, valueScale), 0);
 		if (totalValue > 0) {
 			const candidate = (height - (nodes.length - 1) * nodePadding) / totalValue;
 			yRatio = yRatio === undefined ? candidate : Math.min(yRatio, candidate);
@@ -258,7 +316,7 @@ function updateYOfTree(
 			let currentY = 0;
 			for (const node of nodes) {
 				if (node == null) continue;
-				node.dy = node.value * yRatio;
+				node.dy = getScaledValue(node, valueScale) * yRatio;
 				node.y = currentY;
 				currentY += node.dy + nodePadding;
 			}
@@ -267,12 +325,17 @@ function updateYOfTree(
 			nodes.forEach((node, index) => {
 				if (node == null) return;
 				node.y = index;
-				node.dy = node.value * yRatio;
+				node.dy = getScaledValue(node, valueScale) * yRatio;
 			});
 		}
 	}
 
-	return links.map((link) => ({ ...link, dy: getValue(link) * yRatio, sy: 0, ty: 0 }));
+	return links.map((link) => ({
+		...link,
+		dy: getScaledValue(link, valueScale) * yRatio,
+		sy: 0,
+		ty: 0
+	}));
 }
 
 function resolveCollisions(
@@ -318,6 +381,7 @@ function relaxLeftToRight(
 	tree: LaidOutNode[],
 	depthTree: LaidOutNode[][],
 	links: LaidOutLink[],
+	valueScale: number,
 	alpha: number
 ) {
 	for (const nodes of depthTree) {
@@ -325,9 +389,9 @@ function relaxLeftToRight(
 		for (const node of nodes) {
 			if (node == null || !node.sourceLinks.length) continue;
 
-			const sourceSum = getSumOfIds(links, node.sourceLinks);
+			const sourceSum = getSumOfIds(links, node.sourceLinks, valueScale);
 			if (sourceSum === 0) continue;
-			const weightedSum = getSumWithWeightedSource(tree, links, node.sourceLinks);
+			const weightedSum = getSumWithWeightedSource(tree, links, node.sourceLinks, valueScale);
 			const y = weightedSum / sourceSum;
 			node.y += (y - centerY(node)) * alpha;
 		}
@@ -338,6 +402,7 @@ function relaxRightToLeft(
 	tree: LaidOutNode[],
 	depthTree: LaidOutNode[][],
 	links: LaidOutLink[],
+	valueScale: number,
 	alpha: number
 ) {
 	for (let i = depthTree.length - 1; i >= 0; i--) {
@@ -347,9 +412,9 @@ function relaxRightToLeft(
 		for (const node of nodes) {
 			if (node == null || !node.targetLinks.length) continue;
 
-			const targetSum = getSumOfIds(links, node.targetLinks);
+			const targetSum = getSumOfIds(links, node.targetLinks, valueScale);
 			if (targetSum === 0) continue;
-			const weightedSum = getSumWithWeightedTarget(tree, links, node.targetLinks);
+			const weightedSum = getSumWithWeightedTarget(tree, links, node.targetLinks, valueScale);
 			const y = weightedSum / targetSum;
 			node.y += (y - centerY(node)) * alpha;
 		}
@@ -416,7 +481,7 @@ export type SankeyLayoutOptions = {
 /**
  * Runs the layout and returns the node rectangles and link bands ready to draw.
  *
- * @throws {RangeError} When a link is malformed or the graph contains a directed cycle.
+ * @throws {SankeyValidationError} When input is malformed, numerically unrepresentable, or cyclic.
  */
 export function computeSankey(options: SankeyLayoutOptions): {
 	nodes: SankeyNodeShape[];
@@ -437,24 +502,39 @@ export function computeSankey(options: SankeyLayoutOptions): {
 		top
 	} = options;
 
-	const { connections, topologicalOrder } = validateData(data);
+	const { connections, nodeValues, topologicalOrder, valueScale } = validateData(data);
 
 	if (data.nodes.length === 0 || !(width > 0) || !(height > 0)) {
 		return { nodes: [], links: [] };
 	}
 
-	const { tree } = getNodesTree(data, width, nodeWidth, align, connections, topologicalOrder);
+	const { tree } = getNodesTree(
+		data,
+		width,
+		nodeWidth,
+		align,
+		connections,
+		nodeValues,
+		topologicalOrder
+	);
 	const depthTree = getDepthTree(tree);
-	const links = updateYOfTree(depthTree, height, nodePadding, data.links, verticalAlign);
+	const links = updateYOfTree(
+		depthTree,
+		height,
+		nodePadding,
+		data.links,
+		valueScale,
+		verticalAlign
+	);
 
 	resolveCollisions(depthTree, height, nodePadding, sort);
 
 	if (verticalAlign === 'justify') {
 		let alpha = 1;
 		for (let i = 1; i <= iterations; i++) {
-			relaxRightToLeft(tree, depthTree, links, (alpha *= 0.99));
+			relaxRightToLeft(tree, depthTree, links, valueScale, (alpha *= 0.99));
 			resolveCollisions(depthTree, height, nodePadding, sort);
-			relaxLeftToRight(tree, depthTree, links, alpha);
+			relaxLeftToRight(tree, depthTree, links, valueScale, alpha);
 			resolveCollisions(depthTree, height, nodePadding, sort);
 		}
 	}
