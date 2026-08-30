@@ -4,7 +4,8 @@
 	 *
 	 * Each engine wears its own mark in its own brand colour.
 	 */
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import type { Component } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -100,7 +101,11 @@
 									<span class="truncate text-[11px] text-muted-foreground">{displayed.tagline}</span
 									>
 								</div>
-								<ChevronDown class="ml-auto opacity-60" />
+								<HugeiconsIcon
+									icon={ArrowDown01Icon}
+									aria-hidden="true"
+									class="ml-auto opacity-60"
+								/>
 							</button>
 						{/snippet}
 					</SidebarMenuButton>

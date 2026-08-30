@@ -1,7 +1,8 @@
 <script lang="ts">
 	/** Ported from `evilcharts/src/components/docs/charts/component-preview-tabs.tsx`. */
 	import type { Component, Snippet } from 'svelte';
-	import RotateCw from '@lucide/svelte/icons/rotate-cw';
+	import { RefreshIcon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import LanguageIcon from '$site/assets/language/language-icon.svelte';
 	import { Tabs, TabsList, TabsPanel, TabsTab } from '$site/components/ui/tabs/index.js';
 	import { useBreakpoint } from '$site/hooks/use-breakpoint.svelte.js';
@@ -57,7 +58,9 @@
 						aria-label="Reload preview"
 						class="flex size-3 shrink-0 translate-x-1 cursor-pointer items-center justify-center text-muted-foreground opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100 hover:text-foreground"
 					>
-						<RotateCw
+						<HugeiconsIcon
+							icon={RefreshIcon}
+							aria-hidden="true"
 							class="size-4! transition-transform duration-500 ease-out"
 							style={`transform: rotate(${reloadKey * 360}deg)`}
 						/>

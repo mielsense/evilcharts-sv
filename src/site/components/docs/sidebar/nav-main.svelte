@@ -10,7 +10,8 @@
 	 * Our `<Collapsible>` is state-driven, so the folder is opened once on mount and then left to
 	 * the reader — same behaviour, no special case.
 	 */
-	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { untrack } from 'svelte';
 	import { page } from '$app/state';
 	import {
@@ -161,7 +162,9 @@
 								>
 									{#if Icon}<Icon />{/if}
 									<span class="capitalize">{folder.name}</span>
-									<ChevronRight
+									<HugeiconsIcon
+										icon={ArrowRight01Icon}
+										aria-hidden="true"
 										class={cn(
 											'ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90',
 											hasActiveChild ? 'opacity-100' : 'opacity-60'
