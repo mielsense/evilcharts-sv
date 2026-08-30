@@ -32,6 +32,7 @@ vi.mock('@humanspeak/svelte-motion', async (importOriginal) => {
 });
 
 const NativeResizeObserver = window.ResizeObserver;
+const NativeMatchMedia = window.matchMedia;
 
 class StaticResizeObserver implements ResizeObserver {
 	disconnect() {}
@@ -53,12 +54,23 @@ async function flushLoads() {
 beforeEach(() => {
 	vi.useFakeTimers();
 	window.ResizeObserver = StaticResizeObserver;
+	window.matchMedia = vi.fn((query: string) => ({
+		matches: false,
+		media: query,
+		onchange: null,
+		addEventListener() {},
+		removeEventListener() {},
+		addListener() {},
+		removeListener() {},
+		dispatchEvent: () => true
+	}));
 	vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1200);
 	vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(900);
 });
 
 afterEach(() => {
 	window.ResizeObserver = NativeResizeObserver;
+	window.matchMedia = NativeMatchMedia;
 	vi.useRealTimers();
 	vi.restoreAllMocks();
 });
