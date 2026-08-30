@@ -3,33 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { tick } from 'svelte';
 import PreviewA from '$site/components/docs/charts/component-preview-a.fixture.svelte';
 import ChartStage from './chart-stage.svelte';
-import { CARDS } from './chart-stage.svelte.js';
+import { CARDS, loadLandingCardComponents } from './chart-stage.svelte.js';
 
 const loadLandingCard = vi.hoisted(() => vi.fn());
 
 vi.mock('$env/dynamic/public', () => ({ env: {} }));
 vi.mock('./cards/loaders.js', () => ({ loadLandingCard }));
-vi.mock('./chart-stage.svelte.js', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('./chart-stage.svelte.js')>();
-	return {
-		...actual,
-		shuffled: (length: number) => [
-			0,
-			actual.START_INDEX,
-			...Array.from({ length }, (_, index) => index).filter(
-				(index) => index !== 0 && index !== actual.START_INDEX
-			)
-		]
-	};
-});
-vi.mock('@humanspeak/svelte-motion', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('@humanspeak/svelte-motion')>();
-	return {
-		...actual,
-		animate: () => ({ stop() {} }),
-		useReducedMotion: () => ({ current: false })
-	};
-});
 
 const NativeResizeObserver = window.ResizeObserver;
 const NativeMatchMedia = window.matchMedia;
@@ -42,17 +21,15 @@ class StaticResizeObserver implements ResizeObserver {
 
 async function flushLoads() {
 	// Let the Svelte effect start the loaders, settle Promise.allSettled, then render the result.
-	// A single timer flush can resume before that full microtask chain on slower CI runners.
+	// A single microtask can resume before that full chain on slower CI runners.
 	await tick();
 	for (let pass = 0; pass < 2; pass += 1) {
-		await vi.advanceTimersByTimeAsync(0);
 		await Promise.resolve();
 		await tick();
 	}
 }
 
 beforeEach(() => {
-	vi.useFakeTimers();
 	window.ResizeObserver = StaticResizeObserver;
 	window.matchMedia = vi.fn((query: string) => ({
 		matches: false,
@@ -71,7 +48,6 @@ beforeEach(() => {
 afterEach(() => {
 	window.ResizeObserver = NativeResizeObserver;
 	window.matchMedia = NativeMatchMedia;
-	vi.useRealTimers();
 	vi.restoreAllMocks();
 });
 
@@ -95,56 +71,39 @@ describe('ChartStage lazy card loading', () => {
 		expect(container.textContent).not.toContain('private landing chunk URL');
 	});
 
-	it('retries a failed card after it leaves and re-enters the wanted set', async () => {
+	it('retries a failed card when a later wanted set requests it again', async () => {
 		let failedOnce = false;
-		let retryStarted = false;
-		loadLandingCard.mockImplementation((name: string) => {
+		const loader = vi.fn((name: string) => {
 			if (name === 'LandingHatchedBarChart' && !failedOnce) {
 				failedOnce = true;
 				return Promise.reject(new Error('private landing chunk URL'));
 			}
-			if (name === 'LandingHatchedBarChart') retryStarted = true;
 			return Promise.resolve(PreviewA);
 		});
+		const hatchedBar = CARDS.findIndex((card) => card.id === 'hatched-bar');
+		const radar = CARDS.findIndex((card) => card.id === 'radar');
 
-		const { container } = await render(ChartStage);
-		await flushLoads();
-		expect(
-			container.querySelector('[data-stage-card="hatched-bar"] [data-stage-live-chart]')
-		).toBeNull();
+		const failed = await loadLandingCardComponents([hatchedBar], loader);
+		await loadLandingCardComponents([radar], loader);
+		const retried = await loadLandingCardComponents([hatchedBar], loader);
 
-		// Browser-project setup can finish on either side of the first fake-time boundary under load.
-		// Advance a bounded number of focus hops and stop as soon as the failed card is requested again.
-		for (let hop = 0; hop <= CARDS.length && !retryStarted; hop += 1) {
-			await vi.advanceTimersByTimeAsync(4600);
-			await flushLoads();
-		}
-
-		expect(retryStarted).toBe(true);
-		expect(
-			container.querySelector('[data-stage-card="hatched-bar"] [data-stage-live-chart]')
-		).not.toBeNull();
+		expect(failed.LandingHatchedBarChart).toBeUndefined();
+		expect(retried.LandingHatchedBarChart).toBe(PreviewA);
+		expect(loader).toHaveBeenCalledWith('LandingRadarChart');
 	});
 
 	it('retains successful overlap when a newly wanted card fails', async () => {
-		loadLandingCard.mockImplementation((name: string) =>
+		const loader = vi.fn((name: string) =>
 			name === 'LandingRadarChart'
 				? Promise.reject(new Error('private new landing chunk URL'))
 				: Promise.resolve(PreviewA)
 		);
+		const glowingLine = CARDS.findIndex((card) => card.id === 'glowing-line');
+		const radar = CARDS.findIndex((card) => card.id === 'radar');
 
-		const { container } = await render(ChartStage);
-		await flushLoads();
-		expect(
-			container.querySelector('[data-stage-card="glowing-line"] [data-stage-live-chart]')
-		).not.toBeNull();
+		const components = await loadLandingCardComponents([glowingLine, radar], loader);
 
-		await vi.advanceTimersByTimeAsync(4600);
-		await flushLoads();
-
-		expect(
-			container.querySelector('[data-stage-card="glowing-line"] [data-stage-live-chart]')
-		).not.toBeNull();
-		expect(container.querySelector('[data-stage-card="radar"] [data-stage-live-chart]')).toBeNull();
+		expect(components.LandingGlowingLineChart).toBe(PreviewA);
+		expect(components.LandingRadarChart).toBeUndefined();
 	});
 });

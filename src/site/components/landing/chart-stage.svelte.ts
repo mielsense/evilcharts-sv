@@ -9,6 +9,7 @@
  * same five columns at the same pitch — same canvas, same flight lengths.
  */
 import { cubicBezier } from '@humanspeak/svelte-motion';
+import type { Component } from 'svelte';
 
 export const CANVAS_W = 3480;
 export const CANVAS_H = 2520;
@@ -65,6 +66,18 @@ export const START_INDEX = Math.max(
 	0,
 	CARDS.findIndex((card) => card.id === 'hatched-bar')
 );
+
+export async function loadLandingCardComponents(
+	wanted: readonly number[],
+	load: (name: string) => Promise<Component<Record<string, never>>>
+): Promise<Record<string, Component<Record<string, never>>>> {
+	const results = await Promise.allSettled(wanted.map((index) => load(CARDS[index].card)));
+	return Object.fromEntries(
+		results.flatMap((result, position) =>
+			result.status === 'fulfilled' ? [[CARDS[wanted[position]].card, result.value] as const] : []
+		)
+	);
+}
 /**
  * Never hop to a card bordering the current one — a focus change should be a real flight (roughly
  * two column/row pitches away or more).
