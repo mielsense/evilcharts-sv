@@ -29,7 +29,13 @@
 	import { LegendOverlay } from '../../ui/echarts-legend/index.js';
 	import { syncBrushOverlay, type BrushOverlayElements } from '../../ui/echarts-brush/index.js';
 	import { setEChartsAreaChartContext } from './area-chart-context.svelte.js';
-	import { buildAreaOption, createAreaLoadingData } from './option.js';
+	import {
+		buildAreaOption,
+		computeAreaPlottedTops,
+		createAreaLoadingData,
+		resolveAreaAtPixel,
+		type AreaOptionContext
+	} from './option.js';
 	import type {
 		BrushRegistration,
 		CurveType,
@@ -48,7 +54,7 @@
 		renderStyle = 'native',
 		ditherVariant = 'gradient',
 		ditherCellSize = 2,
-		bloom = 'none',
+		bloom = 'off',
 		xDataKey,
 		class: className,
 		curveType = 'linear',
@@ -101,8 +107,9 @@
 	);
 	let hoveredDataKey = $state<string | null>(null);
 	let introComplete = $state(false);
-	let hoverRevealIndex = $state<number | null>(null);
+	const revealState = { index: null as number | null };
 	let brushRange = $state({ start: 0, end: 100 });
+	let brushHover = $state({ inside: false, left: false, right: false });
 	let loadingData = $state.raw<number[]>(untrack(() => createAreaLoadingData(loadingPoints)));
 	const brushOverlayStore: { brushOverlay: BrushOverlayElements | null } = { brushOverlay: null };
 	let resolved = $state.raw<ResolvedColors>({
@@ -155,8 +162,8 @@
 		resolved = resolveColors(host, config, keys);
 	});
 
-	const option = $derived.by(() => {
-		const built = buildAreaOption({
+	function areaOptionContext(): AreaOptionContext {
+		return {
 			data,
 			config,
 			areas,
@@ -166,7 +173,7 @@
 			selectedDataKey,
 			enableHoverHighlight,
 			enableHoverReveal,
-			hoverRevealIndex,
+			hoverRevealIndex: revealState.index,
 			xAxis,
 			yAxis,
 			showGrid: chart.grids.size > 0,
@@ -185,7 +192,11 @@
 			ditherVariant,
 			ditherCellSize,
 			bloom
-		});
+		};
+	}
+
+	const option = $derived.by(() => {
+		const built = buildAreaOption(areaOptionContext());
 		return (chartOptions ? { ...built, ...chartOptions } : built) as EChartsCoreOption;
 	});
 
@@ -213,19 +224,149 @@
 		const last = Math.max(0, categoryValues.length - 1);
 		const startIndex = Math.round((brushRange.start / 100) * last);
 		const endIndex = Math.round((brushRange.end / 100) * last);
-		const format = brush.formatLabel ?? ((value: string) => value);
+		const format = brush.formatLabel;
 		syncBrushOverlay(chartInstance, brushOverlayStore, {
 			range: brushRange,
 			geom: { bottom: legend?.verticalAlign === 'bottom' ? 34 : 6, height: brush.height ?? 56 },
 			size: dimension,
 			tokens: resolved.tokens,
-			labels: {
-				start: format(categoryValues[startIndex] ?? '', startIndex),
-				end: format(categoryValues[endIndex] ?? '', endIndex)
-			},
-			showLabels: true,
-			hover: { left: false, right: false }
+			labels: format
+				? {
+						start: format(categoryValues[startIndex] ?? '', startIndex),
+						end: format(categoryValues[endIndex] ?? '', endIndex)
+					}
+				: null,
+			showLabels: brushHover.inside,
+			hover: brushHover
 		});
+	});
+
+	$effect(() => {
+		const chartInstance = instance;
+		const activeBrush = brush;
+		const currentLegend = legend;
+		const keys = seriesKeys;
+		const revealEnabled = enableHoverReveal;
+		const highlightEnabled = enableHoverHighlight;
+		if (!chartInstance) return;
+		const renderer = chartInstance.getZr();
+		const context = areaOptionContext();
+		const tops = computeAreaPlottedTops(context);
+		const base = buildAreaOption({ ...context, hoverRevealIndex: null });
+		const baseSeries = Array.isArray(base.series) ? base.series : base.series ? [base.series] : [];
+		const revealValues = new Map(
+			keys.map((key) => {
+				const entry = baseSeries.find(
+					(series) => String((series as { id?: unknown }).id ?? '') === key
+				);
+				const values = Array.isArray((entry as { data?: unknown[] } | undefined)?.data)
+					? ((entry as { data: unknown[] }).data ?? [])
+					: [];
+				return [key, values] as const;
+			})
+		);
+
+		const applyHoverKey = (key: string | null) => {
+			if (hoveredDataKey === key) return;
+			const previous = hoveredDataKey;
+			hoveredDataKey = key;
+			if (previous) {
+				chartInstance.dispatchAction({ type: 'downplay', seriesId: previous });
+				chartInstance.dispatchAction({ type: 'downplay', seriesId: `__buffer-${previous}` });
+			}
+			if (key) {
+				chartInstance.dispatchAction({ type: 'highlight', seriesId: key });
+				chartInstance.dispatchAction({ type: 'highlight', seriesId: `__buffer-${key}` });
+			}
+		};
+
+		const pushReveal = (index: number | null) => {
+			const updates = keys.flatMap((key) => {
+				const values = revealValues.get(key) ?? [];
+				return [
+					{
+						id: key,
+						data:
+							index === null
+								? values
+								: values.map((value, valueIndex) => (valueIndex > index ? null : value))
+					},
+					{
+						id: `__reveal-${key}`,
+						data:
+							index === null
+								? values
+								: values.map((value, valueIndex) => (valueIndex < index ? null : value)),
+						lineStyle: { opacity: index === null ? 0 : 0.3 }
+					}
+				];
+			});
+			chartInstance.setOption({ series: updates }, { silent: true });
+			for (const key of keys) {
+				chartInstance.dispatchAction(
+					index === null
+						? { type: 'downplay', seriesId: key }
+						: { type: 'highlight', seriesId: key, dataIndex: index }
+				);
+			}
+		};
+
+		const clearReveal = () => {
+			if (revealState.index === null) return;
+			revealState.index = null;
+			pushReveal(null);
+		};
+
+		const move = (event: { offsetX?: number; offsetY?: number }) => {
+			const x = event.offsetX ?? -1;
+			const y = event.offsetY ?? -1;
+			if (activeBrush && !isLoading) {
+				const height = activeBrush.height ?? 56;
+				const bottom = currentLegend?.verticalAlign === 'bottom' ? 34 : 6;
+				const top = chartInstance.getHeight() - bottom - height;
+				const inside = y >= top - 4 && y <= top + height + 4;
+				const trackWidth = Math.max(chartInstance.getWidth() - 16, 1);
+				const leftX = 8 + (trackWidth * brushRange.start) / 100;
+				const rightX = 8 + (trackWidth * brushRange.end) / 100;
+				brushHover = {
+					inside,
+					left: inside && Math.abs(x - leftX) <= 8,
+					right: inside && Math.abs(x - rightX) <= 8
+				};
+			}
+
+			if (revealEnabled) {
+				if (!chartInstance.containPixel({ gridIndex: 0 }, [x, y])) {
+					clearReveal();
+					return;
+				}
+				const converted = chartInstance.convertFromPixel({ gridIndex: 0 }, [x, y]);
+				const raw = Array.isArray(converted) ? converted[0] : converted;
+				if (typeof raw !== 'number') return;
+				const index = Math.max(0, Math.min(data.length - 1, Math.round(raw)));
+				if (index === revealState.index) return;
+				revealState.index = index;
+				pushReveal(index);
+				return;
+			}
+
+			if (highlightEnabled && selectedDataKey === null) {
+				applyHoverKey(resolveAreaAtPixel(chartInstance, tops, keys, x, y));
+			}
+		};
+
+		const out = () => {
+			brushHover = { inside: false, left: false, right: false };
+			if (revealEnabled) clearReveal();
+			else if (highlightEnabled) applyHoverKey(null);
+		};
+
+		renderer.on('mousemove', move);
+		renderer.on('globalout', out);
+		return () => {
+			renderer.off('mousemove', move);
+			renderer.off('globalout', out);
+		};
 	});
 
 	function toggleSelection(key: string) {
@@ -246,20 +387,31 @@
 
 	const events = $derived({
 		click: (params: unknown) => {
-			const key = eventSeriesKey(params);
+			let key = eventSeriesKey(params);
+			if (instance && params && typeof params === 'object') {
+				const event = (params as { event?: { offsetX?: unknown; offsetY?: unknown } }).event;
+				if (typeof event?.offsetX === 'number' && typeof event.offsetY === 'number') {
+					key =
+						resolveAreaAtPixel(
+							instance,
+							computeAreaPlottedTops(areaOptionContext()),
+							seriesKeys,
+							event.offsetX,
+							event.offsetY
+						) ?? key;
+				}
+			}
 			if (key) toggleSelection(key);
 		},
 		mouseover: (params: unknown) => {
-			if (selectedDataKey !== null) return;
-			if (enableHoverHighlight) hoveredDataKey = eventSeriesKey(params);
-			if (enableHoverReveal && params && typeof params === 'object') {
-				const index = (params as { dataIndex?: unknown }).dataIndex;
-				hoverRevealIndex = typeof index === 'number' ? index : null;
+			if (!enableHoverHighlight || enableHoverReveal || selectedDataKey !== null || !instance)
+				return;
+			const nativeKey = eventSeriesKey(params);
+			if (nativeKey && nativeKey !== hoveredDataKey) {
+				instance.dispatchAction({ type: 'downplay', seriesId: nativeKey });
+				if (hoveredDataKey)
+					instance.dispatchAction({ type: 'highlight', seriesId: hoveredDataKey });
 			}
-		},
-		mouseout: () => {
-			hoveredDataKey = null;
-			hoverRevealIndex = null;
 		},
 		datazoom: () => {
 			const zoom = (instance?.getOption() as { dataZoom?: { start?: number; end?: number }[] })

@@ -100,4 +100,3 @@ export function tooltipBaseOption(params: {
 		position: resolveTooltipPosition(position)
 	};
 }
-

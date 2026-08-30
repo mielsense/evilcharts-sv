@@ -2,7 +2,12 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { untrack, type Snippet } from 'svelte';
 	import type { EChartsCoreOption, EChartsType } from 'echarts/core';
-	import { AriaComponent, DataZoomComponent, GridComponent, TooltipComponent } from 'echarts/components';
+	import {
+		AriaComponent,
+		DataZoomComponent,
+		GridComponent,
+		TooltipComponent
+	} from 'echarts/components';
 	import { LineChart } from 'echarts/charts';
 	import * as echarts from 'echarts/core';
 	import {
@@ -13,18 +18,24 @@
 		RegistrationSet,
 		resolveColors,
 		setEChartsSharedSlotContext,
+		withAlpha,
 		type ChartAccessibility,
 		type ChartConfig,
 		type EChartsRenderer,
 		type EChartsRenderStyle,
 		type ResolvedColors
 	} from '../../ui/echarts-chart/index.js';
-	import type { DitherVariant } from '../../ui/echarts-dither/index.js';
-	import { LegendOverlay, type LegendProps } from '../../ui/echarts-legend/index.js';
-	import type { TooltipProps } from '../../ui/echarts-tooltip/index.js';
-	import type { BrushProps } from '../../ui/echarts-brush/index.js';
+	import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
+	import { LegendOverlay } from '../../ui/echarts-legend/index.js';
+	import { syncBrushOverlay, type BrushOverlayElements } from '../../ui/echarts-brush/index.js';
 	import { setEChartsLineChartContext } from './line-chart-context.svelte.js';
 	import { buildLineOption, createLineLoadingData } from './option.js';
+	import {
+		companionSeriesIds,
+		resolveEventSeriesKey,
+		sliceFromIndex,
+		sliceToIndex
+	} from './interactions.js';
 	import type {
 		BrushRegistration,
 		CurveType,
@@ -42,6 +53,7 @@
 		renderStyle = 'native',
 		ditherVariant = 'gradient',
 		ditherCellSize = 2,
+		bloom = 'off',
 		xDataKey,
 		class: className,
 		curveType = 'linear',
@@ -63,6 +75,7 @@
 		renderStyle?: EChartsRenderStyle;
 		ditherVariant?: DitherVariant;
 		ditherCellSize?: number;
+		bloom?: DitherBloom;
 		xDataKey?: string;
 		class?: string;
 		curveType?: CurveType;
@@ -85,8 +98,16 @@
 	let instance = $state.raw<EChartsType>();
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
 	let hoveredDataKey = $state<string | null>(null);
-	let hoverRevealIndex = $state<number | null>(null);
+	let hoverRevealIndex: number | null = null;
+	let introComplete = $state(false);
+	let previousLoading = untrack(() => isLoading);
 	let brushRange = $state({ start: 0, end: 100 });
+	let loadingData = $state.raw<number[]>(untrack(() => createLineLoadingData(loadingPoints)));
+	let brushOverlayInstance: EChartsType | undefined;
+	let brushHover = { inside: false, left: false, right: false };
+	const brushOverlayStore: { brushOverlay: BrushOverlayElements | null } = { brushOverlay: null };
+	const revealValues: Record<string, unknown[]> = {};
+	let seriesKeyByIndex: (string | undefined)[] = [];
 	let resolved = $state.raw<ResolvedColors>({
 		series: {},
 		tokens: {
@@ -103,7 +124,8 @@
 	const brushSlots = new RegistrationSet<BrushRegistration>();
 	setEChartsSharedSlotContext({
 		register(slot, token, getter) {
-			if (slot === 'tooltip') return tooltipSlots.register(token, getter as () => TooltipRegistration);
+			if (slot === 'tooltip')
+				return tooltipSlots.register(token, getter as () => TooltipRegistration);
 			if (slot === 'legend') return legendSlots.register(token, getter as () => LegendRegistration);
 			return brushSlots.register(token, getter as () => BrushRegistration);
 		}
@@ -116,7 +138,23 @@
 	const tooltip = $derived(tooltipSlots.first);
 	const legend = $derived(legendSlots.first);
 	const brush = $derived(brushSlots.first);
-	const loadingData = $derived(createLineLoadingData(loadingPoints));
+	const effectiveAnimation = $derived(lines[0]?.animationType ?? animationType);
+	const categoryValues = $derived.by(() => {
+		const series = new Set(lines.map((line) => line.dataKey));
+		const key =
+			xAxis?.dataKey ?? xDataKey ?? Object.keys(data[0] ?? {}).find((item) => !series.has(item));
+		return data.map((row, index) => String((key ? row[key] : undefined) ?? index));
+	});
+
+	$effect(() => {
+		loadingData = createLineLoadingData(loadingPoints);
+	});
+
+	$effect(() => {
+		const loadingNow = isLoading;
+		if (previousLoading && !loadingNow) introComplete = false;
+		previousLoading = loadingNow;
+	});
 
 	$effect(() => {
 		void themeRevision;
@@ -127,6 +165,7 @@
 	});
 
 	const option = $derived.by(() => {
+		for (const key of Object.keys(revealValues)) delete revealValues[key];
 		const built = buildLineOption({
 			data,
 			config,
@@ -136,7 +175,7 @@
 			selectedDataKey,
 			enableHoverHighlight,
 			enableHoverReveal,
-			hoverRevealIndex,
+			hoverRevealIndex: null,
 			xAxis,
 			yAxis,
 			showGrid: chart.grids.size > 0,
@@ -147,43 +186,126 @@
 			isLoading,
 			loadingData,
 			resolved,
-			animation,
+			animation: animation && !introComplete,
 			animationType,
 			reducedMotion: prefersReducedMotion.current,
+			rendererSize: dimension,
 			renderStyle,
 			ditherVariant,
-			ditherCellSize
+			ditherCellSize,
+			bloom,
+			getHoveredDataKey: () => hoveredDataKey,
+			revealSink: revealValues
 		});
-		return (chartOptions ? { ...built, ...chartOptions } : built) as EChartsCoreOption;
+		seriesKeyByIndex = (Array.isArray(built.series) ? built.series : [built.series])
+			.filter(Boolean)
+			.map((series) => {
+				const id = (series as { id?: unknown }).id;
+				return typeof id === 'string' && !id.startsWith('__') ? id : undefined;
+			});
+		const merged = chartOptions ? { ...built, ...chartOptions } : built;
+		return {
+			...merged,
+			animation: built.animation,
+			animationDuration: built.animationDuration,
+			animationDurationUpdate: built.animationDurationUpdate
+		} as EChartsCoreOption;
 	});
 
-	function toggleSelection(key: string) {
-		if (!lines.some((line) => line.dataKey === key && line.isClickable) && !legend?.isClickable) {
+	$effect(() => {
+		if (introComplete || !instance || lines.length === 0 || isLoading) return;
+		if (!animation || effectiveAnimation === 'none' || prefersReducedMotion.current) {
+			introComplete = true;
 			return;
 		}
+		const timer = window.setTimeout(() => (introComplete = true), 1000);
+		return () => window.clearTimeout(timer);
+	});
+
+	function syncBrushOverlayNow() {
+		const chartInstance = instance;
+		if (!chartInstance) return;
+		if (brushOverlayInstance !== chartInstance) {
+			brushOverlayStore.brushOverlay = null;
+			brushOverlayInstance = chartInstance;
+		}
+		if (!brush || isLoading) {
+			syncBrushOverlay(chartInstance, brushOverlayStore, null);
+			return;
+		}
+		const last = Math.max(0, categoryValues.length - 1);
+		const startIndex = Math.round((brushRange.start / 100) * last);
+		const endIndex = Math.round((brushRange.end / 100) * last);
+		const format = brush.formatLabel;
+		syncBrushOverlay(chartInstance, brushOverlayStore, {
+			range: brushRange,
+			geom: { bottom: legend?.verticalAlign === 'bottom' ? 34 : 6, height: brush.height ?? 56 },
+			size: dimension,
+			tokens: resolved.tokens,
+			labels: format
+				? {
+						start: format(categoryValues[startIndex] ?? '', startIndex),
+						end: format(categoryValues[endIndex] ?? '', endIndex)
+					}
+				: null,
+			showLabels: brushHover.inside,
+			hover: brushHover
+		});
+	}
+
+	$effect(() => {
+		void brushRange;
+		void dimension;
+		void resolved;
+		void categoryValues;
+		syncBrushOverlayNow();
+	});
+
+	function companionsFor(key: string): string[] {
+		const line = lines.find((candidate) => candidate.dataKey === key);
+		return line ? companionSeriesIds(line, enableHoverReveal, data.length) : [];
+	}
+
+	function clearHoveredSeries() {
+		const key = hoveredDataKey;
+		if (key && instance) {
+			for (const seriesId of companionsFor(key)) {
+				instance.dispatchAction({ type: 'downplay', seriesId });
+			}
+		}
+		hoveredDataKey = null;
+	}
+
+	function toggleSelection(key: string) {
+		clearHoveredSeries();
 		selectedDataKey = selectedDataKey === key ? null : key;
 		onSelectionChange?.(selectedDataKey);
 	}
 
-	function eventSeriesKey(params: unknown): string | null {
-		if (!params || typeof params !== 'object') return null;
-		const id = (params as { seriesId?: unknown }).seriesId;
-		if (typeof id !== 'string' || id.startsWith('__')) return null;
-		return id;
+	function toggleLegendSelection(key: string) {
+		if (legend?.isClickable) toggleSelection(key);
 	}
 
 	const events = $derived({
 		click: (params: unknown) => {
-			const key = eventSeriesKey(params);
-			if (key) toggleSelection(key);
+			const key = resolveEventSeriesKey(params, seriesKeyByIndex);
+			if (key && lines.some((line) => line.dataKey === key && line.isClickable)) {
+				toggleSelection(key);
+			}
 		},
 		mouseover: (params: unknown) => {
 			if (!enableHoverHighlight || enableHoverReveal || selectedDataKey !== null) return;
-			hoveredDataKey = eventSeriesKey(params);
+			const key = resolveEventSeriesKey(params, seriesKeyByIndex);
+			if (!key || key === hoveredDataKey) return;
+			clearHoveredSeries();
+			hoveredDataKey = key;
+			if (instance) {
+				for (const seriesId of companionsFor(key)) {
+					instance.dispatchAction({ type: 'highlight', seriesId });
+				}
+			}
 		},
-		mouseout: () => {
-			hoveredDataKey = null;
-		},
+		mouseout: clearHoveredSeries,
 		datazoom: () => {
 			const zoom = (instance?.getOption() as { dataZoom?: { start?: number; end?: number }[] })
 				?.dataZoom?.[0];
@@ -195,25 +317,100 @@
 				startIndex: Math.round((brushRange.start / 100) * last),
 				endIndex: Math.round((brushRange.end / 100) * last)
 			});
-		},
-		updateAxisPointer: (params: unknown) => {
-			if (!enableHoverReveal || !params || typeof params !== 'object') return;
-			const axesInfo = (params as { axesInfo?: Array<{ value?: unknown }> }).axesInfo;
-			const value = axesInfo?.[0]?.value;
-			const categoryDataKey =
-				xDataKey ??
-				xAxis?.dataKey ??
-				Object.keys(data[0] ?? {}).find((key) => !seriesKeys.includes(key));
-			const categoryIndex = data.findIndex(
-				(row) => String(categoryDataKey ? row[categoryDataKey] : '') === String(value)
-			);
-			const numericIndex = typeof value === 'number' ? value : Number(value);
-			const index = categoryIndex >= 0 ? categoryIndex : numericIndex;
-			hoverRevealIndex = Number.isInteger(index) ? index : null;
-		},
-		globalout: () => {
-			hoverRevealIndex = null;
 		}
+	});
+
+	$effect(() => {
+		const chartInstance = instance;
+		if (!chartInstance) return;
+		hoverRevealIndex = null;
+		hoveredDataKey = null;
+		brushHover = { inside: false, left: false, right: false };
+		const renderer = chartInstance.getZr();
+		const pushReveal = (index: number | null) => {
+			const active = index !== null;
+			chartInstance.setOption(
+				{
+					series: seriesKeys.flatMap((key) => {
+						const values = revealValues[key] ?? [];
+						return [
+							{
+								id: key,
+								data: active ? sliceToIndex(values, index) : values
+							},
+							{
+								id: `__reveal-base-${key}`,
+								data: active ? sliceFromIndex(values, index) : values,
+								lineStyle: { opacity: active ? 0.3 : 0 }
+							}
+						];
+					})
+				},
+				{ silent: true }
+			);
+			for (const key of seriesKeys) {
+				chartInstance.dispatchAction(
+					active
+						? { type: 'highlight', seriesId: key, dataIndex: index }
+						: { type: 'downplay', seriesId: key }
+				);
+			}
+		};
+		const clearReveal = () => {
+			if (hoverRevealIndex === null) return;
+			hoverRevealIndex = null;
+			pushReveal(null);
+		};
+		const onMove = (event: { offsetX?: number; offsetY?: number }) => {
+			const x = event.offsetX ?? -1;
+			const y = event.offsetY ?? -1;
+			if (enableHoverReveal) {
+				if (data.length > 0 && chartInstance.containPixel({ gridIndex: 0 }, [x, y])) {
+					const raw = chartInstance.convertFromPixel({ gridIndex: 0 }, [x, y])[0];
+					const index = Math.max(0, Math.min(data.length - 1, Math.round(Number(raw))));
+					if (index !== hoverRevealIndex) {
+						hoverRevealIndex = index;
+						pushReveal(index);
+					}
+				} else {
+					clearReveal();
+				}
+			}
+
+			if (!brush || isLoading) return;
+			const height = brush.height ?? 56;
+			const bottom = legend?.verticalAlign === 'bottom' ? 34 : 6;
+			const top = chartInstance.getHeight() - bottom - height;
+			const inside = y >= top - 4 && y <= top + height + 4;
+			const trackWidth = Math.max(chartInstance.getWidth() - 16, 1);
+			const left = 8 + (trackWidth * brushRange.start) / 100;
+			const right = 8 + (trackWidth * brushRange.end) / 100;
+			const next = {
+				inside,
+				left: inside && Math.abs(x - left) <= 8,
+				right: inside && Math.abs(x - right) <= 8
+			};
+			if (
+				next.inside !== brushHover.inside ||
+				next.left !== brushHover.left ||
+				next.right !== brushHover.right
+			) {
+				brushHover = next;
+				syncBrushOverlayNow();
+			}
+		};
+		const onOut = () => {
+			clearReveal();
+			brushHover = { inside: false, left: false, right: false };
+			syncBrushOverlayNow();
+		};
+		renderer.on('mousemove', onMove);
+		renderer.on('globalout', onOut);
+		return () => {
+			clearReveal();
+			renderer.off('mousemove', onMove);
+			renderer.off('globalout', onOut);
+		};
 	});
 
 	$effect(() => {
@@ -221,7 +418,15 @@
 		const animatedKeys = lines
 			.filter((line) => line.strokeVariant === 'animated-dashed' && !line.enableBufferLine)
 			.map((line) => line.dataKey);
-		if (!chartInstance || isLoading || selectedDataKey !== null || animatedKeys.length === 0) return;
+		if (
+			!chartInstance ||
+			isLoading ||
+			selectedDataKey !== null ||
+			animatedKeys.length === 0 ||
+			prefersReducedMotion.current ||
+			!introComplete
+		)
+			return;
 		let frame = 0;
 		const start = performance.now();
 		const tick = (now: number) => {
@@ -240,26 +445,40 @@
 		const chartInstance = instance;
 		if (!chartInstance || !isLoading) return;
 		let frame = 0;
+		let lastPhase = 0;
 		const start = performance.now();
 		const tick = (now: number) => {
 			const phase = ((now - start) / 2000) % 1;
+			if (phase < lastPhase) loadingData = createLineLoadingData(loadingPoints);
+			lastPhase = phase;
 			const width = chartInstance.getWidth();
-			const center = phase * 1.4 - 0.2;
+			const height = chartInstance.getHeight();
+			if (!width || !height) {
+				frame = requestAnimationFrame(tick);
+				return;
+			}
+			const maxT = (width + height) / (2 * width);
+			const center = phase * (maxT + 0.4) - 0.2;
 			const color = resolved.tokens.foreground;
-			const stops = [
-				{ offset: 0, color: 'transparent' },
-				{ offset: Math.max(0, center - 0.2), color: 'transparent' },
-				{ offset: Math.max(0, Math.min(1, center)), color },
-				{ offset: Math.min(1, center + 0.2), color: 'transparent' },
-				{ offset: 1, color: 'transparent' }
-			].sort((left, right) => left.offset - right.offset);
+			const alphaAt = (offset: number) => {
+				const distance = Math.abs(offset - center);
+				if (distance >= 0.2) return 0;
+				return 0.5 * Math.sin(((1 - distance / 0.2) * Math.PI) / 2);
+			};
+			const stops = [0, center - 0.2, center, center + 0.2, 1]
+				.filter((offset) => offset >= 0 && offset <= 1)
+				.sort((left, right) => left - right)
+				.filter((offset, index, values) => index === 0 || offset - values[index - 1] > 0.0001)
+				.map((offset) => ({ offset, color: withAlpha(color, alphaAt(offset)) }));
 			chartInstance.setOption(
 				{
 					series: [
 						{
 							id: '__loading',
+							data: loadingData,
 							lineStyle: {
-								color: new echarts.graphic.LinearGradient(0, 0, Math.max(width, 1), Math.max(width, 1), stops, true)
+								color: new echarts.graphic.LinearGradient(0, 0, width, width, stops, true),
+								width: 1
 							}
 						}
 					]
@@ -302,7 +521,7 @@
 			selectedKey={selectedDataKey}
 			hoveredKey={hoveredDataKey}
 			isClickable={legend.isClickable}
-			onToggle={toggleSelection}
+			onToggle={toggleLegendSelection}
 			style={legendStyle}
 		/>
 	{/if}

@@ -52,7 +52,7 @@
 
 	$effect.pre(() => validateChartConfigColors(config));
 
-	function observeTheme(node: HTMLElement) {
+	function observeTheme(_node: HTMLElement) {
 		const observer = new MutationObserver(() => {
 			themeRevision += 1;
 		});
@@ -73,7 +73,11 @@
 	aria-label={accessibility?.label}
 	aria-labelledby={accessibility?.labelledBy}
 	aria-describedby={describedBy}
-	class={cn('relative flex min-h-0 w-full flex-1 flex-col justify-center text-xs', !footer && 'aspect-video', className)}
+	class={cn(
+		'relative flex min-h-0 w-full flex-1 flex-col justify-center text-xs',
+		!footer && 'aspect-video',
+		className
+	)}
 	{...restProps}
 >
 	{#if accessibility?.description}
@@ -89,4 +93,3 @@
 	</div>
 	{@render footer?.()}
 </div>
-

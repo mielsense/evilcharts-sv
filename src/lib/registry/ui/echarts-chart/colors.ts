@@ -37,8 +37,7 @@ export function buildChartCss(id: string, config: ChartConfig): string {
 
 	return Object.entries(THEMES)
 		.map(
-			([theme, prefix]) =>
-				`${prefix} [data-chart=${id}] {\n${variablesFor(theme as ThemeKey)}\n}`
+			([theme, prefix]) => `${prefix} [data-chart=${id}] {\n${variablesFor(theme as ThemeKey)}\n}`
 		)
 		.join('\n');
 }
@@ -100,8 +99,7 @@ export function resolveColors(
 	}
 
 	const probe = document.createElement('span');
-	probe.style.cssText =
-		'position:absolute;width:0;height:0;visibility:hidden;pointer-events:none;';
+	probe.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden;pointer-events:none;';
 	container.appendChild(probe);
 	const readToken = (className: string) => {
 		probe.className = className;

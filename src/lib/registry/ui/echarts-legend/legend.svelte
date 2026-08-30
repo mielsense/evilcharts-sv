@@ -30,4 +30,3 @@
 		slots.register('legend', token, () => ({ variant, align, verticalAlign, isClickable }))
 	);
 </script>
-

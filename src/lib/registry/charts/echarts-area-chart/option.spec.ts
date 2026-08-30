@@ -122,10 +122,10 @@ describe('buildAreaOption', () => {
 
 	test('applies bloom only to dither geometry', () => {
 		const dither = buildAreaOption(
-			context({ renderStyle: 'dither', bloom: 'strong', stackType: 'default' })
+			context({ renderStyle: 'dither', bloom: 'aura', stackType: 'default' })
 		);
 		const native = buildAreaOption(
-			context({ renderStyle: 'native', bloom: 'strong', stackType: 'default' })
+			context({ renderStyle: 'native', bloom: 'aura', stackType: 'default' })
 		);
 		const shadow = (option: ReturnType<typeof buildAreaOption>) =>
 			(option.series as Array<{ id?: string; lineStyle?: { shadowBlur?: number } }>).find(
@@ -140,7 +140,7 @@ describe('buildAreaOption', () => {
 			context({ enableHoverReveal: true, hoverRevealIndex: 0, stackType: 'default' })
 		);
 		const series = option.series as Array<{ id?: string; data?: unknown[] }>;
-		expect(series.some((entry) => entry.id === '__reveal-base-desktop')).toBe(true);
+		expect(series.some((entry) => entry.id === '__reveal-desktop')).toBe(true);
 		expect(series.find((entry) => entry.id === 'desktop')?.data).toEqual([30, null]);
 	});
 
@@ -164,7 +164,7 @@ describe('buildAreaOption', () => {
 		);
 		const series = option.series as Array<{ id?: string; showSymbol?: boolean }>;
 		expect(series.find((entry) => entry.id === '__buffer-desktop')?.showSymbol).toBe(true);
-		expect(series.some((entry) => entry.id === '__buffer-fill-desktop')).toBe(true);
+		expect(series.some((entry) => entry.id === '__bufferfill-desktop')).toBe(true);
 
 		const formatter = (option.tooltip as { formatter?: (value: unknown) => string }).formatter;
 		const html = formatter?.([

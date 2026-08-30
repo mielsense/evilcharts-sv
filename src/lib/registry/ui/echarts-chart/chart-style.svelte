@@ -7,6 +7,5 @@
 </script>
 
 {#if css}
-	<svelte:element this={'style'}>{css}</svelte:element>
+	<svelte:element this={"style"}>{css}</svelte:element>
 {/if}
-

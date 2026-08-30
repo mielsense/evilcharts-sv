@@ -7,4 +7,3 @@
 	const slots = useEChartsLineSlots();
 	$effect(() => slots.activeDots.register(token, () => ({ variant })));
 </script>
-
