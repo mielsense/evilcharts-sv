@@ -16,8 +16,8 @@ This page records changes to the Svelte port, its registry, and its documentatio
 - Added a provider switcher so readers can move between matching LayerChart and ECharts pages.
 - Fixed production renderer registration so Canvas and SVG charts still initialize after
   tree-shaking.
-- Kept the LayerChart area loading curve fixed while one synchronized shimmer moves across its
-  stroke and gradient fill.
+- Kept the LayerChart area loading curve fixed while one shared shimmer mask animates its
+  Line-style top stroke and the gradient fill beneath it as a single unit.
 
 ## 2026-08-27
 
