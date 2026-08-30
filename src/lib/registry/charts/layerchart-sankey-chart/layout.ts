@@ -98,47 +98,84 @@ const getSumWithWeightedTarget = (tree: LaidOutNode[], links: LaidOutLink[], ids
 
 const ascendingY = (a: LaidOutNode, b: LaidOutNode) => a.y - b.y;
 
-function searchTargetsAndSources(links: SankeyInputLink[], id: number) {
-	const sourceNodes: number[] = [];
-	const sourceLinks: number[] = [];
-	const targetNodes: number[] = [];
-	const targetLinks: number[] = [];
+const INVALID_DATA_MESSAGE =
+	'Sankey data must use integer in-range link endpoints, finite non-negative values, and contain no directed cycles.';
 
-	for (let i = 0, len = links.length; i < len; i++) {
-		const link = links[i];
-		if (link?.source === id) {
-			targetNodes.push(link.target);
-			targetLinks.push(i);
+type NodeConnections = Pick<
+	LaidOutNode,
+	'sourceNodes' | 'sourceLinks' | 'targetNodes' | 'targetLinks'
+>;
+
+/**
+ * Rejects invalid graph input before any layout state is built.
+ *
+ * `computeSankey` exposes one stable `RangeError` contract for malformed links and cycles so
+ * consumers never receive partial geometry.
+ */
+function validateData(data: SankeyData) {
+	const connections: NodeConnections[] = data.nodes.map(() => ({
+		sourceNodes: [],
+		sourceLinks: [],
+		targetNodes: [],
+		targetLinks: []
+	}));
+	const incomingLinkCounts = data.nodes.map(() => 0);
+
+	for (let linkIndex = 0; linkIndex < data.links.length; linkIndex++) {
+		const link = data.links[linkIndex];
+		const hasValidEndpoints =
+			Number.isInteger(link.source) &&
+			link.source >= 0 &&
+			link.source < data.nodes.length &&
+			Number.isInteger(link.target) &&
+			link.target >= 0 &&
+			link.target < data.nodes.length;
+		const hasValidValue = Number.isFinite(link.value) && link.value >= 0;
+
+		if (!hasValidEndpoints || !hasValidValue || link.source === link.target) {
+			throw new RangeError(INVALID_DATA_MESSAGE);
 		}
-		if (link?.target === id) {
-			sourceNodes.push(link.source);
-			sourceLinks.push(i);
+
+		connections[link.source].targetNodes.push(link.target);
+		connections[link.source].targetLinks.push(linkIndex);
+		connections[link.target].sourceNodes.push(link.source);
+		connections[link.target].sourceLinks.push(linkIndex);
+		incomingLinkCounts[link.target] += 1;
+	}
+
+	const queue: number[] = [];
+	for (let nodeIndex = 0; nodeIndex < incomingLinkCounts.length; nodeIndex++) {
+		if (incomingLinkCounts[nodeIndex] === 0) queue.push(nodeIndex);
+	}
+
+	const topologicalOrder: number[] = [];
+	for (let queueIndex = 0; queueIndex < queue.length; queueIndex++) {
+		const nodeIndex = queue[queueIndex];
+		topologicalOrder.push(nodeIndex);
+
+		for (const targetNode of connections[nodeIndex].targetNodes) {
+			incomingLinkCounts[targetNode] -= 1;
+			if (incomingLinkCounts[targetNode] === 0) queue.push(targetNode);
 		}
 	}
 
-	return { sourceNodes, sourceLinks, targetLinks, targetNodes };
-}
-
-function updateDepthOfTargets(tree: LaidOutNode[], curNode: LaidOutNode) {
-	for (const targetNode of curNode.targetNodes) {
-		if (targetNode == null) continue;
-
-		const target = tree[targetNode];
-		if (target) {
-			target.depth = Math.max(curNode.depth + 1, target.depth);
-			updateDepthOfTargets(tree, target);
-		}
+	if (topologicalOrder.length !== data.nodes.length) {
+		throw new RangeError(INVALID_DATA_MESSAGE);
 	}
+
+	return { connections, topologicalOrder };
 }
 
 function getNodesTree(
 	{ nodes, links }: SankeyData,
 	width: number,
 	nodeWidth: number,
-	align: 'left' | 'justify'
+	align: 'left' | 'justify',
+	connections: NodeConnections[],
+	topologicalOrder: number[]
 ) {
 	const tree = nodes.map((entry, index) => {
-		const result = searchTargetsAndSources(links, index);
+		const result = connections[index];
 
 		return {
 			...entry,
@@ -155,9 +192,15 @@ function getNodesTree(
 		} as LaidOutNode;
 	});
 
-	for (const node of tree) {
-		if (node != null && !node.sourceNodes.length) {
-			updateDepthOfTargets(tree, node);
+	for (const nodeIndex of topologicalOrder) {
+		const node = tree[nodeIndex];
+		if (node == null) continue;
+
+		for (const targetNode of node.targetNodes) {
+			const target = tree[targetNode];
+			if (target != null) {
+				target.depth = Math.max(node.depth + 1, target.depth);
+			}
 		}
 	}
 
@@ -198,13 +241,15 @@ function updateYOfTree(
 	links: SankeyInputLink[],
 	verticalAlign: 'justify' | 'top'
 ): LaidOutLink[] {
-	const yRatio = Math.min(
-		...depthTree.map(
-			(nodes) =>
-				(height - (nodes.length - 1) * nodePadding) /
-				nodes.reduce((sum, node) => sum + getValue(node), 0)
-		)
-	);
+	let yRatio: number | undefined;
+	for (const nodes of depthTree) {
+		const totalValue = nodes.reduce((sum, node) => sum + getValue(node), 0);
+		if (totalValue > 0) {
+			const candidate = (height - (nodes.length - 1) * nodePadding) / totalValue;
+			yRatio = yRatio === undefined ? candidate : Math.min(yRatio, candidate);
+		}
+	}
+	yRatio ??= 0;
 
 	for (const nodes of depthTree) {
 		if (nodes == null) continue;
@@ -281,6 +326,7 @@ function relaxLeftToRight(
 			if (node == null || !node.sourceLinks.length) continue;
 
 			const sourceSum = getSumOfIds(links, node.sourceLinks);
+			if (sourceSum === 0) continue;
 			const weightedSum = getSumWithWeightedSource(tree, links, node.sourceLinks);
 			const y = weightedSum / sourceSum;
 			node.y += (y - centerY(node)) * alpha;
@@ -302,6 +348,7 @@ function relaxRightToLeft(
 			if (node == null || !node.targetLinks.length) continue;
 
 			const targetSum = getSumOfIds(links, node.targetLinks);
+			if (targetSum === 0) continue;
 			const weightedSum = getSumWithWeightedTarget(tree, links, node.targetLinks);
 			const y = weightedSum / targetSum;
 			node.y += (y - centerY(node)) * alpha;
@@ -366,7 +413,11 @@ export type SankeyLayoutOptions = {
 	top: number;
 };
 
-/** Runs the layout and returns the node rectangles and link bands ready to draw. */
+/**
+ * Runs the layout and returns the node rectangles and link bands ready to draw.
+ *
+ * @throws {RangeError} When a link is malformed or the graph contains a directed cycle.
+ */
 export function computeSankey(options: SankeyLayoutOptions): {
 	nodes: SankeyNodeShape[];
 	links: SankeyLinkShape[];
@@ -386,11 +437,13 @@ export function computeSankey(options: SankeyLayoutOptions): {
 		top
 	} = options;
 
+	const { connections, topologicalOrder } = validateData(data);
+
 	if (data.nodes.length === 0 || !(width > 0) || !(height > 0)) {
 		return { nodes: [], links: [] };
 	}
 
-	const { tree } = getNodesTree(data, width, nodeWidth, align);
+	const { tree } = getNodesTree(data, width, nodeWidth, align, connections, topologicalOrder);
 	const depthTree = getDepthTree(tree);
 	const links = updateYOfTree(depthTree, height, nodePadding, data.links, verticalAlign);
 
