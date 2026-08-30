@@ -16,6 +16,11 @@
 	"bugs": {
 		"url": "https://github.com/mielsense/evilcharts-sv/issues"
 	},
+	"pnpm": {
+		"overrides": {
+			"cookie@0.6.0": "0.7.2"
+		}
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "pnpm registry:fresh && vite build",
@@ -33,10 +38,13 @@
 		"test": "pnpm test:unit --run && pnpm test:e2e",
 		"test:e2e:install": "playwright install",
 		"test:e2e": "playwright test",
+		"test:e2e:built": "EVILCHARTS_E2E_USE_BUILD=1 playwright test",
 		"test:runtime": "playwright test --config playwright.runtime.config.ts",
 		"qa:tooltips": "node scripts/audit-tooltips.mjs",
 		"qa:visual": "node scripts/visual-check.mjs",
-		"qa:visual:reference": "node scripts/visual-ref.mjs"
+		"qa:visual:reference": "node scripts/visual-ref.mjs",
+		"verify": "pnpm registry:fresh && pnpm check && pnpm lint && pnpm exec vitest --run && pnpm exec vite build",
+		"verify:all": "pnpm verify && pnpm test:e2e:built && pnpm test:runtime"
 	},
 	"sideEffects": [
 		"**/*.css"
@@ -76,7 +84,12 @@
 		"vitest-browser-svelte": "^2.1.1"
 	},
 	"keywords": [
-		"svelte"
+		"svelte",
+		"charts",
+		"data-visualization",
+		"shadcn-svelte",
+		"layerchart",
+		"echarts"
 	],
 	"dependencies": {
 		"@fontsource-variable/geist": "^5.3.0",
@@ -89,6 +102,7 @@
 		"@number-flow/svelte": "^0.4.2",
 		"@types/d3-scale": "^4.0.9",
 		"@types/d3-shape": "^3.2.0",
+		"@vercel/functions": "^3.9.5",
 		"bits-ui": "^2.19.0",
 		"clsx": "^2.1.1",
 		"d3-scale": "^4.0.2",

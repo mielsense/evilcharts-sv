@@ -24,7 +24,9 @@ for the independent ordered-dither variants. Preserve the upstream credits and l
 - `src/site/`: docs chrome, previews, source loading, highlighting, and agent surfaces.
 - `src/routes/`: SvelteKit pages and machine-readable endpoints.
 - `scripts/build-registry.ts`: registry generator.
-- `plans/`: historical porting notes and documented deviations, not runtime code.
+- `skills/evilcharts-svelte/`: the installable coding-agent skill and its bundled references.
+- `.github/`: CI, dependency updates, and contribution templates.
+- `.coderabbit.yaml`: automated review scope; CodeRabbit reads this file and `AGENTS.md`.
 
 ## Source and generated files
 
@@ -38,6 +40,10 @@ Generated outputs are:
 - `static/r/*.json` (generated and ignored)
 
 `pnpm build` runs a clean registry generation before the production build.
+
+When a public component, prop, provider capability, registry name, example, or block changes, review
+the agent skill and both bundled references. Update them when an agent's provider choice, install
+command, composition, or guardrails would otherwise become stale.
 
 ## Implementation standards
 
@@ -60,6 +66,11 @@ Generated outputs are:
   blocks use the shared Svelte/TypeScript syntax-highlighting pipeline.
 - Add or update focused regression tests with behavior changes. Prefer observable invariants over
   snapshots of implementation details.
+- Update `content/docs/changelog.md` when installable chart behavior, a public component contract,
+  registry metadata, consumer dependencies, or the installable agent skill changes. Docs-only,
+  test-only, CI, and contributor-workflow changes belong in the pull-request description instead.
+  Follow the dated-entry policy in `CONTRIBUTING.md`; this registry does not use an `Unreleased`
+  section.
 
 ## Working safely
 
@@ -69,8 +80,8 @@ Generated outputs are:
 - When using a development server, record the process/session you started and stop only that one.
 - Never deploy, publish packages, push, rewrite history, or delete remote data unless the user has
   explicitly authorized that operation.
-- Keep attribution intact when translating upstream designs. Record a deliberate parity exception in
-  `plans/DEVIATIONS.md` with the measurement and reason.
+- Keep attribution intact when translating upstream designs. Document a deliberate parity exception
+  in the affected provider page and dated changelog entry, including the measurement and reason.
 
 ## Commands
 
@@ -82,16 +93,22 @@ pnpm check
 pnpm lint
 pnpm test:unit --run
 pnpm test:e2e
+pnpm test:runtime
 pnpm build
 
 pnpm registry:build
 pnpm registry:fresh
+pnpm verify
+pnpm verify:all
 ```
 
 Use the full Playwright suite for shared chart primitives, layout, navigation, animation, docs
 rendering, or registry-wide changes. This repository publishes a source registry, not an npm
 package: a production build validates registry generation and SvelteKit, while `pnpm test:registry`
 installs representative generated items into an isolated consumer and runs strict `svelte-check`.
+`pnpm verify` is the complete non-Playwright gate used before a handoff; CI adds both Playwright
+suites and rejects an uncommitted generated registry diff. `pnpm verify:all` reuses the production
+build for browser coverage, then checks the runtime endpoints to reproduce the complete CI gate.
 
 ## Definition of done
 
@@ -102,5 +119,12 @@ installs representative generated items into an isolated consumer and runs stric
    coverage. Run `pnpm build` for any shippable change.
 4. Confirm generated registry files match their sources and install commands target
    `https://evilcharts-sv.vercel.app/`.
-5. Run `git diff --check` and inspect `git status --short`. Leave no temporary files, test reports,
+5. Update the dated changelog for installable library, registry-contract, or agent-skill changes.
+   Keep affected provider docs, registry examples, machine-readable agent surfaces, and skill
+   references aligned without recording docs-only work as a library change.
+6. Run `git diff --check` and inspect `git status --short`. Leave no temporary files, test reports,
    accidental vendored sources, or unrelated changes.
+
+Human contribution and review policy lives in `CONTRIBUTING.md`. Keep this file focused on repository
+navigation, implementation invariants, safety, and change completeness rather than duplicating that
+guide.

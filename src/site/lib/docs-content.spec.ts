@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { generateLlmsFullTxt } from './agent-docs.js';
-import { getPages } from './source.js';
+import { getPages } from './source.server.js';
 
 function pageBody(url: string) {
 	const page = getPages().find((candidate) => candidate.url === url);
@@ -36,6 +36,7 @@ describe('copyable documentation', () => {
 
 	it('advertises the portable agent skill separately from Context7 and MCP', () => {
 		const introduction = pageBody('/docs');
+		const agentGuide = pageBody('/docs/agent-skill');
 		const readme = readFileSync('README.md', 'utf8');
 		const skill = readFileSync('skills/evilcharts-svelte/SKILL.md', 'utf8');
 		const catalog = readFileSync('skills/evilcharts-svelte/references/chart-catalog.md', 'utf8');
@@ -45,10 +46,11 @@ describe('copyable documentation', () => {
 		);
 		const command = 'npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte';
 
-		for (const content of [introduction, readme]) {
+		for (const content of [agentGuide, readme]) {
 			expect(content).toContain('Install the agent skill');
 			expect(content).toContain(command);
 		}
+		expect(introduction).toContain('href="/docs/agent-skill"');
 
 		for (const family of CHART_FAMILIES) {
 			expect(catalog).toContain(`\`${family}\``);
@@ -125,12 +127,16 @@ describe('copyable documentation', () => {
 	});
 
 	it('publishes the exact Context7 library ID for coding agents', () => {
-		const installation = pageBody('/docs/layerchart/installation');
+		const agentGuide = pageBody('/docs/agent-skill');
 		const readme = readFileSync('README.md', 'utf8');
 
-		for (const content of [installation, readme]) {
+		for (const content of [agentGuide, readme]) {
 			expect(content).toContain('/mielsense/evilcharts-sv');
 			expect(content).toContain('https://context7.com/mielsense/evilcharts-sv');
+		}
+		expect(agentGuide).toContain('Context7 MCP is the alternative');
+		for (const provider of ['layerchart', 'echarts']) {
+			expect(pageBody(`/docs/${provider}/installation`)).not.toContain('Context7');
 		}
 	});
 
@@ -194,28 +200,36 @@ describe('copyable documentation', () => {
 		expect(pie).not.toContain('Use `labelKey`');
 	});
 
-	it('documents controlled LayerChart selection and the guarded Sankey data contract', () => {
-		const area = pageBody('/docs/layerchart/area-chart');
-		const pie = pageBody('/docs/layerchart/pie-chart');
+	it('documents controlled provider selection and the guarded Sankey data contract', () => {
+		const layerArea = pageBody('/docs/layerchart/area-chart');
+		const layerPie = pageBody('/docs/layerchart/pie-chart');
+		const echartsArea = pageBody('/docs/echarts/area-chart');
+		const echartsPie = pageBody('/docs/echarts/pie-chart');
 		const sankey = pageBody('/docs/layerchart/sankey-chart');
 
-		expect(area).toContain('<ApiRow name="selectedDataKey" type="string | null">');
-		expect(area).toContain('pass `null` to clear a controlled selection');
-		expect(pie).toContain('<ApiRow name="selectedSector" type="string | null">');
-		expect(pie).toContain('pass `null` to clear a controlled selection');
+		for (const area of [layerArea, echartsArea]) {
+			expect(area).toContain('<ApiRow name="selectedDataKey" type="string | null">');
+			expect(area).toContain('pass `null` to clear a controlled selection');
+		}
+		for (const pie of [layerPie, echartsPie]) {
+			expect(pie).toContain('<ApiRow name="selectedSector" type="string | null">');
+			expect(pie).toContain('pass `null` to clear a controlled selection');
+		}
 		expect(sankey).toContain('must be an integer index into `nodes`');
 		expect(sankey).toContain('The graph must be acyclic');
 		expect(sankey).toContain('produces no nodes or links');
 	});
 
-	it('records the completed audit work under the dated changelog entry', () => {
+	it('records installable audit work without docs-only entries', () => {
 		const changelog = pageBody('/docs/changelog');
 
 		expect(changelog).toContain('## 2026-08-30');
+		expect(changelog).toContain('real gaps across ECharts Area, Line, and Composed charts');
 		expect(changelog).toContain('installable `evilcharts-svelte` agent skill');
 		expect(changelog).toContain('controlled selection to LayerChart Area and Pie roots');
 		expect(changelog).toContain('Hardened LayerChart Sankey layout');
-		expect(changelog).toContain('bounded non-reflective MCP inputs');
+		expect(changelog).not.toContain('dedicated Agent Skill guide');
+		expect(changelog).not.toContain('contributor and security guides');
 		expect(changelog).not.toContain('## Unreleased');
 	});
 

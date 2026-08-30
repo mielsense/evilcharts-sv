@@ -13,6 +13,7 @@ import type { Provider } from './providers.js';
 export type SidebarOptionId =
 	| 'get-started'
 	| 'installation'
+	| 'agent-skill'
 	| 'components'
 	| 'changelog'
 	| 'background'
@@ -32,6 +33,7 @@ export function getStartedOptions(provider: Provider): SidebarOption[] {
 	return [
 		{ id: 'get-started', name: 'Get Started', url: '/docs' },
 		{ id: 'installation', name: 'Installation', url: `/docs/${provider}/installation` },
+		{ id: 'agent-skill', name: 'Agent Skill', url: '/docs/agent-skill' },
 		{ id: 'components', name: 'Components', url: `/docs/${provider}/components` },
 		{ id: 'changelog', name: 'Changelog', url: '/docs/changelog' }
 	];
@@ -57,7 +59,12 @@ export const DocumentationOptions: SidebarOption[] = [
  * Pages reachable from the hard-coded groups above; `NavMain` skips them so they don't appear
  * twice. Provider-scoped entries are matched by suffix, since the leading `/docs/<provider>` varies.
  */
-export const EXCLUDED_PAGE_SUFFIXES: string[] = ['/installation', '/components', '/changelog'];
+export const EXCLUDED_PAGE_SUFFIXES: string[] = [
+	'/installation',
+	'/agent-skill',
+	'/components',
+	'/changelog'
+];
 
 export function isExcludedPage(url: string): boolean {
 	return EXCLUDED_PAGE_SUFFIXES.some((suffix) => url.endsWith(suffix));

@@ -1,0 +1,36 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Paris
+    open-pull-requests-limit: 6
+    groups:
+      svelte-tooling:
+        patterns:
+          - svelte
+          - '@sveltejs/*'
+          - vite
+          - vitest
+          - '@vitest/*'
+          - '*svelte*'
+      chart-runtimes:
+        patterns:
+          - layerchart
+          - echarts
+          - '@humanspeak/svelte-motion'
+          - 'd3-*'
+          - '@types/d3-*'
+    labels:
+      - dependencies
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - ci

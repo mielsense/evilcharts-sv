@@ -1,0 +1,71 @@
+name: Bug report
+description: Report a reproducible chart, registry, or documentation problem.
+title: '[Bug]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Remove secrets, personal paths, and private data from every reproduction, log, screenshot, or recording.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - LayerChart provider
+        - Apache ECharts provider
+        - Both providers
+        - Registry installation
+        - Documentation site or agent surfaces
+    validations:
+      required: true
+  - type: dropdown
+    id: chart
+    attributes:
+      label: Chart family
+      options:
+        - Not chart-specific
+        - Area
+        - Line
+        - Bar
+        - Composed
+        - Radar
+        - Pie
+        - Radial
+        - Sankey
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened?
+      description: Describe the observable result and how often it occurs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: Link the matching original EvilCharts behavior when parity is relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the registry item, data shape, props, and steps needed to reproduce the problem.
+      render: svelte
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, operating system, Svelte version, and renderer when relevant.
+      placeholder: Chrome 140, macOS 15, Svelte 5.56, ECharts Canvas
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional evidence
+      description: Add redacted console output, screenshots, or a short motion recording.

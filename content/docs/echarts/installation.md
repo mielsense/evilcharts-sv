@@ -63,15 +63,3 @@ Add components with the CLI. ECharts components are prefixed with `echarts-` —
     </StepContent>
   </Step>
 </Steps>
-
-## Give the docs to your coding agent
-
-Evil Charts for Svelte is indexed on Context7 under the library ID
-<code>/mielsense/evilcharts-sv</code>. Give that exact ID to an agent with Context7 MCP connected so
-it reads this Svelte port instead of the original React implementation:
-
-```text
-Use Context7 library /mielsense/evilcharts-sv for EvilCharts Svelte docs.
-```
-
-<Link href="https://context7.com/mielsense/evilcharts-sv" _blank>Open the Evil Charts for Svelte Context7 page</Link>.

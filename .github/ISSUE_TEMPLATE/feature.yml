@@ -1,0 +1,37 @@
+name: Feature request
+description: Propose a Svelte-specific capability, provider improvement, or documented parity gap.
+title: '[Feature]: '
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What outcome do you need?
+      description: Describe the user problem or workflow, not an implementation plan.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Request type
+      options:
+        - Parity with original EvilCharts
+        - Svelte or LayerChart improvement
+        - Apache ECharts provider improvement
+        - Ordered-dither improvement
+        - Registry, documentation, or agent tooling
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current workaround
+      description: Explain how you handle this today, if at all.
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples and constraints
+      description: Link upstream behavior, screenshots, datasets, accessibility needs, or performance limits that define success.
+  - type: markdown
+    attributes:
+      value: |
+        Entirely new chart designs normally belong in the original EvilCharts project. This repository focuses on its Svelte port, provider parity, and the attributed ordered-dither variants.

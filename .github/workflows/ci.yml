@@ -4,9 +4,17 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
+
+env:
+  CI: true
 
 jobs:
   verify:
@@ -14,23 +22,56 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: pnpm/action-setup@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: 10.22.0
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22.18.0
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm registry:fresh
-      - run: git diff --exit-code -- registry.json src/lib/registry/__index__.ts
-      - run: pnpm check
-      - run: pnpm lint
-      - run: pnpm test:unit --run
-      - run: pnpm build
-      - run: pnpm test:e2e
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verify generated registry files
+        run: |
+          pnpm registry:fresh
+          git diff --exit-code -- registry.json src/lib/registry/__index__.ts
+
+      - name: Check Svelte and TypeScript
+        run: pnpm check
+
+      - name: Check formatting and lint
+        run: pnpm lint
+
+      - name: Run unit and component tests
+        run: pnpm exec vitest --run
+
+      - name: Build production site
+        run: pnpm exec vite build
+
+      - name: Run browser regression suite
+        run: pnpm test:e2e
+
+      - name: Run machine-readable endpoint suite
+        run: pnpm test:runtime
+
+      - name: Upload Playwright failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: playwright-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results
+            playwright-report
+          if-no-files-found: ignore
+          retention-days: 7

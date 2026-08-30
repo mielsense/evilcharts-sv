@@ -115,21 +115,12 @@ One app or dashboard may mix both providers by rendering separate provider-speci
 Each compound chart root must use parts from that same provider. Install only one implementation
 of a chart unless the app intentionally renders both.
 
-## Install the agent skill
+## Use with a coding agent
 
-Install the portable skill from this repository:
-
-```bash
-npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
-```
-
-The skill is a working guide for coding agents. It covers all eight chart families, both providers,
-their compound components, registry installation, example and block selection, accessibility,
-motion, ordered dither, and the rule for mixing provider-specific roots safely. It also directs the
-agent to the exact current Markdown page before it chooses props or imports.
-
-Use it when asking an agent to add, customize, migrate, or debug a chart. The separate Context7
-index and MCP endpoint remain available for live documentation lookup.
+The official skill teaches coding agents how to choose a provider, install the correct registry
+item, compose chart parts, and start from the right example or block. See the
+<Link href="/docs/agent-skill" accent={true}>Agent Skill guide</Link> for installation, example
+prompts, and the Context7 alternative.
 
 ## Credits and licence
 
