@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { computeSankey, type SankeyData } from './layout.js';
+import {
+	computeSankey,
+	SANKEY_VALIDATION_ERROR_CODE,
+	SANKEY_VALIDATION_ERROR_MESSAGE,
+	SankeyValidationError,
+	type SankeyData
+} from './layout.js';
 
 /**
  * The reference's `ex-sankey-chart` data, and the node rectangles Recharts lays out for it.
@@ -118,10 +124,20 @@ function expectInvalidData(invalidData: SankeyData) {
 	}
 
 	expect(thrown).toBeInstanceOf(RangeError);
+	expect(thrown).toBeInstanceOf(SankeyValidationError);
+	expect(thrown).toMatchObject({
+		name: 'SankeyValidationError',
+		code: SANKEY_VALIDATION_ERROR_CODE
+	});
 	expect((thrown as RangeError).message).toBe(INVALID_DATA_MESSAGE);
 }
 
 describe('computeSankey', () => {
+	it('exports a stable recognizable validation contract', () => {
+		expect(SANKEY_VALIDATION_ERROR_CODE).toBe('INVALID_SANKEY_DATA');
+		expect(SANKEY_VALIDATION_ERROR_MESSAGE).toBe(INVALID_DATA_MESSAGE);
+	});
+
 	it('places every node where Recharts does', () => {
 		const { nodes } = layout();
 		expect(nodes).toHaveLength(EXPECTED.length);
@@ -251,8 +267,89 @@ describe('computeSankey', () => {
 
 		expect(result.nodes).toHaveLength(nodeCount);
 		expect(result.links).toHaveLength(nodeCount - 1);
-		expect(result.nodes.at(-1)?.x).toBeGreaterThan(result.nodes[0].x);
+		expect(result.nodes[0].payload.depth).toBe(0);
+		expect(result.nodes[5_000].payload.depth).toBe(5_000);
+		expect(result.nodes.at(-1)?.payload.depth).toBe(9_999);
+		expect(result.nodes.at(-1)?.x).toBeCloseTo(1_004, 12);
 		for (const value of geometryNumbers(result)) expect(Number.isFinite(value)).toBe(true);
+	});
+
+	it.each(['justify', 'top'] as const)(
+		'ignores a zero-only depth beside positive flow with %s vertical alignment',
+		(verticalAlign) => {
+			const dataWithZeroDepth: SankeyData = {
+				nodes: [
+					{ name: 'Paid source' },
+					{ name: 'Paid target' },
+					{ name: 'Free source' },
+					{ name: 'Free middle' },
+					{ name: 'Free target' }
+				],
+				links: [
+					{ source: 0, target: 1, value: 5 },
+					{ source: 2, target: 3, value: 0 },
+					{ source: 3, target: 4, value: 0 }
+				]
+			};
+
+			const result = computeSankey({
+				...layoutOptions(),
+				data: dataWithZeroDepth,
+				align: 'left',
+				verticalAlign
+			});
+
+			expect(result.nodes[4].payload.depth).toBe(2);
+			expect(result.nodes[4].height).toBe(0);
+			for (const value of geometryNumbers(result)) expect(Number.isFinite(value)).toBe(true);
+		}
+	);
+
+	it('keeps the smallest positive finite flow representable', () => {
+		const tinyData: SankeyData = {
+			nodes: [{ name: 'Source' }, { name: 'Target' }],
+			links: [{ source: 0, target: 1, value: Number.MIN_VALUE }]
+		};
+
+		const result = computeSankey({ ...layoutOptions(), data: tinyData });
+
+		expect(result.nodes[0].payload.value).toBe(Number.MIN_VALUE);
+		expect(result.links[0].payload.value).toBe(Number.MIN_VALUE);
+		for (const value of geometryNumbers(result)) expect(Number.isFinite(value)).toBe(true);
+	});
+
+	it('keeps a near-maximum finite flow representable during relaxation', () => {
+		const value = Number.MAX_VALUE / 2;
+		const hugeData: SankeyData = {
+			nodes: [{ name: 'Source' }, { name: 'Target' }],
+			links: [{ source: 0, target: 1, value }]
+		};
+
+		const result = computeSankey({ ...layoutOptions(), data: hugeData });
+
+		expect(result.nodes[0].payload.value).toBe(value);
+		expect(result.links[0].payload.value).toBe(value);
+		for (const number of geometryNumbers(result)) expect(Number.isFinite(number)).toBe(true);
+	});
+
+	it('rejects finite links whose aggregate flow cannot be represented', () => {
+		expectInvalidData({
+			nodes: [{ name: 'Source' }, { name: 'Target' }],
+			links: [
+				{ source: 0, target: 1, value: Number.MAX_VALUE },
+				{ source: 0, target: 1, value: Number.MAX_VALUE }
+			]
+		});
+	});
+
+	it('rejects a finite value range that cannot be represented after scaling', () => {
+		expectInvalidData({
+			nodes: [{ name: 'Source' }, { name: 'Large target' }, { name: 'Tiny target' }],
+			links: [
+				{ source: 0, target: 1, value: Number.MAX_VALUE / 2 },
+				{ source: 0, target: 2, value: Number.MIN_VALUE }
+			]
+		});
 	});
 
 	it.each(['justify', 'top'] as const)(

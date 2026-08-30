@@ -14,7 +14,7 @@
 	} from '../../ui/layerchart-chart/index.js';
 	import { ChartBackground, type BackgroundVariant } from '../../ui/layerchart-background/index.js';
 	import NodeColorGradients from './defs/node-color-gradients.svelte';
-	import { computeSankey, getNodeValue, type SankeyData } from './layout.js';
+	import { computeSankey, getNodeValue, SankeyValidationError, type SankeyData } from './layout.js';
 	import LoadingSankey from './loading/loading-sankey.svelte';
 	import SankeyLink from './sankey-link.svelte';
 	import SankeyNode from './sankey-node.svelte';
@@ -109,22 +109,27 @@
 	 * Recharts runs its own sankey layout rather than d3-sankey, so it is ported in `layout.ts` and
 	 * driven from here — that is what makes the node rectangles land on the reference's pixels.
 	 */
-	const laidOut = $derived(
-		computeSankey({
-			data,
-			width: layerContext?.width ?? 0,
-			height: layerContext?.height ?? 0,
-			iterations,
-			nodeWidth,
-			nodePadding,
-			linkCurvature,
-			sort,
-			align,
-			verticalAlign,
-			left: 0,
-			top: 0
-		})
-	);
+	const laidOut = $derived.by(() => {
+		try {
+			return computeSankey({
+				data,
+				width: layerContext?.width ?? 0,
+				height: layerContext?.height ?? 0,
+				iterations,
+				nodeWidth,
+				nodePadding,
+				linkCurvature,
+				sort,
+				align,
+				verticalAlign,
+				left: 0,
+				top: 0
+			});
+		} catch (error) {
+			if (error instanceof SankeyValidationError) return { nodes: [], links: [] };
+			throw error;
+		}
+	});
 
 	const nodeLabel = $derived(slots.nodeLabel);
 
