@@ -32,6 +32,22 @@ async function prepareRuntimePage(page: Page) {
 	return diagnostics;
 }
 
+test('the hero credits its sources without a maintenance claim', async ({ page }) => {
+	await page.goto('/');
+
+	for (const [name, href] of [
+		['EvilCharts', 'https://github.com/legions-developer/evilcharts'],
+		['Dither Kit', 'https://github.com/Boring-Software-Inc/dither-kit']
+	] as const) {
+		const source = page.getByRole('link', { name, exact: true });
+		await expect(source).toHaveAttribute('href', href);
+		await expect(source).toHaveCSS('color', 'rgb(255, 62, 0)');
+		await expect(source).toHaveCSS('text-decoration-line', 'underline');
+	}
+
+	await expect(page.getByText(/built and maintains/i)).toHaveCount(0);
+});
+
 test('the landing stage completes a focus hop without runtime diagnostics', async ({ page }) => {
 	const diagnostics = await prepareRuntimePage(page);
 

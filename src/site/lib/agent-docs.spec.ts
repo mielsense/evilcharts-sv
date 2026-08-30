@@ -130,6 +130,7 @@ describe('generateLlmsFullTxt', () => {
 
 describe('generateSkillMd', () => {
 	const text = generateSkillMd();
+	const portableSkill = readFileSync('skills/evilcharts-svelte/SKILL.md', 'utf8');
 
 	it('carries the frontmatter an agent-skill loader reads', () => {
 		expect(text.startsWith('---\nname: evilcharts-svelte')).toBe(true);
@@ -151,8 +152,18 @@ describe('generateSkillMd', () => {
 		expect(text).toContain('https://github.com/mielsense/evilcharts-sv');
 	});
 
-	it('serves the canonical portable skill without a second generated copy', () => {
-		expect(text).toBe(readFileSync('skills/evilcharts-svelte/SKILL.md', 'utf8'));
+	it('keeps the portable skill on production while served copies follow the deployment origin', () => {
+		const productionOrigin = 'https://evilcharts-sv.vercel.app';
+		const previewOrigin = 'https://evilcharts-preview.example';
+
+		expect(portableSkill).toContain(`${productionOrigin}/llms.txt`);
+		expect(generateSkillMd(productionOrigin)).toBe(portableSkill);
+
+		const previewSkill = generateSkillMd(previewOrigin);
+		expect(previewSkill).toContain(`${previewOrigin}/llms.txt`);
+		expect(previewSkill).toContain(`${previewOrigin}/r/{provider}-{chart-name}.json`);
+		expect(previewSkill).not.toContain(productionOrigin);
+		expect(previewSkill).toContain('https://github.com/mielsense/evilcharts-sv');
 	});
 });
 
