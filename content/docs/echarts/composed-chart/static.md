@@ -112,7 +112,12 @@ Finally, create `echarts-brush` in the same `ui` folder and paste the zoom brush
 The ECharts composed chart is composable, sharing the LayerChart sibling's API shape. `<EChartsComposedChart>` is the container, and every part hangs off it as a compound member — `<EChartsComposedChart.Grid>`, `<EChartsComposedChart.XAxis>`, `<EChartsComposedChart.YAxis>`, `<EChartsComposedChart.Legend>`, `<EChartsComposedChart.Tooltip>`, and one or more `<EChartsComposedChart.Bar>` and `<EChartsComposedChart.Line>` — so a single import gives you the whole chart. Each `<Bar>` carries its own `variant`, `glow`, and `isClickable`, and each `<Line>` its own `strokeVariant`, `curveType`, `glow`, and `isClickable`, so one chart can freely mix bar and line styles.
 
 ```svelte
-import { EChartsComposedChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-composed-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsComposedChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-composed-chart/index.js';
+</script>
 ```
 
 ```svelte

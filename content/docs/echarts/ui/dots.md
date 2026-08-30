@@ -9,7 +9,9 @@ image: /og/og-image.png
 Compose a `<Dot />` inside a `<Line />` (or `<Area />`) to render a resting marker at every data point, and an `<ActiveDot />` for the marker shown while that point is hovered. Both read the series color and style from the chart context.
 
 ```svelte
-import {EChartsLineChart} from "$lib/components/evilcharts/charts/echarts-line-chart/index.js";
+<script lang="ts">
+	import { EChartsLineChart } from '$lib/components/evilcharts/charts/echarts-line-chart/index.js';
+</script>
 
 <EChartsLineChart {data} config={chartConfig} xDataKey="month">
 	<EChartsLineChart.Line dataKey="desktop">

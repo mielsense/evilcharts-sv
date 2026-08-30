@@ -11,7 +11,9 @@ Add `<EChartsAreaChart.Brush />` as a child of the chart root. Its presence rend
 Set `xDataKey` on the root (or `dataKey` on `<XAxis />`) so the handles can label themselves with the category under each edge.
 
 ```svelte
-import {EChartsAreaChart} from "$lib/components/evilcharts/charts/echarts-area-chart/index.js";
+<script lang="ts">
+	import { EChartsAreaChart } from '$lib/components/evilcharts/charts/echarts-area-chart/index.js';
+</script>
 
 <EChartsAreaChart {data} config={chartConfig} xDataKey="date">
 	<EChartsAreaChart.XAxis dataKey="date" />

@@ -90,7 +90,12 @@ Finally, create `echarts-legend` in the same `ui` folder and paste the legend ov
 The ECharts radial chart is composable, sharing the LayerChart sibling's API shape. `<EChartsRadialChart>` is the container, and every part hangs off it as a compound member — `<EChartsRadialChart.Legend>`, `<EChartsRadialChart.Tooltip>`, and a `<EChartsRadialChart.RadialBar>` — so a single import gives you the whole chart. `<RadialBar>` carries its own `isClickable`, so styling and interactivity live with the series.
 
 ```svelte
-import { EChartsRadialChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-radial-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsRadialChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-radial-chart/index.js';
+</script>
 ```
 
 ```svelte

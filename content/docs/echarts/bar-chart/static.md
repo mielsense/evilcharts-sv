@@ -112,7 +112,12 @@ Finally, create `echarts-brush` in the same `ui` folder and paste the zoom brush
 The ECharts bar chart is composable, sharing the LayerChart sibling's API shape. `<EChartsBarChart>` is the container, and every part hangs off it as a compound member — `<EChartsBarChart.Grid>`, `<EChartsBarChart.XAxis>`, `<EChartsBarChart.YAxis>`, `<EChartsBarChart.Legend>`, `<EChartsBarChart.Tooltip>`, and one or more `<EChartsBarChart.Bar>` — so a single import gives you the whole chart. Each `<Bar>` carries its own `variant`, `radius`, `glowing`, `bufferBar`, and `isClickable`, so one chart can mix fill styles and make only some series interactive.
 
 ```svelte
-import { EChartsBarChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-bar-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsBarChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-bar-chart/index.js';
+</script>
 ```
 
 ```svelte

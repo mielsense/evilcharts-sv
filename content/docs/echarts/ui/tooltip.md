@@ -9,7 +9,9 @@ image: /og/tooltip.png
 Add `<EChartsAreaChart.Tooltip />` as a child of the chart root. It reads the chart's data and config from context — no props are required to get a working tooltip.
 
 ```svelte
-import {EChartsAreaChart} from "$lib/components/evilcharts/charts/echarts-area-chart/index.js";
+<script lang="ts">
+	import { EChartsAreaChart } from '$lib/components/evilcharts/charts/echarts-area-chart/index.js';
+</script>
 
 <EChartsAreaChart {data} config={chartConfig}>
 	<EChartsAreaChart.Tooltip variant="frosted-glass" roundness="md" position="fixed" />

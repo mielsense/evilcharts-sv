@@ -101,7 +101,12 @@ Finally, create `echarts-dot` in the same `ui` folder and paste the dot styles t
 The ECharts radar chart is composable, sharing the LayerChart sibling's API shape. `<EChartsRadarChart>` is the container, and every part hangs off it as a compound member — `<EChartsRadarChart.PolarGrid>`, `<EChartsRadarChart.PolarAngleAxis>`, `<EChartsRadarChart.PolarRadiusAxis>`, `<EChartsRadarChart.Legend>`, `<EChartsRadarChart.Tooltip>`, and one or more `<EChartsRadarChart.Radar>` — so a single import gives you the whole chart. Each `<Radar>` carries its own `variant` and `isClickable`, so one chart can mix fill styles and make only some series interactive.
 
 ```svelte
-import { EChartsRadarChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-radar-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsRadarChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-radar-chart/index.js';
+</script>
 ```
 
 ```svelte

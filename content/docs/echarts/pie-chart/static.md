@@ -90,7 +90,12 @@ Finally, create `echarts-legend` in the same `ui` folder and paste the legend ov
 The ECharts pie chart is composable, sharing the LayerChart sibling's API shape. `<EChartsPieChart>` is the container, and every part hangs off it as a compound member — `<EChartsPieChart.Legend>`, `<EChartsPieChart.Tooltip>`, `<EChartsPieChart.Background>`, and one `<EChartsPieChart.Pie>` — so a single import gives you the whole chart. The `<EChartsPieChart.Pie>` carries its own shape props (`innerRadius`, `paddingAngle`, `cornerRadius`, …) and an `isClickable` flag.
 
 ```svelte
-import { EChartsPieChart, type ChartConfig } from "$lib/components/evilcharts/charts/echarts-pie-chart/index.js";
+<script lang="ts">
+	import {
+		EChartsPieChart,
+		type ChartConfig
+	} from '$lib/components/evilcharts/charts/echarts-pie-chart/index.js';
+</script>
 ```
 
 ```svelte
