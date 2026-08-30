@@ -24,6 +24,10 @@ type JsonRpcRequest = {
 
 const MAX_QUERY_LENGTH = 200;
 const MAX_QUERY_TERMS = 20;
+const MAX_METHOD_LENGTH = 10;
+const MAX_STRING_ID_LENGTH = 128;
+const MAX_TOOL_NAME_LENGTH = 11;
+const MAX_READ_DOC_PATH_LENGTH = 256;
 
 const agentDocs = getAgentDocPages();
 const searchCorpus = agentDocs.map((page) => {
@@ -82,9 +86,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function requestId(value: unknown): JsonRpcRequest['id'] {
 	if (!isRecord(value)) return null;
-	return typeof value.id === 'string' || typeof value.id === 'number' || value.id === null
-		? value.id
-		: null;
+	if (typeof value.id === 'string') {
+		return value.id.length <= MAX_STRING_ID_LENGTH ? value.id : null;
+	}
+	return typeof value.id === 'number' || value.id === null ? value.id : null;
 }
 
 function isJsonRpcRequest(value: unknown): value is JsonRpcRequest {
@@ -97,6 +102,7 @@ function isJsonRpcRequest(value: unknown): value is JsonRpcRequest {
 	) {
 		return false;
 	}
+	if (typeof value.id === 'string' && value.id.length > MAX_STRING_ID_LENGTH) return false;
 	return value.params === undefined || isRecord(value.params);
 }
 
@@ -114,7 +120,7 @@ function getPageByPath(path: string) {
 
 function readDoc(path: string) {
 	const page = getPageByPath(path);
-	if (!page) throw new Error(`No documentation page found for path: ${path}`);
+	if (!page) throw new Error('Documentation page not found');
 
 	const markdown = markdownByUrl.get(page.url) ?? '';
 
@@ -151,6 +157,9 @@ function handleToolCall(request: JsonRpcRequest) {
 	if (typeof name !== 'string' || !isRecord(args)) {
 		return jsonRpcError(request.id, -32602, 'tools/call requires a tool name and arguments object');
 	}
+	if (name.length > MAX_TOOL_NAME_LENGTH) {
+		return jsonRpcError(request.id, -32602, 'Unknown tool');
+	}
 
 	if (name === 'search_docs') {
 		if (typeof args.query !== 'string' || args.query.trim().length === 0) {
@@ -173,22 +182,24 @@ function handleToolCall(request: JsonRpcRequest) {
 	}
 
 	if (name === 'read_doc') {
-		if (typeof args.path !== 'string' || args.path.trim().length === 0) {
+		if (typeof args.path !== 'string') {
 			return jsonRpcError(request.id, -32602, 'read_doc requires a non-empty path string');
 		}
+		if (args.path.length > MAX_READ_DOC_PATH_LENGTH) {
+			return jsonRpcError(request.id, -32602, 'Invalid read_doc path');
+		}
 		const path = args.path.trim();
+		if (path.length === 0) {
+			return jsonRpcError(request.id, -32602, 'read_doc requires a non-empty path string');
+		}
 		try {
 			return jsonRpcResult(request.id, { content: [{ type: 'text', text: readDoc(path) }] });
-		} catch (error) {
-			return jsonRpcError(
-				request.id,
-				-32602,
-				error instanceof Error ? error.message : `No documentation page found for path: ${path}`
-			);
+		} catch {
+			return jsonRpcError(request.id, -32602, 'Documentation page not found');
 		}
 	}
 
-	return jsonRpcError(request.id, -32602, `Unknown tool: ${name ?? 'missing'}`);
+	return jsonRpcError(request.id, -32602, 'Unknown tool');
 }
 
 export const GET: RequestHandler = () =>
@@ -215,6 +226,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	// A notification (no id) gets an acknowledgement and nothing else.
 	if (body.id === undefined) return new Response(null, { status: 202 });
+	if (body.method.length > MAX_METHOD_LENGTH) {
+		return jsonRpcError(body.id, -32601, 'Method not found');
+	}
 
 	switch (body.method) {
 		case 'initialize':
@@ -228,6 +242,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		case 'tools/call':
 			return handleToolCall(body);
 		default:
-			return jsonRpcError(body.id, -32601, `Method not found: ${body.method ?? 'missing'}`);
+			return jsonRpcError(body.id, -32601, 'Method not found');
 	}
 };
