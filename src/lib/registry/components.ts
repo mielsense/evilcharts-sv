@@ -17,7 +17,11 @@ const modules = {
 	...import.meta.glob<{ default: Component<Record<string, never>> }>(
 		'./examples/layerchart/*.svelte'
 	),
-	...import.meta.glob<{ default: Component<Record<string, never>> }>('./blocks/layerchart/*.svelte')
+	...import.meta.glob<{ default: Component<Record<string, never>> }>(
+		'./blocks/layerchart/*.svelte'
+	),
+	...import.meta.glob<{ default: Component<Record<string, never>> }>('./examples/echarts/*.svelte'),
+	...import.meta.glob<{ default: Component<Record<string, never>> }>('./blocks/echarts/*.svelte')
 } as Record<string, Loader>;
 
 /** Keyed by file name, which is how an example's registry item is named. */

@@ -4,6 +4,7 @@ export const NOTICE_REGISTRY_DEPENDENCY = '@evilcharts/evilcharts-notice';
 
 export const PACKAGE = {
 	layerchart: 'layerchart@^2.3.0',
+	echarts: 'echarts@^6.1.0',
 	motion: '@humanspeak/svelte-motion@^0.9.4',
 	d3Scale: 'd3-scale@^4.0.2',
 	d3ScaleTypes: '@types/d3-scale@^4.0.9',
@@ -19,6 +20,8 @@ export function withNotice(items: RegistryItem[]): RegistryItem[] {
 			switch (dependency) {
 				case 'layerchart':
 					return PACKAGE.layerchart;
+				case 'echarts':
+					return PACKAGE.echarts;
 				case '@humanspeak/svelte-motion':
 					return PACKAGE.motion;
 				case 'd3-scale':

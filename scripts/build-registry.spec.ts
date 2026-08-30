@@ -37,25 +37,23 @@ describe('registry build output', () => {
 		expect(area.files.length).toBeGreaterThan(5);
 	});
 
-	it('publishes the shared chart accessibility contract as installable source', () => {
-		const chart = manifest.items.find((item: { name: string }) => item.name === 'layerchart-chart');
-		const source = chart.files.find(
-			(file: { path: string }) =>
-				file.path === 'src/lib/registry/ui/layerchart-chart/accessibility.ts'
-		);
+	it("publishes both providers' shared chart accessibility contracts as installable source", () => {
+		for (const [provider, sourceName] of [
+			['layerchart', 'accessibility.ts'],
+			['echarts', 'types.ts']
+		] as const) {
+			const itemName = `${provider}-chart`;
+			const sourcePath = `src/lib/registry/ui/${itemName}/${sourceName}`;
+			const target = `$lib/components/evilcharts/ui/${itemName}/${sourceName}`;
+			const chart = manifest.items.find((item: { name: string }) => item.name === itemName);
+			const source = chart.files.find((file: { path: string }) => file.path === sourcePath);
 
-		expect(source).toEqual({
-			path: 'src/lib/registry/ui/layerchart-chart/accessibility.ts',
-			type: 'registry:component',
-			target: '$lib/components/evilcharts/ui/layerchart-chart/accessibility.ts'
-		});
+			expect(source).toEqual({ path: sourcePath, type: 'registry:component', target });
 
-		const item = JSON.parse(readFileSync(path.join(ITEMS_DIR, 'layerchart-chart.json'), 'utf8'));
-		const builtSource = item.files.find(
-			(file: { path: string }) =>
-				file.path === 'src/lib/registry/ui/layerchart-chart/accessibility.ts'
-		);
-		expect(builtSource.content).toContain('export type ChartAccessibility');
+			const item = JSON.parse(readFileSync(path.join(ITEMS_DIR, `${itemName}.json`), 'utf8'));
+			const builtSource = item.files.find((file: { path: string }) => file.path === sourcePath);
+			expect(builtSource.content).toContain('export type ChartAccessibility');
+		}
 	});
 
 	it.each(registry.items.map((i) => i.name))('%s validates against the item schema', (name) => {

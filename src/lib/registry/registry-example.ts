@@ -1,16 +1,16 @@
 /**
  * The documentation examples — one item per `ex-*` demo.
  *
- * Ported from `evilcharts/src/registry/registry-example.ts` — the recharts entries only, in the
- * reference's own order, renamed to the `layerchart` provider. Every entry is uniform: one file,
- * `registry:block`, and a single `registryDependencies` entry naming the chart it demonstrates.
+ * Ported from `evilcharts/src/registry/registry-example.ts`: Recharts demos are translated to the
+ * `layerchart` provider, and ECharts demos retain their provider-specific names. Every entry ships
+ * one file and names the chart it demonstrates as a registry dependency.
  *
  * Like the reference, examples declare no `dependencies`: the packages they reach for beyond their
  * chart (icons, for instance) are already present in any shadcn-svelte project.
  */
 import type { RegistryItem } from './schema.js';
 
-export const examples: RegistryItem[] = [
+const layerchartExamples: RegistryItem[] = [
 	// Area chart
 	{
 		name: 'ex-area-chart',
@@ -1001,3 +1001,146 @@ export const examples: RegistryItem[] = [
 		]
 	}))
 ];
+
+const echartsExampleNames = [
+	'ex-animated-dashed-stroke-echarts-area-chart',
+	'ex-animated-dashed-stroke-echarts-composed-chart',
+	'ex-animated-dashed-stroke-echarts-line-chart',
+	'ex-blocks-variant-echarts-bar-chart',
+	'ex-brush-echarts-area-chart',
+	'ex-buffer-echarts-area-chart',
+	'ex-buffer-echarts-bar-chart',
+	'ex-buffer-echarts-line-chart',
+	'ex-bump-curve-echarts-composed-chart',
+	'ex-bump-curve-type-echarts-area-chart',
+	'ex-bump-curve-type-echarts-line-chart',
+	'ex-chart-config-default-echarts-bar-chart',
+	'ex-chart-config-icons-echarts-bar-chart',
+	'ex-circle-grid-echarts-radar-chart',
+	'ex-dashed-stroke-echarts-area-chart',
+	'ex-dashed-stroke-echarts-composed-chart',
+	'ex-dashed-stroke-echarts-line-chart',
+	'ex-dither-echarts-area-chart',
+	'ex-dither-echarts-bar-chart',
+	'ex-dither-echarts-composed-chart',
+	'ex-dither-echarts-line-chart',
+	'ex-dither-echarts-pie-chart',
+	'ex-dither-echarts-radar-chart',
+	'ex-default-type-echarts-area-chart',
+	'ex-default-variant-echarts-bar-chart',
+	'ex-donut-echarts-pie-chart',
+	'ex-dot-border-echarts-line-chart',
+	'ex-dot-colored-border-echarts-line-chart',
+	'ex-dot-default-echarts-line-chart',
+	'ex-dot-ping-echarts-line-chart',
+	'ex-dots-echarts-composed-chart',
+	'ex-dotted-area-variant-echarts-area-chart',
+	'ex-duotone-reverse-variant-echarts-bar-chart',
+	'ex-duotone-variant-echarts-bar-chart',
+	'ex-duotone-variant-echarts-composed-chart',
+	'ex-echarts-area-chart',
+	'ex-echarts-bar-chart',
+	'ex-echarts-composed-chart',
+	'ex-echarts-line-chart',
+	'ex-echarts-pie-chart',
+	'ex-echarts-radar-chart',
+	'ex-echarts-radial-chart',
+	'ex-echarts-sankey-chart',
+	'ex-expandable-variant-echarts-bar-chart',
+	'ex-expanded-type-echarts-area-chart',
+	'ex-glowing-desktop-echarts-bar-chart',
+	'ex-glowing-desktop-echarts-line-chart',
+	'ex-glowing-echarts-composed-chart',
+	'ex-glowing-mobile-echarts-bar-chart',
+	'ex-glowing-mobile-echarts-line-chart',
+	'ex-gradient-area-variant-echarts-area-chart',
+	'ex-gradient-colors-bump-echarts-area-chart',
+	'ex-gradient-colors-bump-echarts-line-chart',
+	'ex-gradient-colors-echarts-area-chart',
+	'ex-gradient-colors-echarts-bar-chart',
+	'ex-gradient-colors-echarts-composed-chart',
+	'ex-gradient-colors-echarts-line-chart',
+	'ex-gradient-colors-echarts-pie-chart',
+	'ex-gradient-colors-echarts-radar-chart',
+	'ex-gradient-colors-echarts-radial-chart',
+	'ex-gradient-colors-echarts-sankey-chart',
+	'ex-gradient-reverse-area-variant-echarts-area-chart',
+	'ex-gradient-variant-echarts-bar-chart',
+	'ex-gradient-variant-echarts-composed-chart',
+	'ex-hatched-area-variant-echarts-area-chart',
+	'ex-hatched-variant-echarts-bar-chart',
+	'ex-hatched-variant-echarts-composed-chart',
+	'ex-horizontal-layout-echarts-bar-chart',
+	'ex-hover-highlight-echarts-area-chart',
+	'ex-hover-highlight-echarts-bar-chart',
+	'ex-hover-highlight-echarts-composed-chart',
+	'ex-hover-reveal-echarts-area-chart',
+	'ex-hover-reveal-echarts-line-chart',
+	'ex-labeled-nodes-echarts-sankey-chart',
+	'ex-labels-echarts-pie-chart',
+	'ex-legend-circle-echarts-line-chart',
+	'ex-legend-circle-outline-echarts-line-chart',
+	'ex-legend-horizontal-bar-echarts-line-chart',
+	'ex-legend-rounded-square-echarts-line-chart',
+	'ex-legend-rounded-square-outline-echarts-line-chart',
+	'ex-legend-square-echarts-line-chart',
+	'ex-legend-vertical-bar-echarts-line-chart',
+	'ex-lines-area-variant-echarts-area-chart',
+	'ex-lines-variant-echarts-radar-chart',
+	'ex-loading-state-echarts-area-chart',
+	'ex-loading-state-echarts-bar-chart',
+	'ex-loading-state-echarts-composed-chart',
+	'ex-loading-state-echarts-line-chart',
+	'ex-loading-state-echarts-pie-chart',
+	'ex-loading-state-echarts-radar-chart',
+	'ex-loading-state-echarts-radial-chart',
+	'ex-loading-state-echarts-sankey-chart',
+	'ex-max-highlight-echarts-bar-chart',
+	'ex-monotoney-curve-type-echarts-area-chart',
+	'ex-monotoney-curve-type-echarts-line-chart',
+	'ex-outside-labels-echarts-pie-chart',
+	'ex-outside-labels-echarts-sankey-chart',
+	'ex-overlapping-padded-echarts-pie-chart',
+	'ex-padded-echarts-pie-chart',
+	'ex-percent-type-echarts-bar-chart',
+	'ex-semi-variant-echarts-radial-chart',
+	'ex-solid-area-variant-echarts-area-chart',
+	'ex-solid-labeled-nodes-echarts-sankey-chart',
+	'ex-solid-link-variant-echarts-sankey-chart',
+	'ex-solid-stroke-echarts-area-chart',
+	'ex-solid-stroke-echarts-line-chart',
+	'ex-source-link-variant-echarts-sankey-chart',
+	'ex-stacked-type-echarts-area-chart',
+	'ex-stacked-type-echarts-bar-chart',
+	'ex-step-curve-type-echarts-area-chart',
+	'ex-step-curve-type-echarts-line-chart',
+	'ex-stripped-variant-echarts-bar-chart',
+	'ex-stripped-variant-echarts-composed-chart',
+	'ex-svg-renderer-echarts-area-chart',
+	'ex-svg-renderer-echarts-bar-chart',
+	'ex-svg-renderer-echarts-composed-chart',
+	'ex-svg-renderer-echarts-line-chart',
+	'ex-svg-renderer-echarts-pie-chart',
+	'ex-svg-renderer-echarts-radar-chart',
+	'ex-svg-renderer-echarts-radial-chart',
+	'ex-svg-renderer-echarts-sankey-chart',
+	'ex-tooltip-default-echarts-bar-chart',
+	'ex-tooltip-frosted-glass-echarts-bar-chart'
+] as const;
+
+const echartsExamples: RegistryItem[] = echartsExampleNames.map((name) => {
+	const family = ['area', 'line', 'bar', 'composed', 'pie', 'radar', 'radial', 'sankey'].find(
+		(candidate) => name.endsWith(`-${candidate}-chart`)
+	);
+	if (!family) throw new Error(`Unable to resolve the ECharts family for "${name}".`);
+	return {
+		name,
+		dependencies:
+			name === 'ex-chart-config-icons-echarts-bar-chart' ? ['@lucide/svelte'] : undefined,
+		registryDependencies: [`@evilcharts/echarts-${family}-chart`],
+		type: 'registry:block',
+		files: [{ path: `examples/echarts/${name}.svelte`, type: 'registry:block' }]
+	};
+});
+
+export const examples: RegistryItem[] = [...layerchartExamples, ...echartsExamples];

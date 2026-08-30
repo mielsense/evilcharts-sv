@@ -48,18 +48,24 @@ describe('registry manifests', () => {
 				.filter((f) => f.endsWith('.svelte') && f.startsWith(prefix))
 				.map((f) => f.slice(0, -'.svelte'.length));
 
-		const examples = registry.items
+		const exampleItems = registry.items
 			.filter((i) => i.name.startsWith('ex-'))
 			.map((i) => i.name)
 			.sort();
-		expect(examples).toEqual(onDisk('examples/layerchart', 'ex-').sort());
+		const exampleFiles = ['layerchart', 'echarts'].flatMap((provider) =>
+			onDisk(`examples/${provider}`, 'ex-')
+		);
+		expect(exampleItems).toEqual(exampleFiles.sort());
 
 		// A block's own file plus its shape children; the manifest lists them all.
 		const blockFiles = registry.items
 			.filter((i) => i.type === 'registry:block' && !i.name.startsWith('ex-'))
 			.flatMap((i) => i.files.map((f) => path.basename(f.path, '.svelte')))
 			.sort();
-		expect(blockFiles).toEqual(onDisk('blocks/layerchart', 'b-').sort());
+		const onDiskBlockFiles = ['layerchart', 'echarts'].flatMap((provider) =>
+			onDisk(`blocks/${provider}`, 'b-')
+		);
+		expect(blockFiles).toEqual(onDiskBlockFiles.sort());
 	});
 
 	it.each(registry.items)('$name points at files that exist', (item) => {
