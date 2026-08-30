@@ -8,6 +8,7 @@ import { PROVIDERS, PROVIDER_META, type Provider } from '$site/globals/constants
 import {
 	PORT_AUTHOR,
 	PORT_REPO_URL,
+	PORT_SITE_URL,
 	UPSTREAM_AUTHOR,
 	UPSTREAM_REPO_URL
 } from '$site/globals/constants/site.js';
@@ -151,8 +152,12 @@ ${sections.join('\n\n---\n\n')}
 `;
 }
 
-export function generateSkillMd() {
-	return skillSource;
+/**
+ * The checked-in skill keeps production URLs so GitHub and skills.sh installs stay portable.
+ * HTTP routes replace only that origin with this deployment's configured absolute URL.
+ */
+export function generateSkillMd(origin = absoluteUrl('')) {
+	return skillSource.replaceAll(PORT_SITE_URL, origin.replace(/\/$/, ''));
 }
 
 export function getAgentSkillsIndex() {
@@ -165,6 +170,20 @@ export function getAgentSkillsIndex() {
 				description:
 					'Add and customize EvilCharts chart components in Svelte projects using LayerChart or ECharts.',
 				url: '/.well-known/agent-skills/evilcharts-svelte/SKILL.md'
+			}
+		]
+	};
+}
+
+export function getSkillsIndex() {
+	const [skill] = getAgentSkillsIndex().skills;
+
+	return {
+		skills: [
+			{
+				name: skill.name,
+				description: skill.description,
+				files: ['skill.md']
 			}
 		]
 	};

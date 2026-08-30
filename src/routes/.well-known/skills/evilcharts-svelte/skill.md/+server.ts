@@ -1,7 +1,6 @@
 import { generateSkillMd } from '$site/lib/agent-docs.js';
 import type { RequestHandler } from './$types.js';
 
-/** Compatibility alias for the original discovery name. */
 export const prerender = true;
 
 export const GET: RequestHandler = () =>
