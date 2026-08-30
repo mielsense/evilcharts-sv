@@ -116,7 +116,7 @@
 	<SidebarGroup>
 		<SidebarGroupLabel>Components</SidebarGroupLabel>
 		<SidebarMenu>
-			{#each folders as folder (folder.name)}
+			{#each folders as folder (`${provider}:${folder.name}`)}
 				{const visible = visibleChildren(folder)}
 				{#if visible.length}
 					{const Icon = getNavItemIcon(folder.index?.url ?? visible[0].url)}

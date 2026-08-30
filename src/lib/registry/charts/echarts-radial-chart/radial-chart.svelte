@@ -84,6 +84,7 @@
 	let container = $state<HTMLDivElement>();
 	let themeRevision = $state(0);
 	let instance = $state.raw<EChartsType>();
+	let introComplete = $state(false);
 	let selectedBar = $state<string | null>(untrack(() => defaultSelectedDataKey));
 	let resolved = $state.raw<ResolvedColors>({
 		series: {},
@@ -150,10 +151,24 @@
 			isLoading,
 			loadingData,
 			resolved,
-			animation: true,
+			animation: !introComplete,
 			reducedMotion: prefersReducedMotion.current
 		});
 		return mergeRadialChartOptions(built, chartOptions) as EChartsCoreOption;
+	});
+
+	$effect(() => {
+		if (isLoading) {
+			introComplete = false;
+			return;
+		}
+		if (introComplete || !instance || !radialBar.dataKey) return;
+		if (prefersReducedMotion.current) {
+			introComplete = true;
+			return;
+		}
+		const timer = window.setTimeout(() => (introComplete = true), 1000);
+		return () => window.clearTimeout(timer);
 	});
 
 	function select(name: string) {
@@ -270,14 +285,9 @@
 	{/if}
 	<div class="relative min-h-0 w-full flex-1">
 		{#if backgroundVariant}<Background variant={backgroundVariant} />{/if}
-		<EChartsHost
-			{option}
-			{renderer}
-			{events}
-			setOptionOptions={{ notMerge: false, replaceMerge: ['series'] }}
-			bind:instance
-			class="z-10"
-		/>
+		{#if radialBar.dataKey}
+			<EChartsHost {option} {renderer} {events} bind:instance class="z-10" />
+		{/if}
 		{#if legend && legend.verticalAlign === 'middle' && !isLoading}
 			<LegendOverlay
 				seriesKeys={categories}

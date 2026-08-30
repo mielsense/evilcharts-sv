@@ -144,6 +144,10 @@ test('the provider switcher uses the LayerChart mark at desktop and mobile width
 		await page.getByRole('menuitem', { name: /ECharts/ }).click();
 		await expect(page).toHaveURL(/\/docs\/?$/);
 		await expect(page.getByRole('button', { name: /ECharts/ })).toBeVisible();
+		await expect(page.getByRole('link', { name: 'Default', exact: true }).first()).toHaveAttribute(
+			'href',
+			'/docs/echarts/area-chart'
+		);
 	}
 });
 

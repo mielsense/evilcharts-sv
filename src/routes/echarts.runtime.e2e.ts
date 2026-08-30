@@ -19,6 +19,17 @@ function collectRuntimeErrors(page: Page) {
 	return errors;
 }
 
+async function canvasSignature(page: Page) {
+	return page.locator('[data-slot="echarts-host"] canvas').evaluate((canvas: HTMLCanvasElement) => {
+		const source = canvas.toDataURL();
+		let hash = 0;
+		for (let index = 0; index < source.length; index += 97) {
+			hash = ((hash << 5) - hash + source.charCodeAt(index)) | 0;
+		}
+		return `${source.length}:${hash}`;
+	});
+}
+
 test('every ECharts family initializes its Canvas renderer in production', async ({ page }) => {
 	const errors = collectRuntimeErrors(page);
 
@@ -28,6 +39,24 @@ test('every ECharts family initializes its Canvas renderer in production', async
 		await expect(page.locator('[data-slot="echarts-host"] canvas')).toBeVisible();
 	}
 
+	expect(errors).toEqual([]);
+});
+
+test('bar, pie, and radial charts visibly animate their first real render', async ({ page }) => {
+	const errors = collectRuntimeErrors(page);
+	for (const example of [
+		'ex-echarts-bar-chart',
+		'ex-echarts-pie-chart',
+		'ex-echarts-radial-chart'
+	]) {
+		await page.goto(`/preview/${example}?w=630&h=360`, { waitUntil: 'commit' });
+		await page.locator('[data-slot="echarts-host"] canvas').waitFor({ state: 'attached' });
+		const initial = await canvasSignature(page);
+		await page.waitForTimeout(250);
+		expect(await canvasSignature(page), `${example} should change during its intro`).not.toBe(
+			initial
+		);
+	}
 	expect(errors).toEqual([]);
 });
 

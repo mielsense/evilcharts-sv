@@ -37,6 +37,8 @@ Docs-only, test-only, CI, and contributor-workflow changes are recorded in their
   the same examples in the ECharts provider, apart from the six documented dither additions.
 - Preserved chart-owned animation lifecycles when consumer ECharts options are merged and made
   loading, dashed-stroke, hover, and landing motion respect reduced-motion preferences.
+- Restored the original ECharts Bar, Pie, and Radial entrances by initializing each renderer only
+  after its primary compound series is registered; Composed bars now use the same grow lifecycle.
 - Made LayerChart Cartesian entrances use one uninterrupted chart-owned timeline, preventing
   scale remounts from shortening or restarting reveals, and matched Area and Line wipe speed to
   the ECharts provider.

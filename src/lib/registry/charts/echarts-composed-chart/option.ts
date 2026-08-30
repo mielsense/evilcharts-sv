@@ -564,7 +564,8 @@ export function buildComposedOption(context: ComposedOptionContext): EChartsComp
 
 	if (!showBrush) {
 		return {
-			animation: false,
+			animation: context.animation && !context.reducedMotion,
+			animationDurationUpdate: 0,
 			aria: { enabled: true },
 			grid: mainGrid,
 			xAxis,
@@ -640,7 +641,8 @@ export function buildComposedOption(context: ComposedOptionContext): EChartsComp
 		};
 	});
 	return {
-		animation: false,
+		animation: context.animation && !context.reducedMotion,
+		animationDurationUpdate: 0,
 		aria: { enabled: true },
 		grid: [mainGrid, { ...miniGrid, outerBoundsMode: 'none' }],
 		xAxis: [

@@ -79,7 +79,7 @@
 	let themeRevision = $state(0);
 	let dimension = $state({ width: 320, height: 200 });
 	let internalSelectedSector = $state<string | null>(untrack(() => defaultSelectedSector));
-	let hasRevealed = false;
+	let introComplete = $state(false);
 	let resolved = $state.raw<ResolvedColors>({
 		series: {},
 		tokens: {
@@ -127,7 +127,8 @@
 	});
 
 	const option = $derived.by(() => {
-		const revealEnabled = animation && !hasRevealed && !isLoading && !prefersReducedMotion.current;
+		const revealEnabled =
+			animation && !introComplete && !isLoading && !prefersReducedMotion.current;
 		const built = buildPieOption({
 			data: data as Record<string, unknown>[],
 			config,
@@ -181,14 +182,16 @@
 		const chartInstance = instance;
 		const pieSlot = pie;
 		if (isLoading) {
-			hasRevealed = false;
+			introComplete = false;
 			return;
 		}
-		if (!chartInstance || !pieSlot || hasRevealed) return;
-		const frame = requestAnimationFrame(() => {
-			hasRevealed = true;
-		});
-		return () => cancelAnimationFrame(frame);
+		if (!chartInstance || !pieSlot || introComplete) return;
+		if (!animation || prefersReducedMotion.current) {
+			introComplete = true;
+			return;
+		}
+		const timer = window.setTimeout(() => (introComplete = true), REVEAL_DURATION);
+		return () => window.clearTimeout(timer);
 	});
 
 	$effect(() => {
@@ -290,7 +293,9 @@
 >
 	{@render children?.()}
 	{#if background && !isLoading}<BackgroundOverlay variant={background.variant} />{/if}
-	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if pie}
+		<EChartsHost {option} {renderer} {events} bind:instance />
+	{/if}
 	{#if !legend?.isClickable}
 		<SelectableSeriesControls
 			items={selectableSectors}

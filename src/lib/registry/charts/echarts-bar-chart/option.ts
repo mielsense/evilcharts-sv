@@ -618,7 +618,9 @@ export function buildBarOption(c: BarOptionContext): EChartsBarOption {
 	const mainSeries = series(c);
 	if (!allowBrush)
 		return {
-			animation: false,
+			animation: c.animation && !c.reducedMotion,
+			animationDuration: 500,
+			animationDurationUpdate: 0,
 			aria: { enabled: true },
 			grid: main,
 			xAxis: builtAxes.xAxis,
@@ -646,7 +648,9 @@ export function buildBarOption(c: BarOptionContext): EChartsBarOption {
 		animation: false
 	}));
 	return {
-		animation: false,
+		animation: c.animation && !c.reducedMotion,
+		animationDuration: 500,
+		animationDurationUpdate: 0,
 		aria: { enabled: true },
 		grid: [main, { left: 8, right: 8, bottom, height, outerBoundsMode: 'none' }],
 		xAxis: [builtAxes.xAxis, { type: 'category', gridIndex: 1, data: categories(c), show: false }],

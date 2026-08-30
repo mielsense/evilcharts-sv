@@ -568,7 +568,9 @@
 	class={className}
 >
 	{@render children?.()}
-	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if bars.length > 0}
+		<EChartsHost {option} {renderer} {events} bind:instance />
+	{/if}
 	{#if !legend?.isClickable}
 		<SelectableSeriesControls
 			items={selectableSeries}
