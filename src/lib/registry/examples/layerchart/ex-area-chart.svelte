@@ -38,6 +38,10 @@
 <EvilAreaChart
 	{data}
 	config={chartConfig}
+	accessibility={{
+		label: 'Monthly desktop and mobile usage area chart',
+		description: 'Desktop and mobile values from January through December, with a range brush.'
+	}}
 	class="h-full w-full p-4"
 	stackType="stacked"
 	xDataKey="month"

@@ -11,6 +11,7 @@
 		ChartContainer,
 		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
+		SelectableSeriesControls,
 		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
@@ -135,8 +136,18 @@
 
 	/** Data keys of the rendered `<Bar />` children, so a category can be divided between them. */
 	// `SvelteMap` for the same reactive mutation behavior as `axesPresent` below.
-	const barKeyByToken = new SvelteMap<string, string>();
-	const barKeys = $derived([...barKeyByToken.values()]);
+	const barKeyByToken = new SvelteMap<string, { dataKey: string; isClickable: boolean }>();
+	const barKeys = $derived([...barKeyByToken.values()].map((item) => item.dataKey));
+	const selectableSeries = $derived(
+		[
+			...new Set(
+				[...barKeyByToken.values()].filter((item) => item.isClickable).map((item) => item.dataKey)
+			)
+		].map((key) => ({
+			key,
+			label: typeof config[key]?.label === 'string' ? config[key].label : key
+		}))
+	);
 
 	/** Which axes are rendered, so the plot reserves the space Recharts does. */
 	// `SvelteSet`, not a plain `Set` in `$state`: `$state` proxies objects and arrays but not
@@ -150,7 +161,7 @@
 
 	// Recharts reserves the legend wrapper's full 32px height inside the chart surface.
 	const EDGE_LEGEND_HEIGHT = 32;
-	let barContext: ReturnType<typeof setBarChartContext>;
+	let barContext = $state<ReturnType<typeof setBarChartContext>>();
 	const edgeLegendPlacement = $derived.by(() => {
 		if (isLoading || !barContext) return null;
 		const align = barContext.slots.legend?.verticalAlign;
@@ -227,9 +238,9 @@
 			selectedDataKey = next;
 			onSelectionChange?.(next);
 		},
-		registerBar: (token, key) => {
+		registerBar: (token, key, isClickable) => {
 			if (key === undefined) barKeyByToken.delete(token);
-			else barKeyByToken.set(token, key);
+			else barKeyByToken.set(token, { dataKey: key, isClickable });
 		},
 		registerXAxisDataKey: (token, key) => {
 			// Ignore a stale teardown from LayerChart's mount-time remount.
@@ -249,6 +260,7 @@
 	{initialDimension}
 	{accessibility}
 	bind:dimension={chartDimension}
+	aria-busy={isLoading}
 	class={className}
 >
 	<LoadingIndicator {isLoading} />
@@ -306,6 +318,13 @@
 	</div>
 	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
+	{#if !barContext?.slots.legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={(key) => barContext?.selectDataKey(selectedDataKey === key ? null : key)}
+		/>
+	{/if}
 
 	{#snippet footer()}
 		{#if showBrush && !isLoading}

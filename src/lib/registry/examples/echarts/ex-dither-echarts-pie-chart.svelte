@@ -23,11 +23,9 @@
 	dataKey="visitors"
 	nameKey="browser"
 	renderStyle="dither"
-	ditherVariant="hatched"
-	ditherCellSize={2}
-	bloom="off"
+	bloom="low"
 	class="h-full w-full p-4"
 >
 	<EChartsPieChart.Legend isClickable /><EChartsPieChart.Tooltip />
-	<EChartsPieChart.Pie innerRadius={54} isClickable />
+	<EChartsPieChart.Pie innerRadius={54} ditherVariant="gradient" isClickable />
 </EChartsPieChart>

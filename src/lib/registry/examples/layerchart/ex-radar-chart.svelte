@@ -29,7 +29,15 @@
 	} satisfies ChartConfig;
 </script>
 
-<EvilRadarChart {data} config={chartConfig} class="h-full w-full p-4">
+<EvilRadarChart
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Desktop and mobile skill comparison radar chart',
+		description: 'Desktop and mobile scores across six programming skills.'
+	}}
+	class="h-full w-full p-4"
+>
 	<EvilRadarChart.PolarGrid />
 	<EvilRadarChart.PolarAngleAxis dataKey="skill" />
 	<EvilRadarChart.Legend isClickable />

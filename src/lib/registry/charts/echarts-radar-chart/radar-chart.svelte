@@ -11,8 +11,10 @@
 		EChartsHost,
 		LoadingIndicator,
 		RegistrationSet,
+		SelectableSeriesControls,
 		resolveColors,
 		setEChartsSharedSlotContext,
+		withAlpha,
 		type ChartAccessibility,
 		type ChartConfig,
 		type EChartsRenderer,
@@ -98,6 +100,20 @@
 	});
 
 	const radars = $derived(chart.radars.values);
+	const selectableSeries = $derived(
+		radars
+			.filter((radar) => radar.isClickable)
+			.filter(
+				(radar, index, all) => all.findIndex((item) => item.dataKey === radar.dataKey) === index
+			)
+			.map((radar) => ({
+				key: radar.dataKey,
+				label:
+					typeof config[radar.dataKey]?.label === 'string'
+						? (config[radar.dataKey].label as string)
+						: radar.dataKey
+			}))
+	);
 	const grid = $derived(chart.grids.first);
 	const angleAxis = $derived(chart.angleAxes.first);
 	const radiusAxis = $derived(Boolean(chart.radiusAxes.first));
@@ -256,6 +272,22 @@
 	$effect(() => {
 		const chartInstance = instance;
 		if (!chartInstance || !isLoading) return;
+		if (prefersReducedMotion.current) {
+			chartInstance.setOption(
+				{
+					series: [
+						{
+							id: '__loading',
+							data: [{ value: loadingData }],
+							lineStyle: { color: withAlpha(resolved.tokens.foreground, 0.5), width: 2 },
+							areaStyle: { color: withAlpha(resolved.tokens.foreground, 0.05) }
+						}
+					]
+				},
+				{ silent: true, lazyUpdate: true }
+			);
+			return;
+		}
 		const startedAt = performance.now();
 		let currentLoadingData = loadingData;
 		let lastPhase = 0;
@@ -335,8 +367,16 @@
 	bind:element={container}
 	bind:themeRevision
 	bind:dimension
+	aria-busy={isLoading}
 	class={className}
 >
 	{@render children?.()}
 	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if !legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={toggleSeries}
+		/>
+	{/if}
 </ChartContainer>

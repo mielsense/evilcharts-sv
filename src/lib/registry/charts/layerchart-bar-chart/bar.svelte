@@ -54,8 +54,8 @@
 	// Announce this bar so the root can divide the category between every bar it finds,
 	// the way Recharts does.
 	$effect.pre(() => {
-		chart.registerBar(id, dataKey);
-		return () => chart.registerBar(id, undefined);
+		chart.registerBar(id, dataKey, isClickable);
+		return () => chart.registerBar(id, undefined, false);
 	});
 	// Devices set to "reduce motion" skip the grow-in animation entirely
 	const shouldReduceMotion = useReducedMotion();

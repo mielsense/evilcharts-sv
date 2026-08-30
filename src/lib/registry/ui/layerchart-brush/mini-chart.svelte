@@ -1,7 +1,7 @@
 <script lang="ts">
 	// ─── Mini Chart ─────────────────────────────────────────────────────────────
 	import { Area, Chart, Spline, Svg } from 'layerchart';
-	import { getColorsCount } from '../layerchart-chart/colors.js';
+	import { chartColorVariable, getColorsCount } from '../layerchart-chart/colors.js';
 	import MiniBars from './mini-bars.svelte';
 	import { resolveCurve, type CurveType } from '../layerchart-chart/curves.js';
 	import type { ChartConfig } from '../layerchart-chart/chart-config.js';
@@ -59,13 +59,13 @@
 	function stops(dataKey: string, colorsCount: number) {
 		if (colorsCount === 1) {
 			return [
-				{ offset: '0%', color: `var(--color-${dataKey}-0)` },
-				{ offset: '100%', color: `var(--color-${dataKey}-0)` }
+				{ offset: '0%', color: chartColorVariable(dataKey, 0) },
+				{ offset: '100%', color: chartColorVariable(dataKey, 0) }
 			];
 		}
 		return Array.from({ length: colorsCount }, (_, i) => ({
 			offset: `${(i / (colorsCount - 1)) * 100}%`,
-			color: `var(--color-${dataKey}-${i}, var(--color-${dataKey}-0))`
+			color: chartColorVariable(dataKey, i, 0)
 		}));
 	}
 

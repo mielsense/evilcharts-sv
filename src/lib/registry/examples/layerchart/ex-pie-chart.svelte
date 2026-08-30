@@ -55,6 +55,10 @@
 	dataKey="visitors"
 	nameKey="browser"
 	config={chartConfig}
+	accessibility={{
+		label: 'Browser visitor share pie chart',
+		description: 'Visitor totals for Chrome, Safari, Firefox, Edge, and other browsers.'
+	}}
 >
 	<EvilPieChart.Legend isClickable />
 	<EvilPieChart.Tooltip />

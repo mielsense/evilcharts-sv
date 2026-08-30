@@ -1,5 +1,5 @@
 import type { LegendVariant } from '../../ui/echarts-legend/index.js';
-import type { DitherBloom } from '../../ui/echarts-dither/index.js';
+import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
 import type {
 	TooltipPosition,
 	TooltipRoundness,
@@ -46,6 +46,7 @@ export type PieRegistration = {
 	startAngle: number;
 	endAngle: number;
 	isClickable: boolean;
+	ditherVariant?: DitherVariant;
 	labelDataKey: string | null;
 	labelPosition: LabelPosition;
 };

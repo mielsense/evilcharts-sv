@@ -55,6 +55,11 @@
 	nameKey="browser"
 	config={chartConfig}
 	variant="full"
+	accessibility={{
+		label: 'Browser visitor totals radial chart',
+		description:
+			'Concentric bars compare visitors from Chrome, Safari, Firefox, Edge, and other browsers.'
+	}}
 >
 	<EvilRadialChart.Legend isClickable />
 	<EvilRadialChart.Tooltip />

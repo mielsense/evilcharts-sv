@@ -179,6 +179,8 @@
 			}
 			shown = active;
 		});
+
+		return () => flight?.stop();
 	});
 </script>
 

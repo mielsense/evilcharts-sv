@@ -20,7 +20,7 @@ type Options = {
 	selectedDataKey: () => string | null;
 	selectDataKey: (dataKey: string | null) => void;
 	/** Called by each rendered `<Radar />` so config-only keys never become series. */
-	registerRadar: (token: string, dataKey: string | undefined) => void;
+	registerRadar: (token: string, dataKey: string | undefined, isClickable: boolean) => void;
 	/**
 	 * Called by `<PolarAngleAxis dataKey>` on mount.
 	 *
@@ -78,8 +78,8 @@ export class RadarChartContext {
 		this.#options.selectDataKey(dataKey);
 	};
 
-	registerRadar = (token: string, dataKey: string | undefined) => {
-		this.#options.registerRadar(token, dataKey);
+	registerRadar = (token: string, dataKey: string | undefined, isClickable: boolean) => {
+		this.#options.registerRadar(token, dataKey, isClickable);
 	};
 
 	registerAngleDataKey = (token: string, dataKey: string | undefined) => {

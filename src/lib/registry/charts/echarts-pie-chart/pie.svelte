@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { DitherVariant } from '../../ui/echarts-dither/index.js';
 	import { useEChartsPieChart } from './pie-chart-context.svelte.js';
 	import { setEChartsPieSlots } from './pie-slots.svelte.js';
 	import {
@@ -21,6 +22,7 @@
 		startAngle = DEFAULT_START_ANGLE,
 		endAngle = DEFAULT_END_ANGLE,
 		isClickable = false,
+		ditherVariant,
 		children
 	}: {
 		variant?: PieVariant;
@@ -31,6 +33,7 @@
 		startAngle?: number;
 		endAngle?: number;
 		isClickable?: boolean;
+		ditherVariant?: DitherVariant;
 		children?: Snippet;
 	} = $props();
 
@@ -50,6 +53,7 @@
 				startAngle,
 				endAngle,
 				isClickable,
+				ditherVariant,
 				labelDataKey: label ? (label.dataKey ?? '') : null,
 				labelPosition: label?.position ?? 'inside'
 			};

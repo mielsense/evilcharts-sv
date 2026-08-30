@@ -15,7 +15,9 @@
 		DEFAULT_ECHARTS_RENDERER,
 		EChartsHost,
 		LoadingIndicator,
+		mergeLifecycleOptions,
 		RegistrationSet,
+		SelectableSeriesControls,
 		resolveColors,
 		setEChartsSharedSlotContext,
 		withAlpha,
@@ -27,7 +29,11 @@
 	} from '../../ui/echarts-chart/index.js';
 	import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
 	import { LegendOverlay } from '../../ui/echarts-legend/index.js';
-	import { syncBrushOverlay, type BrushOverlayElements } from '../../ui/echarts-brush/index.js';
+	import {
+		BrushControls,
+		syncBrushOverlay,
+		type BrushOverlayElements
+	} from '../../ui/echarts-brush/index.js';
 	import { setEChartsComposedChartContext } from './composed-chart-context.svelte.js';
 	import { buildComposedOption, createComposedLoadingData } from './option.js';
 	import type {
@@ -128,6 +134,20 @@
 
 	const bars = $derived(chart.bars.values);
 	const lines = $derived(chart.lines.values);
+	const selectableSeries = $derived(
+		[...bars, ...lines]
+			.filter((series) => series.isClickable)
+			.filter(
+				(series, index, all) => all.findIndex((item) => item.dataKey === series.dataKey) === index
+			)
+			.map((series) => ({
+				key: series.dataKey,
+				label:
+					typeof config[series.dataKey]?.label === 'string'
+						? (config[series.dataKey].label as string)
+						: series.dataKey
+			}))
+	);
 	const effectiveAnimation = $derived(
 		bars[0]?.animationType ?? lines[0]?.animationType ?? animationType
 	);
@@ -195,7 +215,7 @@
 			ditherCellSize,
 			bloom
 		});
-		return (chartOptions ? { ...built, ...chartOptions } : built) as EChartsCoreOption;
+		return mergeLifecycleOptions(built, chartOptions) as EChartsCoreOption;
 	});
 
 	$effect(() => {
@@ -343,11 +363,19 @@
 		const animatedKeys = lines
 			.filter((line) => line.strokeVariant === 'animated-dashed')
 			.map((line) => line.dataKey);
-		if (!chartInstance || isLoading || selectedDataKey !== null || animatedKeys.length === 0)
+		if (
+			!chartInstance ||
+			isLoading ||
+			selectedDataKey !== null ||
+			animatedKeys.length === 0 ||
+			prefersReducedMotion.current ||
+			!introComplete
+		)
 			return;
 		let frame = 0;
 		const start = performance.now();
 		const tick = (now: number) => {
+			if (chartInstance.isDisposed()) return;
 			const dashOffset = -(((now - start) / 1000) % 1) * 6;
 			chartInstance.setOption(
 				{ series: animatedKeys.map((id) => ({ id, lineStyle: { dashOffset } })) },
@@ -361,11 +389,32 @@
 
 	$effect(() => {
 		const chartInstance = instance;
-		if (!chartInstance || !isLoading) return;
+		if (!chartInstance || chartInstance.isDisposed() || !isLoading) return;
+		if (prefersReducedMotion.current) {
+			chartInstance.setOption(
+				{
+					series: [
+						{
+							id: '__loading',
+							data: loadingData,
+							itemStyle: { color: withAlpha(resolved.tokens.foreground, 0.22) }
+						},
+						{
+							id: '__loading-line',
+							data: loadingLineData,
+							lineStyle: { color: withAlpha(resolved.tokens.foreground, 0.5) }
+						}
+					]
+				},
+				{ silent: true, lazyUpdate: true }
+			);
+			return;
+		}
 		let frame = 0;
 		let lastPhase = 0;
 		const start = performance.now();
 		const tick = (now: number) => {
+			if (chartInstance.isDisposed()) return;
 			const phase = ((now - start) / 2000) % 1;
 			if (phase < lastPhase) {
 				loadingData = createComposedLoadingData(loadingBars);
@@ -464,8 +513,38 @@
 	bind:element={container}
 	bind:dimension
 	bind:themeRevision
+	aria-busy={isLoading}
 	class={className}
 >
 	{@render children?.()}
 	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if !legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={toggleSelection}
+		/>
+	{/if}
+	{#if brush && !isLoading && data.length > 0}
+		<BrushControls
+			startIndex={Math.round((brushRange.start / 100) * Math.max(0, data.length - 1))}
+			endIndex={Math.round((brushRange.end / 100) * Math.max(0, data.length - 1))}
+			totalPoints={data.length}
+			formatLabel={(index) =>
+				brush.formatLabel?.(categoryValues[index] ?? '', index) ??
+				String(categoryValues[index] ?? index)}
+			onChange={(range) => {
+				const last = Math.max(0, data.length - 1);
+				brushRange = {
+					start: last === 0 ? 0 : (range.startIndex / last) * 100,
+					end: last === 0 ? 100 : (range.endIndex / last) * 100
+				};
+				instance?.dispatchAction(
+					{ type: 'dataZoom', start: brushRange.start, end: brushRange.end },
+					{ silent: true }
+				);
+				brush.onChange?.(range);
+			}}
+		/>
+	{/if}
 </ChartContainer>

@@ -62,8 +62,8 @@
 	const id = $props.id(); // unique id scopes this area's style defs
 	const seriesToken = Symbol('area-series');
 	$effect.pre(() => {
-		chart.registerSeries(seriesToken, dataKey, true);
-		return () => chart.registerSeries(seriesToken, dataKey, false);
+		chart.registerSeries(seriesToken, dataKey, isClickable, true);
+		return () => chart.registerSeries(seriesToken, dataKey, isClickable, false);
 	});
 	// Devices set to "reduce motion" skip the intro reveal entirely
 	const shouldReduceMotion = useReducedMotion();

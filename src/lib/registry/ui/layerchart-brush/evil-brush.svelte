@@ -8,7 +8,7 @@
 		useSpring,
 		useTransform
 	} from '@humanspeak/svelte-motion';
-	import { untrack } from 'svelte';
+	import { onDestroy, untrack } from 'svelte';
 	import { cn } from '$lib/utils.js';
 	import ChartStyle from '../layerchart-chart/chart-style.svelte';
 	import BrushHandle from './brush-handle.svelte';
@@ -223,8 +223,12 @@
 		);
 	}
 
-	useMotionValueEvent(leftSpring, 'change', updateSelectedWidth);
-	useMotionValueEvent(rightSpring, 'change', updateSelectedWidth);
+	const stopLeftWidthSync = useMotionValueEvent(leftSpring, 'change', updateSelectedWidth);
+	const stopRightWidthSync = useMotionValueEvent(rightSpring, 'change', updateSelectedWidth);
+	onDestroy(() => {
+		stopLeftWidthSync();
+		stopRightWidthSync();
+	});
 	$effect.pre(() => {
 		directSelectedWidth.set(`${Math.max(0, rightPct - leftPct)}%`);
 		leftDirectOverlayWidth.set(`${leftPct}%`);

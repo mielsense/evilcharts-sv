@@ -103,8 +103,8 @@
 	const slots = setRadarSlotsContext();
 
 	$effect.pre(() => {
-		chart.registerRadar(id, dataKey);
-		return () => chart.registerRadar(id, undefined);
+		chart.registerRadar(id, dataKey, isClickable);
+		return () => chart.registerRadar(id, undefined, false);
 	});
 
 	const isSelected = $derived(chart.selectedDataKey === null || chart.selectedDataKey === dataKey);

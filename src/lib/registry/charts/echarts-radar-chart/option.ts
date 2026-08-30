@@ -287,7 +287,7 @@ function realSeries(context: RadarOptionContext): RadarSeriesOption[] {
 		const areaPaint = isDither
 			? rendererDitherPattern(
 					slots,
-					context.ditherVariant ?? 'gradient',
+					radar.ditherVariant ?? context.ditherVariant ?? 'gradient',
 					context.ditherCellSize ?? 2,
 					context
 				)

@@ -89,7 +89,16 @@
 	} satisfies ChartConfig;
 </script>
 
-<EChartsSankeyChart class="h-full w-full p-4" {data} config={chartConfig}>
+<EChartsSankeyChart
+	class="h-full w-full p-4"
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Website conversion flow Sankey chart',
+		description:
+			'Traffic moves from acquisition channels through landing and product pages to purchases or bounces.'
+	}}
+>
 	<EChartsSankeyChart.Node isClickable>
 		<EChartsSankeyChart.NodeLabel position="outside" showValues />
 	</EChartsSankeyChart.Node>

@@ -72,16 +72,35 @@ describe('chart loading parity', () => {
 				radial.container.querySelector('path.lc-arc-line[fill="currentColor"]')?.getAttribute('d')
 			)
 			.toBeTruthy();
+		const areaPath = area.container.querySelector<SVGPathElement>('.lc-area-path');
+		const shimmer = area.container.querySelector<SVGRectElement>(
+			'pattern[id$="-loading-pattern"] > rect'
+		);
+		expect(areaPath).not.toBeNull();
+		expect(shimmer).not.toBeNull();
+
+		// Synchronize with the shimmer's left buffer. The loading data is allowed to refresh only
+		// after the mask has crossed x=1 and fully left the visible plot, exactly like upstream.
+		await expect
+			.poll(() => {
+				const x = Number(shimmer?.getAttribute('x'));
+				return x >= -0.95 && x <= -0.5;
+			})
+			.toBe(true);
+		const initialAreaPath = areaPath?.getAttribute('d');
 
 		const [areaFrames, radialFrames] = await Promise.all([
-			samplePathFrames(area.container, '.lc-area-path'),
-			samplePathFrames(radial.container, 'path.lc-arc-line[fill="currentColor"]')
+			samplePathFrames(area.container, '.lc-area-path', 700),
+			samplePathFrames(radial.container, 'path.lc-arc-line[fill="currentColor"]', 700)
 		]);
 
-		// Only the area shimmer moves; its silhouette stays fixed for the loading session. Radial
-		// sectors, however, continuously tween their angles.
+		// The area silhouette stays fixed for the visible sweep while the radial sectors continuously
+		// tween their angles.
 		expect(areaFrames.size).toBe(1);
 		expect(radialFrames.size).toBeGreaterThan(3);
+
+		await expect.poll(() => Number(shimmer?.getAttribute('x'))).toBeGreaterThanOrEqual(1);
+		await expect.poll(() => areaPath?.getAttribute('d')).not.toBe(initialAreaPath);
 	}, 6000);
 
 	it.each(FAMILIES)(

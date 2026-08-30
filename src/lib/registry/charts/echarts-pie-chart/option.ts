@@ -230,7 +230,7 @@ function realSeries(context: PieOptionContext): PieSeriesOption[] {
 				color: sectorPaint(
 					context.resolved.series[name] ?? [FALLBACK_COLOR],
 					context.renderStyle ?? 'native',
-					context.ditherVariant ?? 'gradient',
+					pie.ditherVariant ?? context.ditherVariant ?? 'gradient',
 					context.ditherCellSize ?? 2,
 					context
 				),

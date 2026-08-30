@@ -8,6 +8,7 @@
 	 */
 	import { Axis, Chart, Svg } from 'layerchart';
 	import {
+		chartColorVariable,
 		ChartContainer,
 		thinAxisTicks,
 		type ChartConfig
@@ -96,7 +97,7 @@
 		>
 			<Svg>
 				{#each seriesKeys as key (key)}
-					<GridBar dataKey={key} {rows} fill={`var(--color-${key}-0)`} />
+					<GridBar dataKey={key} {rows} fill={chartColorVariable(key, 0)} />
 				{/each}
 				<Axis
 					placement="bottom"

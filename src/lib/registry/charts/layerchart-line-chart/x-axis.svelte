@@ -13,7 +13,7 @@
 		RECHARTS_X_AXIS_TICK_OFFSET,
 		thinAxisTicks
 	} from '../../ui/layerchart-chart/ticks.js';
-	import type { ComponentProps } from 'svelte';
+	import { onMount, type ComponentProps } from 'svelte';
 	import { useLineChart } from './line-chart-context.svelte.js';
 
 	type Props = Omit<ComponentProps<typeof Axis>, 'placement' | 'format'> & {
@@ -37,15 +37,28 @@
 
 	const chart = useLineChart();
 	const token = $props.id();
+	let fontMetricsRevision = $state(0);
 	const translatedTickLength = $derived(tickMargin + RECHARTS_X_AXIS_TICK_OFFSET);
 	const format = $derived(tickFormatter ? layerChartFormatter(tickFormatter) : undefined);
-	const ticks = $derived(
-		thinAxisTicks({
+	const ticks = $derived.by(() => {
+		void fontMetricsRevision;
+		return thinAxisTicks({
 			minGap: minTickGap,
 			leadingInset: chart.xAxisLeadingInset,
+			trailingInset: chart.xAxisTrailingInset,
 			format: (value, index) => tickFormatter?.(value, index) ?? String(value)
-		})
-	);
+		});
+	});
+
+	onMount(() => {
+		let active = true;
+		void (document.fonts?.ready ?? Promise.resolve()).then(() => {
+			if (active) fontMetricsRevision += 1;
+		});
+		return () => {
+			active = false;
+		};
+	});
 
 	$effect.pre(() => {
 		chart.registerXAxisDataKey(token, dataKey);

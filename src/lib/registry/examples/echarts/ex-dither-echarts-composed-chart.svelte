@@ -22,15 +22,13 @@
 	{config}
 	xDataKey="month"
 	renderStyle="dither"
-	ditherVariant="gradient"
-	ditherCellSize={2}
-	bloom="aura"
+	bloom="low"
 	class="h-full w-full p-4"
 >
 	<EChartsComposedChart.Grid />
 	<EChartsComposedChart.XAxis dataKey="month" />
 	<EChartsComposedChart.Legend isClickable />
 	<EChartsComposedChart.Tooltip />
-	<EChartsComposedChart.Bar dataKey="desktop" ditherVariant="hatched" isClickable />
-	<EChartsComposedChart.Line dataKey="mobile" ditherVariant="dotted" isClickable />
+	<EChartsComposedChart.Bar dataKey="desktop" ditherVariant="gradient" isClickable />
+	<EChartsComposedChart.Line dataKey="mobile" ditherVariant="solid" isClickable />
 </EChartsComposedChart>

@@ -44,8 +44,3 @@ export type ChartConfig = Record<
 		colors?: AtLeastOneThemeColor;
 	}
 >;
-
-/** Validates that every config key also exists on the data row type. */
-export type ValidateConfigKeys<TData, TConfig> = {
-	[K in keyof TConfig]: K extends keyof TData ? ChartConfig[string] : never;
-};

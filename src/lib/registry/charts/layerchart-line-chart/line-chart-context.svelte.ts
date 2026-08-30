@@ -21,6 +21,7 @@ type Options = {
 	ditherVariant: () => DitherVariant;
 	isLoading: () => boolean;
 	xAxisLeadingInset: () => number;
+	xAxisTrailingInset: () => number;
 	chartId: () => string;
 	selectedDataKey: () => string | null;
 	selectDataKey: (dataKey: string | null) => void;
@@ -33,7 +34,7 @@ type Options = {
 	 */
 	registerXAxisDataKey: (token: string, dataKey: string | undefined) => void;
 	/** Called by each `<Line />` so geometry, legends, and tooltips use rendered marks only. */
-	registerSeries: (token: symbol, dataKey: string, present: boolean) => void;
+	registerSeries: (token: symbol, dataKey: string, isClickable: boolean, present: boolean) => void;
 	/**
 	 * Called by `<XAxis />` / `<YAxis />` so the root can reserve plot-area space for them.
 	 *
@@ -92,6 +93,9 @@ export class LineChartContext {
 	get xAxisLeadingInset() {
 		return this.#options.xAxisLeadingInset();
 	}
+	get xAxisTrailingInset() {
+		return this.#options.xAxisTrailingInset();
+	}
 	get chartId() {
 		return this.#options.chartId();
 	}
@@ -107,8 +111,8 @@ export class LineChartContext {
 		this.#options.registerXAxisDataKey(token, dataKey);
 	};
 
-	registerSeries = (token: symbol, dataKey: string, present: boolean) => {
-		this.#options.registerSeries(token, dataKey, present);
+	registerSeries = (token: symbol, dataKey: string, isClickable: boolean, present: boolean) => {
+		this.#options.registerSeries(token, dataKey, isClickable, present);
 	};
 
 	registerAxis = (token: string, axis: 'x' | 'y', present: boolean, size?: number) => {

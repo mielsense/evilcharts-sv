@@ -35,7 +35,16 @@
 	} satisfies ChartConfig;
 </script>
 
-<EChartsComposedChart class="h-full w-full p-4" xDataKey="month" {data} config={chartConfig}>
+<EChartsComposedChart
+	class="h-full w-full p-4"
+	xDataKey="month"
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Monthly revenue and profit chart',
+		description: 'Revenue bars and a profit line from January through December, with a range brush.'
+	}}
+>
 	<EChartsComposedChart.Grid />
 	<EChartsComposedChart.XAxis
 		dataKey="month"

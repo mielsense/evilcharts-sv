@@ -1,3 +1,4 @@
+import { chartColorVariable } from '../layerchart-chart/colors.js';
 import type { DitherCanvasFrame, DitherVariant } from './types.js';
 
 export type DitherMarkKind = 'fill' | 'stroke';
@@ -117,7 +118,7 @@ export function collectDitherDomMarks(
 export function resolveDitherSeriesColors(frame: DitherCanvasFrame, key: string): string[] {
 	const colors: string[] = [];
 	for (let index = 0; index < 32; index += 1) {
-		const color = frame.resolveColor(`var(--color-${key}-${index})`);
+		const color = frame.resolveColor(chartColorVariable(key, index));
 		if (!color) break;
 		colors.push(color);
 	}

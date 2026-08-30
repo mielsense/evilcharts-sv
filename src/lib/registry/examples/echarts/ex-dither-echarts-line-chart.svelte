@@ -22,9 +22,7 @@
 	{config}
 	xDataKey="month"
 	renderStyle="dither"
-	ditherVariant="dotted"
-	ditherCellSize={3}
-	bloom="aura"
+	bloom="low"
 	class="h-full w-full p-4"
 >
 	<EChartsLineChart.Grid /><EChartsLineChart.XAxis dataKey="month" /><EChartsLineChart.Legend

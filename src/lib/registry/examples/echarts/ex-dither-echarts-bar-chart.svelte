@@ -25,15 +25,18 @@
 	{config}
 	xDataKey="month"
 	renderStyle="dither"
-	ditherVariant="gradient"
-	ditherCellSize={2}
-	bloom="high"
+	bloom="low"
 	class="h-full w-full p-4"
 >
 	<EChartsBarChart.Grid />
 	<EChartsBarChart.XAxis dataKey="month" />
 	<EChartsBarChart.Legend isClickable />
 	<EChartsBarChart.Tooltip />
-	<EChartsBarChart.Bar dataKey="desktop" ditherVariant="solid" isClickable enableHoverHighlight />
+	<EChartsBarChart.Bar
+		dataKey="desktop"
+		ditherVariant="gradient"
+		isClickable
+		enableHoverHighlight
+	/>
 	<EChartsBarChart.Bar dataKey="mobile" ditherVariant="hatched" isClickable enableHoverHighlight />
 </EChartsBarChart>

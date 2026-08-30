@@ -1,8 +1,24 @@
 import { render } from 'vitest-browser-svelte';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import Harness from './rendered-series-parity.test.svelte';
 
+const NativeResizeObserver = window.ResizeObserver;
+
+class StaticResizeObserver implements ResizeObserver {
+	disconnect() {}
+	observe() {}
+	unobserve() {}
+}
+
 describe('rendered series parity', () => {
+	beforeEach(() => {
+		window.ResizeObserver = StaticResizeObserver;
+	});
+
+	afterEach(() => {
+		window.ResizeObserver = NativeResizeObserver;
+	});
+
 	for (const family of ['bar', 'composed', 'radar'] as const) {
 		it(`${family} derives its legend and value domain from rendered marks`, async () => {
 			const { container } = render(Harness, { family });

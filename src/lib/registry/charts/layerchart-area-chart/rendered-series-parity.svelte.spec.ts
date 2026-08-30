@@ -1,8 +1,24 @@
 import { render } from 'vitest-browser-svelte';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import Harness from './rendered-series-parity.test.svelte';
 
+const NativeResizeObserver = window.ResizeObserver;
+
+class StaticResizeObserver implements ResizeObserver {
+	disconnect() {}
+	observe() {}
+	unobserve() {}
+}
+
 describe('Area and Line rendered-series parity', () => {
+	beforeEach(() => {
+		window.ResizeObserver = StaticResizeObserver;
+	});
+
+	afterEach(() => {
+		window.ResizeObserver = NativeResizeObserver;
+	});
+
 	for (const family of ['area', 'line'] as const) {
 		it(`${family} ignores config-only series and includes mark-only series`, async () => {
 			const { container } = render(Harness);

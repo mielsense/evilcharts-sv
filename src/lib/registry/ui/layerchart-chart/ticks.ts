@@ -3,6 +3,20 @@ import type { AnyScale } from 'layerchart';
 /** Converts LayerChart's x-axis tick origin to Recharts' `tickMargin` baseline. */
 export const RECHARTS_X_AXIS_TICK_OFFSET = 5.5;
 
+let axisTextContext: CanvasRenderingContext2D | null;
+
+function measureAxisLabels(labels: string[], fallbackCharWidth: number): number[] {
+	if (typeof document === 'undefined')
+		return labels.map((label) => label.length * fallbackCharWidth);
+
+	axisTextContext ??= document.createElement('canvas').getContext('2d');
+	if (!axisTextContext) return labels.map((label) => label.length * fallbackCharWidth);
+
+	const family = getComputedStyle(document.body).fontFamily;
+	axisTextContext.font = `400 12px ${family}`;
+	return labels.map((label) => axisTextContext!.measureText(label).width);
+}
+
 /**
  * Axis tick values with a leading tick dropped when its label cannot fit inside the plot.
  *
@@ -40,9 +54,8 @@ export function dropOverflowingLeadTick(scale: AnyScale): unknown[] {
  * `minTickGap` of the one already kept. LayerChart's `tickSpacing` cannot do this — it only derives a
  * tick *count*, and it is disabled outright for band scales.
  *
- * Recharts measures real text; there is no rendered text to measure before the axis draws, so the
- * width is estimated from the label's length. `charWidth` defaults to a 12px monospace-ish advance,
- * which is what these axes use.
+ * Recharts measures real text. The browser path mirrors that with canvas text metrics using the
+ * chart's inherited 12px font; SSR falls back to a stable per-character estimate until hydration.
  *
  * Pass it to `<Axis ticks={…}>`; it also applies `dropOverflowingLeadTick`'s boundary rule.
  */
@@ -50,7 +63,8 @@ export function thinAxisTicks({
 	format,
 	minGap = 5,
 	charWidth = 6.6,
-	leadingInset = 0
+	leadingInset = 0,
+	trailingInset = 0
 }: {
 	/** Renders a domain value the way the axis will, so its width can be estimated. */
 	format: (value: unknown, index: number) => string;
@@ -60,10 +74,14 @@ export function thinAxisTicks({
 	charWidth?: number;
 	/** Space between the SVG edge and the scale range (for example a rendered Y axis). */
 	leadingInset?: number;
+	/** Space between the scale range and the SVG's trailing edge. */
+	trailingInset?: number;
 }) {
 	return (scale: AnyScale): unknown[] => {
 		const domain = scale.domain() as unknown[];
 		if (domain.length < 2) return domain;
+		const labels = domain.map((value, index) => format(value, index));
+		const labelWidths = measureAxisLabels(labels, charWidth);
 
 		const bandOffset =
 			typeof (scale as { bandwidth?: () => number }).bandwidth === 'function'
@@ -73,14 +91,9 @@ export function thinAxisTicks({
 		const centreOf = (value: unknown) =>
 			Number((scale as (v: unknown) => number)(value)) + bandOffset;
 		const halfWidthOf = (value: unknown) =>
-			(format(
-				value,
-				domain.findIndex((candidate) => Object.is(candidate, value))
-			).length *
-				charWidth) /
-			2;
+			labelWidths[domain.findIndex((candidate) => Object.is(candidate, value))] / 2;
 		const range = scale.range() as number[];
-		const endBoundary = Math.max(...range);
+		const endBoundary = Math.max(...range) + trailingInset;
 
 		// Recharts moves the final label just far enough inward for its trailing edge to stay inside
 		// the axis view box. That shifted label then owns the collision boundary, which is why a

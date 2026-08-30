@@ -74,6 +74,43 @@ test.describe('EvilCharts blocks', () => {
 		}
 	});
 
+	test('upstream blocks stay contained at compact and wide widths', async ({ page }) => {
+		test.setTimeout(90_000);
+
+		for (const width of [320, 390, 630]) {
+			for (const name of BLOCKS) {
+				await page.goto(`/preview/${name}?w=${width}&h=360`);
+				await page.waitForSelector('[data-preview-ready]');
+				const overflow = await page.locator('[data-slot="preview"]').evaluate((block) => {
+					const nestedScrollers = [...block.querySelectorAll<HTMLElement>('*')].filter((node) => {
+						const style = getComputedStyle(node);
+						const scrollsX =
+							/auto|scroll/.test(style.overflowX) && node.scrollWidth > node.clientWidth;
+						const scrollsY =
+							/auto|scroll/.test(style.overflowY) && node.scrollHeight > node.clientHeight;
+						return scrollsX || scrollsY;
+					}).length;
+
+					return {
+						blockX: block.scrollWidth - block.clientWidth,
+						blockY: block.scrollHeight - block.clientHeight,
+						nestedScrollers,
+						previewX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+						previewY: document.documentElement.scrollHeight - document.documentElement.clientHeight
+					};
+				});
+
+				expect(overflow, `${name} overflowed at ${width}px`).toEqual({
+					blockX: 0,
+					blockY: 0,
+					nestedScrollers: 0,
+					previewX: 0,
+					previewY: 0
+				});
+			}
+		}
+	});
+
 	for (const name of BLOCKS) {
 		test(`${name} renders cleanly`, async ({ page }) => {
 			const errors = await open(page, name);

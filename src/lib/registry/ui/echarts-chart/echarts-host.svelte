@@ -37,6 +37,7 @@
 			const chart = echarts.init(node, undefined, { renderer: activeRenderer });
 			instance = chart;
 			const resizeObserver = new ResizeObserver(() => {
+				if (chart.isDisposed()) return;
 				if (node.clientWidth === chart.getWidth() && node.clientHeight === chart.getHeight())
 					return;
 				chart.resize();
@@ -45,7 +46,7 @@
 
 			return () => {
 				resizeObserver.disconnect();
-				chart.dispose();
+				if (!chart.isDisposed()) chart.dispose();
 				if (instance === chart) instance = undefined;
 			};
 		};

@@ -56,6 +56,10 @@ describe('ChartLegendContent', () => {
 		expect(legend(top.container)!.className).toContain('pb-4');
 		const bottom = render(Harness, { config, payload, verticalAlign: 'bottom' });
 		expect(legend(bottom.container)!.className).toContain('pt-4');
+		const middle = render(Harness, { config, payload, verticalAlign: 'middle' });
+		expect(legend(middle.container)!.className).toContain('pt-4');
+		const defaultPlacement = render(Harness, { config, payload });
+		expect(legend(defaultPlacement.container)!.className).toContain('pt-4');
 	});
 
 	it('dims entries that are not the selected series', () => {
