@@ -9,7 +9,7 @@
 	import { Area as LayerArea, Highlight, Points } from 'layerchart';
 	import { useReducedMotion } from '@humanspeak/svelte-motion';
 	import type { Snippet } from 'svelte';
-	import { resolveCurve } from '../../ui/layerchart-chart/curves.js';
+	import { RevealMask, resolveCurve } from '../../ui/layerchart-chart/index.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
 	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { useAreaChart } from './area-chart-context.svelte.js';
@@ -20,11 +20,12 @@
 	import HatchedPattern from './defs/hatched-pattern.svelte';
 	import LinesPattern from './defs/lines-pattern.svelte';
 	import ReverseGradientPattern from './defs/reverse-gradient-pattern.svelte';
-	import RevealMask from './defs/reveal-mask.svelte';
 	import SolidPattern from './defs/solid-pattern.svelte';
 	import UnselectedPattern from './defs/unselected-pattern.svelte';
 	import { getFillPattern, getOpacity } from './helpers.js';
 	import {
+		REVEAL_DURATION,
+		REVEAL_EASE,
 		STROKE_WIDTH,
 		type AreaAnimationType,
 		type AreaVariant,
@@ -185,7 +186,14 @@
 
 	<defs>
 		{#if revealType !== 'none'}
-			<RevealMask {id} type={revealType} introStartedAt={chart.introStartedAt} />
+			<RevealMask
+				{id}
+				type={revealType}
+				elapsed={chart.introElapsed}
+				duration={REVEAL_DURATION}
+				ease={REVEAL_EASE}
+				onReady={chart.startIntro}
+			/>
 		{/if}
 		<ColorGradient {id} {dataKey} config={chart.config} isExpanded={chart.isExpanded} />
 		{#if variant === 'gradient'}

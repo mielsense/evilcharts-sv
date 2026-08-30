@@ -6,7 +6,7 @@ export const LOADING_AREA_DATA_KEY = 'loading';
 export const LOADING_ANIMATION_DURATION = 2000; // in milliseconds
 export const STACK_ID = 'evil-stacked';
 export const REVEAL_DURATION = 1; // intro wipe length, in seconds
-export const REVEAL_EASE: [number, number, number, number] = [0, 0.7, 0.5, 1]; // intro wipe easing
+export const REVEAL_EASE: [number, number, number, number] = [0, 0, 1, 1]; // ECharts' constant-speed clip
 
 export type AreaVariant =
 	'gradient' | 'gradient-reverse' | 'solid' | 'dotted' | 'lines' | 'hatched';

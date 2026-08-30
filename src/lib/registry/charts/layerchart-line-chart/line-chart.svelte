@@ -10,6 +10,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
+		createIntroTimeline,
 		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
 		SelectableSeriesControls,
@@ -33,7 +34,12 @@
 	import { LoadingDataState } from './loading/use-loading-data.svelte.js';
 	import TooltipCursor from './tooltip-cursor.svelte';
 	import TooltipRender from './tooltip-render.svelte';
-	import { LOADING_LINE_DATA_KEY, type CurveType, type LineAnimationType } from './types.js';
+	import {
+		LOADING_LINE_DATA_KEY,
+		REVEAL_DURATION,
+		type CurveType,
+		type LineAnimationType
+	} from './types.js';
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 	let {
@@ -77,17 +83,13 @@
 	} = $props();
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
-	let introStartedAt = $state(Date.now());
 	let chartDimension = $state(untrack(() => initialDimension));
-	let previousLoading = untrack(() => isLoading);
 	let layerContext = $state<ChartState<Record<string, unknown>, ScalePoint<string>> | undefined>(
 		undefined
 	);
-
-	$effect(() => {
-		const loadingNow = isLoading;
-		if (previousLoading && !loadingNow) introStartedAt = Date.now();
-		previousLoading = loadingNow;
+	const intro = createIntroTimeline({
+		durationMs: () => REVEAL_DURATION * 1000,
+		isLoading: () => isLoading
 	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
@@ -212,7 +214,8 @@
 		seriesKeys: () => seriesKeys,
 		curveType: () => curveType,
 		animationType: () => animationType,
-		introStartedAt: () => introStartedAt,
+		introElapsed: () => intro.elapsed,
+		startIntro: intro.start,
 		renderStyle: () => renderStyle,
 		ditherVariant: () => ditherVariant,
 		isLoading: () => isLoading,
@@ -281,7 +284,7 @@
 					{bloom}
 					paused={isLoading}
 					animationDuration={1000}
-					animationRevision={introStartedAt}
+					animationRevision={intro.revision}
 				/>
 			</Html>
 		{/if}

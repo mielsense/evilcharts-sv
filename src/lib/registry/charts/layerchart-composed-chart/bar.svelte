@@ -18,7 +18,7 @@
 	import { getBarPositions, type BarInsets } from '../../ui/layerchart-chart/bar-geometry.js';
 	import AnimatedGrow from '../../ui/layerchart-chart/animated-grow.svelte';
 	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
-	import { getBarGrowAnimation, getBarOpacity, getVariantFill } from './helpers.js';
+	import { getBarGrowProgress, getBarOpacity, getVariantFill } from './helpers.js';
 	import { DEFAULT_BAR_RADIUS, type BarVariant, type ComposedAnimationType } from './types.js';
 
 	let {
@@ -71,6 +71,10 @@
 	const revealType = $derived<ComposedAnimationType>(
 		shouldReduceMotion.current ? 'none' : (animationType ?? chart.animationType)
 	);
+
+	$effect.pre(() => {
+		if (!chart.isLoading && revealType !== 'none') chart.startIntro();
+	});
 
 	const isStripped = $derived(variant === 'stripped');
 	const fill = $derived(getVariantFill(variant, id));
@@ -131,7 +135,7 @@
 	const rows = $derived(
 		chart.data.map((row, index) => ({
 			row,
-			grow: getBarGrowAnimation(revealType, index, chart.dataLength, chart.introStartedAt),
+			grow: getBarGrowProgress(revealType, index, chart.dataLength, chart.introElapsed),
 			opacity: getBarOpacity({
 				isClickable,
 				isSelected,
@@ -165,8 +169,8 @@
 				motion="none"
 				tooltip
 			/>
-			{#if grow}
-				<AnimatedGrow animation={grow}>
+			{#if grow !== null}
+				<AnimatedGrow progress={grow} axis="vertical">
 					{@render painted(row, opacity, capInset)}
 				</AnimatedGrow>
 			{:else}

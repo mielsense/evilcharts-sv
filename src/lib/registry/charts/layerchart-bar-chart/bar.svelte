@@ -19,7 +19,7 @@
 	import { getBarPositions, type BarInsets } from '../../ui/layerchart-chart/bar-geometry.js';
 	import AnimatedGrow from '../../ui/layerchart-chart/animated-grow.svelte';
 	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
-	import { getBarGrowAnimation, getBarOpacity, getVariantFill } from './helpers.js';
+	import { getBarGrowProgress, getBarOpacity, getVariantFill } from './helpers.js';
 	import type { BarAnimationType, BarVariant } from './types.js';
 
 	let {
@@ -68,6 +68,10 @@
 	const revealType = $derived<BarAnimationType>(
 		shouldReduceMotion.current ? 'none' : (animationType ?? chart.animationType)
 	);
+
+	$effect.pre(() => {
+		if (!chart.isLoading && revealType !== 'none') chart.startIntro();
+	});
 
 	const isStripped = $derived(variant === 'stripped');
 	// Stripped bars round only their top corners; every other variant rounds all four
@@ -176,13 +180,7 @@
 			return {
 				row,
 				last,
-				grow: getBarGrowAnimation(
-					revealType,
-					index,
-					chart.dataLength,
-					chart.isHorizontal,
-					chart.introStartedAt
-				),
+				grow: getBarGrowProgress(revealType, index, chart.dataLength, chart.introElapsed),
 				fill: last ? `url(#${id}-buffer-hatched-${dataKey})` : getVariantFill(variant, id, dataKey),
 				fillOpacity: getBarOpacity({
 					isClickable,
@@ -218,8 +216,8 @@
 				motion="none"
 				tooltip
 			/>
-			{#if grow}
-				<AnimatedGrow animation={grow}>
+			{#if grow !== null}
+				<AnimatedGrow progress={grow} axis={chart.isHorizontal ? 'horizontal' : 'vertical'}>
 					{@render painted(row, fill, fillOpacity, last, capInset)}
 				</AnimatedGrow>
 			{:else}

@@ -29,7 +29,7 @@ const primitives: RegistryItem[] = [
 	{
 		name: 'layerchart-chart',
 		type: 'registry:component',
-		dependencies: [PACKAGE.layerchart, PACKAGE.d3Shape, PACKAGE.d3ShapeTypes],
+		dependencies: [PACKAGE.layerchart, PACKAGE.motion, PACKAGE.d3Shape, PACKAGE.d3ShapeTypes],
 		files: [
 			{
 				path: 'ui/layerchart-chart',

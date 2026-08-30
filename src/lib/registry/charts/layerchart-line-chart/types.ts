@@ -5,7 +5,7 @@ export const STROKE_WIDTH = 0.8; // default series stroke — <Line strokeWidth>
 export const LOADING_LINE_DATA_KEY = 'loading';
 export const LOADING_ANIMATION_DURATION = 2000; // in milliseconds
 export const REVEAL_DURATION = 1; // intro wipe length, in seconds
-export const REVEAL_EASE: [number, number, number, number] = [0, 0.7, 0.5, 1]; // intro wipe easing
+export const REVEAL_EASE: [number, number, number, number] = [0, 0, 1, 1]; // ECharts' constant-speed clip
 
 export const BUFFER_DASH_SIZE = 4;
 export const BUFFER_GAP_SIZE = 3;

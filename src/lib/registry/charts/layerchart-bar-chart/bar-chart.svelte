@@ -8,7 +8,9 @@
 	import { Chart, Html, Svg, type ChartState } from 'layerchart';
 	import { untrack, type Snippet } from 'svelte';
 	import {
+		barIntroDurationMs,
 		ChartContainer,
+		createIntroTimeline,
 		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
 		SelectableSeriesControls,
@@ -34,6 +36,8 @@
 	import TooltipRender from './tooltip-render.svelte';
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import {
+		BAR_GROW_DURATION,
+		BAR_STAGGER,
 		DEFAULT_BAR_RADIUS,
 		LOADING_BAR_DATA_KEY,
 		type BarAnimationType,
@@ -93,18 +97,9 @@
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
 	let chartDimension = $state(untrack(() => initialDimension));
-
-	/**
-	 * Anchors the grow-in to a fixed moment so it plays exactly once — re-renders read elapsed
-	 * time from here instead of replaying.
-	 */
-	let introStartedAt = $state(Date.now());
-	let previousLoading = untrack(() => isLoading);
-
-	$effect(() => {
-		const loadingNow = isLoading;
-		if (previousLoading && !loadingNow) introStartedAt = Date.now();
-		previousLoading = loadingNow;
+	const intro = createIntroTimeline({
+		durationMs: () => barIntroDurationMs(chartData.length, BAR_GROW_DURATION, BAR_STAGGER),
+		isLoading: () => isLoading
 	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
@@ -186,7 +181,9 @@
 	const chartData = $derived(
 		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
 	);
-	const ditherAnimationDuration = $derived(500 + Math.max(0, chartData.length - 1) * 50);
+	const ditherAnimationDuration = $derived(
+		barIntroDurationMs(chartData.length, BAR_GROW_DURATION, BAR_STAGGER)
+	);
 
 	/** Category key for the band scale, resolved from the mounted axis before falling back to data. */
 	const fallbackXKey = $derived(
@@ -226,7 +223,8 @@
 		barRadius: () => barRadius,
 		barGap: () => barGap,
 		barCategoryGap: () => barCategoryGap,
-		introStartedAt: () => introStartedAt,
+		introElapsed: () => intro.elapsed,
+		startIntro: intro.start,
 		renderStyle: () => renderStyle,
 		ditherVariant: () => ditherVariant,
 		isMouseInChart: () => isMouseInChart,
@@ -300,7 +298,7 @@
 						{bloom}
 						paused={isLoading}
 						animationDuration={ditherAnimationDuration}
-						animationRevision={introStartedAt}
+						animationRevision={intro.revision}
 					/>
 				</Html>
 			{/if}

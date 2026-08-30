@@ -411,18 +411,19 @@ test.describe('EvilAreaChart examples', () => {
 		}));
 		expect(inside).toEqual({ fill: 1, line: 1 });
 
-		// And the mask rect is mid-wipe rather than already finished.
-		const early = await plot(page)
-			.locator('mask[id*="-reveal-mask"] rect')
-			.first()
-			.evaluate((n) => new DOMMatrixReadOnly(getComputedStyle(n).transform).a);
-		expect(early).toBeLessThan(1);
+		// And the chart-owned mask is mid-wipe rather than already finished. Its width is reactive;
+		// there is no element-local transform animation that can restart when LayerChart remounts it.
+		const maskRect = plot(page).locator('mask[id*="-reveal-mask"] rect').first();
+		const early = Number.parseFloat((await maskRect.getAttribute('width')) ?? '100');
+		expect(early).toBeGreaterThan(0);
+		expect(early).toBeLessThan(100);
+
+		await page.waitForTimeout(200);
+		const later = Number.parseFloat((await maskRect.getAttribute('width')) ?? '0');
+		expect(later).toBeGreaterThan(early);
 
 		await page.waitForTimeout(1400);
-		const done = await plot(page)
-			.locator('mask[id*="-reveal-mask"] rect')
-			.first()
-			.evaluate((n) => new DOMMatrixReadOnly(getComputedStyle(n).transform).a);
-		expect(done).toBeCloseTo(1, 1);
+		const done = Number.parseFloat((await maskRect.getAttribute('width')) ?? '0');
+		expect(done).toBe(100);
 	});
 });

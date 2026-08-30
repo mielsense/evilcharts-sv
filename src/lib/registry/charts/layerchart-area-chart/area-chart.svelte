@@ -10,6 +10,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import {
 		ChartContainer,
+		createIntroTimeline,
 		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
 		SelectableSeriesControls,
@@ -36,6 +37,7 @@
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import {
 		LOADING_AREA_DATA_KEY,
+		REVEAL_DURATION,
 		type AreaAnimationType,
 		type CurveType,
 		type StackType
@@ -85,17 +87,13 @@
 
 	const chartId = $props.id(); // selector-safe id keeps CSS/SVG references valid
 	const categoryScale = scalePoint();
-	let introStartedAt = $state(Date.now());
 	let chartDimension = $state(untrack(() => initialDimension));
-	let previousLoading = untrack(() => isLoading);
 	let layerContext = $state<ChartState<Record<string, unknown>, ScalePoint<string>> | undefined>(
 		undefined
 	);
-
-	$effect(() => {
-		const loadingNow = isLoading;
-		if (previousLoading && !loadingNow) introStartedAt = Date.now();
-		previousLoading = loadingNow;
+	const intro = createIntroTimeline({
+		durationMs: () => REVEAL_DURATION * 1000,
+		isLoading: () => isLoading
 	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
@@ -249,7 +247,8 @@
 		seriesKeys: () => seriesKeys,
 		curveType: () => curveType,
 		animationType: () => animationType,
-		introStartedAt: () => introStartedAt,
+		introElapsed: () => intro.elapsed,
+		startIntro: intro.start,
 		renderStyle: () => renderStyle,
 		ditherVariant: () => ditherVariant,
 		isStacked: () => isStacked,
@@ -322,7 +321,7 @@
 					{bloom}
 					paused={isLoading}
 					animationDuration={1000}
-					animationRevision={introStartedAt}
+					animationRevision={intro.revision}
 				/>
 			</Html>
 		{/if}

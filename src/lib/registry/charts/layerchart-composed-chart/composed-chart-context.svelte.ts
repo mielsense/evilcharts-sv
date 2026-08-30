@@ -22,8 +22,8 @@ type Options = {
 	barGap: () => number | undefined;
 	/** Gap on each side of a category. Recharts' default is `"10%"`. */
 	barCategoryGap: () => number | undefined;
-	/** Timestamp the chart mounted — anchors the one-shot intro. */
-	introStartedAt: () => number;
+	introElapsed: () => number;
+	startIntro: () => void;
 	renderStyle: () => RenderStyle;
 	ditherVariant: () => DitherVariant;
 	isLoading: () => boolean;
@@ -102,8 +102,8 @@ export class ComposedChartContext {
 	get barCategoryGap() {
 		return this.#options.barCategoryGap();
 	}
-	get introStartedAt() {
-		return this.#options.introStartedAt();
+	get introElapsed() {
+		return this.#options.introElapsed();
 	}
 	get renderStyle() {
 		return this.#options.renderStyle();
@@ -129,6 +129,10 @@ export class ComposedChartContext {
 
 	selectDataKey = (dataKey: string | null) => {
 		this.#options.selectDataKey(dataKey);
+	};
+
+	startIntro = () => {
+		this.#options.startIntro();
 	};
 
 	registerBar = (token: string, dataKey: string | undefined) => {
