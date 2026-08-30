@@ -37,12 +37,28 @@ describe('copyable documentation', () => {
 	it('advertises the portable agent skill separately from Context7 and MCP', () => {
 		const introduction = pageBody('/docs');
 		const readme = readFileSync('README.md', 'utf8');
+		const skill = readFileSync('skills/evilcharts-svelte/SKILL.md', 'utf8');
+		const catalog = readFileSync('skills/evilcharts-svelte/references/chart-catalog.md', 'utf8');
+		const guide = readFileSync(
+			'skills/evilcharts-svelte/references/implementation-guide.md',
+			'utf8'
+		);
 		const command = 'npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte';
 
 		for (const content of [introduction, readme]) {
 			expect(content).toContain('Install the agent skill');
 			expect(content).toContain(command);
 		}
+
+		for (const family of CHART_FAMILIES) {
+			expect(catalog).toContain(`\`${family}\``);
+		}
+		expect(skill).toContain('Use examples and blocks correctly');
+		expect(catalog).toContain('EvilAreaChart');
+		expect(catalog).toContain('EChartsAreaChart');
+		expect(guide).toContain('config={chartConfig}');
+		expect(guide).toContain('accessibility={{ label:');
+		expect(guide).toContain('prefers-reduced-motion');
 	});
 
 	it('resolves every ECharts preview, source panel, and concrete install command', () => {

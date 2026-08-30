@@ -185,8 +185,11 @@ A request to any `/docs/…` page with `Accept: text/markdown` is served its mar
 npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
 ```
 
-The skill gives an agent the provider rules, registry install command, and current API routes. It
-does not replace the separate Context7 and MCP documentation options below.
+The skill teaches an agent how to use the library: all eight chart families, both rendering
+providers, compound components, focused examples, dashboard blocks, registry installation,
+accessibility, motion, dither rendering, and the boundary for mixing providers. It directs the
+agent to the exact current Markdown page before choosing props or imports. It does not replace the
+separate Context7 and MCP documentation options below.
 
 ### Context7
 

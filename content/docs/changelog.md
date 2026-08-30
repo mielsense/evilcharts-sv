@@ -7,8 +7,9 @@ This page records changes to the Svelte port, its registry, and its documentatio
 
 ## 2026-08-30
 
-- Added the installable `evilcharts-svelte` agent skill, with skills.sh-compatible discovery and
-  links to the Markdown docs, Context7 library, and MCP endpoint.
+- Added the installable `evilcharts-svelte` agent skill, with skills.sh-compatible discovery, a
+  complete chart and compound-component catalog, implementation workflows, example and block
+  guidance, plus links to the Markdown docs, Context7 library, and MCP endpoint.
 - Corrected the public `miel` attribution, replaced the Svelte stand-in with LayerChart's official
   mark, linked both rendering providers in the credits, clarified per-chart provider choice, and
   moved standard site controls to Hugeicons.
