@@ -33,25 +33,42 @@
 	const loader = $derived(getRegistryComponent(name));
 	const metaClassName = $derived(Index[name]?.meta?.className as string | undefined);
 
-	let resolved = $state<{ name: string; component: Component<Record<string, never>> } | null>(null);
+	type PreviewLoadState =
+		| { status: 'loading' }
+		| { status: 'ready'; name: string; component: Component<Record<string, never>> }
+		| { status: 'missing' }
+		| { status: 'failed' };
+
+	let retryToken = $state(0);
+	let loadState = $state<PreviewLoadState>({ status: 'loading' });
 
 	$effect(() => {
 		const current = name;
 		const load = loader;
+		void retryToken;
+		loadState = load ? { status: 'loading' } : { status: 'missing' };
 		if (!load) return;
+
 		let cancelled = false;
-		load().then((module) => {
-			if (!cancelled) resolved = { name: current, component: module.default };
-		});
+		load()
+			.then((module) => {
+				if (!cancelled) loadState = { status: 'ready', name: current, component: module.default };
+			})
+			.catch(() => {
+				if (!cancelled) loadState = { status: 'failed' };
+			});
+
 		return () => {
 			cancelled = true;
 		};
 	});
 
-	const component = $derived(resolved?.name === name ? resolved.component : null);
+	const component = $derived(
+		loadState.status === 'ready' && loadState.name === name ? loadState.component : null
+	);
 </script>
 
-{#if !loader}
+{#if !loader || loadState.status === 'missing'}
 	<p class="mt-4 text-[13px] leading-6 text-muted-foreground">
 		The <code
 			class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
@@ -62,6 +79,23 @@
 		<a target="_blank" href={PORT_ISSUES_URL} class="text-primary hover:underline">Open an issue</a
 		>.
 	</p>
+{:else if loadState.status === 'failed'}
+	<div
+		class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] leading-6 text-muted-foreground"
+	>
+		<p>
+			The <code
+				class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
+				>{name}</code
+			>
+			component could not be loaded.
+		</p>
+		<button
+			type="button"
+			class="rounded-md border bg-background px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted"
+			onclick={() => (retryToken += 1)}>Try again</button
+		>
+	</div>
 {:else if component}
 	<ComponentPreviewTabs
 		{align}

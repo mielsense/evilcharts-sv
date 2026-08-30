@@ -9,29 +9,44 @@
 	const width = $derived(parsePreviewDimension(page.url.searchParams.get('w'), PREVIEW_WIDTH));
 	const height = $derived(parsePreviewDimension(page.url.searchParams.get('h'), PREVIEW_HEIGHT));
 
-	let resolved = $state<{ name: string; component: Component<Record<string, never>> | null }>({
-		name: '',
-		component: null
-	});
+	type PreviewLoadState =
+		| { status: 'loading' }
+		| { status: 'ready'; name: string; component: Component<Record<string, never>> }
+		| { status: 'missing' }
+		| { status: 'failed' };
+
+	let retryToken = $state(0);
+	let loadState = $state<PreviewLoadState>({ status: 'loading' });
 
 	$effect(() => {
 		const current = name;
 		const loader = getRegistryComponent(current);
+		void retryToken;
+		loadState = loader ? { status: 'loading' } : { status: 'missing' };
 		if (!loader) {
-			resolved = { name: current, component: null };
 			return;
 		}
+
 		let cancelled = false;
-		loader().then((mod) => {
-			if (!cancelled) resolved = { name: current, component: mod.default };
-		});
+		loader()
+			.then((module) => {
+				if (!cancelled) loadState = { status: 'ready', name: current, component: module.default };
+			})
+			.catch(() => {
+				if (!cancelled) loadState = { status: 'failed' };
+			});
+
 		return () => {
 			cancelled = true;
 		};
 	});
 
-	const ready = $derived(resolved.name === name);
-	const Preview = $derived(ready ? resolved.component : null);
+	const Preview = $derived(
+		loadState.status === 'ready' && loadState.name === name ? loadState.component : null
+	);
+	const previewError = $derived(
+		loadState.status === 'missing' || loadState.status === 'failed' ? loadState.status : undefined
+	);
 </script>
 
 <svelte:head>
@@ -62,17 +77,35 @@
 			<div
 				class="no-scrollbar h-full w-full [&>svg]:select-none"
 				data-slot="preview"
-				data-preview-ready={ready && Preview ? 'true' : undefined}
+				data-preview-ready={Preview ? 'true' : undefined}
+				data-preview-error={previewError}
 			>
 				{#if Preview}
 					<Preview />
-				{:else if ready}
+				{:else if loadState.status === 'missing'}
 					<p class="flex size-full items-center justify-center text-[13px] text-muted-foreground">
 						Component <code
 							class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
 							>{name}</code
 						> not found in registry.
 					</p>
+				{:else if loadState.status === 'failed'}
+					<div
+						class="flex size-full flex-col items-center justify-center gap-3 text-[13px] text-muted-foreground"
+					>
+						<p>
+							Component <code
+								class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
+								>{name}</code
+							>
+							could not be loaded.
+						</p>
+						<button
+							type="button"
+							class="rounded-md border bg-background px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted"
+							onclick={() => (retryToken += 1)}>Try again</button
+						>
+					</div>
 				{/if}
 			</div>
 		</div>
