@@ -51,7 +51,7 @@ const EXPECTED = [
 ];
 
 const INVALID_DATA_MESSAGE =
-	'Sankey data must use integer in-range link endpoints, finite non-negative values, and contain no directed cycles.';
+	'Sankey data requires integer in-range link endpoints, finite non-negative values, representable aggregate flows and layout scale, and no directed cycles.';
 
 function layout() {
 	return computeSankey({
