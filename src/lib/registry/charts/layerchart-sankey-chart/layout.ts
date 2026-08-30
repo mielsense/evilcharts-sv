@@ -113,7 +113,7 @@ const ascendingY = (a: LaidOutNode, b: LaidOutNode) => a.y - b.y;
 
 export const SANKEY_VALIDATION_ERROR_CODE = 'INVALID_SANKEY_DATA' as const;
 export const SANKEY_VALIDATION_ERROR_MESSAGE =
-	'Sankey data must use integer in-range link endpoints, finite non-negative values, and contain no directed cycles.';
+	'Sankey data requires integer in-range link endpoints, finite non-negative values, representable aggregate flows and layout scale, and no directed cycles.';
 
 /** Recognizable validation failure emitted before Sankey layout state is built. */
 export class SankeyValidationError extends RangeError {
