@@ -107,7 +107,9 @@ test('docs render decoded code and keep the desktop table-of-contents marker act
 		.getByText('On This Page', { exact: true })
 		.locator('..')
 		.locator('..');
-	await expect(tableOfContents.locator('path[stroke="currentColor"]')).not.toHaveAttribute('d', '');
+	await expect(
+		tableOfContents.locator('path[marker-end="url(#toc-end-circle)"]')
+	).not.toHaveAttribute('d', '');
 	await page.locator('#usage').evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
 	await expect(page.locator('a[href="#usage"][data-active="true"]')).toBeVisible();
 	await expect(page.locator('#gradient-tail-of-toc-indicator')).not.toHaveCSS('opacity', '0');
