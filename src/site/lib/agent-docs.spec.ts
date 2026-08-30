@@ -53,14 +53,15 @@ describe('generateLlmsTxt', () => {
 	it('groups each provider into Setup, Chart Components and UI Components', () => {
 		for (const id of available) {
 			expect(text).toContain(`## ${PROVIDER_META[id].name}`);
+			expect(text).toContain(`/r/${id}-{chart-name}.json`);
 		}
 		expect(text).toContain('### Setup');
 		expect(text).toContain('### Chart Components');
 		expect(text).toContain('### UI Components');
 	});
 
-	it('lists all eight charts and all five UI pages', () => {
-		for (const chart of [
+	it("lists every provider's eight charts and UI pages", () => {
+		const charts = [
 			'area-chart',
 			'line-chart',
 			'bar-chart',
@@ -69,11 +70,20 @@ describe('generateLlmsTxt', () => {
 			'pie-chart',
 			'radial-chart',
 			'sankey-chart'
-		]) {
-			expect(text, chart).toContain(`/docs/layerchart/${chart}.md`);
+		];
+		for (const id of available) {
+			for (const chart of charts) {
+				expect(text, `${id}/${chart}`).toContain(`/docs/${id}/${chart}.md`);
+			}
 		}
-		for (const ui of ['background', 'tooltip', 'legend', 'dots', 'brush']) {
-			expect(text, ui).toContain(`/docs/layerchart/ui/${ui}.md`);
+		for (const id of available) {
+			const expectedUi =
+				id === 'layerchart'
+					? ['background', 'tooltip', 'legend', 'dots', 'brush']
+					: ['tooltip', 'legend', 'dots', 'brush'];
+			for (const ui of expectedUi) {
+				expect(text, `${id}/${ui}`).toContain(`/docs/${id}/ui/${ui}.md`);
+			}
 		}
 	});
 
@@ -125,8 +135,9 @@ describe('generateSkillMd', () => {
 		expect(text).toContain(`source: ${absoluteUrl('/llms.txt')}`);
 	});
 
-	it('names the substituted dependency and CLI', () => {
-		expect(text).toContain('Treat LayerChart as the underlying chart dependency.');
+	it('names both install-time providers and the CLI', () => {
+		expect(text).toContain('Treat LayerChart and ECharts as separate install-time providers');
+		expect(text).toContain('/r/{provider}-{chart-name}.json');
 		expect(text).toContain('npx shadcn-svelte@latest add');
 		expect(text.toLowerCase()).not.toContain('recharts');
 	});

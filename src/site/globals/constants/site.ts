@@ -3,7 +3,7 @@ export const SITE_NAME = 'Evil Charts';
 export const SITE_TITLE = 'Evil Charts for Svelte | Animated chart components';
 
 export const SITE_DESCRIPTION =
-	'Open-source Svelte 5 chart components built with LayerChart, shadcn-svelte, and Tailwind CSS.';
+	'Open-source Svelte 5 chart components built with LayerChart or ECharts, shadcn-svelte, and Tailwind CSS.';
 
 export const SITE_KEYWORDS: string[] = [
 	'evil charts',
@@ -13,6 +13,7 @@ export const SITE_KEYWORDS: string[] = [
 	'shadcn charts',
 	'shadcn-svelte charts',
 	'layerchart',
+	'echarts',
 	'tailwind charts',
 	'animated charts',
 	'bar chart',

@@ -99,13 +99,16 @@ function orderSourceFiles<T extends RegistryItemFile>(files: T[]): T[] {
 /**
  * Rewrites registry imports to the paths a consumer will have.
  *
- * The installed layout mirrors the source layout — `charts/`, `ui/` and `blocks/` stay siblings
- * under `$lib/components/evilcharts` — so the relative imports *between* items already resolve and
- * only the `$lib/registry/…` alias has to move. That makes this a single substitution where the
- * reference needs a five-branch regex over `@/(…)/(components|ui|hooks|lib|charts)/(…)`.
+ * The generated registry flattens provider block folders into the consumer's `blocks/` directory.
+ * Keep this source-view transform identical to `scripts/build-registry.ts`, including relative
+ * cross-item imports, so copyable code matches what the CLI installs.
  */
 export function fixImports(content: string): string {
-	return content.replaceAll('$lib/registry/', `${CONSUMER_ROOT}/`);
+	return content
+		.replaceAll('$lib/registry/', `${CONSUMER_ROOT}/`)
+		.replace(/(['"])\.\.\/\.\.\/charts\//g, `$1${CONSUMER_ROOT}/charts/`)
+		.replace(/(['"])\.\.\/\.\.\/ui\//g, `$1${CONSUMER_ROOT}/ui/`)
+		.replace(/(from\s+['"]\.\/)b-/g, '$1');
 }
 
 /** Paths shown relative to the item's own directory, as the reference's `fixFilePaths` does. */

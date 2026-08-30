@@ -1,19 +1,18 @@
-// The rendering engine a chart is built on. EvilCharts ships one file per chart per
-// provider — you install `@evilcharts/layerchart-area-chart` — so this is an install-time
-// choice, not a runtime prop.
+// The rendering engine a chart is built on. EvilCharts ships one registry item per chart and
+// provider, so this is an install-time choice rather than a runtime prop.
 //
 // Docs mirror that split: everything provider-specific lives under /docs/<provider>/*.
 // The exceptions are the intro (/docs) and Chart Config (/docs/chart-config), which
 // documents the one contract every engine shares.
 
-export const PROVIDERS = ['layerchart'] as const;
+export const PROVIDERS = ['layerchart', 'echarts'] as const;
 
 export type Provider = (typeof PROVIDERS)[number];
 
 // Which engine the docs lead with for a first-time reader — the switcher falls back to
 // this on shared pages when there's no remembered provider yet. Agent surfaces don't use
 // it; they cite whichever provider is actually installable (see lib/agent-docs.ts).
-export const DEFAULT_PROVIDER: Provider = 'layerchart';
+export const DEFAULT_PROVIDER: Provider = 'echarts';
 
 interface ProviderMeta {
 	/** Folder name under content/docs, and the URL segment. */
@@ -35,6 +34,12 @@ export const PROVIDER_META: Record<Provider, ProviderMeta> = {
 		name: 'LayerChart',
 		tagline: 'SVG charts rendered by Svelte',
 		available: true
+	},
+	echarts: {
+		id: 'echarts',
+		name: 'ECharts',
+		tagline: 'Canvas and SVG charts powered by ECharts',
+		available: true
 	}
 };
 
@@ -51,9 +56,8 @@ export function providerHref(provider: Provider) {
 /**
  * Resolve the active provider from a pathname.
  *
- * Returns null — rather than DEFAULT_PROVIDER — on shared pages like /docs and
- * /docs/chart-config, so the switcher can show "no engine selected" instead of
- * falsely implying you're reading LayerChart docs.
+ * Returns null on shared pages such as /docs and /docs/chart-config. Their callers can then use
+ * the reader's remembered provider, falling back to DEFAULT_PROVIDER on a first visit.
  */
 export function providerFromPathname(pathname: string): Provider | null {
 	const segment = pathname.split('/').filter(Boolean)[1];

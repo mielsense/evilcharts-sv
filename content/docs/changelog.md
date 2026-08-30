@@ -5,6 +5,16 @@ description: Changes to EvilCharts for Svelte, its registry, and its documentati
 
 This page records changes to the Svelte port, its registry, and its documentation.
 
+## 2026-08-30
+
+- Added Apache ECharts as a complete second rendering provider for all eight chart families, with
+  Canvas rendering by default and optional SVG output.
+- Added provider-specific ECharts tooltips, legends, dots, brushes, loading states, examples,
+  dashboard blocks, registry items, documentation, and agent-readable pages.
+- Added ordered-dither treatments for the ECharts area, line, bar, composed, pie, and radar charts,
+  preserving the Dither Kit attribution and licence boundary.
+- Added a provider switcher so readers can move between matching LayerChart and ECharts pages.
+
 ## 2026-08-27
 
 - Loading states now match the original chart geometry, including cartesian category spacing,
