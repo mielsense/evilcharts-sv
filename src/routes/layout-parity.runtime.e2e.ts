@@ -202,9 +202,9 @@ test('the docs attribution header stays inside its responsive container', async 
 		expect(actionsBox).not.toBeNull();
 		expect(borderBox).not.toBeNull();
 
-		// The translated curve ends at x=56 in the SVG's 400-unit viewBox. Keep the filled header
+		// The translated curve ends at x=54 in the SVG's 400-unit viewBox. Keep the filled header
 		// surface clear of every control while its trailing edge masks the panel border.
-		const curveEnd = borderBox!.x + borderBox!.width * (56 / 400);
+		const curveEnd = borderBox!.x + borderBox!.width * (54 / 400);
 		expect(curveEnd).toBeLessThanOrEqual(actionsBox!.x - 8);
 	};
 
