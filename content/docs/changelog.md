@@ -10,7 +10,8 @@ This page records changes to the Svelte port, its registry, and its documentatio
 - Loading states now match the original chart geometry, including cartesian category spacing,
   Area chart domain headroom, Radial chart ring placement, and Pie chart legend clearance.
 - Area loading curves now remain static while the shimmer crosses the plot, matching the original.
-- Area loading now applies that moving shimmer to both the top stroke and the gradient fill.
+- Area loading now renders its moving top stroke with the same masked spline as Line loading,
+  while the shimmer continues through the gradient fill beneath it.
 - Radial loading bars now tween between values with the original 1.5-second ease-in-out motion.
 - Radial plots now reserve the full edge-legend band so outer rings cannot overlap the legend.
 
