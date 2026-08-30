@@ -101,4 +101,26 @@ describe('ChartStage lazy card loading', () => {
 			container.querySelector('[data-stage-card="hatched-bar"] [data-stage-live-chart]')
 		).not.toBeNull();
 	});
+
+	it('retains successful overlap when a newly wanted card fails', async () => {
+		loadLandingCard.mockImplementation((name: string) =>
+			name === 'LandingRadarChart'
+				? Promise.reject(new Error('private new landing chunk URL'))
+				: Promise.resolve(PreviewA)
+		);
+
+		const { container } = render(ChartStage);
+		await flushLoads();
+		expect(
+			container.querySelector('[data-stage-card="glowing-line"] [data-stage-live-chart]')
+		).not.toBeNull();
+
+		await vi.advanceTimersByTimeAsync(4600);
+		await flushLoads();
+
+		expect(
+			container.querySelector('[data-stage-card="glowing-line"] [data-stage-live-chart]')
+		).not.toBeNull();
+		expect(container.querySelector('[data-stage-card="radar"] [data-stage-live-chart]')).toBeNull();
+	});
 });

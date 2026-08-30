@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 test('client-side docs navigation resets the docs scroll container', async ({ page }) => {
 	test.setTimeout(90_000);
@@ -92,7 +93,7 @@ test('the brush footer matches the original geometry at desktop and mobile width
 
 	for (const current of cases) {
 		await page.goto(current.url);
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 
 		const geometry = await page.locator('[data-slot="chart"]').evaluate((chart) => {
 			const rect = (element: Element) => {

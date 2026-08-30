@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const EXAMPLES = [
 	'ex-pie-chart',
@@ -29,7 +30,7 @@ function sectors(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	// The intro sweep begins after 400ms and runs for 1500ms.
 	await page.waitForTimeout(2400);
 	return errors;
@@ -56,7 +57,7 @@ test.describe('EvilPieChart examples', () => {
 			[632, 360, 114.4]
 		] as const) {
 			await page.goto(`/preview/ex-pie-chart?w=${width}&h=${height}`);
-			await page.waitForSelector('[data-preview-ready]');
+			await waitForPreview(page);
 			await page.waitForTimeout(2400);
 			const d = (await sectors(page).first().getAttribute('d'))!;
 			const radius = Number(d.match(/A([\d.]+),/)![1]);

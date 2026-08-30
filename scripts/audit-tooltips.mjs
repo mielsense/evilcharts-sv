@@ -7,6 +7,7 @@
  */
 import { chromium } from 'playwright';
 import { readdirSync } from 'node:fs';
+import { waitForPreview } from './wait-for-preview.mjs';
 
 const filter = process.argv[2] ?? '';
 const examples = readdirSync('src/lib/registry/examples/layerchart')
@@ -27,7 +28,7 @@ for (const name of examples) {
 	page.on('pageerror', onError);
 
 	await page.goto(`http://localhost:4173/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(700);
 
 	const plot = await page.locator('svg.lc-layout-svg').first().boundingBox();

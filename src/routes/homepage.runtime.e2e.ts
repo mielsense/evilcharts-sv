@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 // The stage's first automatic focus hop runs at 4.6s. Keep this comfortably beyond that boundary
 // so the test exercises the prop update that previously read destroyed motion derivations.
@@ -104,19 +105,19 @@ test('chart previews survive resize, navigation, and unmount without runtime dia
 	const diagnostics = await prepareRuntimePage(page);
 
 	await page.goto('/preview/ex-bar-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.setViewportSize({ width: 820, height: 520 });
 	await page.goto('/preview/ex-area-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.goto('/preview/ex-line-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.goto('/preview/ex-loading-state-area-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1_200);
 	await page.goto('/preview/b-isometric-bar-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.goto('/preview/b-monospace-bar-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.goto('/docs/layerchart/bar-chart');
 	await page.waitForTimeout(800);
 
@@ -137,7 +138,7 @@ test('reduced motion leaves loading previews without running animations', async 
 		'b-monospace-bar-chart'
 	]) {
 		await page.goto(`/preview/${name}?w=630&h=360`);
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await page.waitForTimeout(250);
 
 		const runningAnimations = await page.evaluate(() =>

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const EXAMPLES = [
 	'ex-animated-dashed-stroke-area-chart',
@@ -48,7 +49,7 @@ function plot(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1400); // let the intro reveal finish
 	return errors;
 }
@@ -177,7 +178,7 @@ test.describe('EvilAreaChart examples', () => {
 			[632, 360, { width: 588, height: 100.722 }]
 		] as const) {
 			await page.goto(`/preview/ex-area-chart?w=${width}&h=${height}`);
-			await page.waitForSelector('[data-preview-ready]');
+			await waitForPreview(page);
 			await page.waitForTimeout(1400);
 			const bounds = await plot(page)
 				.locator('path.lc-area-path')
@@ -197,7 +198,7 @@ test.describe('EvilAreaChart examples', () => {
 			[632, 360]
 		] as const) {
 			await page.goto(`/preview/ex-area-chart?w=${width}&h=${height}`);
-			await page.waitForSelector('[data-preview-ready]');
+			await waitForPreview(page);
 			await page.waitForTimeout(1400);
 
 			const metrics = await plot(page).evaluate((svg) => {
@@ -399,7 +400,7 @@ test.describe('EvilAreaChart examples', () => {
 		// instantly while the fill wiped in. The mask now sits on a wrapping `<g>`, which is what the
 		// reference's element-level `style.mask` covers. See plans/DEVIATIONS.md A-13.
 		await page.goto('/preview/ex-area-chart?w=630&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 
 		const masked = plot(page).locator('g[mask*="-reveal-mask"]');
 		expect(await masked.count()).toBeGreaterThan(0);

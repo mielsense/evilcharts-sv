@@ -13,7 +13,8 @@ type LoadedModule = { default: Component<Record<string, never>> };
 const testNames = [
 	'component-preview-retry-test',
 	'component-preview-old-resolve-test',
-	'component-preview-old-reject-test'
+	'component-preview-old-reject-test',
+	'component-preview-pending-test'
 ] as const;
 
 function deferred<T>() {
@@ -89,4 +90,37 @@ describe('ComponentPreview lazy loading', () => {
 		);
 		expect(container.textContent).not.toContain('could not be loaded');
 	});
+
+	it.each(['missing', 'failed'] as const)(
+		'clears a stale %s state when another preview starts loading',
+		async (terminalState) => {
+			const oldName =
+				terminalState === 'missing'
+					? 'missing-registry-example'
+					: 'component-preview-old-reject-test';
+			if (terminalState === 'failed') {
+				registryComponents[oldName] = () => Promise.reject(new Error('private old chunk URL'));
+			}
+
+			const { container, rerender } = render(ComponentPreview, { name: oldName });
+			await expect
+				.poll(() => container.textContent)
+				.toContain(
+					terminalState === 'missing' ? 'missing from the registry' : 'could not be loaded'
+				);
+			const terminalName = container.querySelector('code');
+			expect(terminalName?.textContent).toBe(oldName);
+
+			const pending = deferred<LoadedModule>();
+			registryComponents['component-preview-pending-test'] = () => pending.promise;
+			await rerender({ name: 'component-preview-pending-test' });
+
+			expect(container.textContent).not.toContain('missing from the registry');
+			expect(container.textContent).not.toContain('could not be loaded');
+			expect(container.querySelector('button')).toBeNull();
+			expect(terminalName?.textContent).not.toBe('component-preview-pending-test');
+
+			pending.resolve({ default: PreviewB });
+		}
+	);
 });

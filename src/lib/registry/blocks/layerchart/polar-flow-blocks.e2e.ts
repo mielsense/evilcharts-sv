@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const BLOCKS = [
 	{ name: 'market-share-pie-chart', marker: 'Ecosystem value' },
@@ -25,7 +26,7 @@ test.describe('polar and flow blocks', () => {
 		test(`${name} is a composed, contained registry block`, async ({ page }) => {
 			const errors = collectErrors(page);
 			await page.goto(`/preview/${name}?w=630&h=360`);
-			await page.waitForSelector('[data-preview-ready]');
+			await waitForPreview(page);
 			await page.waitForTimeout(1700);
 
 			await expect(page.getByText(marker, { exact: false }).first()).toBeVisible();
@@ -59,7 +60,7 @@ test.describe('polar and flow blocks', () => {
 	test('the composed blocks remain contained at phone width', async ({ page }) => {
 		for (const { name } of BLOCKS) {
 			await page.goto(`/preview/${name}?w=320&h=360`);
-			await page.waitForSelector('[data-preview-ready]');
+			await waitForPreview(page);
 			const preview = page.locator('[data-slot="preview"]');
 			const overflow = await preview.evaluate((element) => {
 				const nested = [...element.querySelectorAll<HTMLElement>('*')];

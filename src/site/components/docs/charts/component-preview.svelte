@@ -34,28 +34,45 @@
 	const metaClassName = $derived(Index[name]?.meta?.className as string | undefined);
 
 	type PreviewLoadState =
-		| { status: 'loading' }
-		| { status: 'ready'; name: string; component: Component<Record<string, never>> }
-		| { status: 'missing' }
-		| { status: 'failed' };
+		| { status: 'loading'; name: string; retryToken: number }
+		| {
+				status: 'ready';
+				name: string;
+				retryToken: number;
+				component: Component<Record<string, never>>;
+		  }
+		| { status: 'missing'; name: string; retryToken: number }
+		| { status: 'failed'; name: string; retryToken: number };
 
 	let retryToken = $state(0);
-	let loadState = $state<PreviewLoadState>({ status: 'loading' });
+	let loadState = $state<PreviewLoadState | null>(null);
 
 	$effect(() => {
 		const current = name;
+		const currentRetryToken = retryToken;
 		const load = loader;
-		void retryToken;
-		loadState = load ? { status: 'loading' } : { status: 'missing' };
+		loadState = load
+			? { status: 'loading', name: current, retryToken: currentRetryToken }
+			: { status: 'missing', name: current, retryToken: currentRetryToken };
 		if (!load) return;
 
 		let cancelled = false;
+		const isCurrentRequest = () => name === current && retryToken === currentRetryToken;
 		load()
 			.then((module) => {
-				if (!cancelled) loadState = { status: 'ready', name: current, component: module.default };
+				if (!cancelled && isCurrentRequest()) {
+					loadState = {
+						status: 'ready',
+						name: current,
+						retryToken: currentRetryToken,
+						component: module.default
+					};
+				}
 			})
 			.catch(() => {
-				if (!cancelled) loadState = { status: 'failed' };
+				if (!cancelled && isCurrentRequest()) {
+					loadState = { status: 'failed', name: current, retryToken: currentRetryToken };
+				}
 			});
 
 		return () => {
@@ -63,12 +80,13 @@
 		};
 	});
 
-	const component = $derived(
-		loadState.status === 'ready' && loadState.name === name ? loadState.component : null
+	const currentState = $derived(
+		loadState?.name === name && loadState.retryToken === retryToken ? loadState : null
 	);
+	const component = $derived(currentState?.status === 'ready' ? currentState.component : null);
 </script>
 
-{#if !loader || loadState.status === 'missing'}
+{#if currentState?.status === 'missing'}
 	<p class="mt-4 text-[13px] leading-6 text-muted-foreground">
 		The <code
 			class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
@@ -79,7 +97,7 @@
 		<a target="_blank" href={PORT_ISSUES_URL} class="text-primary hover:underline">Open an issue</a
 		>.
 	</p>
-{:else if loadState.status === 'failed'}
+{:else if currentState?.status === 'failed'}
 	<div
 		class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] leading-6 text-muted-foreground"
 	>
