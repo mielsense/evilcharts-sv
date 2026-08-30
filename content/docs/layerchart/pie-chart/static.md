@@ -286,6 +286,11 @@ Extra CSS classes for the chart container.
 Sector name selected by default.
 
 </ApiRow>
+  <ApiRow name="selectedSector" type="string | null">
+
+Controls the selected sector. Leave it undefined to let the chart manage selection; pass `null` to clear a controlled selection.
+
+</ApiRow>
   <ApiRow name="onSelectionChange" type="(selection: &#123; dataKey: string; value: number &#125; | null) => void">
 
 Fires when a sector is selected or deselected via a clickable `<Pie />` sector or `<Legend />` entry. Receives an object with `dataKey` (sector name) and `value` (sector value), or `null` when deselected.

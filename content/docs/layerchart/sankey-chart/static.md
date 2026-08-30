@@ -230,6 +230,8 @@ loading skeleton.
 
 Nodes and links for the diagram — nodes are entities, links are flows between them. `SankeyData` is `{ nodes: SankeyNode[]; links: SankeyLink[] }`, where `SankeyNode = { name: string; icon?: Snippet }` and `SankeyLink = { source: number; target: number; value: number }`.
 
+Each `source` and `target` must be an integer index into `nodes`; values must be finite and non-negative. The graph must be acyclic, and its aggregate flows must fit JavaScript's representable numeric range. Invalid data produces no nodes or links instead of partial or non-finite SVG geometry.
+
 </ApiRow>
   <ApiRow name="config" type="ChartConfig" required>
 
