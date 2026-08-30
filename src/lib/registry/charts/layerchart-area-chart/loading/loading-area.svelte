@@ -8,10 +8,14 @@
 	import { LOADING_AREA_DATA_KEY, STROKE_WIDTH, type CurveType } from '../types.js';
 	import LoadingPattern from './loading-pattern.svelte';
 
-	let { chartId, curveType }: { chartId: string; curveType: CurveType } = $props();
+	let {
+		chartId,
+		curveType,
+		onShimmerExit
+	}: { chartId: string; curveType: CurveType; onShimmerExit: () => void } = $props();
 </script>
 
-<!-- Keep the geometry fixed while one shimmer crosses both the fill and its top stroke. -->
+<!-- One shimmer crosses the Line-style top stroke and the gradient fill beneath it. -->
 <Area
 	y={LOADING_AREA_DATA_KEY}
 	curve={resolveCurve(curveType)}
@@ -30,5 +34,5 @@
 	mask={`url(#${chartId}-loading-mask)`}
 />
 <defs>
-	<LoadingPattern {chartId} />
+	<LoadingPattern {chartId} {onShimmerExit} />
 </defs>
