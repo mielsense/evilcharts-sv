@@ -178,6 +178,31 @@ describe('copyable documentation', () => {
 		expect(pie).not.toContain('Use `labelKey`');
 	});
 
+	it('documents controlled LayerChart selection and the guarded Sankey data contract', () => {
+		const area = pageBody('/docs/layerchart/area-chart');
+		const pie = pageBody('/docs/layerchart/pie-chart');
+		const sankey = pageBody('/docs/layerchart/sankey-chart');
+
+		expect(area).toContain('<ApiRow name="selectedDataKey" type="string | null">');
+		expect(area).toContain('pass `null` to clear a controlled selection');
+		expect(pie).toContain('<ApiRow name="selectedSector" type="string | null">');
+		expect(pie).toContain('pass `null` to clear a controlled selection');
+		expect(sankey).toContain('must be an integer index into `nodes`');
+		expect(sankey).toContain('The graph must be acyclic');
+		expect(sankey).toContain('produces no nodes or links');
+	});
+
+	it('records the completed audit work under the dated changelog entry', () => {
+		const changelog = pageBody('/docs/changelog');
+
+		expect(changelog).toContain('## 2026-08-30');
+		expect(changelog).toContain('installable `evilcharts-svelte` agent skill');
+		expect(changelog).toContain('controlled selection to LayerChart Area and Pie roots');
+		expect(changelog).toContain('Hardened LayerChart Sankey layout');
+		expect(changelog).toContain('bounded non-reflective MCP inputs');
+		expect(changelog).not.toContain('## Unreleased');
+	});
+
 	it('keeps the README registry inventory in sync with the built registry', () => {
 		const readme = readFileSync('README.md', 'utf8');
 		const registry = JSON.parse(readFileSync('registry.json', 'utf8')) as {
