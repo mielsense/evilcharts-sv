@@ -59,3 +59,19 @@ test('canonical and compatibility skill endpoints serve the same Markdown body',
 		expect(await response.text(), endpoint).toBe(canonicalBody);
 	}
 });
+
+test('the canonical skill publishes its bundled reference guides over HTTP', async ({
+	request
+}) => {
+	for (const [file, expected] of [
+		['chart-catalog.md', 'EvilAreaChart'],
+		['implementation-guide.md', 'config={chartConfig}']
+	] as const) {
+		const response = await request.get(
+			`/.well-known/agent-skills/evilcharts-svelte/references/${file}`
+		);
+		expect(response.status(), file).toBe(200);
+		expect(response.headers()['content-type'], file).toContain('text/markdown');
+		expect(await response.text(), file).toContain(expected);
+	}
+});

@@ -87,7 +87,7 @@
 </script>
 
 {#if currentState?.status === 'missing'}
-	<p class="mt-4 text-[13px] leading-6 text-muted-foreground">
+	<p role="alert" class="mt-4 text-[13px] leading-6 text-muted-foreground">
 		The <code
 			class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
 			>{name}</code
@@ -99,6 +99,7 @@
 	</p>
 {:else if currentState?.status === 'failed'}
 	<div
+		role="alert"
 		class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] leading-6 text-muted-foreground"
 	>
 		<p>

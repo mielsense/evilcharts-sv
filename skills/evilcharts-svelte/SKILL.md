@@ -19,10 +19,10 @@ https://github.com/legions-developer/evilcharts.
 5. Add an accessible label, respect reduced motion, and verify the result in both themes at its
    real container size.
 
-Read [references/chart-catalog.md](references/chart-catalog.md) when choosing a family or compound
-part. Read [references/implementation-guide.md](references/implementation-guide.md) before writing
-or changing a chart, selecting an example, or using a dashboard block. These references are bundled
-when the skill is installed with `skills`; HTTP-only loaders can use the chart pages below.
+Installed copies bundle `references/chart-catalog.md` for choosing a family or compound part and
+`references/implementation-guide.md` for writing or changing a chart. HTTP-only loaders can read
+the same [chart catalog](https://evilcharts-sv.vercel.app/.well-known/agent-skills/evilcharts-svelte/references/chart-catalog.md)
+and [implementation guide](https://evilcharts-sv.vercel.app/.well-known/agent-skills/evilcharts-svelte/references/implementation-guide.md).
 
 ## Read the current docs
 
