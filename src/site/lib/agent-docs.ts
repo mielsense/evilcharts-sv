@@ -14,6 +14,7 @@ import {
 import { processMdxForLLMs } from './llm.js';
 import { absoluteUrl } from './utils.js';
 import { getPages, type DocsPage } from './source.js';
+import skillSource from '../../../skills/evilcharts-svelte/SKILL.md?raw';
 
 // Pages that belong to no provider: the intro, and the config contract both engines share.
 const SHARED_DOCS = new Set(['/docs', '/docs/chart-config', '/docs/changelog']);
@@ -151,42 +152,7 @@ ${sections.join('\n\n---\n\n')}
 }
 
 export function generateSkillMd() {
-	return `---
-name: evilcharts
-description: Add and customize the Svelte 5 port of EvilCharts with shadcn-svelte, LayerChart, or Apache ECharts.
-license: MIT
-compatibility: Requires a Svelte/SvelteKit project with shadcn-svelte and the selected chart provider.
-metadata:
-  source: ${absoluteUrl('/llms.txt')}
----
-
-# EvilCharts (Svelte port)
-
-Use this skill when a user wants to install, add, customize, or debug EvilCharts chart components in
-a **Svelte** project. This is the Svelte 5 port by ${PORT_AUTHOR}: ${PORT_REPO_URL}.
-The original React project is by ${UPSTREAM_AUTHOR}: ${UPSTREAM_REPO_URL}.
-
-## Workflow
-
-1. Read \`/llms.txt\` to find the relevant documentation page.
-2. Choose the provider that matches the user's rendering needs: LayerChart for Svelte-rendered SVG, or ECharts for Canvas with optional SVG rendering.
-3. For setup, follow \`/docs/{provider}/installation.md\`.
-4. For chart usage, read the matching page such as \`/docs/{provider}/bar-chart.md\` and the provider's UI primitive pages.
-5. Add components with the shadcn-svelte CLI pattern documented by EvilCharts: \`npx shadcn-svelte@latest add ${absoluteUrl('/r/{provider}-{chart-name}.json')}\`.
-
-## Constraints
-
-- Do not assume EvilCharts is a separate charting runtime library.
-- Treat LayerChart and ECharts as separate install-time providers; do not mix their compound parts.
-- Docs are grouped by rendering engine under \`/docs/{provider}/\`. Only ${AVAILABLE_PROVIDERS.map(
-		(id) => PROVIDER_META[id].name
-	).join(' and ')} ${
-		AVAILABLE_PROVIDERS.length === 1 ? 'is' : 'are'
-	} installable. Never suggest components from a provider that is not listed in \`/llms.txt\`.
-- \`chartConfig\` is the one contract shared across engines; see \`/docs/chart-config.md\`.
-- Preserve the user's existing shadcn-svelte and Tailwind setup.
-- This is a Svelte port. For React, point the user at ${UPSTREAM_REPO_URL}.
-`;
+	return skillSource;
 }
 
 export function getAgentSkillsIndex() {
@@ -194,11 +160,11 @@ export function getAgentSkillsIndex() {
 		$schema: 'https://schemas.agentskills.io/discovery/0.2.0/schema.json',
 		skills: [
 			{
-				name: 'evilcharts',
+				name: 'evilcharts-svelte',
 				type: 'skill-md',
 				description:
 					'Add and customize EvilCharts chart components in Svelte projects using LayerChart or ECharts.',
-				url: '/.well-known/agent-skills/evilcharts/SKILL.md'
+				url: '/.well-known/agent-skills/evilcharts-svelte/SKILL.md'
 			}
 		]
 	};
