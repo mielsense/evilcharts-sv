@@ -54,14 +54,16 @@
 
 	$effect.pre(() => validateChartConfigColors(config));
 
-	function observeTheme(_node: HTMLElement) {
+	function observeTheme(node: HTMLElement) {
 		const observer = new MutationObserver(() => {
 			themeRevision += 1;
 		});
-		observer.observe(document.documentElement, {
+		const options = {
 			attributes: true,
 			attributeFilter: ['class', 'style']
-		});
+		};
+		observer.observe(document.documentElement, options);
+		if (node !== document.documentElement) observer.observe(node, options);
 		return () => observer.disconnect();
 	}
 </script>
