@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const FILL_VARIANTS = {
 	'ex-default-variant-bar-chart': 'colors-desktop',
@@ -60,7 +61,7 @@ function seriesBars(page: Page, key: string) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1500); // let the staggered grow-in finish
 	return errors;
 }
@@ -107,7 +108,7 @@ test.describe('EvilBarChart examples', () => {
 			[632, 360, 64.032]
 		] as const) {
 			await page.goto(`/preview/ex-bar-chart?w=${width}&h=${height}`);
-			await page.waitForSelector('[data-preview-ready]');
+			await waitForPreview(page);
 			await page.waitForTimeout(1600);
 			const [paintedHeight, hitHeight] = await Promise.all([
 				seriesBars(page, 'desktop')
@@ -125,7 +126,7 @@ test.describe('EvilBarChart examples', () => {
 
 	test('the edge legend leaves the same five-line value plot as Recharts', async ({ page }) => {
 		await page.goto('/preview/ex-bar-chart?w=632&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await page.waitForTimeout(1600);
 
 		const y = await plot(page)

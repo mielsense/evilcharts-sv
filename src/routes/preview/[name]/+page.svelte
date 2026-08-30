@@ -10,30 +10,47 @@
 	const height = $derived(parsePreviewDimension(page.url.searchParams.get('h'), PREVIEW_HEIGHT));
 
 	type PreviewLoadState =
-		| { status: 'loading' }
-		| { status: 'ready'; name: string; component: Component<Record<string, never>> }
-		| { status: 'missing' }
-		| { status: 'failed' };
+		| { status: 'loading'; name: string; retryToken: number }
+		| {
+				status: 'ready';
+				name: string;
+				retryToken: number;
+				component: Component<Record<string, never>>;
+		  }
+		| { status: 'missing'; name: string; retryToken: number }
+		| { status: 'failed'; name: string; retryToken: number };
 
 	let retryToken = $state(0);
-	let loadState = $state<PreviewLoadState>({ status: 'loading' });
+	let loadState = $state<PreviewLoadState | null>(null);
 
 	$effect(() => {
 		const current = name;
+		const currentRetryToken = retryToken;
 		const loader = getRegistryComponent(current);
-		void retryToken;
-		loadState = loader ? { status: 'loading' } : { status: 'missing' };
+		loadState = loader
+			? { status: 'loading', name: current, retryToken: currentRetryToken }
+			: { status: 'missing', name: current, retryToken: currentRetryToken };
 		if (!loader) {
 			return;
 		}
 
 		let cancelled = false;
+		const isCurrentRequest = () => name === current && retryToken === currentRetryToken;
 		loader()
 			.then((module) => {
-				if (!cancelled) loadState = { status: 'ready', name: current, component: module.default };
+				if (!cancelled && isCurrentRequest()) {
+					loadState = {
+						status: 'ready',
+						name: current,
+						retryToken: currentRetryToken,
+						component: module.default
+					};
+				}
 			})
 			.catch(() => {
-				if (!cancelled) loadState = { status: 'failed' };
+				if (!cancelled && isCurrentRequest()) {
+					loadState = { status: 'failed', name: current, retryToken: currentRetryToken };
+				}
 			});
 
 		return () => {
@@ -41,11 +58,14 @@
 		};
 	});
 
-	const Preview = $derived(
-		loadState.status === 'ready' && loadState.name === name ? loadState.component : null
+	const currentState = $derived(
+		loadState?.name === name && loadState.retryToken === retryToken ? loadState : null
 	);
+	const Preview = $derived(currentState?.status === 'ready' ? currentState.component : null);
 	const previewError = $derived(
-		loadState.status === 'missing' || loadState.status === 'failed' ? loadState.status : undefined
+		currentState?.status === 'missing' || currentState?.status === 'failed'
+			? currentState.status
+			: undefined
 	);
 </script>
 
@@ -82,14 +102,14 @@
 			>
 				{#if Preview}
 					<Preview />
-				{:else if loadState.status === 'missing'}
+				{:else if currentState?.status === 'missing'}
 					<p class="flex size-full items-center justify-center text-[13px] text-muted-foreground">
 						Component <code
 							class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
 							>{name}</code
 						> not found in registry.
 					</p>
-				{:else if loadState.status === 'failed'}
+				{:else if currentState?.status === 'failed'}
 					<div
 						class="flex size-full flex-col items-center justify-center gap-3 text-[13px] text-muted-foreground"
 					>

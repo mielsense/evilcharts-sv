@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const BAR_VARIANTS = {
 	'ex-duotone-variant-composed-chart': 'duotone',
@@ -44,7 +45,7 @@ function line(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1500); // let the reveal and the staggered grow-in finish
 	return errors;
 }
@@ -100,7 +101,7 @@ test.describe('EvilComposedChart examples', () => {
 
 	test('the edge legend preserves the reference grid, bar, and line geometry', async ({ page }) => {
 		await page.goto('/preview/ex-composed-chart?w=632&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await page.waitForTimeout(1600);
 
 		const gridY = await plot(page)
@@ -300,7 +301,7 @@ test.describe('EvilComposedChart examples', () => {
 
 	test('the reveal mask wipes the line in from the left', async ({ page }) => {
 		await page.goto('/preview/ex-composed-chart?w=630&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		const mask = plot(page).locator('mask[id$="-reveal-mask"]').first();
 		await expect(mask).toBeAttached();
 		const rect = mask.locator('rect');

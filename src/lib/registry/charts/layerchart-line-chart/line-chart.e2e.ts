@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const LEGEND_VARIANTS = [
 	'square',
@@ -70,7 +71,7 @@ function visibleSplines(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1400); // let the intro reveal finish
 	return errors;
 }
@@ -137,7 +138,7 @@ test.describe('EvilLineChart examples', () => {
 		page
 	}) => {
 		await page.goto('/preview/ex-solid-stroke-line-chart?w=632&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await page.waitForTimeout(1400);
 
 		const points = await visibleSplines(page)

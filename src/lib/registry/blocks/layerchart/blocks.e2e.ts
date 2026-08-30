@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const BLOCKS = [
 	'b-grid-bar-chart',
@@ -32,7 +33,7 @@ function plot(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1800); // let the staggered intro finish
 	return errors;
 }
@@ -56,7 +57,7 @@ test.describe('EvilCharts blocks', () => {
 		for (const width of [390, 630]) {
 			for (const name of DASHBOARD_BLOCKS) {
 				await page.goto(`/preview/${name}?w=${width}&h=360`);
-				await page.waitForSelector('[data-preview-ready]');
+				await waitForPreview(page);
 				const overflow = await page.locator(`[data-block="${name}"]`).evaluate((block) => ({
 					blockX: block.scrollWidth - block.clientWidth,
 					blockY: block.scrollHeight - block.clientHeight,
@@ -80,7 +81,7 @@ test.describe('EvilCharts blocks', () => {
 		for (const width of [320, 390, 630]) {
 			for (const name of BLOCKS) {
 				await page.goto(`/preview/${name}?w=${width}&h=360`);
-				await page.waitForSelector('[data-preview-ready]');
+				await waitForPreview(page);
 				const overflow = await page.locator('[data-slot="preview"]').evaluate((block) => {
 					const nestedScrollers = [...block.querySelectorAll<HTMLElement>('*')].filter((node) => {
 						const style = getComputedStyle(node);

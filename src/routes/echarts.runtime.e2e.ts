@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const NATIVE_EXAMPLES = [
 	'ex-echarts-area-chart',
@@ -23,7 +24,7 @@ test('every ECharts family initializes its Canvas renderer in production', async
 
 	for (const example of NATIVE_EXAMPLES) {
 		await page.goto(`/preview/${example}?w=630&h=360`);
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await expect(page.locator('[data-slot="echarts-host"] canvas')).toBeVisible();
 	}
 
@@ -34,11 +35,11 @@ test('ECharts SVG and ordered-dither renderers initialize in production', async 
 	const errors = collectRuntimeErrors(page);
 
 	await page.goto('/preview/ex-svg-renderer-echarts-area-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await expect(page.locator('[data-slot="echarts-host"] svg')).toBeVisible();
 
 	await page.goto('/preview/ex-dither-echarts-area-chart?w=630&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await expect(page.locator('[data-slot="echarts-host"] canvas')).toBeVisible();
 
 	expect(errors).toEqual([]);
@@ -46,7 +47,7 @@ test('ECharts SVG and ordered-dither renderers initialize in production', async 
 
 test('ECharts overlays and radial legend use the upstream chart bounds', async ({ page }) => {
 	await page.goto('/preview/ex-echarts-area-chart?w=632&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	const area = page.locator('[data-slot="chart"]');
 	const areaGeometry = await area.evaluate((chart) => {
 		const chartRect = chart.getBoundingClientRect();
@@ -66,7 +67,7 @@ test('ECharts overlays and radial legend use the upstream chart bounds', async (
 	});
 
 	await page.goto('/preview/ex-echarts-radial-chart?w=632&h=360');
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	const radial = page.locator('[data-slot="chart"]');
 	const radialGeometry = await radial.evaluate((chart) => {
 		const chartRect = chart.getBoundingClientRect();

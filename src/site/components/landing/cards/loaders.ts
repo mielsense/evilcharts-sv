@@ -29,21 +29,25 @@ const loaders: Record<string, LandingCardLoader> = {
 	LandingPaddedPieChart: () => import('./landing-padded-pie-chart.svelte')
 };
 
-const moduleCache = new Map<string, Promise<LandingCard>>();
+export function createLandingCardLoader(cardLoaders: Record<string, LandingCardLoader>) {
+	const moduleCache = new Map<string, Promise<LandingCard>>();
 
-export function loadLandingCard(name: string): Promise<LandingCard> {
-	const existing = moduleCache.get(name);
-	if (existing) return existing;
+	return function loadLandingCard(name: string): Promise<LandingCard> {
+		const existing = moduleCache.get(name);
+		if (existing) return existing;
 
-	const loader = loaders[name];
-	if (!loader) return Promise.reject(new Error(`Unknown landing card: ${name}`));
+		const loader = cardLoaders[name];
+		if (!loader) return Promise.reject(new Error(`Unknown landing card: ${name}`));
 
-	const pending = loader()
-		.then((module) => module.default)
-		.catch((error) => {
-			if (moduleCache.get(name) === pending) moduleCache.delete(name);
-			throw error;
-		});
-	moduleCache.set(name, pending);
-	return pending;
+		const pending = loader()
+			.then((module) => module.default)
+			.catch((error) => {
+				if (moduleCache.get(name) === pending) moduleCache.delete(name);
+				throw error;
+			});
+		moduleCache.set(name, pending);
+		return pending;
+	};
 }
+
+export const loadLandingCard = createLandingCardLoader(loaders);

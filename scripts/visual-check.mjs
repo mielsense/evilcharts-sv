@@ -9,6 +9,7 @@
  */
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
+import { waitForPreview } from './wait-for-preview.mjs';
 
 const [example, ...rest] = process.argv.slice(2);
 // `--light` renders in the light theme, for comparison against the reference docs.
@@ -27,7 +28,7 @@ await page.emulateMedia({ colorScheme: light ? 'light' : 'dark' });
 // No `?w`/`?h`: the route now defaults to the reference's own card box, which is the only size
 // its fixed-pixel geometry is comparable at.
 await page.goto(`http://localhost:4173/preview/${example}`);
-await page.waitForSelector('[data-preview-ready]');
+await waitForPreview(page);
 await page.waitForTimeout(2500);
 
 const tooltipText = () =>

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const EXAMPLES = [
 	'ex-dither-area-chart',
@@ -19,7 +20,7 @@ function collectErrors(page: Page) {
 async function open(page: Page, name: (typeof EXAMPLES)[number], width = 630) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=${width}&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1300);
 	return errors;
 }

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const EXAMPLES = [
 	'ex-radar-chart',
@@ -30,7 +31,7 @@ function radars(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1600);
 	return errors;
 }
@@ -82,7 +83,7 @@ test.describe('EvilRadarChart examples', () => {
 		page
 	}) => {
 		await page.goto('/preview/ex-radar-chart?w=440&h=256');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await page.waitForTimeout(2400);
 		const bounds = await radars(page)
 			.first()
@@ -96,7 +97,7 @@ test.describe('EvilRadarChart examples', () => {
 
 	test('desktop settled geometry scales the web to the reference bounds', async ({ page }) => {
 		await page.goto('/preview/ex-radar-chart?w=632&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 		await page.waitForTimeout(2400);
 		const bounds = await radars(page)
 			.first()
@@ -341,7 +342,7 @@ test.describe('EvilRadarChart examples', () => {
 		// The reference never disables Recharts' `<Radar>` animation, which interpolates every point
 		// from the centre outward over 1.5s. See plans/DEVIATIONS.md A-14.
 		await page.goto('/preview/ex-radar-chart?w=630&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 
 		const scaleOf = () =>
 			plot(page)

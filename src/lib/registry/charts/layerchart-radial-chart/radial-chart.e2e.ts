@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForPreview } from '$site/testing/wait-for-preview.js';
 
 const EXAMPLES = [
 	'ex-radial-chart',
@@ -32,7 +33,7 @@ function tracks(page: Page) {
 async function open(page: Page, name: string) {
 	const errors = collectErrors(page);
 	await page.goto(`/preview/${name}?w=630&h=360`);
-	await page.waitForSelector('[data-preview-ready]');
+	await waitForPreview(page);
 	await page.waitForTimeout(1600);
 	return errors;
 }
@@ -366,7 +367,7 @@ test.describe('EvilRadialChart examples', () => {
 		// The reference never disables Recharts' `<RadialBar>` animation, which interpolates each
 		// bar's `endAngle` from its `startAngle` over 1.5s. See plans/DEVIATIONS.md A-14.
 		await page.goto('/preview/ex-radial-chart?w=630&h=360');
-		await page.waitForSelector('[data-preview-ready]');
+		await waitForPreview(page);
 
 		// The widest bar closes into a full ring only once the sweep finishes; mid-sweep it still
 		// carries rounded end caps. At t=0 it has no sweep at all, so sample just after the start.
