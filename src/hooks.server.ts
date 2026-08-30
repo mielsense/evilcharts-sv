@@ -56,10 +56,15 @@ function prefersMarkdown(accept: string): boolean {
 
 function varyOnAccept(response: Response): Response {
 	const values = (response.headers.get('Vary') ?? '').split(',').map((value) => value.trim());
-	if (!values.some((value) => value.toLowerCase() === 'accept')) {
-		response.headers.append('Vary', 'Accept');
-	}
-	return response;
+	if (values.some((value) => ['*', 'accept'].includes(value.toLowerCase()))) return response;
+
+	const headers = new Headers(response.headers);
+	headers.append('Vary', 'Accept');
+	return new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers
+	});
 }
 
 /**

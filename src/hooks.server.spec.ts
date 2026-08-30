@@ -76,6 +76,7 @@ describe('docs content negotiation', () => {
 		'text/html;q=0.4, text/markdown;q=0.8',
 		'text/html;q=0.4, text/*;q=0.8',
 		'text/html;q=0.4, */*;q=0.8',
+		'text/html;q=0, */*;q=0.8',
 		'text/markdown;q=0.8, text/html;q=0.4'
 	])('prefers Markdown for Accept: %s', async (accept) => {
 		const event = eventFor({ accept });
@@ -90,6 +91,7 @@ describe('docs content negotiation', () => {
 	it.each([
 		undefined,
 		'text/markdown;q=0',
+		'text/markdown;q=0, */*;q=1',
 		'text/html, text/markdown',
 		'text/*',
 		'*/*',
@@ -131,6 +133,37 @@ describe('docs content negotiation', () => {
 			expect(varyValues(response)).toEqual(['Origin', 'Accept']);
 		}
 	);
+
+	it('adds Vary without mutating an immutable response', async () => {
+		const event = eventFor({ accept: 'text/html' });
+		const original = await fetch('data:text/plain,immutable-body');
+
+		const response = await handle({
+			event,
+			resolve: vi.fn(async () => original)
+		} as never);
+
+		expect(response).not.toBe(original);
+		expect(response.status).toBe(original.status);
+		expect(response.statusText).toBe(original.statusText);
+		expect(response.headers.get('content-type')).toBe(original.headers.get('content-type'));
+		expect(response.headers.get('vary')).toBe('Accept');
+		expect(original.headers.get('vary')).toBeNull();
+		expect(await response.text()).toBe('immutable-body');
+	});
+
+	it('leaves Vary wildcard responses unchanged', async () => {
+		const event = eventFor({ accept: 'text/html' });
+		const original = new Response('<html></html>', { headers: { Vary: '*' } });
+
+		const response = await handle({
+			event,
+			resolve: vi.fn(async () => original)
+		} as never);
+
+		expect(response).toBe(original);
+		expect(response.headers.get('vary')).toBe('*');
+	});
 });
 
 describe('analytics metadata', () => {
