@@ -2,8 +2,9 @@
 	/**
 	 * `getIconForLanguageExtension` from `evilcharts/src/assets/language/icons.tsx`.
 	 *
-	 * The reference draws these from `@hugeicons/core-free-icons`. That package is not a dependency
-	 * here, so the nearest Lucide glyph stands in for each — same size, same position, same switch.
+	 * The reference draws these from `@hugeicons/core-free-icons`. Lucide is deliberately retained
+	 * here for language/technology semantics and source parity; Hugeicons is reserved for standard
+	 * site controls. The glyphs keep the same size, position, and switch behavior.
 	 */
 	import Braces from '@lucide/svelte/icons/braces';
 	import FileCode from '@lucide/svelte/icons/file-code';

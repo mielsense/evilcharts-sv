@@ -6,6 +6,24 @@ async function tokenColors(locator: Locator) {
 		.evaluateAll((spans) => [...new Set(spans.map((span) => getComputedStyle(span).color))]);
 }
 
+async function expectDecorativeHugeicon(svg: Locator) {
+	await expect(svg).toHaveAttribute('aria-hidden', 'true');
+	await expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
+	await expect(svg).toHaveAttribute('color', 'currentColor');
+	await expect.poll(() => svg.locator('path').count()).toBeGreaterThan(0);
+
+	const geometry = await svg.evaluate((element) => ({
+		width: Number(element.getAttribute('width')),
+		height: Number(element.getAttribute('height')),
+		hasPathGeometry: [...element.querySelectorAll('path')].every((path) =>
+			Boolean(path.getAttribute('d')?.trim())
+		)
+	}));
+	expect(geometry.width).toBeGreaterThan(0);
+	expect(geometry.height).toBeGreaterThan(0);
+	expect(geometry.hasPathGeometry).toBe(true);
+}
+
 test('markdown fences and chart source tabs use syntax token colors', async ({ page }) => {
 	await page.goto('/docs/layerchart/area-chart');
 
@@ -89,4 +107,84 @@ test('the provider switcher uses the LayerChart mark at desktop and mobile width
 		await expect(page).toHaveURL(/\/docs\/?$/);
 		await expect(page.getByRole('button', { name: /ECharts/ })).toBeVisible();
 	}
+});
+
+test('standard controls render decorative Hugeicons and preserve their actions', async ({
+	page
+}) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto('/');
+
+	const browseCharts = page.getByRole('link', { name: 'Browse Charts', exact: true });
+	await expectDecorativeHugeicon(browseCharts.locator('svg'));
+	await browseCharts.click();
+	await expect(page).toHaveURL(/\/docs\/?$/);
+
+	await page.goto('/docs/layerchart/area-chart');
+
+	const reloadPreview = page.getByRole('button', { name: 'Reload preview', exact: true }).first();
+	const reloadIcon = reloadPreview.locator('svg');
+	await expectDecorativeHugeicon(reloadIcon);
+	await expect(reloadIcon).toHaveAttribute('style', /rotate\(0deg\)/);
+	await reloadPreview.click();
+	await expect(reloadIcon).toHaveAttribute('style', /rotate\(360deg\)/);
+
+	const copyDisclosure = page.getByRole('button', { name: 'Open dropdown menu', exact: true });
+	await expectDecorativeHugeicon(copyDisclosure.locator('svg'));
+	await copyDisclosure.click();
+	await expect(page.getByRole('menuitem', { name: 'View as Markdown' })).toBeVisible();
+	await page.keyboard.press('Escape');
+
+	const areaDisclosure = page.getByRole('button', { name: 'Area Chart', exact: true });
+	const areaDisclosureIcon = areaDisclosure.locator('svg').last();
+	await expectDecorativeHugeicon(areaDisclosureIcon);
+	await expect(areaDisclosure).toHaveAttribute('aria-expanded', 'true');
+	await expect
+		.poll(() => areaDisclosureIcon.evaluate((icon) => getComputedStyle(icon).rotate))
+		.toBe('90deg');
+	await areaDisclosure.click();
+	await expect(areaDisclosure).toHaveAttribute('aria-expanded', 'false');
+	await expect
+		.poll(() => areaDisclosureIcon.evaluate((icon) => getComputedStyle(icon).rotate))
+		.toBe('none');
+	await areaDisclosure.click();
+	await expect(areaDisclosure).toHaveAttribute('aria-expanded', 'true');
+	await expect
+		.poll(() => areaDisclosureIcon.evaluate((icon) => getComputedStyle(icon).rotate))
+		.toBe('90deg');
+
+	const tocLabel = page.getByText('On This Page', { exact: true });
+	const toc = tocLabel.locator('../..');
+	await expectDecorativeHugeicon(tocLabel.locator('..').locator('svg'));
+	await toc.getByRole('link', { name: 'Installation', exact: true }).click();
+	await expect(page).toHaveURL(/#installation$/);
+
+	const providerDisclosure = page.getByRole('button', { name: /^LayerChart/ });
+	await expectDecorativeHugeicon(providerDisclosure.locator('svg').last());
+	await providerDisclosure.click();
+	await page.getByRole('menuitem', { name: /ECharts/ }).click();
+	await expect(page).toHaveURL(/\/docs\/echarts\/area-chart$/);
+
+	await page.goto('/docs/layerchart/area-chart');
+	const previous = page.getByRole('link', { name: /^Components Every EvilCharts component\./ });
+	const next = page.getByRole('link', { name: /^Line Chart Beautifully designed Svelte 5/ });
+	await expectDecorativeHugeicon(previous.locator('svg'));
+	await expectDecorativeHugeicon(next.locator('svg'));
+	await previous.click();
+	await expect(page).toHaveURL(/\/docs\/layerchart\/components$/);
+
+	await page.goto('/docs/layerchart/area-chart');
+	await page.getByRole('link', { name: /^Line Chart Beautifully designed Svelte 5/ }).click();
+	await expect(page).toHaveURL(/\/docs\/layerchart\/line-chart$/);
+
+	await page.setViewportSize({ width: 390, height: 800 });
+	await page.goto('/docs/layerchart/area-chart');
+	await page.getByRole('button', { name: 'Toggle Sidebar' }).click();
+	const sidebarDialog = page.getByRole('dialog');
+	await expect(sidebarDialog).toBeVisible();
+	// The mobile sidebar deliberately hides this built-in close control in favor of its header toggle.
+	const sheetClose = page.getByRole('button', { name: 'Close', includeHidden: true });
+	await expectDecorativeHugeicon(sheetClose.locator('svg'));
+	await sheetClose.evaluate((button: HTMLButtonElement) => button.click());
+	await expect(sidebarDialog).toBeHidden();
 });
