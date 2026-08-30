@@ -11,24 +11,24 @@
 	let { chartId, curveType }: { chartId: string; curveType: CurveType } = $props();
 </script>
 
-<!-- One shimmer crosses the Line-style top stroke and the gradient fill beneath it. -->
-<Area
-	y={LOADING_AREA_DATA_KEY}
-	curve={resolveCurve(curveType)}
-	fillOpacity={0.05}
-	fill="currentColor"
-	motion="none"
-	mask={`url(#${chartId}-loading-mask)`}
-/>
-<Spline
-	y={LOADING_AREA_DATA_KEY}
-	curve={resolveCurve(curveType)}
-	stroke="currentColor"
-	strokeOpacity={0.5}
-	strokeWidth={STROKE_WIDTH}
-	motion="none"
-	mask={`url(#${chartId}-loading-mask)`}
-/>
+<!-- Keep the Line-style stroke and the fill beneath it inside one moving shimmer. -->
+<g mask={`url(#${chartId}-loading-mask)`}>
+	<Area
+		y={LOADING_AREA_DATA_KEY}
+		curve={resolveCurve(curveType)}
+		fillOpacity={0.05}
+		fill="currentColor"
+		motion="none"
+	/>
+	<Spline
+		y={LOADING_AREA_DATA_KEY}
+		curve={resolveCurve(curveType)}
+		stroke="currentColor"
+		strokeOpacity={0.5}
+		strokeWidth={STROKE_WIDTH}
+		motion="none"
+	/>
+</g>
 <defs>
 	<LoadingPattern {chartId} />
 </defs>
