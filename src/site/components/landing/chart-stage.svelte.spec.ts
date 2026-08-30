@@ -70,7 +70,7 @@ describe('ChartStage lazy card loading', () => {
 				: Promise.resolve(PreviewA)
 		);
 
-		const { container } = render(ChartStage);
+		const { container } = await render(ChartStage);
 		await flushLoads();
 
 		expect(
@@ -84,31 +84,30 @@ describe('ChartStage lazy card loading', () => {
 
 	it('retries a failed card after it leaves and re-enters the wanted set', async () => {
 		let failedOnce = false;
-		let resolveRetry!: () => void;
-		const retryStarted = new Promise<void>((resolve) => {
-			resolveRetry = resolve;
-		});
+		let retryStarted = false;
 		loadLandingCard.mockImplementation((name: string) => {
 			if (name === 'LandingHatchedBarChart' && !failedOnce) {
 				failedOnce = true;
 				return Promise.reject(new Error('private landing chunk URL'));
 			}
-			if (name === 'LandingHatchedBarChart') resolveRetry();
+			if (name === 'LandingHatchedBarChart') retryStarted = true;
 			return Promise.resolve(PreviewA);
 		});
 
-		const { container } = render(ChartStage);
+		const { container } = await render(ChartStage);
 		await flushLoads();
 		expect(
 			container.querySelector('[data-stage-card="hatched-bar"] [data-stage-live-chart]')
 		).toBeNull();
 
-		await vi.advanceTimersByTimeAsync(4600);
-		await tick();
-		await vi.advanceTimersByTimeAsync(4600);
-		await retryStarted;
-		await flushLoads();
+		// Browser-project setup can finish on either side of the first fake-time boundary under load.
+		// Advance a bounded number of focus hops and stop as soon as the failed card is requested again.
+		for (let hop = 0; hop < 3 && !retryStarted; hop += 1) {
+			await vi.advanceTimersByTimeAsync(4600);
+			await flushLoads();
+		}
 
+		expect(retryStarted).toBe(true);
 		expect(
 			container.querySelector('[data-stage-card="hatched-bar"] [data-stage-live-chart]')
 		).not.toBeNull();
@@ -121,7 +120,7 @@ describe('ChartStage lazy card loading', () => {
 				: Promise.resolve(PreviewA)
 		);
 
-		const { container } = render(ChartStage);
+		const { container } = await render(ChartStage);
 		await flushLoads();
 		expect(
 			container.querySelector('[data-stage-card="glowing-line"] [data-stage-live-chart]')
