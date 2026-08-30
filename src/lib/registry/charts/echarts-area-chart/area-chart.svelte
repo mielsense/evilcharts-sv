@@ -25,7 +25,7 @@
 		type EChartsRenderStyle,
 		type ResolvedColors
 	} from '../../ui/echarts-chart/index.js';
-	import type { DitherVariant } from '../../ui/echarts-dither/index.js';
+	import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
 	import { LegendOverlay } from '../../ui/echarts-legend/index.js';
 	import { syncBrushOverlay, type BrushOverlayElements } from '../../ui/echarts-brush/index.js';
 	import { setEChartsAreaChartContext } from './area-chart-context.svelte.js';
@@ -48,6 +48,7 @@
 		renderStyle = 'native',
 		ditherVariant = 'gradient',
 		ditherCellSize = 2,
+		bloom = 'none',
 		xDataKey,
 		class: className,
 		curveType = 'linear',
@@ -71,6 +72,7 @@
 		renderStyle?: EChartsRenderStyle;
 		ditherVariant?: DitherVariant;
 		ditherCellSize?: number;
+		bloom?: DitherBloom;
 		xDataKey?: string;
 		class?: string;
 		curveType?: CurveType;
@@ -98,6 +100,7 @@
 		selectedDataKeyProp === undefined ? internalSelectedDataKey : selectedDataKeyProp
 	);
 	let hoveredDataKey = $state<string | null>(null);
+	let introComplete = $state(false);
 	let hoverRevealIndex = $state<number | null>(null);
 	let brushRange = $state({ start: 0, end: 100 });
 	let loadingData = $state.raw<number[]>(untrack(() => createAreaLoadingData(loadingPoints)));
@@ -126,6 +129,7 @@
 	});
 
 	const areas = $derived(chart.areas.values);
+	const effectiveAnimation = $derived(areas[0]?.animationType ?? animationType);
 	const seriesKeys = $derived(areas.map((area) => area.dataKey));
 	const xAxis = $derived(chart.xAxes.first);
 	const yAxis = $derived(chart.yAxes.first);
@@ -173,15 +177,30 @@
 			isLoading,
 			loadingData,
 			resolved,
-			animation,
+			animation: animation && !introComplete && effectiveAnimation !== 'none',
 			animationType,
 			reducedMotion: prefersReducedMotion.current,
 			rendererSize: dimension,
 			renderStyle,
 			ditherVariant,
-			ditherCellSize
+			ditherCellSize,
+			bloom
 		});
 		return (chartOptions ? { ...built, ...chartOptions } : built) as EChartsCoreOption;
+	});
+
+	$effect(() => {
+		if (isLoading) {
+			introComplete = false;
+			return;
+		}
+		if (introComplete || !instance || areas.length === 0) return;
+		if (!animation || effectiveAnimation === 'none' || prefersReducedMotion.current) {
+			introComplete = true;
+			return;
+		}
+		const timer = window.setTimeout(() => (introComplete = true), 1000);
+		return () => window.clearTimeout(timer);
 	});
 
 	$effect(() => {
@@ -268,7 +287,7 @@
 		const tick = (now: number) => {
 			const dashOffset = -(((now - start) / 1000) % 1) * 6;
 			chartInstance.setOption(
-				{ series: animatedKeys.map((id) => ({ id, areaStyle: { dashOffset } })) },
+				{ series: animatedKeys.map((id) => ({ id, lineStyle: { dashOffset } })) },
 				{ silent: true, lazyUpdate: true }
 			);
 			frame = requestAnimationFrame(tick);
@@ -309,9 +328,7 @@
 					.map((offset) => {
 						const distance = Math.abs(offset - center);
 						const alpha =
-							distance >= 0.2
-								? 0
-								: peak * Math.sin(((1 - distance / 0.2) * Math.PI) / 2);
+							distance >= 0.2 ? 0 : peak * Math.sin(((1 - distance / 0.2) * Math.PI) / 2);
 						return { offset, color: withAlpha(color, alpha) };
 					});
 			const clip = (peak: number) =>

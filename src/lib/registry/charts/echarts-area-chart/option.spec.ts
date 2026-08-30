@@ -109,6 +109,32 @@ describe('buildAreaOption', () => {
 		expect(area?.areaStyle?.color).toBe('rgba(20, 100, 220, 1)');
 	});
 
+	test('keeps animated dashed strokes native while dithering the area fill', () => {
+		const areas = context().areas.map((area, index) =>
+			index === 0 ? { ...area, strokeVariant: 'animated-dashed' as const } : area
+		);
+		const option = buildAreaOption(context({ areas, renderStyle: 'dither', ditherCellSize: 2 }));
+		const area = (option.series as Array<{ id?: string; lineStyle?: { type?: unknown } }>).find(
+			(entry) => entry.id === 'desktop'
+		);
+		expect(area?.lineStyle?.type).toEqual([3, 3]);
+	});
+
+	test('applies bloom only to dither geometry', () => {
+		const dither = buildAreaOption(
+			context({ renderStyle: 'dither', bloom: 'strong', stackType: 'default' })
+		);
+		const native = buildAreaOption(
+			context({ renderStyle: 'native', bloom: 'strong', stackType: 'default' })
+		);
+		const shadow = (option: ReturnType<typeof buildAreaOption>) =>
+			(option.series as Array<{ id?: string; lineStyle?: { shadowBlur?: number } }>).find(
+				(entry) => entry.id === 'desktop'
+			)?.lineStyle?.shadowBlur;
+		expect(shadow(dither)).toBe(14);
+		expect(shadow(native)).toBe(0);
+	});
+
 	test('builds a muted continuation and a clipped foreground for hover reveal', () => {
 		const option = buildAreaOption(
 			context({ enableHoverReveal: true, hoverRevealIndex: 0, stackType: 'default' })
@@ -116,5 +142,36 @@ describe('buildAreaOption', () => {
 		const series = option.series as Array<{ id?: string; data?: unknown[] }>;
 		expect(series.some((entry) => entry.id === '__reveal-base-desktop')).toBe(true);
 		expect(series.find((entry) => entry.id === 'desktop')?.data).toEqual([30, null]);
+	});
+
+	test('keeps buffer fill, endpoint markers, and the final tooltip value', () => {
+		const areas = context().areas.map((area, index) =>
+			index === 0
+				? {
+						...area,
+						enableBufferLine: true,
+						dotVariant: 'default' as const,
+						activeDotVariant: 'colored-border' as const
+					}
+				: area
+		);
+		const option = buildAreaOption(
+			context({
+				areas,
+				stackType: 'default',
+				tooltip: { variant: 'default', roundness: 'lg', cursor: true, position: 'variable' }
+			})
+		);
+		const series = option.series as Array<{ id?: string; showSymbol?: boolean }>;
+		expect(series.find((entry) => entry.id === '__buffer-desktop')?.showSymbol).toBe(true);
+		expect(series.some((entry) => entry.id === '__buffer-fill-desktop')).toBe(true);
+
+		const formatter = (option.tooltip as { formatter?: (value: unknown) => string }).formatter;
+		const html = formatter?.([
+			{ seriesId: 'desktop', seriesName: 'Desktop', axisValueLabel: 'Feb', value: null },
+			{ seriesId: '__buffer-desktop', axisValueLabel: 'Feb', value: 20 }
+		]);
+		expect(html).toContain('Desktop');
+		expect(html).toContain('20');
 	});
 });

@@ -18,6 +18,7 @@ import { dotItemStyle, dotStyle, sampleGradient } from '../../ui/echarts-dot/ind
 import { buildBrushDataZoom, type BrushRange } from '../../ui/echarts-brush/index.js';
 import {
 	createDitherPattern,
+	type DitherBloom,
 	type DitherVariant,
 	type RenderStyle
 } from '../../ui/echarts-dither/index.js';
@@ -73,7 +74,11 @@ export type AreaOptionContext = {
 	renderStyle: RenderStyle;
 	ditherVariant: DitherVariant;
 	ditherCellSize: number;
+	bloom?: DitherBloom;
 };
+
+const ditherBloomBlur = (style: RenderStyle, bloom?: DitherBloom) =>
+	style !== 'dither' || bloom === 'none' || bloom === undefined ? 0 : bloom === 'strong' ? 14 : 8;
 
 const labelFor = (config: ChartConfig, key: string) =>
 	typeof config[key]?.label === 'string' ? (config[key].label as string) : key;
@@ -164,7 +169,7 @@ function areaPaint(c: AreaOptionContext, area: AreaRegistration, slots: string[]
 	const color = slots[0] ?? c.resolved.tokens.foreground;
 	if (area.variant === 'none') return 'transparent';
 	if (c.renderStyle === 'dither') {
-		return createDitherPattern(slots, c.ditherVariant, c.ditherCellSize, 0.8);
+		return createDitherPattern(slots, area.ditherVariant ?? c.ditherVariant, c.ditherCellSize, 0.8);
 	}
 	if (area.variant === 'solid') {
 		if (slots.length > 1)
@@ -203,18 +208,27 @@ function tooltip(c: AreaOptionContext): TooltipComponentOption {
 		formatter: (raw) => {
 			const params = (Array.isArray(raw) ? raw : [raw]) as Array<{
 				seriesId?: string;
+				seriesName?: string;
 				axisValueLabel?: string;
 				value?: unknown;
 				data?: unknown;
 			}>;
+			const seen = new Set<string>();
 			const body = params
-				.filter((p) => p.seriesId && !p.seriesId.startsWith('__'))
 				.map((p) => {
-					const key = p.seriesId as string;
+					const rawId = p.seriesId ?? '';
+					const key = rawId.startsWith('__buffer-')
+						? rawId.slice('__buffer-'.length)
+						: rawId.startsWith('__')
+							? ''
+							: rawId || p.seriesName || '';
+					if (!key || seen.has(key)) return '';
 					const value =
 						typeof p.data === 'object' && p.data && 'value' in p.data
 							? (p.data as { value: unknown }).value
 							: p.value;
+					if (value === null || value === undefined) return '';
+					seen.add(key);
 					return tooltipRow({
 						indicatorHtml: tooltipIndicatorHtml(key, getColorsCount(c.config[key] ?? {})),
 						labelText: labelFor(c.config, key),
@@ -249,16 +263,20 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 				// resting paint transparent prevents a solid line between sweeps.
 				lineStyle: { color: withAlpha(c.resolved.tokens.foreground, 0), width: 1 },
 				areaStyle: { color: withAlpha(c.resolved.tokens.foreground, 0) },
+				z: 1,
 				animation: false
 			}
 		];
 	return c.areas.flatMap((area, index) => {
 		const vals = values(c, area.dataKey);
 		const slots = c.resolved.series[area.dataKey] ?? [c.resolved.tokens.foreground];
-		const paint =
-			c.renderStyle === 'dither'
-				? createDitherPattern(slots, c.ditherVariant, c.ditherCellSize)
-				: seriesPaint(slots);
+		const bloomBlur = ditherBloomBlur(c.renderStyle, c.bloom);
+		const bloomColor =
+			bloomBlur > 0 ? withAlpha(slots[0] ?? c.resolved.tokens.foreground, 0.55) : undefined;
+		const ditherStroke = c.renderStyle === 'dither' && area.strokeVariant !== 'animated-dashed';
+		const paint = ditherStroke
+			? createDitherPattern(slots, area.ditherVariant ?? c.ditherVariant, c.ditherCellSize)
+			: seriesPaint(slots);
 		const dotPaint = seriesPaint(slots);
 		const curve = curveConfig(area.curveType ?? c.curveType);
 		const opacity = opacityFor(c.selectedDataKey, area.dataKey);
@@ -284,6 +302,18 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 						)
 					}
 		);
+		const bufferData = vals.map((v, i) => {
+			if (i < vals.length - 2 || v === null) return null;
+			if (area.dotVariant === 'none' && area.activeDotVariant === 'none') return v;
+			return {
+				value: v,
+				itemStyle: dotItemStyle(
+					area.dotVariant,
+					sampleGradient(slots, vals.length > 1 ? i / (vals.length - 1) : 0),
+					c.resolved.tokens.background
+				)
+			};
+		});
 		const result: LineSeriesOption[] = [];
 		if (revealActive)
 			result.push({
@@ -323,22 +353,22 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			z: c.selectedDataKey === area.dataKey ? 3 : c.selectedDataKey === null ? 2 : 1,
 			lineStyle: {
 				color: paint,
-				width:
-					c.renderStyle === 'dither'
-						? Math.max(area.strokeWidth, c.ditherCellSize)
-						: area.strokeWidth,
-				type:
-					c.renderStyle === 'dither'
-						? [c.ditherCellSize, c.ditherCellSize]
-						: hasBuffer || area.strokeVariant === 'solid'
-							? 'solid'
-							: [3, 3],
-				opacity
+				width: ditherStroke ? Math.max(area.strokeWidth, c.ditherCellSize) : area.strokeWidth,
+				type: ditherStroke
+					? [c.ditherCellSize, c.ditherCellSize]
+					: hasBuffer || area.strokeVariant === 'solid'
+						? 'solid'
+						: [3, 3],
+				opacity,
+				shadowBlur: bloomBlur,
+				shadowColor: bloomColor
 			},
 			itemStyle: { ...dot.itemStyle, opacity },
 			areaStyle: {
 				color: areaPaint(c, area, slots),
-				opacity: c.selectedDataKey === null || c.selectedDataKey === area.dataKey ? 0.8 : 0.1
+				opacity: c.selectedDataKey === null || c.selectedDataKey === area.dataKey ? 0.8 : 0.1,
+				shadowBlur: bloomBlur,
+				shadowColor: bloomColor
 			},
 			emphasis: {
 				focus:
@@ -363,14 +393,31 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			result.push({
 				id: `__buffer-${area.dataKey}`,
 				type: 'line',
-				data: vals.map((v, i) => (i >= vals.length - 2 ? v : null)),
+				data: bufferData,
 				stack: c.stackType === 'default' ? undefined : '__area-buffer-stack',
 				smooth: curve.smooth,
 				step: curve.step,
 				connectNulls: true,
-				showSymbol: false,
+				showSymbol: dot.size > 0,
+				symbol: 'circle',
+				symbolSize: dot.size > 0 ? dot.size : activeDot.size,
 				silent: true,
-				lineStyle: { color: paint, width: area.strokeWidth, type: BUFFER_DASH, opacity },
+				z: c.selectedDataKey === area.dataKey ? 3 : c.selectedDataKey === null ? 2 : 1,
+				lineStyle: {
+					color: paint,
+					width: area.strokeWidth,
+					type: BUFFER_DASH,
+					opacity,
+					shadowBlur: bloomBlur,
+					shadowColor: bloomColor
+				},
+				itemStyle: { ...dot.itemStyle, opacity },
+				emphasis: {
+					disabled: false,
+					scale: dot.size > 0 ? activeDot.size / Math.max(dot.size, 1) : 1,
+					itemStyle: { ...activeDot.itemStyle, opacity: 1 }
+				},
+				blur: { lineStyle: { opacity: 0.3 }, itemStyle: { opacity: 0.3 } },
 				areaStyle: { opacity: 0 },
 				animation: false
 			});
@@ -389,7 +436,9 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 				lineStyle: { opacity: 0 },
 				areaStyle: {
 					color: areaPaint(c, area, slots),
-					opacity: c.selectedDataKey === null || c.selectedDataKey === area.dataKey ? 0.8 : 0.1
+					opacity: c.selectedDataKey === null || c.selectedDataKey === area.dataKey ? 0.8 : 0.1,
+					shadowBlur: bloomBlur,
+					shadowColor: bloomColor
 				},
 				animation: false,
 				tooltip: { show: false }
