@@ -42,8 +42,8 @@ loading, brushes, responsive layout, and transparent SVG interaction targets kee
 | Rendering providers    | 2: LayerChart and Apache ECharts                         |
 | Shared primitives      | 13 provider-specific UI modules                          |
 | Documentation examples | 242                                                      |
-| Installable blocks     | 40                                                       |
-| Registry items total   | 312                                                      |
+| Installable blocks     | 45                                                       |
+| Registry items total   | 317                                                      |
 
 ## Install a chart
 

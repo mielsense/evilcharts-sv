@@ -5,30 +5,10 @@
 
 	const total = 1000;
 	const tiers = [
-		{
-			name: 'memory',
-			label: 'L1 Memory',
-			count: 610,
-			swatch: 'bg-[#dc2626] dark:bg-[#ef4444]'
-		},
-		{
-			name: 'regional',
-			label: 'L2 Regional',
-			count: 240,
-			swatch: 'bg-[#d97706] dark:bg-[#f59e0b]'
-		},
-		{
-			name: 'overflow',
-			label: 'Edge Overflow',
-			count: 100,
-			swatch: 'bg-[#2563eb] dark:bg-[#3b82f6]'
-		},
-		{
-			name: 'origin',
-			label: 'Origin Fetch',
-			count: 50,
-			swatch: 'bg-[#0f172a] dark:bg-white'
-		}
+		{ name: 'memory', label: 'L1 Memory', count: 610, color: '#dc2626' },
+		{ name: 'regional', label: 'L2 Regional', count: 240, color: '#d97706' },
+		{ name: 'overflow', label: 'Edge Overflow', count: 100, color: '#2563eb' },
+		{ name: 'origin', label: 'Origin Fetch', count: 50, color: '#94a3b8' }
 	];
 	const stats = [
 		{ name: 'warm', label: 'Served Warm', value: 9150 },
@@ -36,12 +16,12 @@
 		{ name: 'evictions', label: 'Evictions', value: 412 },
 		{ name: 'purges', label: 'Purges', value: 96 }
 	];
-	const config = {
-		memory: { label: 'L1 Memory', colors: { light: ['#dc2626'], dark: ['#ef4444'] } },
-		regional: { label: 'L2 Regional', colors: { light: ['#d97706'], dark: ['#f59e0b'] } },
-		overflow: { label: 'Edge Overflow', colors: { light: ['#2563eb'], dark: ['#3b82f6'] } },
-		origin: { label: 'Origin Fetch', colors: { light: ['#0f172a'], dark: ['#ffffff'] } }
-	} satisfies ChartConfig;
+	const config = Object.fromEntries(
+		tiers.map(({ name, label, color }) => [
+			name,
+			{ label, colors: { light: [color], dark: [color] } }
+		])
+	) satisfies ChartConfig;
 	const data = [...tiers]
 		.reverse()
 		.map(({ name, count }) => ({ name, share: (count / total) * 100 }));
@@ -90,7 +70,7 @@
 		{#each tiers as tier (tier.name)}
 			<div class="flex min-w-0 flex-col gap-1">
 				<div class="flex min-w-0 items-center gap-1.5">
-					<span class={`size-2.5 shrink-0 rounded-[3px] ${tier.swatch}`}></span>
+					<span class="size-2.5 shrink-0 rounded-[3px]" style:background={tier.color}></span>
 					<span class="truncate text-xs text-primary">{tier.label}</span>
 				</div>
 				<span class="text-xs text-muted-foreground tabular-nums"

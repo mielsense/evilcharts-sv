@@ -43,4 +43,4 @@ export type {
 	TooltipRoundness,
 	TooltipVariant
 } from '../../ui/echarts-tooltip/index.js';
-export type { DitherBloom, GridType, RadarVariant } from './types.js';
+export type { DitherBloom, GridType, RadarStrokeVariant, RadarVariant } from './types.js';

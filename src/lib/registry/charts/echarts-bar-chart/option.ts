@@ -1,7 +1,8 @@
-import type { BarSeriesOption } from 'echarts/charts';
+import type { BarSeriesOption, CustomSeriesOption } from 'echarts/charts';
 import type {
 	DataZoomComponentOption,
 	GridComponentOption,
+	MarkLineComponentOption,
 	TooltipComponentOption
 } from 'echarts/components';
 import type { ComposeOption, EChartsType } from 'echarts/core';
@@ -38,7 +39,12 @@ import type {
 } from './types.js';
 
 export type EChartsBarOption = ComposeOption<
-	BarSeriesOption | GridComponentOption | TooltipComponentOption | DataZoomComponentOption
+	| BarSeriesOption
+	| CustomSeriesOption
+	| GridComponentOption
+	| TooltipComponentOption
+	| DataZoomComponentOption
+	| MarkLineComponentOption
 >;
 type ArrayItem<T> = T extends readonly (infer Item)[] ? Item : T;
 type XAxisOption = ArrayItem<NonNullable<EChartsBarOption['xAxis']>>;
@@ -55,6 +61,8 @@ export type BarOptionContext = {
 	barCategoryGap?: number;
 	selectedDataKey: string | null;
 	enableMaxValueHighlight: boolean;
+	referenceLine?: number | null;
+	referenceLineFormatter?: (value: number) => string;
 	xAxis?: AxisRegistration;
 	yAxis?: AxisRegistration;
 	showGrid: boolean;
@@ -402,10 +410,11 @@ function tooltip(c: BarOptionContext): TooltipComponentOption {
 				.filter((p) => p.seriesId && !p.seriesId.startsWith('__'))
 				.map((p) => {
 					const key = p.seriesId as string;
-					const value =
+					const rawValue =
 						typeof p.data === 'object' && p.data && 'value' in p.data
 							? (p.data as { value: unknown }).value
 							: p.value;
+					const value = Array.isArray(rawValue) ? rawValue.at(-1) : rawValue;
 					return tooltipRow({
 						indicatorHtml: tooltipIndicatorHtml(key, getColorsCount(c.config[key] ?? {})),
 						labelText: labelFor(c.config, key),
@@ -423,7 +432,125 @@ function tooltip(c: BarOptionContext): TooltipComponentOption {
 		}
 	};
 }
-function series(c: BarOptionContext): BarSeriesOption[] {
+
+function isDarkBackground(color: string): boolean {
+	const channels = color
+		.match(/[\d.]+/g)
+		?.slice(0, 3)
+		.map(Number);
+	if (!channels || channels.length < 3) return false;
+	return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722 < 128;
+}
+
+function isometricSeries(
+	c: BarOptionContext,
+	bar: BarRegistration,
+	maxIndex: number | null
+): CustomSeriesOption {
+	const slots = c.resolved.series[bar.dataKey] ?? [c.resolved.tokens.foreground];
+	const base = slots[0] ?? c.resolved.tokens.foreground;
+	const dark = isDarkBackground(c.resolved.tokens.background);
+	const accent = dark ? '#15803d' : '#22c55e';
+	const valuesForBar = values(c, bar.dataKey);
+
+	return {
+		id: bar.dataKey,
+		name: labelFor(c.config, bar.dataKey),
+		type: 'custom',
+		coordinateSystem: 'cartesian2d',
+		encode: { x: 0, y: 1 },
+		data: valuesForBar.map((value, index) => [index, value]),
+		cursor: bar.isClickable ? 'pointer' : 'default',
+		renderItem(params, api) {
+			const index = params.dataIndex;
+			const value = Number(api.value(1));
+			const top = api.coord([api.value(0), value]);
+			const baseline = api.coord([api.value(0), 0]);
+			const categorySize = api.size?.([1, 0]) ?? [0, 0];
+			const width = Math.max(
+				4,
+				Number(Array.isArray(categorySize) ? categorySize[0] : categorySize) * 0.55
+			);
+			const depth = Math.min(10, Math.max(5, width * 0.24));
+			const left = Number(top[0]) - width / 2;
+			const right = Number(top[0]) + width / 2;
+			const topY = Number(top[1]);
+			const baseY = Number(baseline[1]);
+			const height = Math.max(0, baseY - topY);
+			const highlight = index === maxIndex;
+			const color = highlight ? accent : base;
+			const front = patternFill('hatched', color) ?? color;
+
+			return {
+				type: 'group',
+				children: [
+					{
+						type: 'polygon',
+						shape: {
+							points: [
+								[right, topY],
+								[right + depth, topY - depth],
+								[right + depth, baseY - depth],
+								[right, baseY]
+							]
+						},
+						style: { fill: withAlpha(color, 0.55) }
+					},
+					{
+						type: 'polygon',
+						shape: {
+							points: [
+								[left, topY],
+								[right, topY],
+								[right + depth, topY - depth],
+								[left + depth, topY - depth]
+							]
+						},
+						style: { fill: withAlpha(color, 0.78) }
+					},
+					{
+						type: 'rect',
+						shape: { x: left, y: topY, width, height },
+						style: { fill: front }
+					}
+				]
+			};
+		},
+		animation: c.animation && !c.reducedMotion,
+		animationDuration: 700,
+		animationDelay: (index) => index * 80,
+		animationEasing: 'cubicOut'
+	};
+}
+
+function referenceMarkLine(c: BarOptionContext) {
+	if (c.referenceLine === null || c.referenceLine === undefined) return undefined;
+	return {
+		symbol: 'none',
+		silent: true,
+		lineStyle: {
+			color: withAlpha(c.resolved.tokens.mutedForeground, 0.6),
+			type: 'dashed' as const,
+			width: 1
+		},
+		label: {
+			show: true,
+			position: c.layout === 'horizontal' ? ('end' as const) : ('insideEndTop' as const),
+			formatter: c.referenceLineFormatter?.(c.referenceLine) ?? String(c.referenceLine),
+			color: c.resolved.tokens.foreground,
+			backgroundColor: c.resolved.tokens.background,
+			borderColor: c.resolved.tokens.border,
+			borderWidth: 1,
+			borderRadius: 4,
+			padding: [2, 5],
+			fontFamily: 'var(--font-mono, monospace)',
+			fontSize: 10
+		},
+		data: [c.layout === 'horizontal' ? { xAxis: c.referenceLine } : { yAxis: c.referenceLine }]
+	};
+}
+
+function series(c: BarOptionContext): Array<BarSeriesOption | CustomSeriesOption> {
 	if (c.isLoading) {
 		return [
 			{
@@ -449,7 +576,8 @@ function series(c: BarOptionContext): BarSeriesOption[] {
 		? totals.reduce((best, total, index) => (total > (totals[best] ?? -Infinity) ? index : best), 0)
 		: null;
 	const horizontal = c.layout === 'horizontal';
-	const built = c.bars.map((bar): BarSeriesOption => {
+	const built = c.bars.map((bar, seriesIndex): BarSeriesOption | CustomSeriesOption => {
+		if (bar.variant === 'isometric') return isometricSeries(c, bar, maxIndex);
 		const slots = c.resolved.series[bar.dataKey] ?? [GRAY];
 		const baseColor = slots[0] ?? GRAY;
 		const opacity = c.selectedDataKey === null || c.selectedDataKey === bar.dataKey ? 1 : 0.3;
@@ -558,6 +686,7 @@ function series(c: BarOptionContext): BarSeriesOption[] {
 				c.animation && (bar.animationType ?? c.animationType) !== 'none' && !c.reducedMotion,
 			animationDuration: 500,
 			animationEasing: 'cubicOut',
+			markLine: seriesIndex === 0 ? referenceMarkLine(c) : undefined,
 			animationDelay: (index) => {
 				const type = bar.animationType ?? c.animationType;
 				const last = Math.max(0, c.data.length - 1);
@@ -574,13 +703,14 @@ function series(c: BarOptionContext): BarSeriesOption[] {
 			}
 		};
 	});
+	if (built.some((entry) => entry.type === 'custom')) return built;
 
 	const gapUnits =
 		c.stackType !== 'default' && built.length > 1 && c.valuePxPerUnit
 			? STACK_SEGMENT_GAP / c.valuePxPerUnit
 			: 0;
 	if (!gapUnits) return built;
-	return built.flatMap((entry, index) =>
+	return (built as BarSeriesOption[]).flatMap((entry, index) =>
 		index === built.length - 1
 			? [entry]
 			: [

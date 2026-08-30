@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getStartedOptions } from './docs-sidebar.js';
+import { DocumentationOptions, getStartedOptions } from './docs-sidebar.js';
 
 describe('docs sidebar', () => {
 	it('keeps the provider-neutral agent skill in Get Started', () => {
@@ -12,8 +12,13 @@ describe('docs sidebar', () => {
 		}
 	});
 
-	it('places the changelog at the bottom of Get Started', () => {
-		expect(getStartedOptions('layerchart').at(-1)).toEqual({
+	it('places the changelog at the bottom of Documentation', () => {
+		expect(getStartedOptions('layerchart')).not.toContainEqual({
+			id: 'changelog',
+			name: 'Changelog',
+			url: '/docs/changelog'
+		});
+		expect(DocumentationOptions.at(-1)).toEqual({
 			id: 'changelog',
 			name: 'Changelog',
 			url: '/docs/changelog'

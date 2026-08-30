@@ -374,6 +374,21 @@ Fires when a series is selected or deselected via a clickable `<Bar />` or `<Leg
 Colors only the tallest column and mutes every other. With several series the comparison is per column (totals across all series), so a whole stack or group highlights together.
 
 </ApiRow>
+  <ApiRow name="referenceLine" type="number | null" default="null">
+
+Draws a dashed reference line across the value axis. Useful for medians, targets, and thresholds.
+
+</ApiRow>
+  <ApiRow name="referenceLineFormatter" type="(value: number) => string">
+
+Formats the label attached to `referenceLine`.
+
+</ApiRow>
+  <ApiRow name="onDataHover" type="(datum: BarHoverDatum | null) => void">
+
+Reports the category row under the pointer, and `null` when the pointer leaves the plot. This powers block-level readouts without coupling the chart to their layout.
+
+</ApiRow>
   <ApiRow name="isLoading" type="boolean" default="false">
 
 Shows the animated shimmer skeleton while data loads.
@@ -411,9 +426,9 @@ A single bar series. Each `<Bar />` carries its own fill variant, radius, glow, 
 The series key. Must exist on both the data rows and the chart `config`.
 
 </ApiRow>
-  <ApiRow name="variant" type='"default" | "hatched" | "duotone" | "duotone-reverse" | "gradient" | "stripped" | "blocks" | "expandable"' default='"default"'>
+  <ApiRow name="variant" type='"default" | "hatched" | "duotone" | "duotone-reverse" | "gradient" | "stripped" | "blocks" | "expandable" | "isometric"' default='"default"'>
 
-The bar's fill style, applied to this bar only. The `default` variant renders the full vertical color gradient for multi-color configs; `blocks` renders the bar as a stack of segments over a muted grid of the same segments.
+The bar's fill style, applied to this bar only. The `default` variant renders the full vertical color gradient for multi-color configs; `blocks` renders the bar as a stack of segments over a muted grid of the same segments; `isometric` draws dimensional front, top, and side faces.
 
 </ApiRow>
   <ApiRow name="radius" type="number">

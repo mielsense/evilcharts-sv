@@ -86,6 +86,23 @@ describe('buildRadarOption', () => {
 		expect(series[1].areaStyle).toBeUndefined();
 	});
 
+	it('applies per-series dashed strokes and glow without changing radar geometry', () => {
+		const option = buildRadarOption({
+			...base,
+			isLoading: false,
+			radars: [
+				{ ...base.radars[0], glowing: true },
+				{ ...base.radars[1], strokeVariant: 'dashed' as const }
+			]
+		});
+		const series = option.series as Array<{
+			lineStyle?: { type?: string; shadowBlur?: number };
+		}>;
+
+		expect(series[0].lineStyle).toMatchObject({ type: 'solid', shadowBlur: 8 });
+		expect(series[1].lineStyle).toMatchObject({ type: 'dashed', shadowBlur: 0 });
+	});
+
 	it('renders the reference random-walk loading polygon with the requested point count', () => {
 		const loadingData = createRadarLoadingData(8, () => 0.5);
 		const option = buildRadarOption({

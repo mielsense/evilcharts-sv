@@ -28,17 +28,26 @@
 			{ source: 4, target: 8, value: 46710 }
 		]
 	};
-	const config = {
-		Retail: { label: 'Retail', colors: { light: ['#1d4ed8'], dark: ['#3b82f6'] } },
-		Wholesale: { label: 'Wholesale', colors: { light: ['#2563eb'], dark: ['#60a5fa'] } },
-		Licensing: { label: 'Licensing', colors: { light: ['#4338ca'], dark: ['#6366f1'] } },
-		Services: { label: 'Services', colors: { light: ['#4f46e5'], dark: ['#818cf8'] } },
-		Pipeline: { label: '', colors: { light: ['#6d28d9'], dark: ['#8b5cf6'] } },
-		Expansion: { label: 'Expansion', colors: { light: ['#be123c'], dark: ['#f43f5e'] } },
-		Tooling: { label: 'Tooling', colors: { light: ['#c2410c'], dark: ['#fb923c'] } },
-		Support: { label: 'Support', colors: { light: ['#9f1239'], dark: ['#fb7185'] } },
-		Reserve: { label: 'Reserve', colors: { light: ['#b91c1c'], dark: ['#ef4444'] } }
-	} satisfies ChartConfig;
+	const palette: Record<string, string> = {
+		Retail: '#1d4ed8',
+		Wholesale: '#2563eb',
+		Licensing: '#4338ca',
+		Services: '#4f46e5',
+		Pipeline: '#6d28d9',
+		Expansion: '#be123c',
+		Tooling: '#c2410c',
+		Support: '#9f1239',
+		Reserve: '#b91c1c'
+	};
+	const config = Object.fromEntries(
+		data.nodes.map(({ name }) => [
+			name,
+			{
+				label: name === 'Pipeline' ? '' : name,
+				colors: { light: [palette[name]], dark: [palette[name]] }
+			}
+		])
+	) satisfies ChartConfig;
 	const total = data.links
 		.filter((link) => link.target === 4)
 		.reduce((sum, link) => sum + link.value, 0);

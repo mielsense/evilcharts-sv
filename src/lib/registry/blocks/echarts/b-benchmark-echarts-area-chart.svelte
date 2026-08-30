@@ -27,7 +27,7 @@
 	];
 	const config = {
 		actual: { label: 'Actual', colors: { light: ['#0a0a0a'], dark: ['#ffffff'] } },
-		target: { label: 'Target', colors: { light: ['#a1a1aa'], dark: ['#666'] } }
+		target: { label: 'Target', colors: { light: ['#a1a1aa'], dark: ['#666666'] } }
 	} satisfies ChartConfig;
 	const latest = data.at(-1)!;
 	const delta = ((latest.actual - latest.target) / latest.target) * 100;

@@ -5,50 +5,26 @@
 	const max = 1000;
 	const score = 842;
 	const data = [
-		{
-			band: 'atrisk',
-			label: 'At risk',
-			from: 0,
-			value: 450,
-			bar: 'bg-[#e11d48] dark:bg-[#fb7185]'
-		},
-		{
-			band: 'fair',
-			label: 'Fair',
-			from: 450,
-			value: 200,
-			bar: 'bg-[#f59e0b] dark:bg-[#fbbf24]'
-		},
-		{
-			band: 'good',
-			label: 'Good',
-			from: 650,
-			value: 170,
-			bar: 'bg-[#84cc16] dark:bg-[#a3e635]'
-		},
-		{
-			band: 'excellent',
-			label: 'Excellent',
-			from: 820,
-			value: 180,
-			bar: 'bg-[#059669] dark:bg-[#34d399]'
-		}
+		{ band: 'atrisk', label: 'At risk', from: 0, value: 450, color: '#e11d48' },
+		{ band: 'fair', label: 'Fair', from: 450, value: 200, color: '#f59e0b' },
+		{ band: 'good', label: 'Good', from: 650, value: 170, color: '#84cc16' },
+		{ band: 'excellent', label: 'Excellent', from: 820, value: 180, color: '#059669' }
 	];
-	const config = {
-		atrisk: { label: 'At risk', colors: { light: ['#e11d48'], dark: ['#fb7185'] } },
-		fair: { label: 'Fair', colors: { light: ['#f59e0b'], dark: ['#fbbf24'] } },
-		good: { label: 'Good', colors: { light: ['#84cc16'], dark: ['#a3e635'] } },
-		excellent: { label: 'Excellent', colors: { light: ['#059669'], dark: ['#34d399'] } }
-	} satisfies ChartConfig;
+	const config = Object.fromEntries(
+		data.map(({ band, label, color }) => [
+			band,
+			{ label, colors: { light: [color], dark: [color] } }
+		])
+	) satisfies ChartConfig;
 	const scoreBand = [...data].reverse().find(({ from }) => score >= from) ?? data[0];
 </script>
 
-<div class="flex h-full w-full flex-col p-4">
-	<span class="text-base font-medium tracking-tight text-primary sm:text-lg"
+<div class="flex h-full w-full min-w-0 flex-col overflow-hidden p-3 sm:p-4">
+	<span class="shrink-0 text-base font-medium tracking-tight text-primary sm:text-lg"
 		>Delivery Reliability</span
 	>
 
-	<div class="relative mx-auto mt-1 aspect-square w-full max-w-50 shrink-0">
+	<div class="relative mx-auto mt-1 aspect-square min-h-0 w-full max-w-50 flex-1">
 		<EChartsPieChart
 			data={[...data].reverse()}
 			{config}
@@ -65,27 +41,12 @@
 				endAngle={210}
 			/>
 		</EChartsPieChart>
-
-		<svg
-			viewBox="0 0 100 100"
-			class="pointer-events-none absolute inset-0 text-muted-foreground/50"
-			aria-hidden="true"
-		>
-			<path
-				d="M 23.15 65.5 A 31 31 0 1 1 76.85 65.5"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1"
-				stroke-linecap="round"
-				stroke-dasharray="0.1 5"
-			/>
-		</svg>
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
 			<span class="text-3xl font-semibold tracking-tight text-primary sm:text-4xl">{score}</span>
 		</div>
 	</div>
 
-	<div class="-mt-6 text-center">
+	<div class="-mt-5 shrink-0 text-center">
 		<p class="text-xs font-medium text-primary sm:text-sm">
 			Reliability is {scoreBand.label.toLowerCase()}
 		</p>
@@ -93,7 +54,7 @@
 	</div>
 
 	<div class="mt-auto shrink-0 pt-2">
-		<div class="flex text-[10px] text-muted-foreground">
+		<div class="flex text-[9px] text-muted-foreground sm:text-[10px]">
 			{#each data as item (item.band)}
 				<span style:flex-grow={item.value} style:flex-basis="0">{item.from}</span>
 			{/each}
@@ -102,9 +63,10 @@
 		<div class="mt-1 flex gap-1">
 			{#each data as item (item.band)}
 				<span
-					class={`h-1.5 rounded-full ${item.bar}`}
+					class="h-1.5 rounded-full"
 					style:flex-grow={item.value}
 					style:flex-basis="0"
+					style:background={item.color}
 				></span>
 			{/each}
 		</div>

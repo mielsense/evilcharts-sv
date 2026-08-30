@@ -34,8 +34,7 @@ export function getStartedOptions(provider: Provider): SidebarOption[] {
 		{ id: 'get-started', name: 'Get Started', url: '/docs' },
 		{ id: 'installation', name: 'Installation', url: `/docs/${provider}/installation` },
 		{ id: 'agent-skill', name: 'Agent Skill', url: '/docs/agent-skill' },
-		{ id: 'components', name: 'Components', url: `/docs/${provider}/components` },
-		{ id: 'changelog', name: 'Changelog', url: '/docs/changelog' }
+		{ id: 'components', name: 'Components', url: `/docs/${provider}/components` }
 	];
 }
 
@@ -52,7 +51,8 @@ export function getChartComponentOptions(provider: Provider): SidebarOption[] {
 }
 
 export const DocumentationOptions: SidebarOption[] = [
-	{ id: 'chart-config', name: 'Chart Config', url: '/docs/chart-config' }
+	{ id: 'chart-config', name: 'Chart Config', url: '/docs/chart-config' },
+	{ id: 'changelog', name: 'Changelog', url: '/docs/changelog' }
 ];
 
 /**

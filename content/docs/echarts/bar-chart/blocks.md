@@ -18,3 +18,13 @@ image: /og/bar-chart-blocks.png
 
 <ComponentPreview class="mb-4" title="Monospace Bar Chart" name="monospace-echarts-bar-chart"/>
 <CliBlock commands={["@evilcharts/monospace-echarts-bar-chart"]} />
+
+## Hover Trace Bar Chart
+
+<ComponentPreview class="mb-4" title="Hover Trace Bar Chart" name="hover-trace-echarts-bar-chart"/>
+<CliBlock commands={["@evilcharts/hover-trace-echarts-bar-chart"]} />
+
+## Isometric Bar Chart
+
+<ComponentPreview class="mb-4" title="Isometric Bar Chart" name="isometric-echarts-bar-chart"/>
+<CliBlock commands={["@evilcharts/isometric-echarts-bar-chart"]} />

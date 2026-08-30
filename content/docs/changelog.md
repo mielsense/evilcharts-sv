@@ -8,6 +8,10 @@ Docs-only, test-only, CI, and contributor-workflow changes are recorded in their
 
 ## 2026-08-30
 
+- Added ECharts counterparts for every LayerChart dashboard block and aligned shared block data,
+  palettes, supporting metrics, and responsive compositions across providers. The ECharts Bar API
+  now includes isometric bars, reference lines, and row-hover callbacks; ECharts Radar series add
+  dashed strokes and optional glow for those compositions.
 - Preserved null and non-finite data as real gaps across ECharts Area, Line, and Composed charts,
   including their brushes, reveal layers, buffer lines, hit targets, and tooltips.
 - Gave both Sankey providers the same guarded data contract and expanded ECharts keyboard and

@@ -33,42 +33,35 @@
 		previous: { label: 'Last week', colors: { light: ['#d4d4d4'], dark: ['#525252'] } }
 	} satisfies ChartConfig;
 	const legend = [
-		{
-			key: 'current',
-			label: 'This week',
-			swatch: 'border-[#171717] dark:border-[#fafafa]'
-		},
-		{
-			key: 'previous',
-			label: 'Last week',
-			swatch: 'border-[#d4d4d4] dark:border-[#525252]'
-		}
+		{ label: 'This week', color: '#fafafa' },
+		{ label: 'Last week', color: '#525252' }
 	];
 	const total = data.reduce((sum, row) => sum + row.current, 0);
 </script>
 
-<section class="flex h-full w-full flex-col p-4" data-block="shipments-line-chart">
-	<header>
-		<strong class="text-sm font-medium tracking-tight text-primary">Orders shipped</strong>
-		<div class="mt-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-			<div class="flex items-baseline gap-2">
-				<strong class="text-2xl font-semibold tracking-tight text-primary sm:text-3xl"
-					>{total}</strong
-				>
-				<span class="text-xs font-medium text-emerald-500">+4.2%</span>
-				<span class="text-xs text-muted-foreground">vs last week</span>
+<section
+	class="flex size-full min-h-0 flex-col overflow-hidden p-3 sm:p-4"
+	data-block="shipments-line-chart"
+>
+	<header class="shrink-0">
+		<strong class="text-sm font-medium tracking-tight">Orders shipped</strong>
+		<div class="mt-0.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+			<div class="flex items-baseline gap-1.5">
+				<strong class="text-2xl tracking-tight sm:text-3xl">{total}</strong>
+				<span class="text-[10px] font-medium text-emerald-500 sm:text-xs">+4.2%</span>
+				<span class="text-[10px] text-muted-foreground sm:text-xs">vs last week</span>
 			</div>
-			<div class="flex items-center gap-3">
-				{#each legend as item (item.key)}
-					<span class="flex items-center gap-1.5 text-[11px] text-muted-foreground sm:text-xs">
-						<i class={`size-2.5 shrink-0 rounded-full border-2 ${item.swatch}`}></i>{item.label}
+			<div class="flex gap-2 sm:gap-3">
+				{#each legend as item (item.label)}
+					<span class="flex items-center gap-1 text-[10px] text-muted-foreground sm:text-xs">
+						<i class="size-2 rounded-full border-2" style:border-color={item.color}></i>{item.label}
 					</span>
 				{/each}
 			</div>
 		</div>
 	</header>
-	<div class="mt-2 min-h-0 w-full flex-1">
-		<EChartsLineChart {data} {config} xDataKey="slot" class="h-full w-full" curveType="linear">
+	<div class="mt-1 min-h-0 flex-1 overflow-hidden sm:mt-2">
+		<EChartsLineChart {data} {config} xDataKey="slot" class="size-full" curveType="linear">
 			<EChartsLineChart.Grid />
 			<EChartsLineChart.YAxis />
 			<EChartsLineChart.XAxis

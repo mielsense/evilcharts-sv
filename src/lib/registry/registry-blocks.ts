@@ -246,7 +246,16 @@ const echartsBlockDescriptions = {
 		'Bar chart whose columns are stacks of blocks, on the ECharts blocks variant',
 	'b-monospace-echarts-bar-chart':
 		'Monospace sales card whose hairline bars expand on hover, on the ECharts bar chart',
+	'b-hover-trace-echarts-bar-chart':
+		'Interactive value card with a live headline and dashed reference trace',
+	'b-isometric-echarts-bar-chart':
+		'Isometric revenue columns with hatched faces and a highlighted peak',
 	'b-peak-echarts-bar-chart': 'Stacked weekly signups with only the best week in color',
+	'b-revenue-echarts-composed-chart':
+		'Annual revenue bars with a monthly profit trend and margin summary',
+	'b-signups-echarts-composed-chart': 'Weekly signup bars measured against a stepped target line',
+	'b-capability-echarts-radar-chart':
+		'Team capability dashboard comparing current and target performance',
 	'b-allocation-echarts-sankey-chart': 'Fund allocation flow with labelled nodes and a stat row',
 	'b-pipeline-echarts-sankey-chart':
 		'Revenue sources converging through a hub and fanning back out, with a centered total'
@@ -254,15 +263,19 @@ const echartsBlockDescriptions = {
 
 const echartsBlockItems: RegistryItem[] = Object.entries(echartsBlockDescriptions).map(
 	([fileName, description]) => {
-		const family = ['area', 'line', 'bar', 'pie', 'radial', 'sankey'].find((candidate) =>
-			fileName.endsWith(`-${candidate}-chart`)
+		const family = ['area', 'line', 'bar', 'composed', 'pie', 'radar', 'radial', 'sankey'].find(
+			(candidate) => fileName.endsWith(`-${candidate}-chart`)
 		);
 		if (!family) throw new Error(`Unable to resolve ECharts block family for "${fileName}".`);
 		return {
 			name: fileName.replace(/^b-/, ''),
 			description,
 			dependencies:
-				fileName === 'b-ride-echarts-radial-chart' ? ['echarts', '@lucide/svelte'] : ['echarts'],
+				fileName === 'b-ride-echarts-radial-chart'
+					? ['echarts', '@lucide/svelte']
+					: fileName === 'b-hover-trace-echarts-bar-chart'
+						? ['echarts', '@number-flow/svelte']
+						: ['echarts'],
 			registryDependencies: [`@evilcharts/echarts-${family}-chart`],
 			type: 'registry:block',
 			files: echartsFiles(fileName)

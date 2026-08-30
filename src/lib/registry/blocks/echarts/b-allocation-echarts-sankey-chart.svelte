@@ -27,15 +27,21 @@
 			{ source: 3, target: 6, value: 15 }
 		]
 	};
-	const config = {
-		Inflow: { label: 'Inflow', colors: { light: ['#0d9488'], dark: ['#2dd4bf'] } },
-		Equities: { label: 'Equities', colors: { light: ['#d97706'], dark: ['#fbbf24'] } },
-		Bonds: { label: 'Bonds', colors: { light: ['#ea580c'], dark: ['#fb923c'] } },
-		Cash: { label: 'Cash', colors: { light: ['#b45309'], dark: ['#f59e0b'] } },
-		Growth: { label: 'Growth', colors: { light: ['#7c3aed'], dark: ['#a78bfa'] } },
-		Income: { label: 'Income', colors: { light: ['#6d28d9'], dark: ['#8b5cf6'] } },
-		Reserve: { label: 'Reserve', colors: { light: ['#4f46e5'], dark: ['#818cf8'] } }
-	} satisfies ChartConfig;
+	const palette: Record<string, string> = {
+		Inflow: '#0d9488',
+		Equities: '#d97706',
+		Bonds: '#ea580c',
+		Cash: '#b45309',
+		Growth: '#7c3aed',
+		Income: '#6d28d9',
+		Reserve: '#4f46e5'
+	};
+	const config = Object.fromEntries(
+		data.nodes.map(({ name }) => [
+			name,
+			{ label: name, colors: { light: [palette[name]], dark: [palette[name]] } }
+		])
+	) satisfies ChartConfig;
 	const stats = [
 		{ key: 'positions', label: 'Open positions', value: '204' },
 		{ key: 'aum', label: 'Assets under management', value: '$65,430' },

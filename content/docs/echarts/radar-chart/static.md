@@ -354,6 +354,16 @@ The visual style for this radar. `"filled"` shows a filled area, `"lines"` shows
 The opacity of the filled area when using `variant="filled"`.
 
 </ApiRow>
+  <ApiRow name="strokeVariant" type='"solid" | "dashed"' default='"solid"'>
+
+Controls the outline style independently from the fill variant.
+
+</ApiRow>
+  <ApiRow name="glowing" type="boolean" default="false">
+
+Adds a restrained glow to this radar series.
+
+</ApiRow>
   <ApiRow name="isClickable" type="boolean" default="false">
 
 Lets this radar be clicked to select/deselect it. When one is selected, unselected clickable radars turn semi-transparent.

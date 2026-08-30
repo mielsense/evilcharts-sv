@@ -6,9 +6,10 @@
 		AriaComponent,
 		DataZoomComponent,
 		GridComponent,
+		MarkLineComponent,
 		TooltipComponent
 	} from 'echarts/components';
-	import { BarChart } from 'echarts/charts';
+	import { BarChart, CustomChart } from 'echarts/charts';
 	import * as echarts from 'echarts/core';
 	import {
 		ChartContainer,
@@ -47,11 +48,20 @@
 		BarLayout,
 		LegendRegistration,
 		BarAnimationType,
+		BarHoverDatum,
 		StackType,
 		TooltipRegistration
 	} from './types.js';
 
-	echarts.use([BarChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent]);
+	echarts.use([
+		BarChart,
+		CustomChart,
+		GridComponent,
+		TooltipComponent,
+		DataZoomComponent,
+		MarkLineComponent,
+		AriaComponent
+	]);
 
 	let {
 		data,
@@ -71,6 +81,9 @@
 		animation = true,
 		animationType = 'left-to-right',
 		enableMaxValueHighlight = false,
+		referenceLine = null,
+		referenceLineFormatter,
+		onDataHover,
 		defaultSelectedDataKey = null,
 		onSelectionChange,
 		isLoading = false,
@@ -96,6 +109,9 @@
 		animation?: boolean;
 		animationType?: BarAnimationType;
 		enableMaxValueHighlight?: boolean;
+		referenceLine?: number | null;
+		referenceLineFormatter?: (value: number) => string;
+		onDataHover?: (datum: BarHoverDatum | null) => void;
 		defaultSelectedDataKey?: string | null;
 		onSelectionChange?: (key: string | null) => void;
 		isLoading?: boolean;
@@ -201,6 +217,8 @@
 			barCategoryGap,
 			selectedDataKey,
 			enableMaxValueHighlight,
+			referenceLine,
+			referenceLineFormatter,
 			xAxis,
 			yAxis,
 			showGrid: chart.grids.size > 0,
@@ -441,17 +459,26 @@
 		return id;
 	}
 
+	function eventDataIndex(params: unknown): number | null {
+		if (!params || typeof params !== 'object') return null;
+		const index = (params as { dataIndex?: unknown }).dataIndex;
+		return typeof index === 'number' && Number.isInteger(index) ? index : null;
+	}
+
 	const events = $derived({
 		click: (params: unknown) => {
 			const key = eventSeriesKey(params);
 			if (key) toggleSelection(key);
 		},
 		mouseover: (params: unknown) => {
+			const index = eventDataIndex(params);
+			onDataHover?.(index === null || !data[index] ? null : { index, row: data[index] });
 			if (selectedDataKey !== null) return;
 			hoveredDataKey = eventSeriesKey(params);
 		},
 		mouseout: () => {
 			hoveredDataKey = null;
+			onDataHover?.(null);
 		},
 		datazoom: () => {
 			const zoom = (instance?.getOption() as { dataZoom?: { start?: number; end?: number }[] })

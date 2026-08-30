@@ -9,11 +9,16 @@ export type BarVariant =
 	| 'gradient'
 	| 'stripped'
 	| 'blocks'
-	| 'expandable';
+	| 'expandable'
+	| 'isometric';
 export type StackType = 'default' | 'stacked' | 'percent';
 export type BarLayout = 'vertical' | 'horizontal';
 export type BarAnimationType =
 	'none' | 'left-to-right' | 'right-to-left' | 'center-out' | 'edges-in';
+export type BarHoverDatum = {
+	index: number;
+	row: Record<string, unknown>;
+};
 export type BarRegistration = {
 	dataKey: string;
 	variant: BarVariant;

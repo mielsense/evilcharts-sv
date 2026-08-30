@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { blocks } from './registry-blocks.js';
 import { charts } from './registry-chart.js';
@@ -12,6 +13,50 @@ const REGISTRY_DIR = path.join(process.cwd(), 'src/lib/registry');
 const names = new Set(registry.items.map((item) => item.name));
 
 const FRAMEWORK_IMPORTS = new Set(['svelte', 'svelte/elements', 'svelte/reactivity']);
+const PRESENTATION_DECLARATIONS = new Set([
+	'data',
+	'chartData',
+	'config',
+	'chartConfig',
+	'series',
+	'palette',
+	'stats',
+	'cities',
+	'legend',
+	'tiers',
+	'metrics',
+	'splits',
+	'ride',
+	'dotCount',
+	'sectorCount',
+	'max',
+	'score'
+]);
+
+function presentationDeclarations(file: string): Map<string, string> {
+	const component = readFileSync(file, 'utf8');
+	const script = component.match(/<script[^>]*>([\s\S]*?)<\/script>/)?.[1] ?? '';
+	const source = ts.createSourceFile(file, script, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+	const declarations = new Map<string, string>();
+
+	source.forEachChild((node) => {
+		if (!ts.isVariableStatement(node)) return;
+		for (const declaration of node.declarationList.declarations) {
+			if (
+				ts.isIdentifier(declaration.name) &&
+				declaration.initializer &&
+				PRESENTATION_DECLARATIONS.has(declaration.name.text)
+			) {
+				declarations.set(
+					declaration.name.text,
+					declaration.initializer.getText(source).replace(/\s+/g, ' ')
+				);
+			}
+		}
+	});
+
+	return declarations;
+}
 
 function packageName(specifier: string): string {
 	if (!specifier.startsWith('@')) return specifier.split('@')[0].split('/')[0];
@@ -35,6 +80,44 @@ function sourcesOf(item: (typeof registry.items)[number]): string[] {
 }
 
 describe('registry manifests', () => {
+	it('provides an ECharts counterpart for every LayerChart block', () => {
+		const blockItems = blocks.filter((item) => item.type === 'registry:block');
+		const layerchartNames = blockItems
+			.filter((item) => item.files.some((file) => file.path.startsWith('blocks/layerchart/')))
+			.map((item) => item.name)
+			.sort();
+		const echartsNames = new Set(
+			blockItems
+				.filter((item) => item.files.some((file) => file.path.startsWith('blocks/echarts/')))
+				.map((item) => item.name.replace('-echarts-', '-'))
+		);
+
+		expect(layerchartNames.filter((name) => !echartsNames.has(name))).toEqual([]);
+	});
+
+	it('keeps shared block data, palettes, labels, and supporting metrics provider-neutral', () => {
+		const layerchartDirectory = path.join(REGISTRY_DIR, 'blocks/layerchart');
+		const echartsDirectory = path.join(REGISTRY_DIR, 'blocks/echarts');
+		const blockPattern = /-(area|line|bar|composed|radar|pie|radial|sankey)-chart\.svelte$/;
+
+		for (const layerchartFile of readdirSync(layerchartDirectory).filter((file) =>
+			blockPattern.test(file)
+		)) {
+			const echartsFile = layerchartFile.replace(
+				blockPattern,
+				(_match, family: string) => `-echarts-${family}-chart.svelte`
+			);
+			const echartsPath = path.join(echartsDirectory, echartsFile);
+			expect(existsSync(echartsPath), echartsFile).toBe(true);
+
+			const expected = presentationDeclarations(path.join(layerchartDirectory, layerchartFile));
+			const actual = presentationDeclarations(echartsPath);
+			for (const [name, initializer] of expected) {
+				expect(actual.get(name), `${echartsFile}: ${name}`).toBe(initializer);
+			}
+		}
+	});
+
 	it('holds one item per source file group', () => {
 		const expectedItemCount = [ui, charts, examples, blocks].reduce(
 			(total, category) => total + category.length,

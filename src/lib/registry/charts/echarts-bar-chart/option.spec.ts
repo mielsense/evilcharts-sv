@@ -134,4 +134,31 @@ describe('buildBarOption', () => {
 		const bar = (option.series as Array<{ itemStyle?: { borderRadius?: unknown } }>)[0];
 		expect(bar.itemStyle?.borderRadius).toEqual([0, 3, 3, 0]);
 	});
+
+	test('renders an isometric bar as a custom cartesian series', () => {
+		const isometric = context({ stackType: 'default', enableMaxValueHighlight: true });
+		isometric.bars = [{ ...isometric.bars[0], variant: 'isometric' }];
+		const option = buildBarOption(isometric);
+		const series = (option.series as Array<{ type?: string; coordinateSystem?: string }>)[0];
+
+		expect(series.type).toBe('custom');
+		expect(series.coordinateSystem).toBe('cartesian2d');
+	});
+
+	test('attaches a formatted reference line to the first regular bar series', () => {
+		const option = buildBarOption(
+			context({
+				stackType: 'default',
+				referenceLine: 42,
+				referenceLineFormatter: (value) => `Median ${value}`
+			})
+		);
+		const series = option.series as Array<{
+			markLine?: { data?: Array<{ yAxis?: number }>; label?: { formatter?: string } };
+		}>;
+
+		expect(series[0].markLine?.data).toEqual([{ yAxis: 42 }]);
+		expect(series[0].markLine?.label?.formatter).toBe('Median 42');
+		expect(series[1].markLine).toBeUndefined();
+	});
 });

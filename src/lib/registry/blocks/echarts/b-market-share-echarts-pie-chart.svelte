@@ -3,42 +3,12 @@
 	import { type ChartConfig } from '$lib/registry/ui/echarts-chart/index.js';
 
 	const series = [
-		{
-			key: 'skyline',
-			label: 'Skyline',
-			value: 27,
-			swatch: 'bg-[#0a0a0a] dark:bg-[#ffffff]'
-		},
-		{
-			key: 'datawell',
-			label: 'Datawell',
-			value: 21,
-			swatch: 'bg-[#262626] dark:bg-[#dedede]'
-		},
-		{
-			key: 'cloudpeak',
-			label: 'Cloudpeak',
-			value: 13,
-			swatch: 'bg-[#3d3d3d] dark:bg-[#bebebe]'
-		},
-		{
-			key: 'taskbridge',
-			label: 'Taskbridge',
-			value: 21,
-			swatch: 'bg-[#545454] dark:bg-[#a0a0a0]'
-		},
-		{
-			key: 'insightloop',
-			label: 'Insightloop',
-			value: 6,
-			swatch: 'bg-[#6b6b6b] dark:bg-[#868686]'
-		},
-		{
-			key: 'streamforge',
-			label: 'Streamforge',
-			value: 12,
-			swatch: 'bg-[#7d7d7d] dark:bg-[#6f6f6f]'
-		}
+		{ key: 'skyline', label: 'Skyline', value: 27, color: '#0a0a0a' },
+		{ key: 'datawell', label: 'Datawell', value: 21, color: '#343434' },
+		{ key: 'cloudpeak', label: 'Cloudpeak', value: 13, color: '#555555' },
+		{ key: 'taskbridge', label: 'Taskbridge', value: 21, color: '#777777' },
+		{ key: 'insightloop', label: 'Insightloop', value: 6, color: '#999999' },
+		{ key: 'streamforge', label: 'Streamforge', value: 12, color: '#b9b9b9' }
 	] as const;
 
 	const data = [...series].reverse().map(({ key, value }) => ({
@@ -47,14 +17,12 @@
 		share: `${value}%`
 	}));
 
-	const config = {
-		skyline: { label: 'Skyline', colors: { light: ['#0a0a0a'], dark: ['#ffffff'] } },
-		datawell: { label: 'Datawell', colors: { light: ['#262626'], dark: ['#dedede'] } },
-		cloudpeak: { label: 'Cloudpeak', colors: { light: ['#3d3d3d'], dark: ['#bebebe'] } },
-		taskbridge: { label: 'Taskbridge', colors: { light: ['#545454'], dark: ['#a0a0a0'] } },
-		insightloop: { label: 'Insightloop', colors: { light: ['#6b6b6b'], dark: ['#868686'] } },
-		streamforge: { label: 'Streamforge', colors: { light: ['#7d7d7d'], dark: ['#6f6f6f'] } }
-	} satisfies ChartConfig;
+	const config = Object.fromEntries(
+		series.map(({ key, label, color }) => [
+			key,
+			{ label, colors: { light: [color], dark: [color === '#0a0a0a' ? '#ffffff' : color] } }
+		])
+	) satisfies ChartConfig;
 
 	const total = series.reduce((sum, { value }) => sum + value, 0);
 	let selected = $state<string | null>(null);
@@ -64,7 +32,7 @@
 	}
 </script>
 
-<div class="@container flex h-full w-full flex-col p-4">
+<div class="@container flex h-full w-full min-w-0 flex-col overflow-hidden p-3 sm:p-4">
 	<div class="relative min-h-0 w-full flex-1">
 		<EChartsPieChart
 			{data}
@@ -97,22 +65,19 @@
 	</div>
 
 	<div
-		class="mt-3 grid grid-flow-col grid-cols-2 grid-rows-3 gap-x-6 gap-y-1.5 border-t border-border pt-3"
+		class="mt-2 grid shrink-0 grid-cols-2 gap-x-3 gap-y-1.5 border-t pt-2 sm:mt-3 sm:pt-3 @md:grid-flow-col @md:grid-rows-3 @md:gap-x-6"
 	>
 		{#each series as item (item.key)}
 			<button
 				type="button"
 				aria-pressed={selected === item.key}
 				onclick={() => select(item.key)}
-				class={[
-					'flex cursor-pointer items-center gap-2 text-left text-xs transition-opacity',
-					selected !== null && selected !== item.key && 'opacity-40'
-				]}
+				class="flex min-w-0 cursor-pointer items-center gap-1.5 text-left text-[10px] transition-opacity sm:gap-2 sm:text-xs"
+				class:opacity-40={selected !== null && selected !== item.key}
 			>
-				<span class={`size-3 shrink-0 rounded-[3px] ${item.swatch}`}></span>
-				<span class="font-medium text-primary">{item.label}</span>
-				<span class="text-muted-foreground">${item.value}B</span>
-				<span class="text-muted-foreground/60">({item.value}%)</span>
+				<span class="size-2.5 shrink-0 rounded-[3px]" style:background={item.color}></span>
+				<span class="truncate font-medium text-primary">{item.label}</span>
+				<span class="ml-auto shrink-0 text-muted-foreground">${item.value}B</span>
 			</button>
 		{/each}
 	</div>

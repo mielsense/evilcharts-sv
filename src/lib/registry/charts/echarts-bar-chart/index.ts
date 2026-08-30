@@ -29,4 +29,4 @@ export type {
 	TooltipRoundness,
 	TooltipVariant
 } from '../../ui/echarts-tooltip/index.js';
-export type { BarAnimationType, BarLayout, BarVariant, StackType } from './types.js';
+export type { BarAnimationType, BarHoverDatum, BarLayout, BarVariant, StackType } from './types.js';

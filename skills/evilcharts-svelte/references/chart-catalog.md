@@ -23,7 +23,7 @@ For a family slug such as `area-chart`, use:
 - LayerChart blocks: `https://evilcharts-sv.vercel.app/docs/layerchart/{family}/blocks`
 - ECharts guide: `https://evilcharts-sv.vercel.app/docs/echarts/{family}`
 - ECharts Markdown: `https://evilcharts-sv.vercel.app/docs/echarts/{family}.md`
-- ECharts blocks, only where listed below:
+- ECharts blocks:
   `https://evilcharts-sv.vercel.app/docs/echarts/{family}/blocks`
 
 Valid family slugs are `area-chart`, `line-chart`, `bar-chart`, `composed-chart`, `radar-chart`,
@@ -48,6 +48,7 @@ available for Area, Line, Bar, Composed, Pie, and Radar, not Radial or Sankey.
 ## Examples and blocks
 
 Focused registry examples use `ex-*` item names and demonstrate one feature at a time. Public block
-item names omit the source file's `b-` prefix. LayerChart currently has blocks for all eight chart
-families. ECharts has blocks for Area, Line, Bar, Pie, Radial, and Sankey; it does not currently
-publish Composed or Radar blocks. Always copy the exact item name from the provider page.
+item names omit the source file's `b-` prefix. Both providers publish blocks for all eight chart
+families. Each LayerChart block has an ECharts counterpart with the same data, palette, labels, and
+supporting composition; ECharts also includes its provider-specific Peak Week block. Always copy the
+exact item name from the provider page.

@@ -6486,6 +6486,45 @@
       ]
     },
     {
+      "name": "hover-trace-echarts-bar-chart",
+      "description": "Interactive value card with a live headline and dashed reference trace",
+      "dependencies": [
+        "echarts@^6.1.0",
+        "@number-flow/svelte@^0.4.2"
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
+        "@evilcharts/echarts-bar-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/echarts/b-hover-trace-echarts-bar-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/hover-trace-echarts-bar-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "isometric-echarts-bar-chart",
+      "description": "Isometric revenue columns with hatched faces and a highlighted peak",
+      "dependencies": [
+        "echarts@^6.1.0"
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
+        "@evilcharts/echarts-bar-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/echarts/b-isometric-echarts-bar-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/isometric-echarts-bar-chart.svelte"
+        }
+      ]
+    },
+    {
       "name": "peak-echarts-bar-chart",
       "description": "Stacked weekly signups with only the best week in color",
       "dependencies": [
@@ -6501,6 +6540,63 @@
           "path": "src/lib/registry/blocks/echarts/b-peak-echarts-bar-chart.svelte",
           "type": "registry:block",
           "target": "$lib/components/evilcharts/blocks/peak-echarts-bar-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "revenue-echarts-composed-chart",
+      "description": "Annual revenue bars with a monthly profit trend and margin summary",
+      "dependencies": [
+        "echarts@^6.1.0"
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
+        "@evilcharts/echarts-composed-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/echarts/b-revenue-echarts-composed-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/revenue-echarts-composed-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "signups-echarts-composed-chart",
+      "description": "Weekly signup bars measured against a stepped target line",
+      "dependencies": [
+        "echarts@^6.1.0"
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
+        "@evilcharts/echarts-composed-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/echarts/b-signups-echarts-composed-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/signups-echarts-composed-chart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "capability-echarts-radar-chart",
+      "description": "Team capability dashboard comparing current and target performance",
+      "dependencies": [
+        "echarts@^6.1.0"
+      ],
+      "registryDependencies": [
+        "@evilcharts/evilcharts-notice",
+        "@evilcharts/echarts-radar-chart"
+      ],
+      "type": "registry:block",
+      "files": [
+        {
+          "path": "src/lib/registry/blocks/echarts/b-capability-echarts-radar-chart.svelte",
+          "type": "registry:block",
+          "target": "$lib/components/evilcharts/blocks/capability-echarts-radar-chart.svelte"
         }
       ]
     },

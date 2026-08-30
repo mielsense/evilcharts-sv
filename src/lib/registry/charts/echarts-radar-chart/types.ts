@@ -15,14 +15,17 @@ export const LOADING_DEFAULT_POINTS = 6;
 export const LOADING_MAX = 100;
 
 export type RadarVariant = 'filled' | 'lines';
+export type RadarStrokeVariant = 'solid' | 'dashed';
 export type GridType = 'polygon' | 'circle';
 export type { DitherBloom };
 
 export type RadarRegistration = {
 	dataKey: string;
 	variant: RadarVariant;
+	strokeVariant?: RadarStrokeVariant;
 	fillOpacity: number;
 	isClickable: boolean;
+	glowing?: boolean;
 	ditherVariant?: DitherVariant;
 	dotVariant: DotVariant;
 	activeDotVariant: DotVariant;

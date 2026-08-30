@@ -2475,6 +2475,22 @@ export const Index: Record<string, RegistryItem> = {
 		dependencies: ["echarts@^6.1.0"],
 		files: [{"path":"blocks/echarts/b-monospace-echarts-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/monospace-echarts-bar-chart.svelte"}]
 	},
+	'hover-trace-echarts-bar-chart': {
+		name: 'hover-trace-echarts-bar-chart',
+		description: "Interactive value card with a live headline and dashed reference trace",
+		type: 'registry:block',
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-bar-chart"],
+		dependencies: ["echarts@^6.1.0","@number-flow/svelte@^0.4.2"],
+		files: [{"path":"blocks/echarts/b-hover-trace-echarts-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-echarts-bar-chart.svelte"}]
+	},
+	'isometric-echarts-bar-chart': {
+		name: 'isometric-echarts-bar-chart',
+		description: "Isometric revenue columns with hatched faces and a highlighted peak",
+		type: 'registry:block',
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-bar-chart"],
+		dependencies: ["echarts@^6.1.0"],
+		files: [{"path":"blocks/echarts/b-isometric-echarts-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/isometric-echarts-bar-chart.svelte"}]
+	},
 	'peak-echarts-bar-chart': {
 		name: 'peak-echarts-bar-chart',
 		description: "Stacked weekly signups with only the best week in color",
@@ -2482,6 +2498,30 @@ export const Index: Record<string, RegistryItem> = {
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-bar-chart"],
 		dependencies: ["echarts@^6.1.0"],
 		files: [{"path":"blocks/echarts/b-peak-echarts-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/peak-echarts-bar-chart.svelte"}]
+	},
+	'revenue-echarts-composed-chart': {
+		name: 'revenue-echarts-composed-chart',
+		description: "Annual revenue bars with a monthly profit trend and margin summary",
+		type: 'registry:block',
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-composed-chart"],
+		dependencies: ["echarts@^6.1.0"],
+		files: [{"path":"blocks/echarts/b-revenue-echarts-composed-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/revenue-echarts-composed-chart.svelte"}]
+	},
+	'signups-echarts-composed-chart': {
+		name: 'signups-echarts-composed-chart',
+		description: "Weekly signup bars measured against a stepped target line",
+		type: 'registry:block',
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-composed-chart"],
+		dependencies: ["echarts@^6.1.0"],
+		files: [{"path":"blocks/echarts/b-signups-echarts-composed-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/signups-echarts-composed-chart.svelte"}]
+	},
+	'capability-echarts-radar-chart': {
+		name: 'capability-echarts-radar-chart',
+		description: "Team capability dashboard comparing current and target performance",
+		type: 'registry:block',
+		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-radar-chart"],
+		dependencies: ["echarts@^6.1.0"],
+		files: [{"path":"blocks/echarts/b-capability-echarts-radar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/capability-echarts-radar-chart.svelte"}]
 	},
 	'allocation-echarts-sankey-chart': {
 		name: 'allocation-echarts-sankey-chart',

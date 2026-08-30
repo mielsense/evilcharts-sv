@@ -292,7 +292,7 @@ function realSeries(context: RadarOptionContext): RadarSeriesOption[] {
 					context
 				)
 			: radarFillPaint(slots);
-		const shadowBlur = isDither ? bloomPixels(context.bloom) : 0;
+		const shadowBlur = radar.glowing ? 8 : isDither ? bloomPixels(context.bloom) : 0;
 		const dotColor = sampleGradient(slots, 0.5);
 		const opacity = selectionOpacity(context.selectedDataKey, key, radar.isClickable);
 		const restingVisible = radar.dotVariant !== 'none';
@@ -312,7 +312,7 @@ function realSeries(context: RadarOptionContext): RadarSeriesOption[] {
 			width: isDither ? Math.max(STROKE_WIDTH, context.ditherCellSize ?? 2) : STROKE_WIDTH,
 			type: isDither
 				? ([context.ditherCellSize ?? 2, context.ditherCellSize ?? 2] as [number, number])
-				: ('solid' as const),
+				: (radar.strokeVariant ?? 'solid'),
 			opacity: opacity.stroke,
 			shadowBlur,
 			shadowColor: shadowBlur > 0 ? sampleGradient(slots, 0.5) : undefined
