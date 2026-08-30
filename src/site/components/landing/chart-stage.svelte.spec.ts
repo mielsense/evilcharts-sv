@@ -39,8 +39,14 @@ class StaticResizeObserver implements ResizeObserver {
 }
 
 async function flushLoads() {
-	await vi.advanceTimersByTimeAsync(0);
+	// Let the Svelte effect start the loaders, settle Promise.allSettled, then render the result.
+	// A single timer flush can resume before that full microtask chain on slower CI runners.
 	await tick();
+	for (let pass = 0; pass < 2; pass += 1) {
+		await vi.advanceTimersByTimeAsync(0);
+		await Promise.resolve();
+		await tick();
+	}
 }
 
 beforeEach(() => {
