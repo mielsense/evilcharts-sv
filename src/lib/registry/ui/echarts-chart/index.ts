@@ -1,8 +1,3 @@
-import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
-import * as echarts from 'echarts/core';
-
-echarts.use([CanvasRenderer, SVGRenderer]);
-
 export { default as ChartContainer } from './chart-container.svelte';
 export { default as ChartStyle } from './chart-style.svelte';
 export { default as EChartsHost } from './echarts-host.svelte';
