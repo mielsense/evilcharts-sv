@@ -35,7 +35,16 @@
 	} satisfies ChartConfig;
 </script>
 
-<EvilLineChart {data} config={chartConfig} class="h-full w-full p-4" xDataKey="month">
+<EvilLineChart
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Monthly desktop and mobile usage line chart',
+		description: 'Desktop and mobile values from January through December, with a range brush.'
+	}}
+	class="h-full w-full p-4"
+	xDataKey="month"
+>
 	<EvilLineChart.XAxis dataKey="month" tickFormatter={(value) => String(value).substring(0, 3)} />
 	<EvilLineChart.Brush formatLabel={(value) => String(value).substring(0, 3)} />
 	<EvilLineChart.Legend isClickable />

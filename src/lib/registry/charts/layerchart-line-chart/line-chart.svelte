@@ -12,6 +12,7 @@
 		ChartContainer,
 		LOADING_CATEGORY_DATA_KEY,
 		LoadingIndicator,
+		SelectableSeriesControls,
 		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
@@ -115,12 +116,12 @@
 	// `Map`/`Set`, so `.add()` / `.delete()` would not notify and the padding would never
 	// pick up an axis.
 	const axesPresent = { x: new SvelteSet<string>(), y: new SvelteMap<string, number>() };
-	const renderedSeries = new SvelteMap<symbol, string>();
+	const renderedSeries = new SvelteMap<symbol, { dataKey: string; isClickable: boolean }>();
 
 	const CHART_MARGIN = 5; // Recharts' default <LineChart margin>
 	const X_AXIS_HEIGHT = 30; // Recharts' default <XAxis height>
 	const EDGE_LEGEND_HEIGHT = 32;
-	let lineContext: ReturnType<typeof setLineChartContext>;
+	let lineContext = $state<ReturnType<typeof setLineChartContext>>();
 	const edgeLegendPlacement = $derived.by(() => {
 		if (isLoading || !lineContext) return null;
 		const align = lineContext.slots.legend?.verticalAlign;
@@ -140,7 +141,19 @@
 	// Recharts derives its value domain, legend payload, and tooltip payload from the rendered
 	// `<Line />` children. Config only supplies presentation metadata; extra config entries must not
 	// create phantom marks or stretch the value scale.
-	const seriesKeys = $derived([...new Set(renderedSeries.values())]);
+	const seriesKeys = $derived([
+		...new Set([...renderedSeries.values()].map((item) => item.dataKey))
+	]);
+	const selectableSeries = $derived(
+		[
+			...new Set(
+				[...renderedSeries.values()].filter((item) => item.isClickable).map((item) => item.dataKey)
+			)
+		].map((key) => ({
+			key,
+			label: typeof config[key]?.label === 'string' ? config[key].label : key
+		}))
+	);
 	const displayData = $derived(showBrush && !isLoading ? brush.visibleData : data);
 	const chartData = $derived(
 		(isLoading ? loading.loadingData : displayData) as Record<string, unknown>[]
@@ -204,6 +217,7 @@
 		ditherVariant: () => ditherVariant,
 		isLoading: () => isLoading,
 		xAxisLeadingInset: () => padding.left,
+		xAxisTrailingInset: () => padding.right,
 		chartId: () => chartId,
 		selectedDataKey: () => selectedDataKey,
 		selectDataKey: (next) => {
@@ -216,8 +230,8 @@
 			registeredXKeyToken = key === undefined ? null : token;
 			registeredXKey = key;
 		},
-		registerSeries: (token, key, present) => {
-			if (present) renderedSeries.set(token, key);
+		registerSeries: (token, key, isClickable, present) => {
+			if (present) renderedSeries.set(token, { dataKey: key, isClickable });
 			else renderedSeries.delete(token);
 		},
 		registerAxis: (token, axis, present, size) => {
@@ -235,6 +249,7 @@
 	{initialDimension}
 	{accessibility}
 	bind:dimension={chartDimension}
+	aria-busy={isLoading}
 	class={className}
 >
 	<LoadingIndicator {isLoading} />
@@ -281,6 +296,13 @@
 	</Chart>
 	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
+	{#if !lineContext?.slots.legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={(key) => lineContext?.selectDataKey(selectedDataKey === key ? null : key)}
+		/>
+	{/if}
 
 	{#snippet footer()}
 		{#if showBrush && !isLoading}

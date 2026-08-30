@@ -3,7 +3,7 @@
 	 * Horizontal left-to-right color gradient for a series. Always rendered — every
 	 * fill variant, the stroke, and the dots all paint from this single gradient.
 	 */
-	import { getColorsCount } from '../../../ui/layerchart-chart/colors.js';
+	import { chartColorVariable, getColorsCount } from '../../../ui/layerchart-chart/colors.js';
 	import type { ChartConfig } from '../../../ui/layerchart-chart/chart-config.js';
 
 	let {
@@ -25,11 +25,11 @@
 	gradientUnits={isExpanded ? 'userSpaceOnUse' : 'objectBoundingBox'}
 >
 	{#if colorsCount === 1}
-		<stop offset="0%" stop-color={`var(--color-${dataKey}-0)`} />
-		<stop offset="100%" stop-color={`var(--color-${dataKey}-0)`} />
+		<stop offset="0%" stop-color={chartColorVariable(dataKey, 0)} />
+		<stop offset="100%" stop-color={chartColorVariable(dataKey, 0)} />
 	{:else}
 		{#each Array.from({ length: colorsCount }, (_, index) => `${(index / (colorsCount - 1)) * 100}%`) as offset, index (offset)}
-			<stop {offset} stop-color={`var(--color-${dataKey}-${index}, var(--color-${dataKey}-0))`} />
+			<stop {offset} stop-color={chartColorVariable(dataKey, index, 0)} />
 		{/each}
 	{/if}
 </linearGradient>

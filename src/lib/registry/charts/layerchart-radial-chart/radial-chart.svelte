@@ -140,6 +140,7 @@
 	{initialDimension}
 	{accessibility}
 	bind:dimension={chartDimension}
+	aria-busy={isLoading}
 	class={className}
 >
 	<LoadingIndicator {isLoading} />

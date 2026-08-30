@@ -35,7 +35,16 @@
 	} satisfies ChartConfig;
 </script>
 
-<EvilComposedChart class="h-full w-full p-4" xDataKey="month" {data} config={chartConfig}>
+<EvilComposedChart
+	class="h-full w-full p-4"
+	xDataKey="month"
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Monthly revenue and profit chart',
+		description: 'Revenue bars and a profit line from January through December, with a range brush.'
+	}}
+>
 	<EvilComposedChart.Grid />
 	<EvilComposedChart.XAxis
 		dataKey="month"

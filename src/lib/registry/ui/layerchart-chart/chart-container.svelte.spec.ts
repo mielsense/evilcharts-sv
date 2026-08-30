@@ -32,19 +32,42 @@ describe('ChartContainer', () => {
 		expect(containerOf(container).className).toContain('aspect-video');
 	});
 
+	it('uses the theme-aware muted foreground token for axis ticks', () => {
+		const { container } = render(ChartContainer, { config });
+		const className = containerOf(container).className;
+		expect(className).toContain('[&_.lc-axis-tick-label]:fill-muted-foreground');
+		expect(className).not.toContain('[&_.lc-axis-tick-label]:fill-[#666]');
+	});
+
 	it('emits one --color-<key>-<index> declaration per distributed slot, per theme', () => {
 		const { container } = render(ChartContainer, { config, id: 'vars' });
 		const css = container.querySelector('style')!.textContent!;
 
 		// `mobile` has two light colors and one dark color, so both themes fill two slots.
-		expect(css).toContain(' [data-chart=chart-vars] {');
-		expect(css).toContain('.dark [data-chart=chart-vars] {');
+		expect(css).toContain(' [data-chart="chart-vars"] {');
+		expect(css).toContain('.dark [data-chart="chart-vars"] {');
 		expect(css).toContain('--color-desktop-0: #047857;');
 		expect(css).toContain('--color-mobile-0: #be123c;');
 		expect(css).toContain('--color-mobile-1: #f43f5e;');
 		expect(css).toContain('--color-desktop-0: #10b981;');
 		// The single dark `mobile` color is distributed across both slots.
 		expect(css.match(/--color-mobile-\d: #f43f5e;/g)!.length).toBe(3);
+	});
+
+	it('encodes arbitrary config keys and quotes explicit ids in generated CSS', () => {
+		const unsafeConfig = {
+			'Total Sales': { colors: { light: ['#ff3e00'], dark: ['#ff3e00'] } }
+		} satisfies ChartConfig;
+		const { container } = render(ChartContainer, {
+			config: unsafeConfig,
+			id: 'sales"]{}'
+		});
+		const css = container.querySelector('style')!.textContent!;
+
+		expect(css).toContain('[data-chart="chart-sales\\"]{}"]');
+		expect(css).toContain(
+			'--color-u-00005400006f00007400006100006c00002000005300006100006c000065000073-0'
+		);
 	});
 
 	it('renders no style element when no entry declares colors', () => {

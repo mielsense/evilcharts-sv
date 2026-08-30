@@ -29,7 +29,15 @@
 	} satisfies ChartConfig;
 </script>
 
-<EChartsRadarChart {data} config={chartConfig} class="h-full w-full p-4">
+<EChartsRadarChart
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Desktop and mobile skill comparison radar chart',
+		description: 'Desktop and mobile scores across six programming skills.'
+	}}
+	class="h-full w-full p-4"
+>
 	<EChartsRadarChart.PolarGrid />
 	<EChartsRadarChart.PolarAngleAxis dataKey="skill" />
 	<EChartsRadarChart.Legend isClickable />

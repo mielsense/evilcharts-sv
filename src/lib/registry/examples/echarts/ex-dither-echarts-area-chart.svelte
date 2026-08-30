@@ -29,8 +29,6 @@
 	{config}
 	xDataKey="month"
 	renderStyle="dither"
-	ditherVariant="gradient"
-	ditherCellSize={2}
 	bloom="low"
 	class="h-full w-full p-4"
 >
@@ -38,6 +36,6 @@
 	<EChartsAreaChart.XAxis dataKey="month" />
 	<EChartsAreaChart.Legend isClickable />
 	<EChartsAreaChart.Tooltip />
-	<EChartsAreaChart.Area dataKey="desktop" ditherVariant="dotted" isClickable />
+	<EChartsAreaChart.Area dataKey="desktop" ditherVariant="gradient" isClickable />
 	<EChartsAreaChart.Area dataKey="mobile" ditherVariant="hatched" isClickable />
 </EChartsAreaChart>

@@ -17,18 +17,10 @@
 	} satisfies ChartConfig;
 </script>
 
-<EChartsRadarChart
-	{data}
-	{config}
-	renderStyle="dither"
-	ditherVariant="gradient"
-	ditherCellSize={2}
-	bloom="low"
-	class="h-full w-full p-4"
->
+<EChartsRadarChart {data} {config} renderStyle="dither" bloom="low" class="h-full w-full p-4">
 	<EChartsRadarChart.PolarGrid /><EChartsRadarChart.PolarAngleAxis
 		dataKey="skill"
 	/><EChartsRadarChart.Legend isClickable /><EChartsRadarChart.Tooltip />
-	<EChartsRadarChart.Radar dataKey="desktop" isClickable />
-	<EChartsRadarChart.Radar dataKey="mobile" isClickable />
+	<EChartsRadarChart.Radar dataKey="desktop" ditherVariant="gradient" isClickable />
+	<EChartsRadarChart.Radar dataKey="mobile" ditherVariant="hatched" isClickable />
 </EChartsRadarChart>

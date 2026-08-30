@@ -15,7 +15,9 @@
 		DEFAULT_ECHARTS_RENDERER,
 		EChartsHost,
 		LoadingIndicator,
+		mergeLifecycleOptions,
 		RegistrationSet,
+		SelectableSeriesControls,
 		resolveColors,
 		setEChartsSharedSlotContext,
 		withAlpha,
@@ -27,7 +29,11 @@
 	} from '../../ui/echarts-chart/index.js';
 	import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
 	import { LegendOverlay } from '../../ui/echarts-legend/index.js';
-	import { syncBrushOverlay, type BrushOverlayElements } from '../../ui/echarts-brush/index.js';
+	import {
+		BrushControls,
+		syncBrushOverlay,
+		type BrushOverlayElements
+	} from '../../ui/echarts-brush/index.js';
 	import { setEChartsAreaChartContext } from './area-chart-context.svelte.js';
 	import {
 		buildAreaOption,
@@ -136,6 +142,20 @@
 	});
 
 	const areas = $derived(chart.areas.values);
+	const selectableSeries = $derived(
+		areas
+			.filter((area) => area.isClickable)
+			.filter(
+				(area, index, all) => all.findIndex((item) => item.dataKey === area.dataKey) === index
+			)
+			.map((area) => ({
+				key: area.dataKey,
+				label:
+					typeof config[area.dataKey]?.label === 'string'
+						? (config[area.dataKey].label as string)
+						: area.dataKey
+			}))
+	);
 	const effectiveAnimation = $derived(areas[0]?.animationType ?? animationType);
 	const seriesKeys = $derived(areas.map((area) => area.dataKey));
 	const xAxis = $derived(chart.xAxes.first);
@@ -197,7 +217,7 @@
 
 	const option = $derived.by(() => {
 		const built = buildAreaOption(areaOptionContext());
-		return (chartOptions ? { ...built, ...chartOptions } : built) as EChartsCoreOption;
+		return mergeLifecycleOptions(built, chartOptions) as EChartsCoreOption;
 	});
 
 	$effect(() => {
@@ -432,7 +452,14 @@
 		const animatedKeys = areas
 			.filter((area) => area.strokeVariant === 'animated-dashed' && !area.enableBufferLine)
 			.map((area) => area.dataKey);
-		if (!chartInstance || isLoading || selectedDataKey !== null || animatedKeys.length === 0)
+		if (
+			!chartInstance ||
+			isLoading ||
+			selectedDataKey !== null ||
+			animatedKeys.length === 0 ||
+			prefersReducedMotion.current ||
+			!introComplete
+		)
 			return;
 		let frame = 0;
 		const start = performance.now();
@@ -451,6 +478,22 @@
 	$effect(() => {
 		const chartInstance = instance;
 		if (!chartInstance || !isLoading) return;
+		if (prefersReducedMotion.current) {
+			chartInstance.setOption(
+				{
+					series: [
+						{
+							id: '__loading',
+							data: loadingData,
+							lineStyle: { color: withAlpha(resolved.tokens.foreground, 0.5), width: 1 },
+							areaStyle: { color: withAlpha(resolved.tokens.foreground, 0.03) }
+						}
+					]
+				},
+				{ silent: true, lazyUpdate: true }
+			);
+			return;
+		}
 		let frame = 0;
 		let lastPhase = 0;
 		const start = performance.now();
@@ -539,8 +582,38 @@
 	bind:element={container}
 	bind:dimension
 	bind:themeRevision
+	aria-busy={isLoading}
 	class={className}
 >
 	{@render children?.()}
 	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if !legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={toggleSelection}
+		/>
+	{/if}
+	{#if brush && !isLoading && data.length > 0}
+		<BrushControls
+			startIndex={Math.round((brushRange.start / 100) * Math.max(0, data.length - 1))}
+			endIndex={Math.round((brushRange.end / 100) * Math.max(0, data.length - 1))}
+			totalPoints={data.length}
+			formatLabel={(index) =>
+				brush.formatLabel?.(categoryValues[index] ?? '', index) ??
+				String(categoryValues[index] ?? index)}
+			onChange={(range) => {
+				const last = Math.max(0, data.length - 1);
+				brushRange = {
+					start: last === 0 ? 0 : (range.startIndex / last) * 100,
+					end: last === 0 ? 100 : (range.endIndex / last) * 100
+				};
+				instance?.dispatchAction(
+					{ type: 'dataZoom', start: brushRange.start, end: brushRange.end },
+					{ silent: true }
+				);
+				brush.onChange?.(range);
+			}}
+		/>
+	{/if}
 </ChartContainer>

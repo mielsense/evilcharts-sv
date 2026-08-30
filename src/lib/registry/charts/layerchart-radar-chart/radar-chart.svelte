@@ -9,6 +9,7 @@
 	import {
 		ChartContainer,
 		LoadingIndicator,
+		SelectableSeriesControls,
 		type ChartAccessibility,
 		type ChartConfig
 	} from '../../ui/layerchart-chart/index.js';
@@ -127,8 +128,18 @@
 	let registeredAngleToken: string | null = null;
 
 	const configuredKeys = $derived(Object.keys(config));
-	const radarKeyByToken = new SvelteMap<string, string>();
-	const seriesKeys = $derived([...radarKeyByToken.values()]);
+	const radarKeyByToken = new SvelteMap<string, { dataKey: string; isClickable: boolean }>();
+	const seriesKeys = $derived([...radarKeyByToken.values()].map((item) => item.dataKey));
+	const selectableSeries = $derived(
+		[
+			...new Set(
+				[...radarKeyByToken.values()].filter((item) => item.isClickable).map((item) => item.dataKey)
+			)
+		].map((key) => ({
+			key,
+			label: typeof config[key]?.label === 'string' ? config[key].label : key
+		}))
+	);
 	const chartData = $derived((isLoading ? loading.loadingData : data) as Record<string, unknown>[]);
 
 	/** Category key for the angle scale. Falls back the same way the cartesian charts do (A-1). */
@@ -159,9 +170,9 @@
 			selectedDataKey = next;
 			onSelectionChange?.(next);
 		},
-		registerRadar: (token, key) => {
+		registerRadar: (token, key, isClickable) => {
 			if (key === undefined) radarKeyByToken.delete(token);
-			else radarKeyByToken.set(token, key);
+			else radarKeyByToken.set(token, { dataKey: key, isClickable });
 		},
 		registerAngleDataKey: (token, key) => {
 			// Ignore a stale teardown from LayerChart's mount-time remount.
@@ -194,6 +205,7 @@
 	{initialDimension}
 	{accessibility}
 	bind:dimension={chartDimension}
+	aria-busy={isLoading}
 	class={className}
 >
 	<LoadingIndicator {isLoading} />
@@ -266,4 +278,11 @@
 	</div>
 	<LegendRender placement="middle" />
 	<LegendRender placement="bottom" />
+	{#if !radarContext.slots.legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={(key) => radarContext.selectDataKey(selectedDataKey === key ? null : key)}
+		/>
+	{/if}
 </ChartContainer>

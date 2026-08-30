@@ -11,6 +11,7 @@
 		EChartsHost,
 		LoadingIndicator,
 		RegistrationSet,
+		SelectableSeriesControls,
 		resolveColors,
 		setEChartsSharedSlotContext,
 		type ChartAccessibility,
@@ -109,6 +110,14 @@
 	const tooltip = $derived(tooltipSlots.first);
 	const legend = $derived(legendSlots.first);
 	const sectorKeys = $derived(data.map((row) => String(row[nameKey])));
+	const selectableSectors = $derived(
+		pie?.isClickable
+			? sectorKeys.map((key) => ({
+					key,
+					label: typeof config[key]?.label === 'string' ? config[key].label : key
+				}))
+			: []
+	);
 
 	$effect(() => {
 		void themeRevision;
@@ -200,6 +209,26 @@
 		if (!chartInstance || !isLoading) return;
 		const cornerRadius = pie?.cornerRadius ?? 0;
 		const paddingAngle = pie?.paddingAngle ?? 0;
+		if (prefersReducedMotion.current) {
+			chartInstance.setOption(
+				{
+					series: [
+						{
+							id: '__loading',
+							data: createPieLoadingFrame({
+								center: 0.5,
+								foreground: resolved.tokens.foreground,
+								background: resolved.tokens.background,
+								cornerRadius,
+								paddingAngle
+							})
+						}
+					]
+				},
+				{ silent: true, lazyUpdate: true }
+			);
+			return;
+		}
 		let frame = 0;
 		const startedAt = performance.now();
 		const tick = (now: number) => {
@@ -256,9 +285,17 @@
 	bind:element={container}
 	bind:themeRevision
 	bind:dimension
+	aria-busy={isLoading}
 	class={className}
 >
 	{@render children?.()}
 	{#if background && !isLoading}<BackgroundOverlay variant={background.variant} />{/if}
 	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if !legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSectors}
+			selectedKey={selectedSector}
+			onToggle={toggleSector}
+		/>
+	{/if}
 </ChartContainer>

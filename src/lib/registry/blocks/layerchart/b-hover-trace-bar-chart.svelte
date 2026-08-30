@@ -7,7 +7,8 @@
 	 * reference builds it on `ChartContainer` plus raw Recharts.
 	 */
 	import { Axis, Chart, Svg, type ChartState } from 'layerchart';
-	import { useMotionValueEvent, useSpring } from '@humanspeak/svelte-motion';
+	import { useMotionValueEvent, useReducedMotion, useSpring } from '@humanspeak/svelte-motion';
+	import { onDestroy } from 'svelte';
 	import NumberFlow from '@number-flow/svelte';
 	import {
 		ChartContainer,
@@ -76,14 +77,21 @@
 
 	/** The reference's spring, so the trace line eases between columns. */
 	const valueSpring = useSpring(maxData.value, { stiffness: 110, damping: 20 });
+	const shouldReduceMotion = useReducedMotion();
 	let springValue = $state(maxData.value);
 
-	useMotionValueEvent(valueSpring, 'change', (latest: number) => {
+	const stopValueSync = useMotionValueEvent(valueSpring, 'change', (latest: number) => {
 		springValue = Math.round(latest);
 	});
+	onDestroy(stopValueSync);
 
 	$effect(() => {
-		valueSpring.set(selectedData.value);
+		if (shouldReduceMotion.current) {
+			valueSpring.jump(selectedData.value);
+			springValue = selectedData.value;
+		} else {
+			valueSpring.set(selectedData.value);
+		}
 	});
 </script>
 

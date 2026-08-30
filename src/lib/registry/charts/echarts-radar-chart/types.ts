@@ -1,5 +1,5 @@
 import type { DotVariant } from '../../ui/echarts-dot/index.js';
-import type { DitherBloom } from '../../ui/echarts-dither/index.js';
+import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
 import type { LegendVariant } from '../../ui/echarts-legend/index.js';
 import type {
 	TooltipPosition,
@@ -23,6 +23,7 @@ export type RadarRegistration = {
 	variant: RadarVariant;
 	fillOpacity: number;
 	isClickable: boolean;
+	ditherVariant?: DitherVariant;
 	dotVariant: DotVariant;
 	activeDotVariant: DotVariant;
 };

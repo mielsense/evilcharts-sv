@@ -1,6 +1,36 @@
 import * as echarts from 'echarts/core';
 import { THEMES, THEME_KEYS, type ChartConfig, type ThemeKey } from './types.js';
 
+const ENCODED_TOKEN = /^u-(?:[0-9a-f]{6})+$/;
+
+export function chartColorToken(key: string): string {
+	if (/^[A-Za-z0-9_-]+$/.test(key) && !ENCODED_TOKEN.test(key)) return key;
+	return `u-${Array.from(key, (character) =>
+		(character.codePointAt(0) ?? 0).toString(16).padStart(6, '0')
+	).join('')}`;
+}
+
+export function chartColorVariableName(key: string, index: number): string {
+	return `--color-${chartColorToken(key)}-${index}`;
+}
+
+export function chartColorVariable(key: string, index: number, fallbackIndex?: number): string {
+	const name = chartColorVariableName(key, index);
+	return fallbackIndex === undefined
+		? `var(${name})`
+		: `var(${name}, var(${chartColorVariableName(key, fallbackIndex)}))`;
+}
+
+export function quoteCssString(value: string): string {
+	return `"${Array.from(value, (character) => {
+		const codePoint = character.codePointAt(0) ?? 0;
+		if (character === '"' || character === '\\') return `\\${character}`;
+		if (codePoint === 0) return '\uFFFD';
+		if (codePoint < 0x20 || codePoint === 0x7f) return `\\${codePoint.toString(16)} `;
+		return character;
+	}).join('')}"`;
+}
+
 export function getColorsCount(item: ChartConfig[string]): number {
 	if (!item.colors) return 1;
 	return Math.max(...THEME_KEYS.map((theme) => item.colors?.[theme]?.length ?? 0), 1);
@@ -30,14 +60,15 @@ export function buildChartCss(id: string, config: ChartConfig): string {
 				const authored = item.colors?.[theme];
 				if (!authored?.length) return [];
 				return distributeColors(authored, getColorsCount(item)).map(
-					(color, index) => `  --color-${key}-${index}: ${color};`
+					(color, index) => `  ${chartColorVariableName(key, index)}: ${color};`
 				);
 			})
 			.join('\n');
 
 	return Object.entries(THEMES)
 		.map(
-			([theme, prefix]) => `${prefix} [data-chart=${id}] {\n${variablesFor(theme as ThemeKey)}\n}`
+			([theme, prefix]) =>
+				`${prefix} [data-chart=${quoteCssString(id)}] {\n${variablesFor(theme as ThemeKey)}\n}`
 		)
 		.join('\n');
 }
@@ -93,7 +124,7 @@ export function resolveColors(
 	for (const key of seriesKeys) {
 		const count = getColorsCount(config[key] ?? {});
 		series[key] = Array.from({ length: count }, (_, index) => {
-			const raw = computed.getPropertyValue(`--color-${key}-${index}`).trim();
+			const raw = computed.getPropertyValue(chartColorVariableName(key, index)).trim();
 			return raw ? normalizeColor(raw) : 'rgba(120, 120, 120, 1)';
 		});
 	}
@@ -128,10 +159,10 @@ export function seriesPaint(slots: string[]): string | echarts.graphic.LinearGra
 }
 
 export function indicatorBackground(key: string, colorsCount: number): string {
-	if (colorsCount <= 1) return `var(--color-${key}-0)`;
+	if (colorsCount <= 1) return chartColorVariable(key, 0);
 	const stops = Array.from({ length: colorsCount }, (_, index) => {
 		const offset = (index / (colorsCount - 1)) * 100;
-		return `var(--color-${key}-${index}) ${offset}%`;
+		return `${chartColorVariable(key, index)} ${offset}%`;
 	}).join(', ');
 	return `linear-gradient(to right, ${stops})`;
 }

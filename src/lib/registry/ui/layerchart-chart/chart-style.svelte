@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { THEMES, type ChartConfig, type ThemeKey } from './chart-config.js';
-	import { distributeColors, getColorsCount } from './colors.js';
+	import {
+		chartColorVariableName,
+		distributeColors,
+		getColorsCount,
+		quoteCssString
+	} from './colors.js';
 
 	let { id, config }: { id: string; config: ChartConfig } = $props();
 
@@ -22,7 +27,9 @@
 				// Distribute colors evenly across all required slots
 				const distributedColors = distributeColors(colorsArray, maxCount);
 
-				return distributedColors.map((color, index) => `  --color-${key}-${index}: ${color};`);
+				return distributedColors.map(
+					(color, index) => `  ${chartColorVariableName(key, index)}: ${color};`
+				);
 			})
 			.filter(Boolean)
 			.join('\n');
@@ -32,7 +39,7 @@
 		Object.entries(THEMES)
 			.map(
 				([theme, prefix]) =>
-					`${prefix} [data-chart=${id}] {\n${generateCssVars(theme as ThemeKey)}\n}`
+					`${prefix} [data-chart=${quoteCssString(id)}] {\n${generateCssVars(theme as ThemeKey)}\n}`
 			)
 			.join('\n')
 	);

@@ -1,12 +1,14 @@
+import { chartColorVariable } from '../layerchart-chart/colors.js';
+
 /** Solid fill / gradient background for filled variants. */
 export function getLegendFillStyle(dataKey: string, colorsCount: number): string {
 	if (colorsCount <= 1) {
-		return `background-color: var(--color-${dataKey}-0)`;
+		return `background-color: ${chartColorVariable(dataKey, 0)}`;
 	}
 
 	const stops = Array.from({ length: colorsCount }, (_, i) => {
 		const offset = (i / (colorsCount - 1)) * 100;
-		return `var(--color-${dataKey}-${i}) ${offset}%`;
+		return `${chartColorVariable(dataKey, i)} ${offset}%`;
 	}).join(', ');
 
 	return `background: linear-gradient(to right, ${stops})`;
@@ -27,12 +29,12 @@ export function getLegendOutlineStyle(dataKey: string, colorsCount: number): str
 	].join('; ');
 
 	if (colorsCount <= 1) {
-		return `background-color: var(--color-${dataKey}-0); ${maskStyle}`;
+		return `background-color: ${chartColorVariable(dataKey, 0)}; ${maskStyle}`;
 	}
 
 	const stops = Array.from({ length: colorsCount }, (_, i) => {
 		const offset = (i / (colorsCount - 1)) * 100;
-		return `var(--color-${dataKey}-${i}) ${offset}%`;
+		return `${chartColorVariable(dataKey, i)} ${offset}%`;
 	}).join(', ');
 
 	return `background: linear-gradient(to right, ${stops}); ${maskStyle}`;

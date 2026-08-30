@@ -1,8 +1,10 @@
 import { render } from 'vitest-browser-svelte';
+import { userEvent } from 'vitest/browser';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import Harness from './chart-accessibility.test.svelte';
 
 const FAMILIES = ['area', 'line', 'bar', 'composed', 'pie', 'radar', 'radial', 'sankey'] as const;
+const SERIES_CONTROL_FAMILIES = ['area', 'line', 'bar', 'radar'] as const;
 const NativeResizeObserver = window.ResizeObserver;
 
 class StaticResizeObserver implements ResizeObserver {
@@ -59,4 +61,33 @@ describe('chart accessibility contract', () => {
 			'Externally described area chart'
 		);
 	});
+
+	it.each(SERIES_CONTROL_FAMILIES)(
+		'selects a clickable %s series from the keyboard control without a legend',
+		async (family) => {
+			const { container } = render(Harness, { family, seriesOnly: true });
+			const controls = container.querySelector('[aria-label="Selectable chart series"]');
+
+			await expect.poll(() => controls?.querySelectorAll('button').length).toBe(2);
+			const desktop = [...(controls?.querySelectorAll('button') ?? [])].find(
+				(button) => button.textContent?.trim() === 'Desktop'
+			) as HTMLButtonElement | undefined;
+			expect(desktop).toBeTruthy();
+			desktop?.focus();
+			await userEvent.keyboard('{Enter}');
+
+			await expect.poll(() => desktop?.getAttribute('aria-pressed')).toBe('true');
+			await expect
+				.poll(() => container.querySelector('[data-test="selection"]')?.textContent)
+				.toBe('desktop');
+		}
+	);
+
+	it.each(SERIES_CONTROL_FAMILIES)(
+		'does not duplicate the clickable %s legend with hidden series controls',
+		(family) => {
+			const { container } = render(Harness, { family });
+			expect(container.querySelector('[aria-label="Selectable chart series"]')).toBeNull();
+		}
+	);
 });

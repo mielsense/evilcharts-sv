@@ -1,5 +1,6 @@
 <script lang="ts">
 	/** Source-to-target fade gradient that fills a single gradient-variant link. */
+	import { chartColorVariable } from '../../../ui/layerchart-chart/colors.js';
 	import type { ChartConfig } from '../../../ui/layerchart-chart/chart-config.js';
 
 	let {
@@ -17,10 +18,10 @@
 	} = $props();
 
 	const sourceColor = $derived(
-		sourceName in config ? `var(--color-${sourceName}-0)` : 'currentColor'
+		sourceName in config ? chartColorVariable(sourceName, 0) : 'currentColor'
 	);
 	const targetColor = $derived(
-		targetName in config ? `var(--color-${targetName}-0)` : 'currentColor'
+		targetName in config ? chartColorVariable(targetName, 0) : 'currentColor'
 	);
 </script>
 

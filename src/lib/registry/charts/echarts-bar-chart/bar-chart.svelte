@@ -15,7 +15,9 @@
 		DEFAULT_ECHARTS_RENDERER,
 		EChartsHost,
 		LoadingIndicator,
+		mergeLifecycleOptions,
 		RegistrationSet,
+		SelectableSeriesControls,
 		resolveColors,
 		setEChartsSharedSlotContext,
 		withAlpha,
@@ -27,7 +29,11 @@
 	} from '../../ui/echarts-chart/index.js';
 	import type { DitherBloom, DitherVariant } from '../../ui/echarts-dither/index.js';
 	import { LegendOverlay } from '../../ui/echarts-legend/index.js';
-	import { syncBrushOverlay, type BrushOverlayElements } from '../../ui/echarts-brush/index.js';
+	import {
+		BrushControls,
+		syncBrushOverlay,
+		type BrushOverlayElements
+	} from '../../ui/echarts-brush/index.js';
 	import { setEChartsBarChartContext } from './bar-chart-context.svelte.js';
 	import {
 		buildBarOption,
@@ -143,6 +149,18 @@
 	});
 
 	const bars = $derived(chart.bars.values);
+	const selectableSeries = $derived(
+		bars
+			.filter((bar) => bar.isClickable)
+			.filter((bar, index, all) => all.findIndex((item) => item.dataKey === bar.dataKey) === index)
+			.map((bar) => ({
+				key: bar.dataKey,
+				label:
+					typeof config[bar.dataKey]?.label === 'string'
+						? (config[bar.dataKey].label as string)
+						: bar.dataKey
+			}))
+	);
 	const effectiveAnimation = $derived(bars[0]?.animationType ?? animationType);
 	const seriesKeys = $derived(bars.map((bar) => bar.dataKey));
 	const xAxis = $derived(chart.xAxes.first);
@@ -209,7 +227,7 @@
 
 	const option = $derived.by(() => {
 		const built = buildBarOption(barOptionContext());
-		return (chartOptions ? { ...built, ...chartOptions } : built) as EChartsCoreOption;
+		return mergeLifecycleOptions(built, chartOptions) as EChartsCoreOption;
 	});
 
 	$effect(() => {
@@ -326,7 +344,7 @@
 		return () => {
 			renderer.off('mousemove', move);
 			renderer.off('globalout', out);
-			chartInstance.off('finished', finished);
+			if (!chartInstance.isDisposed()) chartInstance.off('finished', finished);
 			if (expandFrame) {
 				cancelAnimationFrame(expandFrame);
 				expandFrame = 0;
@@ -334,16 +352,42 @@
 		};
 	});
 
+	function renderExpandableSeries(key: string): boolean {
+		const chartInstance = instance;
+		if (!chartInstance || chartInstance.isDisposed()) return false;
+		const built = buildBarOption(barOptionContext());
+		const all = Array.isArray(built.series) ? built.series : built.series ? [built.series] : [];
+		const series = all.find((entry) => String((entry as { id?: unknown }).id ?? '') === key);
+		if (!series) return false;
+		chartInstance.setOption({ series: [series] }, { silent: true, lazyUpdate: true });
+		return true;
+	}
+
+	function snapExpandableToReducedMotion(key: string) {
+		expand.progress.clear();
+		if (expand.hovered !== null) expand.progress.set(expand.hovered, 1);
+		renderExpandableSeries(key);
+	}
+
 	function animateExpandable(key: string, index: number | null) {
 		if (expand.hovered === index && expand.key === key) return;
 		expand.key = key;
 		expand.hovered = index;
+		if (prefersReducedMotion.current) {
+			snapExpandableToReducedMotion(key);
+			return;
+		}
 		if (index !== null && !expand.progress.has(index)) expand.progress.set(index, 0.12);
 		if (expandFrame) return;
 		let previous = performance.now();
 		const tick = (now: number) => {
 			const chartInstance = instance;
 			if (!chartInstance || chartInstance.isDisposed()) {
+				expandFrame = 0;
+				return;
+			}
+			if (prefersReducedMotion.current) {
+				snapExpandableToReducedMotion(key);
 				expandFrame = 0;
 				return;
 			}
@@ -361,14 +405,10 @@
 					moving = true;
 				}
 			}
-			const built = buildBarOption(barOptionContext());
-			const all = Array.isArray(built.series) ? built.series : built.series ? [built.series] : [];
-			const series = all.find((entry) => String((entry as { id?: unknown }).id ?? '') === key);
-			if (!series) {
+			if (!renderExpandableSeries(key)) {
 				expandFrame = 0;
 				return;
 			}
-			chartInstance.setOption({ series: [series] }, { silent: true, lazyUpdate: true });
 			expandFrame = moving ? requestAnimationFrame(tick) : 0;
 		};
 		expandFrame = requestAnimationFrame(tick);
@@ -430,6 +470,21 @@
 	$effect(() => {
 		const chartInstance = instance;
 		if (!chartInstance || !isLoading) return;
+		if (prefersReducedMotion.current) {
+			chartInstance.setOption(
+				{
+					series: [
+						{
+							id: '__loading',
+							data: loadingData,
+							itemStyle: { color: withAlpha(resolved.tokens.foreground, 0.22) }
+						}
+					]
+				},
+				{ silent: true, lazyUpdate: true }
+			);
+			return;
+		}
 		let frame = 0;
 		let lastPhase = 0;
 		const start = performance.now();
@@ -509,8 +564,38 @@
 	bind:element={container}
 	bind:dimension
 	bind:themeRevision
+	aria-busy={isLoading}
 	class={className}
 >
 	{@render children?.()}
 	<EChartsHost {option} {renderer} {events} bind:instance />
+	{#if !legend?.isClickable}
+		<SelectableSeriesControls
+			items={selectableSeries}
+			selectedKey={selectedDataKey}
+			onToggle={toggleSelection}
+		/>
+	{/if}
+	{#if brush && !isLoading && data.length > 0 && layout === 'vertical'}
+		<BrushControls
+			startIndex={Math.round((brushRange.start / 100) * Math.max(0, data.length - 1))}
+			endIndex={Math.round((brushRange.end / 100) * Math.max(0, data.length - 1))}
+			totalPoints={data.length}
+			formatLabel={(index) =>
+				brush.formatLabel?.(categoryValues[index] ?? '', index) ??
+				String(categoryValues[index] ?? index)}
+			onChange={(range) => {
+				const last = Math.max(0, data.length - 1);
+				brushRange = {
+					start: last === 0 ? 0 : (range.startIndex / last) * 100,
+					end: last === 0 ? 100 : (range.endIndex / last) * 100
+				};
+				instance?.dispatchAction(
+					{ type: 'dataZoom', start: brushRange.start, end: brushRange.end },
+					{ silent: true }
+				);
+				brush.onChange?.(range);
+			}}
+		/>
+	{/if}
 </ChartContainer>

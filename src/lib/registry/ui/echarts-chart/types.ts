@@ -29,10 +29,6 @@ export type ChartConfig = Record<
 	}
 >;
 
-export type ValidateConfigKeys<TData, TConfig> = {
-	[K in keyof TConfig]: K extends keyof TData ? ChartConfig[string] : never;
-};
-
 export function validateChartConfigColors(config: ChartConfig): void {
 	for (const [key, item] of Object.entries(config)) {
 		if (!item.colors) continue;

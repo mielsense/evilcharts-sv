@@ -89,7 +89,16 @@
 	} satisfies ChartConfig;
 </script>
 
-<EvilSankeyChart class="h-full w-full p-4" {data} config={chartConfig}>
+<EvilSankeyChart
+	class="h-full w-full p-4"
+	{data}
+	config={chartConfig}
+	accessibility={{
+		label: 'Website conversion flow Sankey chart',
+		description:
+			'Traffic moves from acquisition channels through landing and product pages to purchases or bounces.'
+	}}
+>
 	<EvilSankeyChart.Node isClickable>
 		<EvilSankeyChart.NodeLabel position="outside" showValues />
 	</EvilSankeyChart.Node>

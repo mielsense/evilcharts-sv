@@ -50,7 +50,7 @@ type Options = {
 	 * Recharts divides a category between the bars it finds in the tree; the port needs the same
 	 * count to place them, so the bars announce themselves.
 	 */
-	registerBar: (token: string, dataKey: string | undefined) => void;
+	registerBar: (token: string, dataKey: string | undefined, isClickable: boolean) => void;
 	registerXAxisDataKey: (token: string, dataKey: string | undefined) => void;
 	/**
 	 * Called by `<XAxis />` / `<YAxis />` so the root can reserve plot-area space for them.
@@ -145,8 +145,8 @@ export class BarChartContext {
 		this.#options.selectDataKey(dataKey);
 	};
 
-	registerBar = (token: string, dataKey: string | undefined) => {
-		this.#options.registerBar(token, dataKey);
+	registerBar = (token: string, dataKey: string | undefined, isClickable: boolean) => {
+		this.#options.registerBar(token, dataKey, isClickable);
 	};
 
 	registerXAxisDataKey = (token: string, dataKey: string | undefined) => {

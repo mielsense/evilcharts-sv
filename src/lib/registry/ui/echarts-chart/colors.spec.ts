@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
 	buildChartCss,
+	chartColorToken,
+	chartColorVariable,
+	chartColorVariableName,
 	distributeColors,
 	flattenColor,
 	getColorsCount,
@@ -34,5 +37,21 @@ describe('ECharts shared colors', () => {
 		expect(indicatorBackground('desktop', 3)).toBe(
 			'linear-gradient(to right, var(--color-desktop-0) 0%, var(--color-desktop-1) 50%, var(--color-desktop-2) 100%)'
 		);
+	});
+
+	it('generates stable CSS tokens for arbitrary public config keys', () => {
+		const encoded = 'u-00005400006f00007400006100006c00002000005300006100006c000065000073';
+		expect(chartColorToken('desktop')).toBe('desktop');
+		expect(chartColorToken('Total Sales')).toBe(encoded);
+		expect(chartColorVariableName('Total Sales', 1)).toBe(`--color-${encoded}-1`);
+		expect(chartColorVariable('Total Sales', 1, 0)).toBe(
+			`var(--color-${encoded}-1, var(--color-${encoded}-0))`
+		);
+
+		const css = buildChartCss('chart-sales"]{}', {
+			'Total Sales': { colors: { light: ['#ff3e00'], dark: ['#ff3e00'] } }
+		});
+		expect(css).toContain('[data-chart="chart-sales\\"]{}"]');
+		expect(css).toContain(`--color-${encoded}-0: #ff3e00;`);
 	});
 });

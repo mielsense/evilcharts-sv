@@ -10,7 +10,12 @@
 	import { EvilSankeyChart, type SankeyData } from './layerchart-sankey-chart/index.js';
 
 	type Family = 'area' | 'line' | 'bar' | 'composed' | 'pie' | 'radar' | 'radial' | 'sankey';
-	let { family, external = false }: { family: Family; external?: boolean } = $props();
+	let {
+		family,
+		external = false,
+		seriesOnly = false
+	}: { family: Family; external?: boolean; seriesOnly?: boolean } = $props();
+	let selectedDataKey = $state<string | null>(null);
 
 	const cartesianData = [
 		{ month: 'January', desktop: 342, mobile: 245 },
@@ -65,12 +70,13 @@
 			xDataKey="month"
 			animationType="none"
 			{accessibility}
+			onSelectionChange={(key) => (selectedDataKey = key)}
 			class="h-full"
 		>
 			<EvilAreaChart.XAxis dataKey="month" />
-			<EvilAreaChart.Legend isClickable />
-			<EvilAreaChart.Area dataKey="desktop" />
-			<EvilAreaChart.Area dataKey="mobile" />
+			{#if !seriesOnly}<EvilAreaChart.Legend isClickable />{/if}
+			<EvilAreaChart.Area dataKey="desktop" isClickable={seriesOnly} />
+			<EvilAreaChart.Area dataKey="mobile" isClickable={seriesOnly} />
 		</EvilAreaChart>
 	{:else if family === 'line'}
 		<EvilLineChart
@@ -79,12 +85,13 @@
 			xDataKey="month"
 			animationType="none"
 			{accessibility}
+			onSelectionChange={(key) => (selectedDataKey = key)}
 			class="h-full"
 		>
 			<EvilLineChart.XAxis dataKey="month" />
-			<EvilLineChart.Legend isClickable />
-			<EvilLineChart.Line dataKey="desktop" />
-			<EvilLineChart.Line dataKey="mobile" />
+			{#if !seriesOnly}<EvilLineChart.Legend isClickable />{/if}
+			<EvilLineChart.Line dataKey="desktop" isClickable={seriesOnly} />
+			<EvilLineChart.Line dataKey="mobile" isClickable={seriesOnly} />
 		</EvilLineChart>
 	{:else if family === 'bar'}
 		<EvilBarChart
@@ -93,12 +100,13 @@
 			xDataKey="month"
 			animationType="none"
 			{accessibility}
+			onSelectionChange={(key) => (selectedDataKey = key)}
 			class="h-full"
 		>
 			<EvilBarChart.XAxis dataKey="month" />
-			<EvilBarChart.Legend isClickable />
-			<EvilBarChart.Bar dataKey="desktop" />
-			<EvilBarChart.Bar dataKey="mobile" />
+			{#if !seriesOnly}<EvilBarChart.Legend isClickable />{/if}
+			<EvilBarChart.Bar dataKey="desktop" isClickable={seriesOnly} />
+			<EvilBarChart.Bar dataKey="mobile" isClickable={seriesOnly} />
 		</EvilBarChart>
 	{:else if family === 'composed'}
 		<EvilComposedChart
@@ -127,9 +135,15 @@
 			<EvilPieChart.Pie isClickable />
 		</EvilPieChart>
 	{:else if family === 'radar'}
-		<EvilRadarChart data={polarData} config={cartesianConfig} {accessibility} class="h-full">
+		<EvilRadarChart
+			data={polarData}
+			config={cartesianConfig}
+			{accessibility}
+			onSelectionChange={(key) => (selectedDataKey = key)}
+			class="h-full"
+		>
 			<EvilRadarChart.PolarAngleAxis dataKey="skill" />
-			<EvilRadarChart.Legend isClickable />
+			{#if !seriesOnly}<EvilRadarChart.Legend isClickable />{/if}
 			<EvilRadarChart.Radar dataKey="desktop" isClickable />
 			<EvilRadarChart.Radar dataKey="mobile" isClickable />
 		</EvilRadarChart>
@@ -151,3 +165,4 @@
 		</EvilSankeyChart>
 	{/if}
 </div>
+<output data-test="selection">{selectedDataKey ?? 'none'}</output>

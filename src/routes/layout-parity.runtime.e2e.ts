@@ -61,6 +61,13 @@ test('the brush footer matches the original geometry at desktop and mobile width
 			lastTickInset: 0
 		},
 		{
+			url: '/preview/ex-area-chart?w=350&h=256',
+			chartWidth: 348,
+			chartHeight: 256,
+			ticks: ['Feb', 'Apr', 'Jun', 'Jul', 'Aug', 'Oct', 'Dec'],
+			lastTickInset: 0
+		},
+		{
 			url: '/preview/ex-line-chart?w=632&h=360',
 			chartWidth: 630,
 			chartHeight: 360,
@@ -111,6 +118,11 @@ test('the brush footer matches the original geometry at desktop and mobile width
 				(svg) => !brush.contains(svg)
 			)!;
 			const legend = chart.querySelector<HTMLElement>('.pointer-events-auto.absolute')!;
+			const tokenProbe = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			tokenProbe.style.fill = 'var(--muted-foreground)';
+			chart.append(tokenProbe);
+			const mutedForeground = getComputedStyle(tokenProbe).fill;
+			tokenProbe.remove();
 
 			return {
 				chart: rect(chart),
@@ -118,6 +130,7 @@ test('the brush footer matches the original geometry at desktop and mobile width
 				brush: rect(brush),
 				selection: rect(selection),
 				legend: rect(legend),
+				mutedForeground,
 				ticks: ticks.map((tick) => ({
 					text: tick.textContent,
 					rect: rect(tick),
@@ -151,7 +164,7 @@ test('the brush footer matches the original geometry at desktop and mobile width
 		expect(geometry.legend.height).toBe(32);
 
 		expect(geometry.ticks.map((tick) => tick.text)).toEqual(current.ticks);
-		expect(geometry.ticks.every((tick) => tick.fill === 'rgb(102, 102, 102)')).toBe(true);
+		expect(geometry.ticks.every((tick) => tick.fill === geometry.mutedForeground)).toBe(true);
 		const tickBottom = Math.max(...geometry.ticks.map((tick) => tick.rect.bottom));
 		expect(geometry.brush.y - tickBottom).toBeCloseTo(13.5, 1);
 		expect(

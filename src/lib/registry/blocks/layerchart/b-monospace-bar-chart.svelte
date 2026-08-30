@@ -8,6 +8,7 @@
 	 */
 	import { Axis, Chart, Svg, type ChartState } from 'layerchart';
 	import {
+		chartColorVariable,
 		ChartContainer,
 		thinAxisTicks,
 		type ChartConfig
@@ -112,7 +113,7 @@
 		>
 			<Svg>
 				{#each seriesKeys as key (key)}
-					<MonospaceBar dataKey={key} {rows} {activeRow} fill={`var(--color-${key}-0)`} />
+					<MonospaceBar dataKey={key} {rows} {activeRow} fill={chartColorVariable(key, 0)} />
 				{/each}
 				<Axis
 					placement="bottom"
