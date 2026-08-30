@@ -212,24 +212,39 @@ describe('MCP JSON-RPC endpoint', () => {
 		});
 	});
 
-	it('keeps successful search_docs and read_doc payload shapes unchanged', async () => {
+	it('keeps representative search ranking and document content unchanged', async () => {
 		const search = await call({
 			jsonrpc: '2.0',
 			id: 3,
 			method: 'tools/call',
-			params: { name: 'search_docs', arguments: { query: 'Sankey chart' } }
+			params: { name: 'search_docs', arguments: { query: 'EvilSankeyChart isClickable' } }
 		});
 		expect(search.response.status).toBe(200);
-		expect(search.body).toMatchObject({ id: 3, result: { content: [{ type: 'text' }] } });
+		const searchResults = JSON.parse(search.body.result.content[0].text) as Array<{
+			title: string;
+			url: string;
+			markdownUrl: string;
+		}>;
+		expect(searchResults[0]).toMatchObject({
+			title: 'Sankey Chart',
+			url: 'https://evilcharts-sv.vercel.app/docs/layerchart/sankey-chart',
+			markdownUrl: 'https://evilcharts-sv.vercel.app/docs/layerchart/sankey-chart.md'
+		});
 
 		const read = await call({
 			jsonrpc: '2.0',
 			id: 4,
 			method: 'tools/call',
-			params: { name: 'read_doc', arguments: { path: '/docs' } }
+			params: { name: 'read_doc', arguments: { path: '/docs/layerchart/sankey-chart' } }
 		});
 		expect(read.response.status).toBe(200);
-		expect(read.body).toMatchObject({ id: 4, result: { content: [{ type: 'text' }] } });
+		const document = read.body.result.content[0].text as string;
+		expect(document).toContain('# Sankey Chart');
+		expect(document).toContain(
+			'Source: https://evilcharts-sv.vercel.app/docs/layerchart/sankey-chart'
+		);
+		expect(document).toContain('## Installation');
+		expect(document).toContain('EvilSankeyChart');
 	});
 
 	it('keeps notifications response-free even for an oversized method', async () => {
