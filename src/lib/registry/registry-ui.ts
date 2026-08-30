@@ -1,8 +1,8 @@
 /**
  * The shared chart primitives, one item per module.
  *
- * Ported from `evilcharts/src/registry/registry-ui.ts` — the recharts entries only, renamed to the
- * `layerchart` provider. The ECharts half of the reference has no counterpart here.
+ * Ported from `evilcharts/src/registry/registry-ui.ts`, with provider-specific LayerChart and
+ * ECharts primitives.
  *
  * Each `path` is a **directory**: a Svelte primitive is a folder of `.svelte` files plus an
  * `index.ts` barrel, where the reference is a single `.tsx`. `scripts/build-registry.ts` expands a
@@ -97,6 +97,83 @@ const primitives: RegistryItem[] = [
 				path: 'ui/layerchart-background',
 				type: 'registry:component',
 				target: TARGET_BASE_PATH + '/layerchart-background'
+			}
+		]
+	},
+	{
+		name: 'echarts-chart',
+		type: 'registry:component',
+		dependencies: [PACKAGE.echarts],
+		files: [
+			{
+				path: 'ui/echarts-chart',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/echarts-chart'
+			}
+		]
+	},
+	{
+		name: 'echarts-dither',
+		description: 'Ordered-dither paint helpers for ECharts, inspired by Dither Kit',
+		type: 'registry:component',
+		dependencies: [PACKAGE.echarts],
+		files: [
+			{
+				path: 'ui/echarts-dither',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/echarts-dither'
+			}
+		]
+	},
+	{
+		name: 'echarts-tooltip',
+		type: 'registry:component',
+		registryDependencies: ['@evilcharts/echarts-chart'],
+		dependencies: [PACKAGE.echarts],
+		files: [
+			{
+				path: 'ui/echarts-tooltip',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/echarts-tooltip'
+			}
+		]
+	},
+	{
+		name: 'echarts-legend',
+		type: 'registry:component',
+		registryDependencies: ['@evilcharts/echarts-chart'],
+		dependencies: [PACKAGE.echarts],
+		files: [
+			{
+				path: 'ui/echarts-legend',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/echarts-legend'
+			}
+		]
+	},
+	{
+		name: 'echarts-dot',
+		type: 'registry:component',
+		registryDependencies: ['@evilcharts/echarts-chart'],
+		dependencies: [PACKAGE.echarts],
+		files: [
+			{
+				path: 'ui/echarts-dot',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/echarts-dot'
+			}
+		]
+	},
+	{
+		name: 'echarts-brush',
+		type: 'registry:component',
+		registryDependencies: ['@evilcharts/echarts-chart'],
+		dependencies: [PACKAGE.echarts],
+		files: [
+			{
+				path: 'ui/echarts-brush',
+				type: 'registry:component',
+				target: TARGET_BASE_PATH + '/echarts-brush'
 			}
 		]
 	}

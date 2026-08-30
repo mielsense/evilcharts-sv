@@ -36,14 +36,27 @@ const CHART_ROOTS = [
 	{ item: 'layerchart-pie-chart', exportName: 'EvilPieChart' },
 	{ item: 'layerchart-radar-chart', exportName: 'EvilRadarChart' },
 	{ item: 'layerchart-radial-chart', exportName: 'EvilRadialChart' },
-	{ item: 'layerchart-sankey-chart', exportName: 'EvilSankeyChart' }
+	{ item: 'layerchart-sankey-chart', exportName: 'EvilSankeyChart' },
+	{ item: 'echarts-area-chart', exportName: 'EChartsAreaChart' },
+	{ item: 'echarts-bar-chart', exportName: 'EChartsBarChart' },
+	{ item: 'echarts-composed-chart', exportName: 'EChartsComposedChart' },
+	{ item: 'echarts-line-chart', exportName: 'EChartsLineChart' },
+	{ item: 'echarts-pie-chart', exportName: 'EChartsPieChart' },
+	{ item: 'echarts-radar-chart', exportName: 'EChartsRadarChart' },
+	{ item: 'echarts-radial-chart', exportName: 'EChartsRadialChart' },
+	{ item: 'echarts-sankey-chart', exportName: 'EChartsSankeyChart' }
 ] as const;
 const ROOT_ITEMS = [
 	...CHART_ROOTS.map(({ item }) => item),
 	'layerchart-tooltip',
+	'echarts-tooltip',
 	'monospace-bar-chart',
+	'monospace-echarts-bar-chart',
 	'ex-horizontal-layout-bar-chart',
-	'ex-dither-area-chart'
+	'ex-horizontal-layout-echarts-bar-chart',
+	'ex-chart-config-icons-echarts-bar-chart',
+	'ex-dither-area-chart',
+	'ex-dither-echarts-area-chart'
 ] as const;
 
 function packageName(dependency: string): string {
@@ -114,6 +127,7 @@ describe('generated registry consumer install', () => {
 			expect(CHART_ROOTS.every(({ item }) => installed.has(item))).toBe(true);
 			expect([...ROOT_ITEMS].every((name) => installed.has(name))).toBe(true);
 			expect(installed.has('layerchart-dither')).toBe(true);
+			expect(installed.has('echarts-dither')).toBe(true);
 
 			writeFileSync(
 				path.join(consumer, 'package.json'),
@@ -132,19 +146,28 @@ describe('generated registry consumer install', () => {
 			`import { ${exportName} } from '$lib/components/evilcharts/charts/${item}/index.js';`
 	).join('\n\t')}
 	import { ChartTooltip } from '$lib/components/evilcharts/ui/layerchart-tooltip/index.js';
+	import { Tooltip as EChartsTooltip } from '$lib/components/evilcharts/ui/echarts-tooltip/index.js';
 	import MonospaceBarChart from '$lib/components/evilcharts/blocks/monospace-bar-chart.svelte';
+	import EChartsMonospaceBarChart from '$lib/components/evilcharts/blocks/monospace-echarts-bar-chart.svelte';
 	import HorizontalBarChart from '$lib/examples/ex-horizontal-layout-bar-chart.svelte';
+	import EChartsHorizontalBarChart from '$lib/examples/ex-horizontal-layout-echarts-bar-chart.svelte';
+	import EChartsConfigIconsBarChart from '$lib/examples/ex-chart-config-icons-echarts-bar-chart.svelte';
 	import DitherAreaChart from '$lib/examples/ex-dither-area-chart.svelte';
+	import EChartsDitherAreaChart from '$lib/examples/ex-dither-echarts-area-chart.svelte';
 
 	const charts = [${CHART_ROOTS.map(({ exportName }) => exportName).join(', ')}] as const;
-	const primitive: typeof ChartTooltip = ChartTooltip;
+	const primitives = [ChartTooltip, EChartsTooltip] as const;
 	void charts;
-	void primitive;
+	void primitives;
 </script>
 
 <MonospaceBarChart />
+<EChartsMonospaceBarChart />
 <HorizontalBarChart />
+<EChartsHorizontalBarChart />
+<EChartsConfigIconsBarChart />
 <DitherAreaChart />
+<EChartsDitherAreaChart />
 `
 			);
 			writeFileSync(

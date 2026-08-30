@@ -3,7 +3,8 @@
  *
  * Translated from the original Recharts and ECharts block catalogs, with Svelte compositions for
  * chart families that had no upstream block. Reference data and copy stay intact where available;
- * LayerChart and Svelte motion replace the React chart and motion layers.
+ * LayerChart and Svelte motion replace the React layers, while ECharts remains the rendering engine
+ * for its provider's blocks.
  *
  * A few bar blocks split custom shapes into child files. Those children are listed beside their
  * entry point because the flat block directory also drives the docs preview lookup.
@@ -20,6 +21,16 @@ function files(...names: string[]): RegistryItem['files'] {
 		type: 'registry:block' as const,
 		target: `${TARGET_BASE_PATH}/${name.replace(/^b-/, '')}.svelte`
 	}));
+}
+
+function echartsFiles(name: string): RegistryItem['files'] {
+	return [
+		{
+			path: `blocks/echarts/${name}.svelte`,
+			type: 'registry:block',
+			target: `${TARGET_BASE_PATH}/${name.replace(/^b-/, '')}.svelte`
+		}
+	];
 }
 
 const blockItems: RegistryItem[] = [
@@ -205,4 +216,58 @@ const blockItems: RegistryItem[] = [
 	}
 ];
 
-export const blocks: RegistryItem[] = withNotice(blockItems);
+const echartsBlockDescriptions = {
+	'b-latency-echarts-area-chart':
+		'Latency percentile monitor with an HTML stat row, on the ECharts area chart',
+	'b-portfolio-echarts-area-chart':
+		'Portfolio comparison card with hover-reveal, on the ECharts area chart',
+	'b-benchmark-echarts-area-chart':
+		'Growth against a dashed benchmark — hatched lead area, rounded step plateaus',
+	'b-audience-echarts-area-chart':
+		'Audience growth card with a multi-stop gradient line and faded wash',
+	'b-market-share-echarts-pie-chart':
+		'Grayscale donut with a center total and a two-column value legend',
+	'b-progress-rings-echarts-pie-chart':
+		'Dotted progress rings with a centered stat, built from per-dot pie sectors',
+	'b-budget-echarts-radial-chart':
+		'Budget breakdown card with four gauges and a value list, on the radial chart',
+	'b-ride-echarts-radial-chart':
+		'Activity summary card with a distance goal bar and three metric gauges',
+	'b-cache-tiers-echarts-radial-chart':
+		'Semi-circle multi-ring gauge with a stat grid and a share legend',
+	'b-revenue-mix-echarts-pie-chart':
+		'Gapped donut with a center total and a side legend of amounts',
+	'b-reliability-score-echarts-pie-chart':
+		'Banded score arc with a range scale, built from pie sectors',
+	'b-payouts-echarts-line-chart': 'Payout trend card with a glowing gradient line and stat rows',
+	'b-shipments-echarts-line-chart':
+		'Week-over-week comparison with a solid and a dashed grayscale line',
+	'b-grid-echarts-bar-chart':
+		'Bar chart whose columns are stacks of blocks, on the ECharts blocks variant',
+	'b-monospace-echarts-bar-chart':
+		'Monospace sales card whose hairline bars expand on hover, on the ECharts bar chart',
+	'b-peak-echarts-bar-chart': 'Stacked weekly signups with only the best week in color',
+	'b-allocation-echarts-sankey-chart': 'Fund allocation flow with labelled nodes and a stat row',
+	'b-pipeline-echarts-sankey-chart':
+		'Revenue sources converging through a hub and fanning back out, with a centered total'
+} as const;
+
+const echartsBlockItems: RegistryItem[] = Object.entries(echartsBlockDescriptions).map(
+	([fileName, description]) => {
+		const family = ['area', 'line', 'bar', 'pie', 'radial', 'sankey'].find((candidate) =>
+			fileName.endsWith(`-${candidate}-chart`)
+		);
+		if (!family) throw new Error(`Unable to resolve ECharts block family for "${fileName}".`);
+		return {
+			name: fileName.replace(/^b-/, ''),
+			description,
+			dependencies:
+				fileName === 'b-ride-echarts-radial-chart' ? ['echarts', '@lucide/svelte'] : ['echarts'],
+			registryDependencies: [`@evilcharts/echarts-${family}-chart`],
+			type: 'registry:block',
+			files: echartsFiles(fileName)
+		};
+	}
+);
+
+export const blocks: RegistryItem[] = withNotice([...blockItems, ...echartsBlockItems]);
