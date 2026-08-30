@@ -660,31 +660,54 @@ export function buildAreaOption(c: AreaOptionContext): EChartsAreaOption {
 			tooltip: tooltip(c),
 			series: mainSeries
 		};
-	const mini = c.areas.map((area) => ({
-		id: `__mini-${area.dataKey}`,
-		type: 'line' as const,
-		xAxisIndex: 1,
-		yAxisIndex: 1,
-		data: rawValues(c, area.dataKey),
-		showSymbol: false,
-		silent: true,
-		lineStyle: {
-			color: seriesPaint(c.resolved.series[area.dataKey] ?? []),
-			width: 1,
-			opacity: 0.5
-		},
-		areaStyle: {
-			color: withAlpha(c.resolved.series[area.dataKey]?.[0] ?? c.resolved.tokens.foreground, 0.12)
-		},
-		animation: false
-	}));
+	const mini = c.areas.map((area) => {
+		const key = area.dataKey;
+		const base = c.resolved.series[key]?.[0] ?? c.resolved.tokens.foreground;
+		const curve = curveConfig(area.curveType ?? c.curveType);
+		const selected = c.selectedDataKey === null || c.selectedDataKey === key;
+		return {
+			id: `__mini-${key}`,
+			type: 'line' as const,
+			xAxisIndex: 1,
+			yAxisIndex: 1,
+			data: rawValues(c, key),
+			stack: c.stackType === 'default' ? undefined : '__mini-total',
+			smooth: curve.smooth,
+			step: curve.step,
+			connectNulls: area.connectNulls,
+			showSymbol: false,
+			silent: true,
+			emphasis: { disabled: true },
+			tooltip: { show: false },
+			lineStyle: {
+				color: base,
+				width: 1,
+				opacity: 0.5 * (selected ? 1 : 0.3)
+			},
+			areaStyle: {
+				color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+					{ offset: 0, color: withAlpha(base, 0.15 * (selected ? 1 : 0.125)) },
+					{ offset: 1, color: withAlpha(base, 0) }
+				])
+			},
+			z: 0,
+			animation: false
+		};
+	});
 	return {
 		animation: false,
 		aria: { enabled: true },
-		grid: [main, { left: 8, right: 8, bottom, height }],
+		grid: [main, { left: 8, right: 8, bottom, height, outerBoundsMode: 'none' }],
 		xAxis: [
 			builtAxes.xAxis,
-			{ type: 'category', gridIndex: 1, boundaryGap: false, data: categories(c), show: false }
+			{
+				type: 'category',
+				gridIndex: 1,
+				boundaryGap: false,
+				data: categories(c),
+				show: false,
+				axisPointer: { show: false }
+			}
 		],
 		yAxis: [builtAxes.yAxis, { type: 'value', gridIndex: 1, show: false }],
 		tooltip: tooltip(c),

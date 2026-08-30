@@ -485,16 +485,7 @@
 	);
 </script>
 
-<ChartContainer
-	{config}
-	{accessibility}
-	bind:element={container}
-	bind:dimension
-	bind:themeRevision
-	class={className}
->
-	{@render children?.()}
-	<EChartsHost {option} {renderer} {events} bind:instance />
+{#snippet overlay()}
 	{#if legend && !isLoading}
 		<LegendOverlay
 			{seriesKeys}
@@ -509,4 +500,17 @@
 		/>
 	{/if}
 	<LoadingIndicator {isLoading} />
+{/snippet}
+
+<ChartContainer
+	{config}
+	{accessibility}
+	{overlay}
+	bind:element={container}
+	bind:dimension
+	bind:themeRevision
+	class={className}
+>
+	{@render children?.()}
+	<EChartsHost {option} {renderer} {events} bind:instance />
 </ChartContainer>

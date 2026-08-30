@@ -240,9 +240,14 @@
 	);
 </script>
 
+{#snippet overlay()}
+	<LoadingIndicator {isLoading} />
+{/snippet}
+
 <ChartContainer
 	{config}
 	{accessibility}
+	{overlay}
 	{initialDimension}
 	bind:element={container}
 	bind:themeRevision
@@ -263,12 +268,7 @@
 			style={legendStyle}
 		/>
 	{/if}
-	<div
-		class={[
-			'relative min-h-0 w-full flex-1',
-			legend && legend.verticalAlign === 'bottom' && !isLoading && 'mb-3'
-		]}
-	>
+	<div class="relative min-h-0 w-full flex-1">
 		{#if backgroundVariant}<Background variant={backgroundVariant} />{/if}
 		<EChartsHost
 			{option}
@@ -314,5 +314,4 @@
 			{/each}
 		</div>
 	{/if}
-	<LoadingIndicator {isLoading} />
 </ChartContainer>

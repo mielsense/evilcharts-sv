@@ -8,7 +8,11 @@
 	import { LOADING_AREA_DATA_KEY, STROKE_WIDTH, type CurveType } from '../types.js';
 	import LoadingPattern from './loading-pattern.svelte';
 
-	let { chartId, curveType }: { chartId: string; curveType: CurveType } = $props();
+	let {
+		chartId,
+		curveType,
+		onShimmerExit
+	}: { chartId: string; curveType: CurveType; onShimmerExit: () => void } = $props();
 </script>
 
 <!-- Keep the Line-style stroke and the fill beneath it inside one moving shimmer. -->
@@ -30,5 +34,5 @@
 	/>
 </g>
 <defs>
-	<LoadingPattern {chartId} />
+	<LoadingPattern {chartId} {onShimmerExit} />
 </defs>
