@@ -232,17 +232,7 @@
 	);
 </script>
 
-<ChartContainer
-	{config}
-	{accessibility}
-	bind:element={container}
-	bind:themeRevision
-	bind:dimension
-	class={className}
->
-	{@render children?.()}
-	{#if background && !isLoading}<BackgroundOverlay variant={background.variant} />{/if}
-	<EChartsHost {option} {renderer} {events} bind:instance />
+{#snippet overlay()}
 	{#if legend && !isLoading}
 		<LegendOverlay
 			seriesKeys={sectorKeys}
@@ -257,4 +247,18 @@
 		/>
 	{/if}
 	<LoadingIndicator {isLoading} />
+{/snippet}
+
+<ChartContainer
+	{config}
+	{accessibility}
+	{overlay}
+	bind:element={container}
+	bind:themeRevision
+	bind:dimension
+	class={className}
+>
+	{@render children?.()}
+	{#if background && !isLoading}<BackgroundOverlay variant={background.variant} />{/if}
+	<EChartsHost {option} {renderer} {events} bind:instance />
 </ChartContainer>

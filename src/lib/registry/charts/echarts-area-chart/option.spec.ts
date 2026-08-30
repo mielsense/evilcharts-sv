@@ -101,6 +101,40 @@ describe('buildAreaOption', () => {
 		).toBe(true);
 	});
 
+	test('matches the upstream stacked, curved, fading brush preview', () => {
+		const areas = context().areas.map((area, index) =>
+			index === 0 ? { ...area, curveType: 'bump' as const, connectNulls: true } : area
+		);
+		const option = buildAreaOption(context({ brush: { height: 48 }, stackType: 'stacked', areas }));
+		const grids = option.grid as Array<{ outerBoundsMode?: string }>;
+		const mini = (option.series as Array<Record<string, unknown>>).find(
+			(entry) => entry.id === '__mini-desktop'
+		) as {
+			stack?: string;
+			smooth?: boolean;
+			step?: boolean | string;
+			connectNulls?: boolean;
+			areaStyle?: {
+				color?: { type?: string; colorStops?: Array<{ offset: number; color: string }> };
+			};
+		};
+
+		expect(grids[1]?.outerBoundsMode).toBe('none');
+		expect(mini).toMatchObject({
+			stack: '__mini-total',
+			smooth: true,
+			step: false,
+			connectNulls: true
+		});
+		expect(mini.areaStyle?.color).toMatchObject({
+			type: 'linear',
+			colorStops: [
+				{ offset: 0, color: 'rgba(20, 100, 220, 0.150)' },
+				{ offset: 1, color: 'rgba(20, 100, 220, 0.000)' }
+			]
+		});
+	});
+
 	test('routes dither rendering through the ordered-pattern paint path', () => {
 		const option = buildAreaOption(context({ renderStyle: 'dither', ditherVariant: 'hatched' }));
 		const area = (option.series as Array<{ id?: string; areaStyle?: { color?: unknown } }>).find(

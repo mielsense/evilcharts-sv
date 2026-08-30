@@ -101,6 +101,7 @@
 	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
 
 	const loading = new LoadingDataState({
+		isLoading: () => isLoading,
 		loadingPoints: () => loadingPoints ?? 14
 	});
 
@@ -314,7 +315,7 @@
 			{@render children()}
 			<TooltipCursor />
 			{#if isLoading}
-				<LoadingArea {chartId} {curveType} />
+				<LoadingArea {chartId} {curveType} onShimmerExit={loading.onShimmerExit} />
 			{/if}
 		</Svg>
 		<TooltipRender />

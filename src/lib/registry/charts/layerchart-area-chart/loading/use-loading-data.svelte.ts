@@ -1,14 +1,21 @@
 import { getLoadingData } from '../../../ui/layerchart-chart/loading.js';
 
-/** Stable random data for the area skeleton. Only the shimmer moves while loading. */
 export class LoadingDataState {
+	#isLoading: () => boolean;
 	#loadingPoints: () => number;
+	#tick = $state(0);
 
-	constructor(options: { loadingPoints?: () => number }) {
+	constructor(options: { isLoading: () => boolean; loadingPoints?: () => number }) {
+		this.#isLoading = options.isLoading;
 		this.#loadingPoints = options.loadingPoints ?? (() => 14);
 	}
 
 	get loadingData() {
+		this.#tick;
 		return getLoadingData(this.#loadingPoints());
 	}
+
+	onShimmerExit = () => {
+		if (this.#isLoading()) this.#tick += 1;
+	};
 }

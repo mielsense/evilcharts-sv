@@ -278,10 +278,15 @@
 	});
 </script>
 
+{#snippet overlay()}
+	<LoadingIndicator {isLoading} />
+{/snippet}
+
 <ChartContainer
 	{config}
 	{accessibility}
 	{initialDimension}
+	{overlay}
 	bind:element={container}
 	bind:themeRevision
 	aria-busy={isLoading}
@@ -306,5 +311,4 @@
 			{/each}
 		</div>
 	{/if}
-	<LoadingIndicator {isLoading} />
 </ChartContainer>

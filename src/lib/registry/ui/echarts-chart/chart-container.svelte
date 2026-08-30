@@ -8,6 +8,7 @@
 	type Props = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
 		config: ChartConfig;
 		children?: Snippet;
+		overlay?: Snippet;
 		footer?: Snippet;
 		initialDimension?: { width: number; height: number };
 		dimension?: { width: number; height: number };
@@ -20,6 +21,7 @@
 		id,
 		config,
 		children,
+		overlay,
 		footer,
 		initialDimension = { width: 320, height: 200 },
 		dimension = $bindable(),
@@ -91,5 +93,6 @@
 	>
 		{@render children?.()}
 	</div>
+	{@render overlay?.()}
 	{@render footer?.()}
 </div>
