@@ -107,7 +107,9 @@ brush handles when customizing installed source.
 2. Confirm every compound child belongs to the same root and provider.
 3. Confirm data and config follow the family mapping: Cartesian and Radar series keys, Pie and
    Radial category names, or Sankey node names. Each config `colors` object needs a valid `light` or
-   `dark` array.
+   `dark` array. Sankey link endpoints must be integer node indexes, values must be finite and
+   non-negative, and the graph must be acyclic; both providers render an empty graph for a
+   recognized validation failure.
 4. Compare the current page's API table and closest example.
 5. Type-check, then inspect the browser console and the chart container's measured size.
 6. Exercise loading, tooltips, selection, keyboard use, reduced motion, and brushes where relevant

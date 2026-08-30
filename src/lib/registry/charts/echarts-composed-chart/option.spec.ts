@@ -78,6 +78,48 @@ describe('buildComposedOption', () => {
 		expect(option.dataZoom).toHaveLength(2);
 	});
 
+	test('preserves empty and non-finite values as gaps across composed derivatives and tooltips', () => {
+		const data = [
+			{ month: 'Jan', desktop: 10, trend: 2 },
+			{ month: 'Feb', desktop: null, trend: null },
+			{ month: 'Mar' },
+			{ month: 'Apr', desktop: Number.POSITIVE_INFINITY, trend: Number.POSITIVE_INFINITY },
+			{ month: 'May', desktop: Number.NaN, trend: Number.NaN },
+			{ month: 'Jun', desktop: 0, trend: 0 }
+		];
+		const option = buildComposedOption({
+			...context,
+			data,
+			lines: context.lines.map((line) => ({ ...line, connectNulls: true, glow: true })),
+			tooltip: { variant: 'default', roundness: 'lg', position: 'variable' }
+		});
+		const series = option.series as Array<{ id?: string; data?: unknown[] }>;
+		const values = (id: string) =>
+			series
+				.find((entry) => entry.id === id)
+				?.data?.map((datum) =>
+					datum && typeof datum === 'object' && 'value' in datum
+						? (datum as { value: unknown }).value
+						: datum
+				);
+		const expectedTrend = [2, null, null, null, null, 0];
+		const expectedDesktop = [10, null, null, null, null, 0];
+
+		expect(values('trend')).toEqual(expectedTrend);
+		expect(values('__glow-trend-0')).toEqual(expectedTrend);
+		expect(values('__mini-trend')).toEqual(expectedTrend);
+		expect(values('desktop')).toEqual(expectedDesktop);
+		expect(values('__mini-desktop')).toEqual(expectedDesktop);
+
+		const formatter = (option.tooltip as { formatter?: (params: unknown) => string }).formatter;
+		const html = formatter?.([
+			{ seriesId: 'desktop', seriesName: 'Desktop', axisValueLabel: 'Feb', value: 10 },
+			{ seriesId: 'trend', seriesName: 'Trend', axisValueLabel: 'Feb', value: null }
+		]);
+		expect(html).toContain('Desktop');
+		expect(html).not.toContain('Trend');
+	});
+
 	test('uses ordered-dither paints for both geometry families', () => {
 		const option = buildComposedOption({
 			...context,

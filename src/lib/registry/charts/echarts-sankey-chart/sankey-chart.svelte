@@ -43,6 +43,7 @@
 		type SankeySelection,
 		type TooltipRegistration
 	} from './types.js';
+	import { getRenderableSankeyData } from './validation.js';
 
 	echarts.use([SankeyChart, TooltipComponent]);
 
@@ -124,8 +125,9 @@
 		chart.links.first ?? { variant: 'gradient', verticalPadding: 0 }
 	);
 	const tooltip = $derived(tooltipSlots.first);
-	const nodeValues = $derived(computeNodeValues(data));
-	const nodeNames = $derived(data.nodes.map((item) => item.name));
+	const renderableData = $derived(getRenderableSankeyData(data));
+	const nodeValues = $derived(computeNodeValues(renderableData));
+	const nodeNames = $derived(renderableData.nodes.map((item) => item.name));
 
 	$effect(() => {
 		void themeRevision;
@@ -136,7 +138,7 @@
 
 	function optionContext(intro: IntroState | null): SankeyOptionContext {
 		return {
-			data,
+			data: renderableData,
 			config,
 			node,
 			label,
@@ -212,7 +214,7 @@
 		});
 		hasRevealed = decision.hasRevealed;
 		if (!decision.shouldReveal) return;
-		const depths = computeNodeDepths(data);
+		const depths = computeNodeDepths(renderableData);
 		const duration = sankeyIntroDuration(depths);
 		let frame = 0;
 		const firstFrame = untrack(() =>
@@ -302,7 +304,7 @@
 	/>
 	{#if node.isClickable}
 		<div class="sr-only" aria-label="Chart values">
-			{#each data.nodes as item (item.name)}
+			{#each renderableData.nodes as item (item.name)}
 				<button
 					type="button"
 					aria-pressed={selectedNode === item.name}

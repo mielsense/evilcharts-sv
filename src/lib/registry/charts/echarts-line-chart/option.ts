@@ -113,6 +113,14 @@ function categories(context: LineOptionContext): string[] {
 	return context.data.map((row, index) => String((key ? row[key] : undefined) ?? index));
 }
 
+function finiteNumber(value: unknown): number | null {
+	return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function seriesValues(context: LineOptionContext, key: string): (number | null)[] {
+	return context.data.map((row) => finiteNumber(row[key]));
+}
+
 function buildAxes(context: LineOptionContext): { xAxis: XAxisOption; yAxis: YAxisOption } {
 	const { mutedForeground, border, background } = context.resolved.tokens;
 	const splitLineColor = withAlpha(border, 1);
@@ -205,14 +213,15 @@ function tooltip(context: LineOptionContext): TooltipComponentOption {
 						typeof item.data === 'object' && item.data && 'value' in item.data
 							? (item.data as { value: unknown }).value
 							: item.value;
-					if (value === null || value === undefined) return '';
+					const numericValue = finiteNumber(value);
+					if (numericValue === null) return '';
 					if (seen.has(key)) return '';
 					seen.add(key);
 					const hovered = context.getHoveredDataKey?.() ?? null;
 					return tooltipRow({
 						indicatorHtml: tooltipIndicatorHtml(key, getColorsCount(context.config[key] ?? {})),
 						labelText: labelFor(context.config, key),
-						valueText: typeof value === 'number' ? value.toLocaleString() : String(value),
+						valueText: numericValue.toLocaleString(),
 						dimmed:
 							opacityFor(context.selectedDataKey, key) < 1 || (hovered !== null && hovered !== key)
 								? ' opacity-30'
@@ -357,7 +366,7 @@ function buildSeries(context: LineOptionContext): LineSeriesOption[] {
 	}
 
 	return context.lines.flatMap((line) => {
-		const values = context.data.map((row) => Number(row[line.dataKey]) || 0);
+		const values = seriesValues(context, line.dataKey);
 		const slots = context.resolved.series[line.dataKey] ?? ['rgba(120, 120, 120, 1)'];
 		const isDither = context.renderStyle === 'dither' && line.strokeVariant !== 'animated-dashed';
 		const paint = isDither
@@ -591,7 +600,7 @@ export function buildLineOption(context: LineOptionContext): EChartsLineOption {
 		type: 'line' as const,
 		xAxisIndex: 1,
 		yAxisIndex: 1,
-		data: context.data.map((row) => Number(row[line.dataKey]) || 0),
+		data: seriesValues(context, line.dataKey),
 		smooth: curveConfig(line.curveType ?? context.curveType).smooth,
 		step: curveConfig(line.curveType ?? context.curveType).step,
 		connectNulls: line.connectNulls,

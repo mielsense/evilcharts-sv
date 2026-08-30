@@ -31,3 +31,8 @@ export type {
 	SankeyNode,
 	SankeySelection
 } from './types.js';
+export {
+	SANKEY_VALIDATION_ERROR_CODE,
+	SANKEY_VALIDATION_ERROR_MESSAGE,
+	SankeyValidationError
+} from './validation.js';

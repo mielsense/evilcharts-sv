@@ -105,10 +105,11 @@ function categories(c: AreaOptionContext) {
 	const key = categoryKey(c);
 	return c.data.map((row, i) => String((key ? row[key] : undefined) ?? i));
 }
+function finiteNumber(value: unknown): number | null {
+	return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
 function rawValues(c: AreaOptionContext, key: string): (number | null)[] {
-	return c.data.map((row) =>
-		typeof row[key] === 'number' && Number.isFinite(row[key]) ? (row[key] as number) : 0
-	);
+	return c.data.map((row) => finiteNumber(row[key]));
 }
 
 function ditherPlotBounds(c: AreaOptionContext, reverse = false) {
@@ -392,15 +393,16 @@ function tooltip(c: AreaOptionContext): TooltipComponentOption {
 						typeof p.data === 'object' && p.data && 'value' in p.data
 							? (p.data as { value: unknown }).value
 							: p.value;
-					if (value === null || value === undefined) return '';
+					const numericValue = finiteNumber(value);
+					if (numericValue === null) return '';
 					seen.add(key);
 					return tooltipRow({
 						indicatorHtml: tooltipIndicatorHtml(key, getColorsCount(c.config[key] ?? {})),
 						labelText: labelFor(c.config, key),
 						valueText:
 							c.stackType === 'expanded'
-								? `${Math.round(Number(value) * 100)}%`
-								: Number(value).toLocaleString(),
+								? `${Math.round(numericValue * 100)}%`
+								: numericValue.toLocaleString(),
 						dimmed: opacityFor(c.selectedDataKey, key) < 1 ? ' opacity-30' : ''
 					});
 				})
@@ -730,21 +732,22 @@ export function createAreaLoadingData(points: number): number[] {
 	return rows;
 }
 
-export function computeAreaPlottedTops(c: AreaOptionContext): Record<string, number[]> {
+export function computeAreaPlottedTops(c: AreaOptionContext): Record<string, (number | null)[]> {
 	const running = new Array(c.data.length).fill(0);
-	const tops: Record<string, number[]> = {};
+	const tops: Record<string, (number | null)[]> = {};
 	for (const area of c.areas) {
-		const plotted = values(c, area.dataKey).map((value) => Number(value) || 0);
-		tops[area.dataKey] = plotted.map((value, index) =>
-			c.stackType === 'default' ? value : (running[index] += value)
-		);
+		const plotted = values(c, area.dataKey);
+		tops[area.dataKey] = plotted.map((value, index) => {
+			if (value === null) return null;
+			return c.stackType === 'default' ? value : (running[index] += value);
+		});
 	}
 	return tops;
 }
 
 export function resolveAreaAtPixel(
 	chart: EChartsType,
-	tops: Record<string, number[]>,
+	tops: Record<string, (number | null)[]>,
 	keys: string[],
 	x: number,
 	y: number
@@ -760,7 +763,7 @@ export function resolveAreaAtPixel(
 	let abovePixelY = Number.NEGATIVE_INFINITY;
 	for (const key of keys) {
 		const value = tops[key]?.[index];
-		if (value === undefined) continue;
+		if (value === null || value === undefined) continue;
 		const point = chart.convertToPixel({ gridIndex: 0 }, [index, value]);
 		const pixelY = Array.isArray(point) ? point[1] : undefined;
 		if (typeof pixelY !== 'number') continue;

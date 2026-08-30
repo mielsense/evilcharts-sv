@@ -133,6 +133,14 @@ function categories(context: ComposedOptionContext): string[] {
 	return context.data.map((row, index) => String((key ? row[key] : undefined) ?? index));
 }
 
+function finiteNumber(value: unknown): number | null {
+	return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function seriesValues(context: ComposedOptionContext, key: string): (number | null)[] {
+	return context.data.map((row) => finiteNumber(row[key]));
+}
+
 function buildAxes(context: ComposedOptionContext): { xAxis: XAxisOption; yAxis: YAxisOption } {
 	const { mutedForeground, border, background } = context.resolved.tokens;
 	const splitLineColor = withAlpha(border, 1);
@@ -218,10 +226,12 @@ function tooltip(context: ComposedOptionContext): TooltipComponentOption {
 						typeof item.data === 'object' && item.data && 'value' in item.data
 							? (item.data as { value: unknown }).value
 							: item.value;
+					const numericValue = finiteNumber(value);
+					if (numericValue === null) return '';
 					return tooltipRow({
 						indicatorHtml: tooltipIndicatorHtml(key, getColorsCount(context.config[key] ?? {})),
 						labelText: labelFor(context.config, key),
-						valueText: Number(value).toLocaleString(),
+						valueText: numericValue.toLocaleString(),
 						dimmed: opacityFor(context.selectedDataKey, key) < 1 ? ' opacity-30' : ''
 					});
 				})
@@ -381,7 +391,7 @@ function buildSeries(context: ComposedOptionContext): (LineSeriesOption | BarSer
 		const color = slots[0] ?? context.resolved.tokens.foreground;
 		const bloomBlur = ditherBloomBlur(context.renderStyle, context.bloom);
 		const bloomColor = bloomBlur > 0 ? withAlpha(color, 0.55) : undefined;
-		const values = context.data.map((row) => Number(row[bar.dataKey]) || 0);
+		const values = seriesValues(context, bar.dataKey);
 		const opacity =
 			context.selectedDataKey === null || context.selectedDataKey === bar.dataKey ? 1 : 0.15;
 		const variantColor = composedBarPaint(context, bar, slots);
@@ -433,10 +443,7 @@ function buildSeries(context: ComposedOptionContext): (LineSeriesOption | BarSer
 		return bar.barProps ? { ...base, ...bar.barProps } : base;
 	});
 	const lines = context.lines.flatMap((line, lineIndex) => {
-		const values = context.data.map((row) => {
-			const raw = row[line.dataKey];
-			return typeof raw === 'number' && Number.isFinite(raw) ? raw : 0;
-		});
+		const values = seriesValues(context, line.dataKey);
 		const slots = context.resolved.series[line.dataKey] ?? ['rgba(120, 120, 120, 1)'];
 		const bloomBlur = ditherBloomBlur(context.renderStyle, context.bloom);
 		const bloomColor =
@@ -594,7 +601,7 @@ export function buildComposedOption(context: ComposedOptionContext): EChartsComp
 			type: 'line' as const,
 			xAxisIndex: 1,
 			yAxisIndex: 1,
-			data: context.data.map((row) => Number(row[line.dataKey]) || 0),
+			data: seriesValues(context, line.dataKey),
 			smooth: curve.smooth,
 			step: curve.step,
 			connectNulls: line.connectNulls,
