@@ -23,6 +23,7 @@
 		FOCUS_INTERVAL_MS,
 		hopDistance,
 		LIVE_CARD_LIMIT,
+		loadLandingCardComponents,
 		MIN_HOP_DISTANCE,
 		shuffled,
 		START_INDEX
@@ -105,18 +106,10 @@
 		const wanted = liveCardIndexes;
 		let cancelled = false;
 
-		Promise.allSettled(wanted.map((index) => loadLandingCard(CARDS[index].card))).then(
-			(results) => {
-				if (cancelled) return;
-				cardComponents = Object.fromEntries(
-					results.flatMap((result, position) =>
-						result.status === 'fulfilled'
-							? [[CARDS[wanted[position]].card, result.value] as const]
-							: []
-					)
-				);
-			}
-		);
+		loadLandingCardComponents(wanted, loadLandingCard).then((components) => {
+			if (cancelled) return;
+			cardComponents = components;
+		});
 
 		return () => {
 			cancelled = true;
