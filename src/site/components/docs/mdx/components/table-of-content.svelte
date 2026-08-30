@@ -11,7 +11,8 @@
 	 * Base UI dropdown — the docs never mount it (only the `list` variant is used), so a whole
 	 * dropdown primitive would be dead weight.
 	 */
-	import Menu from '@lucide/svelte/icons/menu';
+	import { Menu01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import type { TocEntry } from '$site/lib/source.js';
 	import { cn } from '$site/lib/utils.js';
 	import TocIndicator from './toc-indicator.svelte';
@@ -144,7 +145,12 @@
 	{:else}
 		<div class={cn('flex flex-col px-4 pt-0 text-sm select-none', className)}>
 			<div class="flex h-6 flex-row items-center gap-[5px]">
-				<Menu size={14} class="text-muted-foreground" />
+				<HugeiconsIcon
+					icon={Menu01Icon}
+					size={14}
+					aria-hidden="true"
+					class="text-muted-foreground"
+				/>
 				<p class="sticky top-0 bg-background text-xs text-muted-foreground/75">On This Page</p>
 			</div>
 			<div bind:this={wrapper} class="relative flex flex-row">

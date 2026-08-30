@@ -1,7 +1,7 @@
 <script lang="ts">
 	/** `MDXNavigation` from `evilcharts/src/components/docs/mdx/components/navigation.tsx`. */
-	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
-	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { cn } from '$site/lib/utils.js';
 
 	let {
@@ -37,9 +37,14 @@
 		</div>
 		<div class="flex items-center duration-200 group-hover:text-primary sm:px-2">
 			{#if type === 'previous'}
-				<ChevronLeft strokeWidth={1.5} class="size-5" />
+				<HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={1.5} aria-hidden="true" class="size-5" />
 			{:else}
-				<ChevronRight strokeWidth={1.5} class="size-5" />
+				<HugeiconsIcon
+					icon={ArrowRight01Icon}
+					strokeWidth={1.5}
+					aria-hidden="true"
+					class="size-5"
+				/>
 			{/if}
 		</div>
 	</div>

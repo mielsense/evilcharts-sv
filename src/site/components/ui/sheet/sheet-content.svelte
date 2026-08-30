@@ -1,7 +1,8 @@
 <script lang="ts">
 	/** Ported from `evilcharts/src/components/ui/sheet.tsx`. */
 	import { Dialog as SheetPrimitive } from 'bits-ui';
-	import X from '@lucide/svelte/icons/x';
+	import { Cancel01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import type { Snippet } from 'svelte';
 	import { cn } from '$site/lib/utils.js';
 
@@ -45,7 +46,7 @@
 		<SheetPrimitive.Close
 			class="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-open:bg-secondary"
 		>
-			<X class="size-4" />
+			<HugeiconsIcon icon={Cancel01Icon} aria-hidden="true" class="size-4" />
 			<span class="sr-only">Close</span>
 		</SheetPrimitive.Close>
 	</SheetPrimitive.Content>

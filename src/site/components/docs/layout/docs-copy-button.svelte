@@ -5,9 +5,10 @@
 	 *
 	 * `@mantine/hooks`' `useClipboard` becomes a local flag. The reference wraps the row in a
 	 * `<Popover>` with a bare `<PopoverAnchor/>` and no popover content at all — that pairing has no
-	 * effect, so it is dropped here. `@carbon/icons-react`'s `CaretDown` becomes Lucide's.
+	 * effect, so it is dropped here. `@carbon/icons-react`'s `CaretDown` becomes Hugeicons'.
 	 */
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import { CheckIcon, CopyIcon } from '$site/assets/icons/index.js';
 	import { Button } from '$site/components/ui/button/index.js';
 	import {
@@ -85,7 +86,7 @@
 					aria-label="Open dropdown menu"
 					class="peer bg-transparent px-1! text-muted-foreground hover:bg-transparent hover:text-primary focus-visible:ring-0!"
 				>
-					<ChevronDown />
+					<HugeiconsIcon icon={ArrowDown01Icon} aria-hidden="true" />
 				</Button>
 			{/snippet}
 		</DropdownMenuTrigger>

@@ -5,7 +5,8 @@
 	 * The hero links the upstream design and ordered-dither inspiration without making a
 	 * maintenance claim.
 	 */
-	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
 	import EvilChartWordmark from '$site/assets/logos/evilchart-wordmark.svelte';
 	import ChartStage from '$site/components/landing/chart-stage.svelte';
 	import { Button } from '$site/components/ui/button/index.js';
@@ -79,7 +80,7 @@
 			</p>
 			<div class="flex flex-wrap items-center gap-3">
 				<Button href="/docs">
-					Browse Charts <ArrowRight />
+					Browse Charts <HugeiconsIcon icon={ArrowRight02Icon} aria-hidden="true" />
 				</Button>
 				<Button variant="outline" href={PORT_REPO_URL} target="_blank" rel="noreferrer">
 					<!-- GitHub's mark, as the reference inlines it. -->
