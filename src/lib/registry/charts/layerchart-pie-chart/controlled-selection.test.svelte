@@ -14,11 +14,15 @@
 	} satisfies ChartConfig;
 
 	let selected = $state<string | null>('safari');
+	let defaultSelectedSector = $state<string | null>('safari');
 	let callbackValue = $state('none');
 </script>
 
 <button type="button" data-select="chrome" onclick={() => (selected = 'chrome')}>chrome</button>
 <button type="button" data-select="none" onclick={() => (selected = null)}>none</button>
+<button type="button" data-default="chrome" onclick={() => (defaultSelectedSector = 'chrome')}
+	>change default</button
+>
 <output data-callback>{callbackValue}</output>
 
 <div class="h-[240px] w-[400px]">
@@ -29,7 +33,7 @@
 			dataKey="visitors"
 			nameKey="browser"
 			selectedSector={selected}
-			defaultSelectedSector="safari"
+			{defaultSelectedSector}
 			onSelectionChange={(selection) => (callbackValue = selection?.dataKey ?? 'none')}
 		>
 			<EvilPieChart.Pie isClickable />
@@ -40,7 +44,7 @@
 			{config}
 			dataKey="visitors"
 			nameKey="browser"
-			defaultSelectedSector="safari"
+			{defaultSelectedSector}
 			onSelectionChange={(selection) => (callbackValue = selection?.dataKey ?? 'none')}
 		>
 			<EvilPieChart.Pie isClickable />

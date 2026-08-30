@@ -1,5 +1,6 @@
 import { render } from 'vitest-browser-svelte';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { tick } from 'svelte';
 import Harness from './controlled-selection.test.svelte';
 
 const NativeResizeObserver = window.ResizeObserver;
@@ -58,9 +59,14 @@ describe('LayerChart Pie controlled selection', () => {
 		expect(sector(container, 'chrome').getAttribute('aria-pressed')).toBe('false');
 	});
 
-	it('initializes an uncontrolled chart from its default and then owns selection', async () => {
+	it('initializes an uncontrolled chart once and ignores later default changes', async () => {
 		const { container } = render(Harness, { controlled: false });
 		await expect.poll(() => sector(container, 'safari')?.getAttribute('aria-pressed')).toBe('true');
+
+		container.querySelector<HTMLButtonElement>('[data-default="chrome"]')!.click();
+		await tick();
+		expect(sector(container, 'safari').getAttribute('aria-pressed')).toBe('true');
+		expect(sector(container, 'chrome').getAttribute('aria-pressed')).toBe('false');
 
 		clickSector(container, 'chrome');
 
