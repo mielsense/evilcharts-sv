@@ -1,5 +1,66 @@
 import type { Handle, HandleServerError } from '@sveltejs/kit';
-import { ingest } from '$site/lib/axiom.js';
+import { ingest, sanitizeAnalyticsContext } from '$site/lib/axiom.js';
+
+type MediaRange = {
+	type: string;
+	subtype: string;
+	quality: number;
+	specificity: number;
+};
+
+function isDocsPath(pathname: string): boolean {
+	return pathname === '/docs' || pathname.startsWith('/docs/');
+}
+
+function parseAccept(accept: string): MediaRange[] {
+	return accept.split(',').flatMap((value) => {
+		const [mediaType = '', ...parameters] = value.split(';');
+		const [type, subtype, ...extra] = mediaType.trim().toLowerCase().split('/');
+		if (!type || !subtype || extra.length > 0) return [];
+
+		let quality = 1;
+		for (const parameter of parameters) {
+			const [name, rawValue] = parameter.trim().split('=', 2);
+			if (name?.toLowerCase() !== 'q') continue;
+			const value = rawValue?.trim() ?? '';
+			quality = /^(?:0(?:\.\d{0,3})?|1(?:\.0{0,3})?)$/.test(value) ? Number(value) : 0;
+			break;
+		}
+
+		const specificity = type === '*' ? 0 : subtype === '*' ? 1 : 2;
+		return [{ type, subtype, quality, specificity }];
+	});
+}
+
+function qualityFor(ranges: MediaRange[], type: string, subtype: string): number {
+	let quality = 0;
+	let specificity = -1;
+
+	for (const range of ranges) {
+		if (range.type !== '*' && range.type !== type) continue;
+		if (range.subtype !== '*' && range.subtype !== subtype) continue;
+		if (range.specificity <= specificity) continue;
+		specificity = range.specificity;
+		quality = range.quality;
+	}
+
+	return quality;
+}
+
+function prefersMarkdown(accept: string): boolean {
+	const ranges = parseAccept(accept);
+	const markdownQuality = qualityFor(ranges, 'text', 'markdown');
+	const htmlQuality = qualityFor(ranges, 'text', 'html');
+	return markdownQuality > 0 && markdownQuality > htmlQuality;
+}
+
+function varyOnAccept(response: Response): Response {
+	const values = (response.headers.get('Vary') ?? '').split(',').map((value) => value.trim());
+	if (!values.some((value) => value.toLowerCase() === 'accept')) {
+		response.headers.append('Vary', 'Accept');
+	}
+	return response;
+}
 
 /**
  * Logs the real error server-side. SvelteKit only sends a generic message to the browser, which
@@ -23,13 +84,13 @@ export const handleError: HandleServerError = ({ error, event }) => {
  */
 export const handle: Handle = async ({ event, resolve }) => {
 	const { pathname } = event.url;
-	const accept = event.request.headers.get('accept')?.toLowerCase() ?? '';
+	const accept = event.request.headers.get('accept') ?? '';
 
-	const context = {
+	const context = sanitizeAnalyticsContext({
 		userAgent: event.request.headers.get('user-agent'),
 		country: event.request.headers.get('x-vercel-ip-country'),
 		referer: event.request.headers.get('referer')
-	};
+	});
 
 	if (pathname.startsWith('/r/') && pathname.endsWith('.json')) {
 		void ingest([
@@ -42,18 +103,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const wantsMarkdown =
-		pathname.startsWith('/docs') && accept.includes('text/markdown') && !pathname.endsWith('.md');
+	const isDocs = isDocsPath(pathname);
+	const wantsMarkdown = isDocs && prefersMarkdown(accept) && !pathname.endsWith('.md');
 
 	if (!wantsMarkdown) {
 		const response = await resolve(event);
-		if (pathname.startsWith('/docs')) response.headers.append('Vary', 'Accept');
-		return response;
+		return isDocs ? varyOnAccept(response) : response;
 	}
 
 	const slug = pathname.replace(/^\/docs\/?/, '');
 	void ingest([{ event: 'docs_markdown_fetch', slug: slug || 'index', ...context }]);
 
 	// `/docs` → `/docs.md`; `/docs/<slug>` → `/docs/<slug>.md`.
-	return event.fetch(slug ? `/docs/${slug}.md` : '/docs.md');
+	return varyOnAccept(await event.fetch(slug ? `/docs/${slug}.md` : '/docs.md'));
 };

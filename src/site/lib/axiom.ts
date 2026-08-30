@@ -12,6 +12,45 @@
 import { env } from '$env/dynamic/private';
 
 const INGEST_ORIGIN = 'https://api.axiom.co';
+const MAX_REFERER_LENGTH = 512;
+
+type RawAnalyticsContext = {
+	userAgent: string | null;
+	country: string | null;
+	referer: string | null;
+};
+
+/**
+ * Analytics events may add only these request fields:
+ *
+ * - `country`: an uppercase two-letter ASCII country code;
+ * - `referer`: an HTTP(S) origin with no credentials, path, query, or fragment.
+ *
+ * User-agent strings are intentionally omitted because raw device detail is not needed.
+ */
+export function sanitizeAnalyticsContext({
+	country,
+	referer
+}: RawAnalyticsContext): Record<string, string> {
+	const context: Record<string, string> = {};
+
+	if (country && /^[A-Za-z]{2}$/.test(country)) {
+		context.country = country.toUpperCase();
+	}
+
+	if (referer && referer.length <= MAX_REFERER_LENGTH) {
+		try {
+			const url = new URL(referer);
+			if (url.protocol === 'http:' || url.protocol === 'https:') {
+				context.referer = url.origin;
+			}
+		} catch {
+			// Invalid referrers are omitted from analytics.
+		}
+	}
+
+	return context;
+}
 
 export function isAxiomConfigured(): boolean {
 	return Boolean(env.AXIOM_TOKEN && env.AXIOM_DATASET);
