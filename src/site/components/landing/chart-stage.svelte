@@ -105,12 +105,18 @@
 		const wanted = liveCardIndexes;
 		let cancelled = false;
 
-		Promise.all(wanted.map((index) => loadLandingCard(CARDS[index].card))).then((components) => {
-			if (cancelled) return;
-			cardComponents = Object.fromEntries(
-				wanted.map((index, position) => [CARDS[index].card, components[position]])
-			);
-		});
+		Promise.allSettled(wanted.map((index) => loadLandingCard(CARDS[index].card))).then(
+			(results) => {
+				if (cancelled) return;
+				cardComponents = Object.fromEntries(
+					results.flatMap((result, position) =>
+						result.status === 'fulfilled'
+							? [[CARDS[wanted[position]].card, result.value] as const]
+							: []
+					)
+				);
+			}
+		);
 
 		return () => {
 			cancelled = true;
