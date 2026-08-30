@@ -268,7 +268,12 @@
 			style={legendStyle}
 		/>
 	{/if}
-	<div class="relative min-h-0 w-full flex-1">
+	<div
+		class={[
+			'relative min-h-0 w-full flex-1',
+			legend && legend.verticalAlign === 'bottom' && !isLoading && 'mb-3'
+		]}
+	>
 		{#if backgroundVariant}<Background variant={backgroundVariant} />{/if}
 		<EChartsHost
 			{option}
