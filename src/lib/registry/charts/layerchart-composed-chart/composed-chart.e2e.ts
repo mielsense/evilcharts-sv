@@ -299,13 +299,22 @@ test.describe('EvilComposedChart examples', () => {
 	});
 
 	test('the reveal mask wipes the line in from the left', async ({ page }) => {
-		await open(page, 'ex-composed-chart');
+		await page.goto('/preview/ex-composed-chart?w=630&h=360');
+		await page.waitForSelector('[data-preview-ready]');
 		const mask = plot(page).locator('mask[id$="-reveal-mask"]').first();
 		await expect(mask).toBeAttached();
 		const rect = mask.locator('rect');
+		await expect(rect).toHaveAttribute('x', '0%');
+
+		const early = Number.parseFloat((await rect.getAttribute('width')) ?? '100');
+		expect(early).toBeGreaterThan(0);
+		expect(early).toBeLessThan(100);
+
+		await page.waitForTimeout(200);
+		const later = Number.parseFloat((await rect.getAttribute('width')) ?? '0');
+		expect(later).toBeGreaterThan(early);
+
 		await expect(rect).toHaveAttribute('width', '100%');
-		// `left-to-right` grows from originX 0; motion writes it onto the element's style.
-		expect(await rect.evaluate((n) => (n as SVGElement).style.transformOrigin)).toContain('0%');
 	});
 
 	test('clicking a legend entry dims the other series', async ({ page }) => {

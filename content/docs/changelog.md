@@ -24,6 +24,9 @@ This page records changes to the Svelte port, its registry, and its documentatio
   the same examples in the ECharts provider, apart from the six documented dither additions.
 - Preserved chart-owned animation lifecycles when consumer ECharts options are merged and made
   loading, dashed-stroke, hover, and landing motion respect reduced-motion preferences.
+- Made LayerChart Cartesian entrances use one uninterrupted chart-owned timeline, preventing
+  scale remounts from shortening or restarting reveals, and matched Area and Line wipe speed to
+  the ECharts provider.
 - Added keyboard controls for clickable series and ECharts brush ranges without duplicating an
   existing clickable legend.
 - Aligned shared theme tokens and legend spacing with the original, and made generated chart CSS

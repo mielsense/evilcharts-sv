@@ -1,6 +1,8 @@
 import { chartColorVariable } from '../layerchart-chart/colors.js';
 import type { DitherCanvasFrame, DitherVariant } from './types.js';
 
+export { cubicBezierProgress } from '../layerchart-chart/intros.js';
+
 export type DitherMarkKind = 'fill' | 'stroke';
 
 export type DitherDomMark = {
@@ -125,29 +127,6 @@ export function resolveDitherSeriesColors(frame: DitherCanvasFrame, key: string)
 	return colors;
 }
 
-/** Evaluates a CSS cubic-bezier curve at an input time. */
-export function cubicBezierProgress(
-	progress: number,
-	x1: number,
-	y1: number,
-	x2: number,
-	y2: number
-): number {
-	const target = Math.min(1, Math.max(0, progress));
-	const sample = (t: number, a: number, b: number) => {
-		const inverse = 1 - t;
-		return 3 * inverse * inverse * t * a + 3 * inverse * t * t * b + t * t * t;
-	};
-	let low = 0;
-	let high = 1;
-	for (let index = 0; index < 14; index += 1) {
-		const middle = (low + high) / 2;
-		if (sample(middle, x1, x2) < target) low = middle;
-		else high = middle;
-	}
-	return sample((low + high) / 2, y1, y2);
-}
-
 export function clipDitherReveal(
 	context: CanvasRenderingContext2D,
 	bounds: DitherDomMark['bounds'],
@@ -155,7 +134,7 @@ export function clipDitherReveal(
 	progress: number
 ): void {
 	if (!type || type === 'none' || progress >= 1) return;
-	const eased = cubicBezierProgress(progress, 0, 0.7, 0.5, 1);
+	const eased = Math.min(1, Math.max(0, progress));
 	const { x, y, width, height } = bounds;
 	context.beginPath();
 	if (type === 'right-to-left') {

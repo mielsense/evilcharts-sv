@@ -6,7 +6,8 @@ export const DEFAULT_BAR_RADIUS = 4;
 export const LOADING_DATA_KEY = 'loading';
 export const LOADING_ANIMATION_DURATION = 2000; // in milliseconds
 export const REVEAL_DURATION = 1; // line intro wipe length, in seconds
-export const REVEAL_EASE: [number, number, number, number] = [0, 0.7, 0.5, 1]; // intro easing
+export const REVEAL_EASE: [number, number, number, number] = [0, 0, 1, 1]; // ECharts' line clip
+export const BAR_REVEAL_EASE: [number, number, number, number] = [0, 0.7, 0.5, 1];
 export const BAR_GROW_DURATION = 0.5; // per-bar grow-in length, in seconds
 export const BAR_STAGGER = 0.05; // delay between consecutive bars, in seconds
 

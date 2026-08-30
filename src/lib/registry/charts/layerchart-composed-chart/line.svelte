@@ -9,16 +9,17 @@
 	import { Highlight, Points, Spline } from 'layerchart';
 	import { useReducedMotion } from '@humanspeak/svelte-motion';
 	import type { Snippet } from 'svelte';
-	import { resolveCurve } from '../../ui/layerchart-chart/curves.js';
+	import { RevealMask, resolveCurve } from '../../ui/layerchart-chart/index.js';
 	import { ChartDot } from '../../ui/layerchart-dot/index.js';
 	import type { DitherVariant } from '../../ui/layerchart-dither/index.js';
 	import { useComposedChart } from './composed-chart-context.svelte.js';
 	import HorizontalColorGradient from './defs/horizontal-color-gradient.svelte';
 	import LineGlowFilter from './defs/line-glow-filter.svelte';
-	import RevealMask from './defs/reveal-mask.svelte';
 	import { getOpacity } from './helpers.js';
 	import { setLineSlotsContext } from './line-slots.svelte.js';
 	import {
+		REVEAL_DURATION,
+		REVEAL_EASE,
 		STROKE_WIDTH,
 		type ComposedAnimationType,
 		type CurveType,
@@ -186,7 +187,14 @@
 
 	<defs>
 		{#if revealType !== 'none'}
-			<RevealMask {id} type={revealType} introStartedAt={chart.introStartedAt} />
+			<RevealMask
+				{id}
+				type={revealType}
+				elapsed={chart.introElapsed}
+				duration={REVEAL_DURATION}
+				ease={REVEAL_EASE}
+				onReady={chart.startIntro}
+			/>
 		{/if}
 		<HorizontalColorGradient {id} {dataKey} config={chart.config} />
 		{#if glow}

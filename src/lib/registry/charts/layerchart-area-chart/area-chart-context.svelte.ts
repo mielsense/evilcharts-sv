@@ -16,7 +16,8 @@ type Options = {
 	seriesKeys: () => string[];
 	curveType: () => CurveType;
 	animationType: () => AreaAnimationType;
-	introStartedAt: () => number;
+	introElapsed: () => number;
+	startIntro: () => void;
 	renderStyle: () => RenderStyle;
 	ditherVariant: () => DitherVariant;
 	isStacked: () => boolean;
@@ -82,8 +83,8 @@ export class AreaChartContext {
 	get animationType() {
 		return this.#options.animationType();
 	}
-	get introStartedAt() {
-		return this.#options.introStartedAt();
+	get introElapsed() {
+		return this.#options.introElapsed();
 	}
 	get renderStyle() {
 		return this.#options.renderStyle();
@@ -121,6 +122,10 @@ export class AreaChartContext {
 
 	selectDataKey = (dataKey: string | null) => {
 		this.#options.selectDataKey(dataKey);
+	};
+
+	startIntro = () => {
+		this.#options.startIntro();
 	};
 
 	registerXAxisDataKey = (token: string, dataKey: string | undefined) => {

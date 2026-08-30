@@ -80,6 +80,7 @@
       "type": "registry:component",
       "dependencies": [
         "layerchart@^2.3.0",
+        "@humanspeak/svelte-motion@^0.9.4",
         "d3-shape@^3.2.0",
         "@types/d3-shape@^3.2.0"
       ],
@@ -145,6 +146,11 @@
           "target": "$lib/components/evilcharts/ui/layerchart-chart/index.ts"
         },
         {
+          "path": "src/lib/registry/ui/layerchart-chart/intro-timeline.svelte.ts",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/layerchart-chart/intro-timeline.svelte.ts"
+        },
+        {
           "path": "src/lib/registry/ui/layerchart-chart/intros.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-chart/intros.ts"
@@ -163,6 +169,11 @@
           "path": "src/lib/registry/ui/layerchart-chart/payload.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/ui/layerchart-chart/payload.ts"
+        },
+        {
+          "path": "src/lib/registry/ui/layerchart-chart/reveal-mask.svelte",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/ui/layerchart-chart/reveal-mask.svelte"
         },
         {
           "path": "src/lib/registry/ui/layerchart-chart/selectable-series-controls.svelte",
@@ -736,11 +747,6 @@
           "target": "$lib/components/evilcharts/charts/layerchart-area-chart/defs/lines-pattern.svelte"
         },
         {
-          "path": "src/lib/registry/charts/layerchart-area-chart/defs/reveal-mask.svelte",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-area-chart/defs/reveal-mask.svelte"
-        },
-        {
           "path": "src/lib/registry/charts/layerchart-area-chart/defs/reverse-gradient-pattern.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-area-chart/defs/reverse-gradient-pattern.svelte"
@@ -877,11 +883,6 @@
           "path": "src/lib/registry/charts/layerchart-line-chart/defs/glow-filter.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-line-chart/defs/glow-filter.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-line-chart/defs/reveal-mask.svelte",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-line-chart/defs/reveal-mask.svelte"
         },
         {
           "path": "src/lib/registry/charts/layerchart-line-chart/dot.svelte",
@@ -1208,11 +1209,6 @@
           "path": "src/lib/registry/charts/layerchart-composed-chart/defs/line-glow-filter.svelte",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/layerchart-composed-chart/defs/line-glow-filter.svelte"
-        },
-        {
-          "path": "src/lib/registry/charts/layerchart-composed-chart/defs/reveal-mask.svelte",
-          "type": "registry:component",
-          "target": "$lib/components/evilcharts/charts/layerchart-composed-chart/defs/reveal-mask.svelte"
         },
         {
           "path": "src/lib/registry/charts/layerchart-composed-chart/defs/stripped-pattern.svelte",

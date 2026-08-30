@@ -16,7 +16,8 @@ type Options = {
 	seriesKeys: () => string[];
 	curveType: () => CurveType;
 	animationType: () => LineAnimationType;
-	introStartedAt: () => number;
+	introElapsed: () => number;
+	startIntro: () => void;
 	renderStyle: () => RenderStyle;
 	ditherVariant: () => DitherVariant;
 	isLoading: () => boolean;
@@ -78,8 +79,8 @@ export class LineChartContext {
 	get animationType() {
 		return this.#options.animationType();
 	}
-	get introStartedAt() {
-		return this.#options.introStartedAt();
+	get introElapsed() {
+		return this.#options.introElapsed();
 	}
 	get renderStyle() {
 		return this.#options.renderStyle();
@@ -105,6 +106,10 @@ export class LineChartContext {
 
 	selectDataKey = (dataKey: string | null) => {
 		this.#options.selectDataKey(dataKey);
+	};
+
+	startIntro = () => {
+		this.#options.startIntro();
 	};
 
 	registerXAxisDataKey = (token: string, dataKey: string | undefined) => {
