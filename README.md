@@ -1,5 +1,7 @@
 # Evil Charts for Svelte
 
+[![CI](https://github.com/mielsense/evilcharts-sv/actions/workflows/ci.yml/badge.svg)](https://github.com/mielsense/evilcharts-sv/actions/workflows/ci.yml)
+
 Animated, interactive chart components for **Svelte 5**. Choose [LayerChart][layerchart] for
 Svelte-rendered SVG or [Apache ECharts][echarts] for Canvas with optional SVG rendering. Components
 are styled for [shadcn-svelte][shadcn-svelte] and installed as source in your project.
@@ -181,6 +183,9 @@ A request to any `/docs/…` page with `Accept: text/markdown` is served its mar
 
 ### Install the agent skill
 
+The [Agent Skill guide](https://evilcharts-sv.vercel.app/docs/agent-skill) explains what the skill
+covers, gives example prompts, and lists the documentation fallbacks available to agents.
+
 ```bash
 npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
 ```
@@ -188,12 +193,12 @@ npx skills add mielsense/evilcharts-sv --skill evilcharts-svelte
 The skill teaches an agent how to use the library: all eight chart families, both rendering
 providers, compound components, focused examples, dashboard blocks, registry installation,
 accessibility, motion, dither rendering, and the boundary for mixing providers. It directs the
-agent to the exact current Markdown page before choosing props or imports. It does not replace the
-separate Context7 and MCP documentation options below.
+agent to the exact current Markdown page before choosing props or imports.
 
-### Context7
+### Context7 alternative
 
-Evil Charts for Svelte is indexed on Context7 as
+If an agent cannot install repository skills, use Context7 MCP instead. Evil Charts for Svelte is
+indexed as
 [`/mielsense/evilcharts-sv`](https://context7.com/mielsense/evilcharts-sv). If your coding agent has
 Context7 MCP connected, give it that library ID directly:
 
@@ -210,7 +215,11 @@ JSON-RPC endpoint at <https://evilcharts-sv.vercel.app/mcp>.
 
 ## Contributing
 
-Bug reports and fixes are welcome. Two things to know first:
+Bug reports and fixes are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for setup, generated-file
+rules, changelog policy, required evidence, and the pull-request workflow. Report vulnerabilities
+through the private route in [SECURITY.md](./SECURITY.md), not a public issue.
+
+Two project rules matter before you start:
 
 - **Parity with the original is the goal.** A change that makes a chart diverge from
   [evilcharts.com][upstream-site] needs measured justification and focused regression coverage.

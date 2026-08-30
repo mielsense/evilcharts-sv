@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+early_access: false
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  in_progress_fortune: false
+  review_status: true
+  review_details: true
+  collapse_walkthrough: true
+  sequence_diagrams: false
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 5
+    ignore_title_keywords:
+      - WIP
+      - '[skip review]'
+    ignore_usernames:
+      - 'dependabot[bot]'
+      - 'github-actions[bot]'
+  path_filters:
+    - '!registry.json'
+    - '!src/lib/registry/__index__.ts'
+    - '!static/r/**'
+    - '!pnpm-lock.yaml'
+  path_instructions:
+    - path: 'src/lib/registry/**'
+      instructions: |
+        Treat the original EvilCharts behavior as the parity target. Check provider boundaries,
+        stable animation geometry, reduced-motion behavior, keyboard and pointer interaction,
+        accessible naming, light/dark themes, and consumer-safe source-registry imports. Flag a
+        source change whose registry manifest, focused regression coverage, docs, or dated
+        changelog entry is missing.
+    - path: 'content/docs/**'
+      instructions: |
+        Check that examples use real exported components and registry names, install commands point
+        to https://evilcharts-sv.vercel.app/, provider guidance stays accurate, links are useful,
+        and prose is direct. Docs-only edits do not belong in the library changelog; require a dated
+        entry only when the same change alters installable chart behavior or a registry contract.
+    - path: 'skills/evilcharts-svelte/**'
+      instructions: |
+        Check that agent guidance matches the current chart families, provider APIs, registry
+        commands, examples, blocks, accessibility, motion, and dither support. Do not allow the
+        skill to invent props or mix compound parts across providers.
+    - path: '.github/**'
+      instructions: |
+        Review workflow triggers, fork safety, least-privilege permissions, immutable action pins,
+        concurrency, deterministic evidence, and whether required checks remain runnable by public
+        contributors. Do not recommend publication or write permissions for pull-request jobs.
+
+chat:
+  auto_reply: true

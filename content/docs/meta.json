@@ -1,4 +1,4 @@
 {
 	"root": true,
-	"pages": ["index", "chart-config", "layerchart", "echarts", "changelog"]
+	"pages": ["index", "agent-skill", "chart-config", "layerchart", "echarts", "changelog"]
 }

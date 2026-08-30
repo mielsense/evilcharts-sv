@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://evilcharts-sv.vercel.app/docs
+    about: Read setup, provider, chart, and component documentation.
+  - name: Security report
+    url: https://github.com/mielsense/evilcharts-sv/security/advisories/new
+    about: Report vulnerabilities privately instead of opening a public issue.

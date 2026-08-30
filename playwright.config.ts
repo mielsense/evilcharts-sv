@@ -3,7 +3,10 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
 	webServer: {
 		// CI builds in the preceding workflow step; local runs remain self-contained.
-		command: process.env.CI ? 'pnpm preview' : 'pnpm build && pnpm preview',
+		command:
+			process.env.CI || process.env.EVILCHARTS_E2E_USE_BUILD
+				? 'pnpm preview'
+				: 'pnpm build && pnpm preview',
 		port: 4173,
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000

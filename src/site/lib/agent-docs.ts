@@ -14,7 +14,7 @@ import {
 } from '$site/globals/constants/site.js';
 import { processMdxForLLMs } from './llm.js';
 import { absoluteUrl } from './utils.js';
-import { getPages, type DocsPage } from './source.js';
+import { getPages, type DocsPage } from './source.server.js';
 import skillSource from '../../../skills/evilcharts-svelte/SKILL.md?raw';
 import chartCatalogSource from '../../../skills/evilcharts-svelte/references/chart-catalog.md?raw';
 import implementationGuideSource from '../../../skills/evilcharts-svelte/references/implementation-guide.md?raw';
@@ -27,7 +27,12 @@ const SKILL_REFERENCES = {
 export type SkillReferenceName = keyof typeof SKILL_REFERENCES;
 
 // Pages that belong to no provider: the intro, and the config contract both engines share.
-const SHARED_DOCS = new Set(['/docs', '/docs/chart-config', '/docs/changelog']);
+const SHARED_DOCS = new Set([
+	'/docs',
+	'/docs/agent-skill',
+	'/docs/chart-config',
+	'/docs/changelog'
+]);
 
 // Agent surfaces advertise only what can actually be installed today. A provider whose docs are
 // still a placeholder is omitted entirely — listing it would invite agents to recommend components

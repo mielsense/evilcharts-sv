@@ -6,6 +6,7 @@
  */
 import type { Component } from 'svelte';
 import {
+	AddMagicIcon,
 	BackgroundIcon,
 	BarChartIcon,
 	BrushIcon,
@@ -49,6 +50,7 @@ export function getNavItemIcon(url: string): IconComponent | undefined {
 export const OPTION_ICONS: Record<SidebarOptionId, IconComponent> = {
 	'get-started': HouseIcon as IconComponent,
 	installation: SquareAddonIcon as IconComponent,
+	'agent-skill': AddMagicIcon as IconComponent,
 	components: ShapesIcon as IconComponent,
 	changelog: HistoryIcon as IconComponent,
 	background: BackgroundIcon as IconComponent,

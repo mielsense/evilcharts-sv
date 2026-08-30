@@ -3,9 +3,11 @@
 	import { resolve } from '$app/paths';
 	import EvilChartWordmark from '$site/assets/logos/evilchart-wordmark.svelte';
 	import { Sidebar, SidebarContent, SidebarHeader } from '$site/components/ui/sidebar/index.js';
-	import { pageTree } from '$site/lib/source.js';
+	import type { PageTree } from '$site/lib/source.js';
 	import { cn } from '$site/lib/utils.js';
 	import SidebarSections from './sidebar-sections.svelte';
+
+	let { tree }: { tree: PageTree } = $props();
 </script>
 
 <Sidebar collapsible="icon">
@@ -19,6 +21,6 @@
 		</a>
 	</SidebarHeader>
 	<SidebarContent class={cn('scroll-fade select-none', 'pt-2 pb-14')}>
-		<SidebarSections tree={pageTree} />
+		<SidebarSections {tree} />
 	</SidebarContent>
 </Sidebar>

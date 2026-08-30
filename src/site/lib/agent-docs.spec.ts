@@ -9,7 +9,7 @@ import {
 	getAgentSkillsIndex
 } from './agent-docs.js';
 import { PROVIDERS, PROVIDER_META } from '$site/globals/constants/providers.js';
-import { getPages } from './source.js';
+import { getPages } from './source.server.js';
 import { absoluteUrl, SITE_URL } from './utils.js';
 
 const available = PROVIDERS.filter((id) => PROVIDER_META[id].available);
@@ -19,9 +19,15 @@ describe('getAgentDocPages', () => {
 		const urls = getAgentDocPages().map((page) => page.url);
 
 		expect(urls).toContain('/docs');
+		expect(urls).toContain('/docs/agent-skill');
 		expect(urls).toContain('/docs/chart-config');
 		for (const url of urls) {
-			const shared = ['/docs', '/docs/chart-config', '/docs/changelog'].includes(url);
+			const shared = [
+				'/docs',
+				'/docs/agent-skill',
+				'/docs/chart-config',
+				'/docs/changelog'
+			].includes(url);
 			const inProvider = available.some((id) => url.startsWith(`/docs/${id}/`));
 			expect(shared || inProvider, url).toBe(true);
 		}
