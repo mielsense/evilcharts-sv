@@ -191,7 +191,13 @@ function renderPackageCommands(commands: string, commandMap: Record<string, stri
 
 function getShowcaseList() {
 	return showcaseItems
-		.map((item) => `- [${item.name}](${item.url}) - ${item.description}`)
+		.flatMap((item) => {
+			const echartsUrl = item.url.replace('/docs/layerchart/', '/docs/echarts/');
+			return [
+				`- [${item.name} · LayerChart](${item.url}) - ${item.description}`,
+				`- [${item.name} · ECharts](${echartsUrl}) - ${item.description}`
+			];
+		})
 		.join('\n');
 }
 

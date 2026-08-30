@@ -1,7 +1,8 @@
 # Evil Charts for Svelte
 
-Animated, interactive chart components for **Svelte 5**. Built on [LayerChart][layerchart], styled
-for [shadcn-svelte][shadcn-svelte], and installed as source in your project.
+Animated, interactive chart components for **Svelte 5**. Choose [LayerChart][layerchart] for
+Svelte-rendered SVG or [Apache ECharts][echarts] for Canvas with optional SVG rendering. Components
+are styled for [shadcn-svelte][shadcn-svelte] and installed as source in your project.
 
 > ### This is an unofficial port
 >
@@ -22,9 +23,9 @@ for [shadcn-svelte][shadcn-svelte], and installed as source in your project.
 
 Two things in one repository, the same split the original uses:
 
-1. **A [shadcn-svelte][shadcn-svelte]-compatible registry** of copy-paste chart components built on
-   LayerChart. The components keep working after you copy them into your own
-   project.
+1. **A [shadcn-svelte][shadcn-svelte]-compatible registry** of copy-paste chart components with
+   parallel LayerChart and ECharts providers. The components keep working after you copy them into
+   your own project.
 2. **The documentation site** that presents the registry, renders every example, publishes the docs
    and exposes machine-readable surfaces for agents.
 
@@ -33,18 +34,25 @@ ordered-dither renderer is an independent Svelte implementation inspired by [Dit
 by Boring Software. It stays inside the same EvilCharts SV components, so tooltips, selection,
 loading, brushes, responsive layout, and transparent SVG interaction targets keep working.
 
-|                        | Count                                                     |
-| ---------------------- | --------------------------------------------------------- |
-| Chart types            | 8: area, line, bar, composed, radar, pie, radial, sankey  |
-| Shared primitives      | 7: chart, tooltip, legend, dot, brush, background, dither |
-| Documentation examples | 119                                                       |
-| Installable blocks     | 22                                                        |
-| Registry items total   | 157                                                       |
+|                        | Count                                                    |
+| ---------------------- | -------------------------------------------------------- |
+| Chart types            | 8: area, line, bar, composed, radar, pie, radial, sankey |
+| Rendering providers    | 2: LayerChart and Apache ECharts                         |
+| Shared primitives      | 13 provider-specific UI modules                          |
+| Documentation examples | 242                                                      |
+| Installable blocks     | 40                                                       |
+| Registry items total   | 312                                                      |
 
 ## Install a chart
 
 ```bash
 npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/layerchart-area-chart.json
+```
+
+Use the ECharts provider by changing the item prefix:
+
+```bash
+npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/echarts-area-chart.json
 ```
 
 Then use it:
@@ -85,6 +93,7 @@ for the full API.
 
 - **Svelte 5** (runes) and **SvelteKit 2**
 - **[LayerChart][layerchart] 2** for the chart engine
+- **[Apache ECharts][echarts] 6** for the Canvas/SVG provider
 - **[`@humanspeak/svelte-motion`][svelte-motion]** for animation
 - **Tailwind CSS v4**, **[bits-ui][bits-ui]** for the site primitives
 - **mdsvex** for the documentation
@@ -138,10 +147,10 @@ fallback so previews are self-consistent. See [`.env.example`](./.env.example).
 
 ```
 src/lib/registry/          the installable product
-  charts/                  8 chart modules, one directory each
-  ui/                      7 shared primitives
-  examples/layerchart/     119 `ex-*` documentation demos
-  blocks/layerchart/       22 composed, installable chart blocks
+  charts/                  8 chart families for each rendering provider
+  ui/                      provider-specific shared primitives
+  examples/{provider}/     focused `ex-*` documentation demos
+  blocks/{provider}/       composed, installable chart blocks
   registry-*.ts            item manifests (names, deps, consumer targets)
   __index__.ts             generated; never edit by hand
 
@@ -207,6 +216,7 @@ recorded there; this project is not affiliated with Boring Software.
 [upstream]: https://github.com/legions-developer/evilcharts
 [upstream-site]: https://evilcharts.com
 [layerchart]: https://www.layerchart.com
+[echarts]: https://echarts.apache.org
 [shadcn-svelte]: https://shadcn-svelte.com
 [svelte-motion]: https://github.com/humanspeak/svelte-motion
 [bits-ui]: https://bits-ui.com

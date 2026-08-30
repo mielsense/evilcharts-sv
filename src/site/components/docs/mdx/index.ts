@@ -6,9 +6,8 @@
  * component. `$site/lib/mdsvex-components.ts` injects an import of exactly the names each page
  * uses. Keep that module's `MDX_COMPONENTS` list in step with these exports.
  *
- * The reference's map also carries `Accordion*`, `LinkedCard`, `Kbd`, `Image` and `Description`,
- * which no page in the ported (recharts) half of the docs uses; they are exported here anyway so
- * the map stays a faithful superset.
+ * The reference's map also carries `Accordion*`, `LinkedCard`, `Kbd`, `Image` and `Description`;
+ * these exports remain a faithful superset for both provider trees.
  */
 export { Tabs, TabsList, TabsPanel, TabsTab } from '$site/components/ui/tabs/index.js';
 export { Kbd } from '$site/components/ui/kbd/index.js';

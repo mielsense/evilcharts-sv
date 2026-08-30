@@ -63,7 +63,8 @@
 				</a>
 			</h1>
 			<p class="text-[15px] text-muted-foreground">
-				Animated chart components for Svelte 5. They use LayerChart and install as source through
+				A Svelte 5 port of EvilCharts with LayerChart and Apache ECharts providers, plus
+				ordered-dither styles inspired by Dither Kit. Install each chart as source through
 				shadcn-svelte.
 			</p>
 			<p class="text-[13px] leading-relaxed text-muted-foreground/80">

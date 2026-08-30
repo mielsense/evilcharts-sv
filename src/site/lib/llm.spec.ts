@@ -99,8 +99,14 @@ describe('processMdxForLLMs', () => {
 
 	it('rewrites a link and expands the showcase grid', () => {
 		expect(output).toContain('[A link](https://example.com)');
-		expect(output).toContain('- [Area Chart](/docs/layerchart/area-chart)');
-		expect(output).toContain('- [Sankey Chart](/docs/layerchart/sankey-chart)');
+		for (const provider of ['layerchart', 'echarts']) {
+			expect(output).toContain(
+				`- [Area Chart · ${provider === 'layerchart' ? 'LayerChart' : 'ECharts'}](/docs/${provider}/area-chart)`
+			);
+			expect(output).toContain(
+				`- [Sankey Chart · ${provider === 'layerchart' ? 'LayerChart' : 'ECharts'}](/docs/${provider}/sankey-chart)`
+			);
+		}
 	});
 
 	it('inlines an example and a whole primitive directory as source', () => {

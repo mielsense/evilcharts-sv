@@ -20,6 +20,18 @@ describe('fixImports', () => {
 		[
 			"import Bar from '$lib/registry/blocks/layerchart/b-grid-bar-chart-bar.svelte';",
 			"import Bar from '$lib/components/evilcharts/blocks/layerchart/b-grid-bar-chart-bar.svelte';"
+		],
+		[
+			"import { EChartsAreaChart } from '../../charts/echarts-area-chart/index.js';",
+			"import { EChartsAreaChart } from '$lib/components/evilcharts/charts/echarts-area-chart/index.js';"
+		],
+		[
+			"import type { ChartConfig } from '../../ui/echarts-chart/index.js';",
+			"import type { ChartConfig } from '$lib/components/evilcharts/ui/echarts-chart/index.js';"
+		],
+		[
+			"import Shape from './b-grid-echarts-bar-chart-shape.svelte';",
+			"import Shape from './grid-echarts-bar-chart-shape.svelte';"
 		]
 	])('rewrites %s', (input, expected) => {
 		expect(fixImports(input)).toBe(expected);
@@ -28,10 +40,7 @@ describe('fixImports', () => {
 	it.each([
 		"import { cn } from '$lib/utils.js';",
 		"import { Chart } from 'layerchart';",
-		"import { motion } from '@humanspeak/svelte-motion';",
-		// Relative imports between items already resolve: the installed layout keeps `charts/`,
-		// `ui/` and `blocks/` siblings, exactly as the source tree does.
-		"import { getBarPositions } from '../../ui/layerchart-chart/bar-geometry.js';"
+		"import { motion } from '@humanspeak/svelte-motion';"
 	])('leaves %s alone', (line) => {
 		expect(fixImports(line)).toBe(line);
 	});
@@ -48,6 +57,14 @@ describe('getRegistryItem', () => {
 		expect(item?.files[0].path).toBe('ex-bar-chart.svelte');
 		expect(item?.files[0].content).toContain('$lib/components/evilcharts/charts/');
 		expect(item?.files[0].content).not.toContain('$lib/registry/');
+	});
+
+	it('reads an ECharts block with consumer-ready cross-item imports', async () => {
+		const item = await getRegistryItem('audience-echarts-area-chart');
+		expect(item?.files[0].content).toContain(
+			"from '$lib/components/evilcharts/charts/echarts-area-chart/index.js'"
+		);
+		expect(item?.files[0].content).not.toContain("from '../../charts/");
 	});
 
 	it('reads a whole chart directory, with paths relative to it', async () => {

@@ -3,9 +3,10 @@
 ## Project
 
 Evil Charts SV is the Svelte 5 port of EvilCharts. It ships copy-paste chart components through a
-shadcn-svelte registry and uses LayerChart for chart geometry plus `@humanspeak/svelte-motion` for
-motion. The documentation site is part of the product: examples, install commands, machine-readable
-docs, and registry output must stay aligned.
+shadcn-svelte registry. It provides parallel LayerChart and Apache ECharts implementations;
+LayerChart uses `@humanspeak/svelte-motion` for motion, while ECharts uses its native Canvas/SVG
+runtime. The documentation site is part of the product: examples, install commands,
+machine-readable docs, and registry output must stay aligned.
 
 Pixel and behavior parity with the original EvilCharts project is the default. The locally ignored
 `evilcharts/` checkout is the visual and interaction reference; it is not a dependency and must not
@@ -14,11 +15,10 @@ for the independent ordered-dither variants. Preserve the upstream credits and l
 
 ## Repository map
 
-- `src/lib/registry/charts/layerchart-*`: installable compound chart components.
-- `src/lib/registry/ui/layerchart-*`: shared chart, tooltip, legend, dot, brush, background, and
-  dither primitives.
-- `src/lib/registry/examples/layerchart/`: focused documentation examples (`ex-*`).
-- `src/lib/registry/blocks/layerchart/`: composed, installable dashboard blocks (`b-*`).
+- `src/lib/registry/charts/{layerchart,echarts}-*`: installable compound chart components.
+- `src/lib/registry/ui/{layerchart,echarts}-*`: provider-specific chart primitives.
+- `src/lib/registry/examples/{layerchart,echarts}/`: focused documentation examples (`ex-*`).
+- `src/lib/registry/blocks/{layerchart,echarts}/`: composed dashboard blocks (`b-*`).
 - `src/lib/registry/registry-*.ts`: registry manifests, consumer dependencies, and target paths.
 - `content/docs/`: authored documentation.
 - `src/site/`: docs chrome, previews, source loading, highlighting, and agent surfaces.
@@ -43,8 +43,8 @@ Generated outputs are:
 
 - Use modern Svelte 5: runes, snippets, typed props, and attachments where appropriate. Do not add
   mixed legacy reactive syntax.
-- Follow current LayerChart and `@humanspeak/svelte-motion` APIs. Check their current documentation
-  before changing framework-specific behavior.
+- Follow current LayerChart, `@humanspeak/svelte-motion`, and Apache ECharts APIs. Check their
+  current documentation before changing provider-specific behavior.
 - Keep chart roots responsible for data, config, shared selection, and compound-component context.
   Keep visual children small and composable.
 - Preserve accessibility, keyboard behavior, reduced-motion behavior, transparent SVG interaction

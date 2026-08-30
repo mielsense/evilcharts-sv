@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: Open-source Svelte 5 chart components built with LayerChart and shadcn-svelte.
+description: Open-source Svelte 5 chart components built with LayerChart or Apache ECharts.
 image: /og/og-image.png
 ---
 
@@ -12,10 +12,11 @@ image: /og/og-image.png
 </AlertContent>
 </Alert>
 
-EvilCharts is a set of installable chart components, not a separate charting runtime. The Svelte
-port uses <Link href="https://www.layerchart.com/" _blank={true} accent={true}>LayerChart</Link> for chart rendering
-and <Link href="https://shadcn-svelte.com" _blank={true} accent={true}>shadcn-svelte</Link> for its registry and UI
-conventions.
+EvilCharts is a set of installable chart components, not a separate charting runtime. Choose
+<Link href="https://www.layerchart.com/" _blank={true} accent={true}>LayerChart</Link> for
+Svelte-rendered SVG or <Link href="https://echarts.apache.org" _blank={true} accent={true}>Apache ECharts</Link>
+for Canvas with optional SVG rendering. Both providers use the same chart config and
+<Link href="https://shadcn-svelte.com" _blank={true} accent={true}>shadcn-svelte</Link> registry flow.
 
 ## The Problem
 
@@ -37,11 +38,11 @@ The result is an open-source chart component collection whose code belongs in yo
 - Design-first, animated, unique designs
 - Handcrafted SVG and motion that give each chart a distinct look
 
-## One engine, every chart
+## Two providers, one chart API
 
-Every chart is a compound component: the root owns the data and the config, and the visible parts
-are children. Same parts, same config object, same gradients, patterns and reveal animations across
-every chart type.
+Every chart is a compound component: the root owns the data and config, and the visible parts are
+children. LayerChart components use the `Evil*Chart` prefix; ECharts components use
+`ECharts*Chart`. Both providers keep the same composition model, data, variants, and interactions.
 
 ```svelte
 <EvilAreaChart {data} config={chartConfig}>
@@ -51,8 +52,8 @@ every chart type.
 </EvilAreaChart>
 ```
 
-You install one chart at a time from this port's registry, so you only ship what you choose. For
-example: `npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/layerchart-area-chart.json`.
+You install one chart at a time from this port's registry, so you only ship what you choose. Use
+`layerchart-area-chart` or `echarts-area-chart` in the registry URL to select the provider.
 
 ## Accessibility
 
@@ -91,6 +92,19 @@ Reach for it by default: product dashboards, marketing pages, anything where the
 Start with <Link href="/docs/layerchart/installation">Installation</Link>. Labels, colors, and icons
 come from one object, which is covered in <Link href="/docs/chart-config">Chart Config</Link>.
 
+### Apache ECharts
+
+**Canvas by default, with SVG available.** ECharts is a strong fit for dense dashboards and teams
+that already use its option model. EvilCharts keeps the compound Svelte API and compiles those
+parts into a typed ECharts option.
+
+- **Renderer choice.** Use the Canvas default or pass `renderer="svg"` on any chart root.
+- **Native updates.** Data changes interpolate through ECharts rather than replacing the chart.
+- **Same source-registry workflow.** Install only the ECharts chart and UI modules you need.
+
+Start with <Link href="/docs/echarts/installation">ECharts installation</Link>, then browse the
+matching chart pages under the ECharts provider.
+
 ## Credits and licence
 
 |                  |                                                                                                                |
@@ -104,4 +118,4 @@ come from one object, which is covered in <Link href="/docs/chart-config">Chart 
 
 Substantially all of the design, component API, documentation prose and example data in this port
 derive from the original project. The Svelte translation uses LayerChart,
-`@humanspeak/svelte-motion`, and Svelte 5 in place of the original React stack.
+`@humanspeak/svelte-motion`, Apache ECharts, and Svelte 5 in place of the original React stack.

@@ -9,18 +9,53 @@ function pageBody(url: string) {
 	return page!.body;
 }
 
-const CHART_DOCS = [
-	'/docs/layerchart/area-chart',
-	'/docs/layerchart/line-chart',
-	'/docs/layerchart/bar-chart',
-	'/docs/layerchart/composed-chart',
-	'/docs/layerchart/pie-chart',
-	'/docs/layerchart/radar-chart',
-	'/docs/layerchart/radial-chart',
-	'/docs/layerchart/sankey-chart'
+const CHART_FAMILIES = [
+	'area-chart',
+	'line-chart',
+	'bar-chart',
+	'composed-chart',
+	'pie-chart',
+	'radar-chart',
+	'radial-chart',
+	'sankey-chart'
 ] as const;
+const CHART_DOCS = ['layerchart', 'echarts'].flatMap((provider) =>
+	CHART_FAMILIES.map((family) => `/docs/${provider}/${family}`)
+);
 
 describe('copyable documentation', () => {
+	it('resolves every ECharts preview, source panel, and concrete install command', () => {
+		const providerPages = getPages().filter((page) => page.url.startsWith('/docs/echarts/'));
+		const registry = JSON.parse(readFileSync('registry.json', 'utf8')) as {
+			items: Array<{ name: string }>;
+		};
+		const registryNames = new Set(registry.items.map(({ name }) => name));
+
+		for (const page of providerPages) {
+			const references = [
+				...page.body.matchAll(/<(?:ComponentPreview|ComponentSource)[^>]*\bname="([^"]+)"/g),
+				...page.body.matchAll(/@evilcharts\/([^"\s]+)/g)
+			]
+				.map((match) => match[1])
+				.filter((name) => !name.includes('{'));
+
+			for (const name of references) {
+				expect(registryNames, `${page.url} -> ${name}`).toContain(name);
+			}
+		}
+	});
+
+	it('publishes consumer-ready ECharts imports and one manual ECharts dependency', () => {
+		for (const page of getPages().filter((candidate) =>
+			candidate.url.startsWith('/docs/echarts/')
+		)) {
+			expect(page.body, page.url).not.toContain('commands={["echarts", "echarts"]}');
+			expect(page.body, page.url).not.toMatch(
+				/from ["']\$lib\/components\/evilcharts\/(?:charts|ui)\/[^"']+(?<!\/index\.js)["']/
+			);
+		}
+	});
+
 	it('publishes a complete first Chart Config example', () => {
 		const firstSvelteFence = pageBody('/docs/chart-config').match(/```svelte\n([\s\S]*?)```/)?.[1];
 
@@ -125,14 +160,27 @@ describe('copyable documentation', () => {
 	it('keeps the README registry inventory in sync with the built registry', () => {
 		const readme = readFileSync('README.md', 'utf8');
 		const registry = JSON.parse(readFileSync('registry.json', 'utf8')) as {
-			items: Array<{ name: string }>;
+			items: Array<{
+				name: string;
+				type: string;
+				files: Array<{ path: string }>;
+			}>;
 		};
 		const examples = registry.items.filter(({ name }) => name.startsWith('ex-')).length;
+		const blocks = registry.items.filter(
+			({ name, type }) => type === 'registry:block' && !name.startsWith('ex-')
+		).length;
+		const primitives = registry.items.filter(({ files }) =>
+			files.some(({ path }) => path.includes('/ui/'))
+		).length;
 
 		expect(readme).toContain(`| Documentation examples | ${examples}`);
+		expect(readme).toContain(`| Installable blocks     | ${blocks}`);
+		expect(readme).toContain(
+			`| Shared primitives      | ${primitives} provider-specific UI modules`
+		);
 		expect(readme).toContain(`| Registry items total   | ${registry.items.length}`);
-		expect(readme).toContain(`examples/layerchart/     ${examples} \`ex-*\` documentation demos`);
-		expect(readme).toContain('| Shared primitives      | 7:');
-		expect(readme).toContain('ui/                      7 shared primitives');
+		expect(readme).toContain('examples/{provider}/     focused `ex-*` documentation demos');
+		expect(readme).toContain('ui/                      provider-specific shared primitives');
 	});
 });
