@@ -168,21 +168,62 @@ describe('buildLineOption', () => {
 		expect(main).toMatchObject({ showSymbol: false, symbolSize: 6 });
 	});
 
-	test('coerces missing and non-numeric line values to zero like the source chart', () => {
-		const option = buildLineOption(
-			context({
-				data: [
-					{ month: 'Jan', desktop: 10 },
-					{ month: 'Feb', desktop: null },
-					{ month: 'Mar', desktop: 'bad' }
-				]
-			})
-		);
-		const main = (
-			option.series as Array<{ id?: string; data?: Array<{ value?: number } | number> }>
-		).find((entry) => entry.id === 'desktop');
+	test('preserves empty and non-finite values as gaps across line derivatives', () => {
+		const data = [
+			{ month: 'Jan', desktop: 10 },
+			{ month: 'Feb', desktop: null },
+			{ month: 'Mar' },
+			{ month: 'Apr', desktop: Number.POSITIVE_INFINITY },
+			{ month: 'May', desktop: Number.NaN },
+			{ month: 'Jun', desktop: 0 }
+		];
+		const line = {
+			...context().lines[0],
+			connectNulls: true,
+			glowing: true
+		};
+		const option = buildLineOption(context({ data, lines: [line], brush: { height: 48 } }));
+		const series = option.series as Array<{ id?: string; data?: unknown[] }>;
+		const expected = [10, null, null, null, null, 0];
 
-		expect(main?.data).toEqual([10, 0, 0]);
+		expect(series.find((entry) => entry.id === 'desktop')?.data).toEqual(expected);
+		expect(series.find((entry) => entry.id === '__glow-0-desktop')?.data).toEqual(expected);
+		expect(series.find((entry) => entry.id === '__mini-desktop')?.data).toEqual(expected);
+
+		const revealed = buildLineOption(
+			context({ data, lines: [line], enableHoverReveal: true, hoverRevealIndex: 4 })
+		).series as Array<{ id?: string; data?: unknown[] }>;
+		expect(revealed.find((entry) => entry.id === 'desktop')?.data).toEqual([
+			10,
+			null,
+			null,
+			null,
+			null,
+			null
+		]);
+		expect(revealed.find((entry) => entry.id === '__reveal-base-desktop')?.data).toEqual([
+			null,
+			null,
+			null,
+			null,
+			null,
+			0
+		]);
+
+		const buffered = buildLineOption(
+			context({
+				data,
+				lines: [{ ...line, glowing: false, enableBufferLine: true }]
+			})
+		).series as Array<{ id?: string; data?: unknown[] }>;
+		expect(buffered.find((entry) => entry.id === '__buffer-desktop')?.data).toEqual([
+			null,
+			null,
+			null,
+			null,
+			null,
+			0
+		]);
 	});
 
 	test('uses the raw category in the tooltip and dims rows for live hover highlight', () => {

@@ -6,8 +6,10 @@
 	import { EChartsLineChart } from './echarts-line-chart/index.js';
 	import { EChartsPieChart } from './echarts-pie-chart/index.js';
 	import { EChartsRadarChart } from './echarts-radar-chart/index.js';
+	import { EChartsRadialChart } from './echarts-radial-chart/index.js';
+	import { EChartsSankeyChart } from './echarts-sankey-chart/index.js';
 
-	type Family = 'area' | 'line' | 'bar' | 'composed' | 'pie' | 'radar';
+	type Family = 'area' | 'line' | 'bar' | 'composed' | 'pie' | 'radar' | 'radial' | 'sankey';
 	// Loading keeps ECharts from rejecting intentionally duplicated runtime series ids before the
 	// accessibility-control registrations can be asserted.
 	let { family, duplicate = false }: { family: Family; duplicate?: boolean } = $props();
@@ -32,6 +34,10 @@
 		{ skill: 'Code', desktop: 65, mobile: 75 },
 		{ skill: 'Research', desktop: 70, mobile: 60 }
 	];
+	const sankeyData = {
+		nodes: [{ name: 'desktop' }, { name: 'mobile' }],
+		links: [{ source: 0, target: 1, value: 42 }]
+	};
 </script>
 
 <div style="height: 200px; width: 320px;">
@@ -106,7 +112,7 @@
 		>
 			<EChartsPieChart.Pie isClickable />
 		</EChartsPieChart>
-	{:else}
+	{:else if family === 'radar'}
 		<EChartsRadarChart
 			data={radarData}
 			{config}
@@ -121,6 +127,29 @@
 			{#if duplicate}<EChartsRadarChart.Radar dataKey="desktop" isClickable />{/if}
 			<EChartsRadarChart.Radar dataKey="mobile" isClickable />
 		</EChartsRadarChart>
+	{:else if family === 'radial'}
+		<EChartsRadialChart
+			data={pieData}
+			nameKey="browser"
+			{config}
+			renderer="svg"
+			class="h-full"
+			onSelectionChange={(item) => (selected = item?.dataKey ?? 'none')}
+		>
+			<EChartsRadialChart.RadialBar dataKey="visitors" isClickable />
+		</EChartsRadialChart>
+	{:else}
+		<EChartsSankeyChart
+			data={sankeyData}
+			{config}
+			renderer="svg"
+			animation={false}
+			class="h-full"
+			onSelectionChange={(item) => (selected = item?.dataKey ?? 'none')}
+		>
+			<EChartsSankeyChart.Node isClickable />
+			<EChartsSankeyChart.Link />
+		</EChartsSankeyChart>
 	{/if}
 </div>
 <output data-test="selection">{selected}</output>

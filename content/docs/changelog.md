@@ -1,24 +1,25 @@
 ---
 title: Changelog
-description: Changes to EvilCharts for Svelte, its registry, and its documentation.
+description: Changes to the installable EvilCharts for Svelte library and source registry.
 ---
 
-This page records changes to the Svelte port, its registry, and its documentation.
+This page records changes to the installable Svelte port, its source registry, and its agent skill.
+Docs-only, test-only, CI, and contributor-workflow changes are recorded in their pull requests.
 
 ## 2026-08-30
 
-- Added the installable `evilcharts-svelte` agent skill, with skills.sh and HTTP discovery, a
+- Preserved null and non-finite data as real gaps across ECharts Area, Line, and Composed charts,
+  including their brushes, reveal layers, buffer lines, hit targets, and tooltips.
+- Gave both Sankey providers the same guarded data contract and expanded ECharts keyboard and
+  controlled-selection coverage across chart families.
+- Unified registry source rewriting and consumer dependency versions across generated installs.
+- Added the installable `evilcharts-svelte` agent skill, with skills.sh-compatible and HTTP discovery, a
   complete chart and compound-component catalog, implementation workflows, example and block
   guidance, plus links to the Markdown docs, Context7 library, and MCP endpoint.
-- Corrected the public `miel` attribution, replaced the Svelte stand-in with LayerChart's official
-  mark, linked both rendering providers in the credits, clarified per-chart provider choice, and
-  moved standard site controls to Hugeicons.
 - Added controlled selection to LayerChart Area and Pie roots without remounting chart state, and
   made ECharts resolve chart-local color changes after mount.
 - Hardened LayerChart Sankey layout for invalid endpoints, cycles, zero-flow graphs, and numeric
   edge cases while preserving valid Recharts-compatible geometry.
-- Added announced, recoverable lazy-preview failures, terminal preview markers, strict docs content
-  negotiation, minimized analytics metadata, and bounded non-reflective MCP inputs.
 - Added Apache ECharts as a complete second rendering provider for all eight chart families, with
   Canvas rendering by default and optional SVG output.
 - Added provider-specific ECharts tooltips, legends, dots, brushes, loading states, examples,
@@ -43,8 +44,6 @@ This page records changes to the Svelte port, its registry, and its documentatio
   existing clickable legend.
 - Aligned shared theme tokens and legend spacing with the original, and made generated chart CSS
   safe for arbitrary chart IDs and data keys.
-- Corrected ECharts documentation snippets, added accessible names to primary examples, and
-  removed unused development and type-only code.
 
 ## 2026-08-27
 

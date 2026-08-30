@@ -1,5 +1,11 @@
 import { describe, expect, test } from 'vitest';
-import { buildAreaOption, createAreaLoadingData, type AreaOptionContext } from './option.js';
+import {
+	buildAreaOption,
+	computeAreaPlottedTops,
+	createAreaLoadingData,
+	resolveAreaAtPixel,
+	type AreaOptionContext
+} from './option.js';
 
 const resolved = {
 	series: {
@@ -89,6 +95,110 @@ describe('buildAreaOption', () => {
 		expect(series.find((entry) => entry.id === 'mobile')?.data).toEqual([0.7, 0.5]);
 		expect(yAxis.max).toBe(1);
 		expect(yAxis.axisLabel?.formatter?.(0.35)).toBe('35%');
+	});
+
+	test('preserves empty and non-finite values as gaps across area derivatives', () => {
+		const data = [
+			{ month: 'Jan', desktop: 10, mobile: 10 },
+			{ month: 'Feb', desktop: null, mobile: 10 },
+			{ month: 'Mar', mobile: 10 },
+			{ month: 'Apr', desktop: Number.POSITIVE_INFINITY, mobile: 10 },
+			{ month: 'May', desktop: Number.NaN, mobile: 10 },
+			{ month: 'Jun', desktop: 0, mobile: 10 },
+			{ month: 'Jul', desktop: 5, mobile: 10 }
+		];
+		const areas = context().areas.map((area, index) =>
+			index === 0 ? { ...area, connectNulls: true, enableBufferLine: true } : area
+		);
+		const option = buildAreaOption(context({ data, areas, brush: { height: 48 } }));
+		const series = option.series as Array<{ id?: string; data?: unknown[] }>;
+		const tops = computeAreaPlottedTops(context({ data, areas }));
+
+		expect(series.find((entry) => entry.id === 'desktop')?.data).toEqual([
+			0.5,
+			null,
+			null,
+			null,
+			null,
+			0,
+			null
+		]);
+		expect(series.find((entry) => entry.id === '__buffer-desktop')?.data).toEqual([
+			null,
+			null,
+			null,
+			null,
+			null,
+			0,
+			1 / 3
+		]);
+		expect(series.find((entry) => entry.id === '__bufferfill-desktop')?.data).toEqual([
+			null,
+			null,
+			null,
+			null,
+			null,
+			0,
+			1 / 3
+		]);
+		expect(series.find((entry) => entry.id === '__mini-desktop')?.data).toEqual([
+			10,
+			null,
+			null,
+			null,
+			null,
+			0,
+			5
+		]);
+		expect(tops.desktop).toEqual([0.5, null, null, null, null, 0, 1 / 3]);
+
+		const revealed = buildAreaOption(
+			context({
+				data,
+				areas: areas.map((area) => ({ ...area, enableBufferLine: false })),
+				enableHoverReveal: true,
+				hoverRevealIndex: 4
+			})
+		).series as Array<{ id?: string; data?: unknown[] }>;
+		expect(revealed.find((entry) => entry.id === 'desktop')?.data).toEqual([
+			0.5,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		]);
+		expect(revealed.find((entry) => entry.id === '__reveal-desktop')?.data).toEqual([
+			null,
+			null,
+			null,
+			null,
+			null,
+			0,
+			1 / 3
+		]);
+	});
+
+	test('does not hit-test an area at a gap', () => {
+		const chart = {
+			containPixel: () => true,
+			convertFromPixel: () => [1, 0],
+			convertToPixel: (_finder: unknown, point: [number, number | null]) => [
+				point[0],
+				point[1] === null ? 50 : 100
+			]
+		} as unknown as Parameters<typeof resolveAreaAtPixel>[0];
+
+		expect(
+			resolveAreaAtPixel(
+				chart,
+				{ desktop: [1, null], mobile: [1, 1] },
+				['desktop', 'mobile'],
+				0,
+				50
+			)
+		).toBeNull();
 	});
 
 	test('adds an unfiltered mini chart and data zoom when Brush is present', () => {

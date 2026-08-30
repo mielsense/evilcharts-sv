@@ -327,7 +327,7 @@ The sector selected on first render.
 </ApiRow>
   <ApiRow name="selectedSector" type="string | null">
 
-Controlled selection. When provided it overrides the internal state, so a parent can drive which sector is selected — pair it with `onSelectionChange` to keep your own UI (a custom legend, stat cards) and the chart in sync.
+Controlled selection. Leave it undefined to let the chart manage selection; pass `null` to clear a controlled selection. Pair it with `onSelectionChange` to keep your own UI, such as a custom legend or stat cards, in sync.
 
 </ApiRow>
   <ApiRow name="onSelectionChange" type={'(selection: { dataKey: string; value: number } | null) => void'}>

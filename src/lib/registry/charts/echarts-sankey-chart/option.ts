@@ -27,6 +27,7 @@ import {
 	type SankeyData,
 	type TooltipRegistration
 } from './types.js';
+import { validateSankeyData } from './validation.js';
 
 export type EChartsSankeyOption = ComposeOption<SankeySeriesOption | TooltipComponentOption>;
 type SankeyNodeItem = NonNullable<SankeySeriesOption['data']>[number];
@@ -108,19 +109,14 @@ export function getSankeyRevealDecision(state: SankeyRevealState): {
 }
 
 export function computeNodeDepths(data: SankeyData): Record<string, number> {
+	const { targets, topologicalOrder } = validateSankeyData(data);
 	const depths = Object.fromEntries(data.nodes.map((node) => [node.name, 0]));
-	for (let pass = 0; pass < data.nodes.length; pass += 1) {
-		let changed = false;
-		for (const link of data.links) {
-			const source = data.nodes[link.source]?.name;
-			const target = data.nodes[link.target]?.name;
-			if (!source || !target) continue;
-			if (depths[target] < depths[source] + 1) {
-				depths[target] = depths[source] + 1;
-				changed = true;
-			}
+	for (const sourceIndex of topologicalOrder) {
+		const source = data.nodes[sourceIndex].name;
+		for (const targetIndex of targets[sourceIndex]) {
+			const target = data.nodes[targetIndex].name;
+			depths[target] = Math.max(depths[target], depths[source] + 1);
 		}
-		if (!changed) break;
 	}
 	return depths;
 }
@@ -134,16 +130,12 @@ export function sankeyIntroDuration(depths: Record<string, number>): number {
 }
 
 export function computeNodeValues(data: SankeyData): Record<string, number> {
+	const { incomingValues, outgoingValues } = validateSankeyData(data);
 	return Object.fromEntries(
-		data.nodes.map((node, index) => {
-			let incoming = 0;
-			let outgoing = 0;
-			for (const link of data.links) {
-				if (link.source === index) outgoing += link.value;
-				if (link.target === index) incoming += link.value;
-			}
-			return [node.name, outgoing > 0 ? outgoing : incoming];
-		})
+		data.nodes.map((node, index) => [
+			node.name,
+			outgoingValues[index] > 0 ? outgoingValues[index] : incomingValues[index]
+		])
 	);
 }
 
@@ -491,6 +483,7 @@ function tooltip(context: SankeyOptionContext): TooltipComponentOption {
 }
 
 export function buildSankeyOption(context: SankeyOptionContext): EChartsSankeyOption {
+	validateSankeyData(context.data);
 	if (context.isLoading) {
 		const transparent = withAlpha(context.resolved.tokens.foreground, 0);
 		return {

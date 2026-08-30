@@ -260,7 +260,9 @@ The root container. It owns the flow data, shared selection state, loading skele
 <ApiTable>
   <ApiRow name="data" type="SankeyData" required>
 
-Nodes and links for the flow. `SankeyData` is `{ nodes: SankeyNode[]; links: SankeyLink[] }`, where `SankeyNode = { name: string; icon?: Snippet }` and `SankeyLink = { source: number; target: number; value: number }`. `source`/`target` are indices into `nodes`. (`icon` is accepted for parity with the LayerChart shape but is not rendered by the ECharts provider.)
+Nodes and links for the flow. `SankeyData` is `{ nodes: SankeyNode[]; links: SankeyLink[] }`, where `SankeyNode = { name: string; icon?: Snippet }` and `SankeyLink = { source: number; target: number; value: number }`. (`icon` is accepted for parity with the LayerChart shape but is not rendered by the ECharts provider.)
+
+Each `source` and `target` must be an integer index into `nodes`; values must be finite and non-negative. The graph must be acyclic, and its aggregate flows must fit JavaScript's representable numeric range. Invalid data produces no nodes or links instead of sending partial or non-finite geometry to ECharts.
 
 </ApiRow>
   <ApiRow name="config" type="ChartConfig" required>

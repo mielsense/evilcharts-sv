@@ -323,6 +323,11 @@ How multiple areas combine — independent, stacked, or normalized to 100%.
 The series selected on first render.
 
 </ApiRow>
+  <ApiRow name="selectedDataKey" type="string | null">
+
+Controls the selected series. Leave it undefined to let the chart manage selection; pass `null` to clear a controlled selection.
+
+</ApiRow>
   <ApiRow name="onSelectionChange" type="(key: string | null) => void">
 
 Fires when a series is selected or deselected via a clickable `<Area />` or `<Legend />`.
