@@ -15,24 +15,24 @@
 	}: { chartId: string; curveType: CurveType; onShimmerExit: () => void } = $props();
 </script>
 
-<!-- Keep the Line-style stroke and the fill beneath it inside one moving shimmer. -->
-<g mask={`url(#${chartId}-loading-mask)`}>
-	<Area
-		y={LOADING_AREA_DATA_KEY}
-		curve={resolveCurve(curveType)}
-		fillOpacity={0.05}
-		fill="currentColor"
-		motion="none"
-	/>
-	<Spline
-		y={LOADING_AREA_DATA_KEY}
-		curve={resolveCurve(curveType)}
-		stroke="currentColor"
-		strokeOpacity={0.5}
-		strokeWidth={STROKE_WIDTH}
-		motion="none"
-	/>
-</g>
+<!-- The stroke mirrors LoadingLine; the fill underneath follows the same shimmer independently. -->
+<Area
+	y={LOADING_AREA_DATA_KEY}
+	curve={resolveCurve(curveType)}
+	fillOpacity={0.05}
+	fill="currentColor"
+	motion="none"
+	mask={`url(#${chartId}-loading-mask)`}
+/>
+<Spline
+	y={LOADING_AREA_DATA_KEY}
+	curve={resolveCurve(curveType)}
+	stroke="currentColor"
+	strokeOpacity={0.5}
+	strokeWidth={STROKE_WIDTH}
+	motion="none"
+	mask={`url(#${chartId}-loading-mask)`}
+/>
 <defs>
 	<LoadingPattern {chartId} {onShimmerExit} />
 </defs>
