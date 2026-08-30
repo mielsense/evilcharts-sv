@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
 	generateLlmsFullTxt,
 	generateLlmsTxt,
@@ -100,7 +101,7 @@ describe('generateLlmsTxt', () => {
 	});
 
 	it('distinguishes the Svelte porter from the original author', () => {
-		expect(text).toContain('Svelte 5 port by Mathis');
+		expect(text).toContain('Svelte 5 port by miel');
 		expect(text).toContain('https://github.com/mielsense/evilcharts-sv');
 		expect(text).toContain('Original EvilCharts by Gurbinder');
 	});
@@ -131,32 +132,27 @@ describe('generateSkillMd', () => {
 	const text = generateSkillMd();
 
 	it('carries the frontmatter an agent-skill loader reads', () => {
-		expect(text.startsWith('---\nname: evilcharts')).toBe(true);
-		expect(text).toContain(`source: ${absoluteUrl('/llms.txt')}`);
+		expect(text.startsWith('---\nname: evilcharts-svelte')).toBe(true);
+		expect(text).toContain(absoluteUrl('/llms.txt'));
 	});
 
 	it('names both install-time providers and the CLI', () => {
-		expect(text).toContain('Treat LayerChart and ECharts as separate install-time providers');
+		expect(text).toContain('one project may render charts from both providers');
+		expect(text).toContain(
+			'Never mix compound parts from different providers inside one chart root'
+		);
 		expect(text).toContain('/r/{provider}-{chart-name}.json');
 		expect(text).toContain('npx shadcn-svelte@latest add');
 		expect(text.toLowerCase()).not.toContain('recharts');
 	});
 
 	it('points agents at the maintained Svelte port', () => {
-		expect(text).toContain('Svelte 5 port by Mathis');
+		expect(text).toContain('Svelte 5 port by miel');
 		expect(text).toContain('https://github.com/mielsense/evilcharts-sv');
 	});
 
-	it('ends the project credit lines as complete sentences', () => {
-		expect(text).toContain('https://github.com/mielsense/evilcharts-sv.\n');
-		expect(text).toContain('https://github.com/legions-developer/evilcharts.\n');
-	});
-
-	it('agrees with PROVIDER_META on what is installable', () => {
-		for (const id of available) {
-			expect(text).toContain(PROVIDER_META[id].name);
-		}
-		expect(text).toContain(available.length === 1 ? 'is installable' : 'are installable');
+	it('serves the canonical portable skill without a second generated copy', () => {
+		expect(text).toBe(readFileSync('skills/evilcharts-svelte/SKILL.md', 'utf8'));
 	});
 });
 
@@ -166,9 +162,9 @@ describe('getAgentSkillsIndex', () => {
 		expect(index.$schema).toBe('https://schemas.agentskills.io/discovery/0.2.0/schema.json');
 		expect(index.skills).toHaveLength(1);
 		expect(index.skills[0]).toMatchObject({
-			name: 'evilcharts',
+			name: 'evilcharts-svelte',
 			type: 'skill-md',
-			url: '/.well-known/agent-skills/evilcharts/SKILL.md'
+			url: '/.well-known/agent-skills/evilcharts-svelte/SKILL.md'
 		});
 	});
 });
