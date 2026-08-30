@@ -94,7 +94,11 @@ test.describe('EvilRadialChart examples', () => {
 		};
 		// Recharts' default `<RadialBarChart margin>`.
 		const CHART_MARGIN = 5;
-		const maxRadius = Math.min(box.w - 2 * CHART_MARGIN, box.h - 2 * CHART_MARGIN) / 2;
+		// The default bottom legend occupies the same 32px band as the reference's absolute legend
+		// wrapper. LayerChart exposes the remaining padded plot to the radial marks.
+		const EDGE_LEGEND_HEIGHT = 32;
+		const maxRadius =
+			Math.min(box.w - 2 * CHART_MARGIN, box.h - 2 * CHART_MARGIN - EDGE_LEGEND_HEIGHT) / 2;
 		// `innerRadius="30%"`, `outerRadius="100%"`, five rows, `barSize={14}`.
 		const inner = maxRadius * 0.3;
 		const step = (maxRadius - inner) / 5;
@@ -135,14 +139,16 @@ test.describe('EvilRadialChart examples', () => {
 		const height = Number(await svg.getAttribute('height'));
 		const width = Number(await svg.getAttribute('width'));
 		const CHART_MARGIN = 5;
+		const EDGE_LEGEND_HEIGHT = 32;
+		const plotHeight = height - 2 * CHART_MARGIN - EDGE_LEGEND_HEIGHT;
 		const full = await centreOf();
 		expect(full.x).toBeCloseTo((width - 2 * CHART_MARGIN) / 2, 0);
-		expect(full.y).toBeCloseTo((height - 2 * CHART_MARGIN) / 2, 0);
+		expect(full.y).toBeCloseTo(plotHeight / 2, 0);
 
 		await open(page, 'ex-semi-variant-radial-chart');
 		const semi = await centreOf();
 		// The reference pushes `cy` to 70% so the half circle fills the box.
-		expect(semi.y).toBeCloseTo((height - 2 * CHART_MARGIN) * 0.7, 0);
+		expect(semi.y).toBeCloseTo(plotHeight * 0.7, 0);
 	});
 
 	test('the largest row fills the arc and the rest are proportional', async ({ page }) => {
