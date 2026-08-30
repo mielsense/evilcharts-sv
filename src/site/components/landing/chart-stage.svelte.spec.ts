@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { tick } from 'svelte';
 import PreviewA from '$site/components/docs/charts/component-preview-a.fixture.svelte';
 import ChartStage from './chart-stage.svelte';
+import { CARDS } from './chart-stage.svelte.js';
 
 const loadLandingCard = vi.hoisted(() => vi.fn());
 
@@ -102,7 +103,7 @@ describe('ChartStage lazy card loading', () => {
 
 		// Browser-project setup can finish on either side of the first fake-time boundary under load.
 		// Advance a bounded number of focus hops and stop as soon as the failed card is requested again.
-		for (let hop = 0; hop < 3 && !retryStarted; hop += 1) {
+		for (let hop = 0; hop <= CARDS.length && !retryStarted; hop += 1) {
 			await vi.advanceTimersByTimeAsync(4600);
 			await flushLoads();
 		}
