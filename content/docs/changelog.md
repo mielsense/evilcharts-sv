@@ -14,6 +14,8 @@ This page records changes to the Svelte port, its registry, and its documentatio
 - Added ordered-dither treatments for the ECharts area, line, bar, composed, pie, and radar charts,
   preserving the Dither Kit attribution and licence boundary.
 - Added a provider switcher so readers can move between matching LayerChart and ECharts pages.
+- Kept the LayerChart area loading curve fixed while one synchronized shimmer moves across its
+  stroke and gradient fill.
 
 ## 2026-08-27
 

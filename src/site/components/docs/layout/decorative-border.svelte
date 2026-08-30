@@ -29,13 +29,13 @@
 	<!-- main path with fill -->
 	<path
 		class="text-[#E5E5E5] dark:text-[#1B1B1B]"
-		d="M 0 0 q 10 0 20 10 l 24 24 q 10 10 20 10 L 390 44 q 10 0 10 10 l 0 -54 Z"
+		d="M -8 0 q 10 0 20 10 l 24 24 q 10 10 20 10 L 390 44 q 10 0 10 10 l 0 -54 Z"
 		fill="var(--sidebar)"
 	/>
 	<!-- main path with border -->
 	<path
 		class="text-[#E5E5E5] dark:text-[#1B1B1B]"
-		d="M 0 0 q 10 0 20 10 l 24 24 q 10 10 20 10 L 390 44 q 10 0 10 10 v 10 "
+		d="M -8 0 q 10 0 20 10 l 24 24 q 10 10 20 10 L 390 44 q 10 0 10 10 v 10 "
 		stroke="currentColor"
 		stroke-width="1"
 		vector-effect="non-scaling-stroke"

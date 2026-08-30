@@ -4,14 +4,13 @@
 	 *
 	 * The visible chart area is normalized to 0-1, the shimmer gradient has width 1,
 	 * and the pattern is 3x wide so the shimmer has buffer on both sides. The motion
-	 * rect travels x from -1 to 2. The data refresh is triggered after the
-	 * shimmer exits the visible plot, matching the Line loading state.
+	 * rect travels x from -1 to 2, leaving enough buffer for a seamless loop.
 	 */
 	import { animate, useReducedMotion } from '@humanspeak/svelte-motion';
 	import { LOADING_ANIMATION_DURATION } from '../types.js';
 	import { generateEasedGradientStops } from './gradient-stops.js';
 
-	let { chartId, onShimmerExit }: { chartId: string; onShimmerExit: () => void } = $props();
+	let { chartId }: { chartId: string } = $props();
 
 	const gradientStops = generateEasedGradientStops();
 
@@ -20,8 +19,6 @@
 	const startX = -1;
 	const endX = 2;
 	const shouldReduceMotion = useReducedMotion();
-	let lastX = startX;
-
 	function runShimmer(reduced: boolean) {
 		return (node: SVGRectElement) => {
 			node.setAttribute('x', reduced ? '0' : String(startX));
@@ -34,8 +31,6 @@
 				repeatType: 'loop',
 				onUpdate(xValue: number) {
 					node.setAttribute('x', String(xValue));
-					if (xValue >= 1 && lastX < 1) onShimmerExit();
-					lastX = xValue;
 				}
 			});
 			return () => controls.stop();

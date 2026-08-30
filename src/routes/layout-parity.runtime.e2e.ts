@@ -6,13 +6,16 @@ test('client-side docs navigation resets the docs scroll container', async ({ pa
 	await expect(page.getByRole('heading', { level: 1, name: 'Chart Config' })).toBeVisible();
 
 	const scrollRoot = page.locator('[data-docs-scroll-root]');
-	await scrollRoot.evaluate((element) => element.scrollTo(0, 1800));
+	await expect
+		.poll(() => scrollRoot.evaluate((element) => element.scrollHeight - element.clientHeight))
+		.toBeGreaterThan(1000);
+	await scrollRoot.evaluate((element) => element.scrollTo(0, element.scrollHeight));
 	await expect
 		.poll(() => scrollRoot.evaluate((element) => element.scrollTop))
 		.toBeGreaterThan(1000);
 
 	await page.getByRole('link', { name: 'Installation', exact: true }).click();
-	await expect(page).toHaveURL(/\/docs\/layerchart\/installation$/);
+	await expect(page).toHaveURL(/\/docs\/echarts\/installation$/);
 	await expect.poll(() => scrollRoot.evaluate((element) => element.scrollTop)).toBe(0);
 });
 
@@ -185,9 +188,9 @@ test('the docs attribution header stays inside its responsive container', async 
 		expect(actionsBox).not.toBeNull();
 		expect(borderBox).not.toBeNull();
 
-		// The curve ends at x=64 in the SVG's 400-unit viewBox. Keep the filled header
+		// The translated curve ends at x=56 in the SVG's 400-unit viewBox. Keep the filled header
 		// surface clear of every control while its trailing edge masks the panel border.
-		const curveEnd = borderBox!.x + borderBox!.width * (64 / 400);
+		const curveEnd = borderBox!.x + borderBox!.width * (56 / 400);
 		expect(curveEnd).toBeLessThanOrEqual(actionsBox!.x - 8);
 	};
 
