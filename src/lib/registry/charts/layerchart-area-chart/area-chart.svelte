@@ -54,6 +54,7 @@
 		animationType = 'left-to-right',
 		stackType = 'default',
 		defaultSelectedDataKey = null,
+		selectedDataKey: selectedDataKeyProp,
 		onSelectionChange,
 		isLoading = false,
 		loadingPoints,
@@ -74,6 +75,7 @@
 		animationType?: AreaAnimationType; // default intro reveal for every <Area />
 		stackType?: StackType; // how multiple areas combine
 		defaultSelectedDataKey?: string | null; // series selected on first render
+		selectedDataKey?: string | null; // controlled selected series; null clears selection
 		onSelectionChange?: (selectedDataKey: string | null) => void; // fires when the selected series changes
 		isLoading?: boolean; // shows the animated loading skeleton
 		loadingPoints?: number; // number of points in the loading skeleton
@@ -97,7 +99,10 @@
 	});
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedDataKey)`.
-	let selectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
+	let internalSelectedDataKey = $state<string | null>(untrack(() => defaultSelectedDataKey));
+	const selectedDataKey = $derived(
+		selectedDataKeyProp === undefined ? internalSelectedDataKey : selectedDataKeyProp
+	);
 
 	const loading = new LoadingDataState({
 		isLoading: () => isLoading,
@@ -261,7 +266,7 @@
 		chartId: () => chartId,
 		selectedDataKey: () => selectedDataKey,
 		selectDataKey: (next) => {
-			selectedDataKey = next;
+			if (selectedDataKeyProp === undefined) internalSelectedDataKey = next;
 			onSelectionChange?.(next);
 		},
 		registerXAxisDataKey: (token, key) => {

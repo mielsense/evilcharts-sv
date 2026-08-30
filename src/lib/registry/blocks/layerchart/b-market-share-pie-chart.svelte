@@ -26,39 +26,35 @@
 
 	const total = series.reduce((sum, { value }) => sum + value, 0);
 	let selected = $state<string | null>(null);
-	let revision = $state(0);
 
 	function select(key: string) {
 		selected = selected === key ? null : key;
-		revision += 1;
 	}
 </script>
 
 <div class="@container flex h-full w-full min-w-0 flex-col overflow-hidden p-3 sm:p-4">
 	<div class="relative min-h-0 w-full flex-1">
-		{#key revision}
-			<EvilPieChart
-				{data}
-				{config}
-				dataKey="value"
-				nameKey="product"
-				class="h-full w-full"
-				defaultSelectedSector={selected}
-				onSelectionChange={(selection) => (selected = selection?.dataKey ?? null)}
+		<EvilPieChart
+			{data}
+			{config}
+			dataKey="value"
+			nameKey="product"
+			class="h-full w-full"
+			selectedSector={selected}
+			onSelectionChange={(selection) => (selected = selection?.dataKey ?? null)}
+		>
+			<EvilPieChart.Tooltip />
+			<EvilPieChart.Pie
+				isClickable
+				innerRadius="52%"
+				outerRadius="94%"
+				paddingAngle={3}
+				startAngle={90}
+				endAngle={-270}
 			>
-				<EvilPieChart.Tooltip />
-				<EvilPieChart.Pie
-					isClickable
-					innerRadius="52%"
-					outerRadius="94%"
-					paddingAngle={3}
-					startAngle={90}
-					endAngle={-270}
-				>
-					<EvilPieChart.Label dataKey="share" />
-				</EvilPieChart.Pie>
-			</EvilPieChart>
-		{/key}
+				<EvilPieChart.Label dataKey="share" />
+			</EvilPieChart.Pie>
+		</EvilPieChart>
 
 		<div
 			class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5"

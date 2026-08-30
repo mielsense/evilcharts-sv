@@ -81,28 +81,26 @@
 	</div>
 
 	<div class="mt-2 min-h-0 flex-1 overflow-hidden @sm/block:mt-4">
-		{#key selected}
-			<EvilAreaChart
-				{data}
-				{config}
-				xDataKey="time"
-				class="size-full"
-				curveType="linear"
-				defaultSelectedDataKey={selected}
-				onSelectionChange={(key) => (selected = key)}
-			>
-				<EvilAreaChart.Grid />
-				<EvilAreaChart.XAxis
-					dataKey="time"
-					tickFormatter={(value) => String(value).replace('Today ', '')}
-				/>
-				<EvilAreaChart.YAxis />
-				<EvilAreaChart.Tooltip />
-				<EvilAreaChart.Area dataKey="p50" variant="gradient" strokeVariant="solid" isClickable />
-				<EvilAreaChart.Area dataKey="p75" variant="gradient" strokeVariant="solid" isClickable />
-				<EvilAreaChart.Area dataKey="p95" variant="gradient" strokeVariant="solid" isClickable />
-				<EvilAreaChart.Area dataKey="p99" variant="gradient" strokeVariant="solid" isClickable />
-			</EvilAreaChart>
-		{/key}
+		<EvilAreaChart
+			{data}
+			{config}
+			xDataKey="time"
+			class="size-full"
+			curveType="linear"
+			selectedDataKey={selected}
+			onSelectionChange={(key) => (selected = key)}
+		>
+			<EvilAreaChart.Grid />
+			<EvilAreaChart.XAxis
+				dataKey="time"
+				tickFormatter={(value) => String(value).replace('Today ', '')}
+			/>
+			<EvilAreaChart.YAxis />
+			<EvilAreaChart.Tooltip />
+			<EvilAreaChart.Area dataKey="p50" variant="gradient" strokeVariant="solid" isClickable />
+			<EvilAreaChart.Area dataKey="p75" variant="gradient" strokeVariant="solid" isClickable />
+			<EvilAreaChart.Area dataKey="p95" variant="gradient" strokeVariant="solid" isClickable />
+			<EvilAreaChart.Area dataKey="p99" variant="gradient" strokeVariant="solid" isClickable />
+		</EvilAreaChart>
 	</div>
 </section>

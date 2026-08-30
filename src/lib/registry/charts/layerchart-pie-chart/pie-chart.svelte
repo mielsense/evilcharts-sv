@@ -33,6 +33,7 @@
 		chartProps,
 		accessibility,
 		defaultSelectedSector = null,
+		selectedSector: selectedSectorProp,
 		onSelectionChange,
 		isLoading = false,
 		initialDimension = { width: 320, height: 200 },
@@ -50,6 +51,7 @@
 		chartProps?: Record<string, unknown>; // escape hatch for the raw LayerChart Chart
 		accessibility?: ChartAccessibility; // accessible name and description for the chart group
 		defaultSelectedSector?: string | null; // sector selected on first render
+		selectedSector?: string | null; // controlled selected sector; null clears selection
 		onSelectionChange?: (selection: { dataKey: string; value: number } | null) => void; // fires when the selected sector changes
 		isLoading?: boolean; // shows the animated loading skeleton
 		initialDimension?: { width: number; height: number }; // zero-size/first-render fallback
@@ -60,7 +62,10 @@
 	} = $props();
 
 	// One-time initialisation, mirroring the reference's `useState(defaultSelectedSector)`.
-	let selectedSector = $state<string | null>(untrack(() => defaultSelectedSector));
+	let internalSelectedSector = $state<string | null>(untrack(() => defaultSelectedSector));
+	const selectedSector = $derived(
+		selectedSectorProp === undefined ? internalSelectedSector : selectedSectorProp
+	);
 	let chartDimension = $state(untrack(() => initialDimension));
 	let introStartedAt = $state(Date.now());
 	let previousLoading = untrack(() => isLoading);
@@ -103,7 +108,7 @@
 		ditherVariant: () => ditherVariant,
 		selectedSector: () => selectedSector,
 		selectSector: (sectorName) => {
-			selectedSector = sectorName;
+			if (selectedSectorProp === undefined) internalSelectedSector = sectorName;
 
 			if (sectorName === null) {
 				onSelectionChange?.(null);
