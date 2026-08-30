@@ -6,7 +6,7 @@
 	"engines": {
 		"node": ">=22.18 <25"
 	},
-	"description": "Animated, interactive Svelte 5 chart components on LayerChart. An unofficial Svelte port of EvilCharts.",
+	"description": "Animated, interactive Svelte 5 chart components powered by LayerChart or Apache ECharts.",
 	"license": "MIT",
 	"homepage": "https://evilcharts-sv.vercel.app",
 	"repository": {
@@ -91,6 +91,7 @@
 		"clsx": "^2.1.1",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
+		"echarts": "^6.1.0",
 		"layerchart": "^2.3.0",
 		"mode-watcher": "^1.1.0",
 		"tailwind-merge": "^3.6.0",
