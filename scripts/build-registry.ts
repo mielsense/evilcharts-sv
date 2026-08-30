@@ -21,6 +21,7 @@
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { registry } from '../src/lib/registry/index.js';
+import { toConsumerSource } from '../src/lib/registry/consumer-source.js';
 import {
 	REGISTRY_ITEM_SCHEMA,
 	REGISTRY_SCHEMA,
@@ -130,17 +131,6 @@ async function buildRegistryJson(items: RegistryItem[]) {
 	await writeFile(REGISTRY_JSON, JSON.stringify(manifest, null, 2) + '\n');
 }
 
-/** Convert the authoring paths used by the docs site into the paths installed in a consumer. */
-function consumerSource(source: string): string {
-	return source
-		.replaceAll('$lib/registry/charts/', '$lib/components/evilcharts/charts/')
-		.replaceAll('$lib/registry/ui/', '$lib/components/evilcharts/ui/')
-		.replaceAll('$lib/registry/blocks/', '$lib/components/evilcharts/blocks/')
-		.replace(/(['"])\.\.\/\.\.\/charts\//g, '$1$lib/components/evilcharts/charts/')
-		.replace(/(['"])\.\.\/\.\.\/ui\//g, '$1$lib/components/evilcharts/ui/')
-		.replace(/(from\s+['"]\.\/)b-/g, '$1');
-}
-
 /** `@evilcharts/name` is an authoring shorthand; published items use supported relative URLs. */
 function consumerDependencies(dependencies: string[] | undefined): string[] {
 	return (dependencies ?? []).map((dependency) =>
@@ -157,7 +147,7 @@ async function buildItemFiles(items: RegistryItem[]) {
 		const files = await Promise.all(
 			item.files.map(async (file) => ({
 				path: `src/lib/registry/${file.path}`,
-				content: consumerSource(await readFile(path.join(REGISTRY_DIR, file.path), 'utf8')),
+				content: toConsumerSource(await readFile(path.join(REGISTRY_DIR, file.path), 'utf8')),
 				type: file.type,
 				...(file.target ? { target: file.target } : {})
 			}))

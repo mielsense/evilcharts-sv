@@ -10,7 +10,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { Index } from '$lib/registry/__index__.js';
-import { pageTree } from './source.js';
+import { toConsumerSource } from '$lib/registry/consumer-source.js';
+import { pageTree } from './source.server.js';
 
 const showcaseItems = [
 	{
@@ -272,11 +273,7 @@ function renderRegistrySource(name: string, title?: string) {
 			continue;
 		}
 
-		// Rewrite internal registry paths to the ones a consumer will have.
-		source = source.replaceAll('$lib/registry/ui/', '$lib/components/evilcharts/ui/');
-		source = source.replaceAll('$lib/registry/charts/', '$lib/components/evilcharts/charts/');
-		source = source.replaceAll('$lib/registry/blocks/', '$lib/components/evilcharts/blocks/');
-		source = source.replaceAll('$lib/registry/examples/', '$lib/components/');
+		source = toConsumerSource(source);
 
 		const language = file.path.endsWith('.svelte') ? 'svelte' : 'ts';
 		const label = item.files.length > 1 ? `\n\`${file.target ?? file.path}\`\n` : '';

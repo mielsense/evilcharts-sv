@@ -2320,6 +2320,11 @@
           "path": "src/lib/registry/charts/echarts-sankey-chart/types.ts",
           "type": "registry:component",
           "target": "$lib/components/evilcharts/charts/echarts-sankey-chart/types.ts"
+        },
+        {
+          "path": "src/lib/registry/charts/echarts-sankey-chart/validation.ts",
+          "type": "registry:component",
+          "target": "$lib/components/evilcharts/charts/echarts-sankey-chart/validation.ts"
         }
       ]
     },
@@ -3893,6 +3898,9 @@
     },
     {
       "name": "ex-chart-config-icons-bar-chart",
+      "dependencies": [
+        "@lucide/svelte@^1.33.0"
+      ],
       "registryDependencies": [
         "@evilcharts/evilcharts-notice",
         "@evilcharts/layerchart-bar-chart"
@@ -4160,7 +4168,7 @@
     {
       "name": "ex-chart-config-icons-echarts-bar-chart",
       "dependencies": [
-        "@lucide/svelte"
+        "@lucide/svelte@^1.33.0"
       ],
       "registryDependencies": [
         "@evilcharts/evilcharts-notice",
@@ -5911,7 +5919,7 @@
       "dependencies": [
         "layerchart@^2.3.0",
         "@humanspeak/svelte-motion@^0.9.4",
-        "@number-flow/svelte"
+        "@number-flow/svelte@^0.4.2"
       ],
       "registryDependencies": [
         "@evilcharts/evilcharts-notice",
@@ -6116,7 +6124,7 @@
       "dependencies": [
         "layerchart@^2.3.0",
         "@humanspeak/svelte-motion@^0.9.4",
-        "@lucide/svelte"
+        "@lucide/svelte@^1.33.0"
       ],
       "registryDependencies": [
         "@evilcharts/evilcharts-notice",
@@ -6329,7 +6337,7 @@
       "description": "Activity summary card with a distance goal bar and three metric gauges",
       "dependencies": [
         "echarts@^6.1.0",
-        "@lucide/svelte"
+        "@lucide/svelte@^1.33.0"
       ],
       "registryDependencies": [
         "@evilcharts/evilcharts-notice",

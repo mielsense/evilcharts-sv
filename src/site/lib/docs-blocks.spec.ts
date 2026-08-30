@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getPages } from './source.js';
+import { getPages } from './source.server.js';
 
 const chartFamilies = ['area', 'line', 'bar', 'composed', 'radar', 'pie', 'radial', 'sankey'];
 

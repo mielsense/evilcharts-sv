@@ -24,6 +24,17 @@ describe('MCP JSON-RPC endpoint', () => {
 		expect(invalid.body).toMatchObject({ id: 1, error: { code: -32600 } });
 	});
 
+	it('rejects non-finite numeric IDs without losing response correlation', async () => {
+		const invalid = await call('{"jsonrpc":"2.0","id":1e400,"method":"initialize"}');
+
+		expect(invalid.response.status).toBe(200);
+		expect(invalid.body).toEqual({
+			jsonrpc: '2.0',
+			id: null,
+			error: { code: -32600, message: 'Invalid Request' }
+		});
+	});
+
 	it('rejects missing, mistyped, and oversized tool arguments', async () => {
 		for (const body of [
 			{

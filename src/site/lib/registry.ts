@@ -15,10 +15,8 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { Index } from '$lib/registry/__index__.js';
+import { toConsumerSource } from '$lib/registry/consumer-source.js';
 import type { RegistryItem, RegistryItemFile } from '$lib/registry/schema.js';
-
-/** Where the consumer paths in `target` are rooted. */
-const CONSUMER_ROOT = '$lib/components/evilcharts';
 
 export type RegistryItemSource = RegistryItemFile & {
 	content: string;
@@ -104,11 +102,7 @@ function orderSourceFiles<T extends RegistryItemFile>(files: T[]): T[] {
  * cross-item imports, so copyable code matches what the CLI installs.
  */
 export function fixImports(content: string): string {
-	return content
-		.replaceAll('$lib/registry/', `${CONSUMER_ROOT}/`)
-		.replace(/(['"])\.\.\/\.\.\/charts\//g, `$1${CONSUMER_ROOT}/charts/`)
-		.replace(/(['"])\.\.\/\.\.\/ui\//g, `$1${CONSUMER_ROOT}/ui/`)
-		.replace(/(from\s+['"]\.\/)b-/g, '$1');
+	return toConsumerSource(content);
 }
 
 /** Paths shown relative to the item's own directory, as the reference's `fixFilePaths` does. */

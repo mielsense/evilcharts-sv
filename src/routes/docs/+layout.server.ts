@@ -1,4 +1,5 @@
 import { useGithubStars } from '$site/hooks/use-github-stars.server.js';
+import { pageTree } from '$site/lib/source.server.js';
 import type { LayoutServerLoad } from './$types.js';
 
 /**
@@ -7,5 +8,6 @@ import type { LayoutServerLoad } from './$types.js';
 export const prerender = false;
 
 export const load: LayoutServerLoad = async ({ fetch }) => ({
-	stars: await useGithubStars(fetch)
+	stars: await useGithubStars(fetch),
+	pageTree
 });

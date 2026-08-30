@@ -1,4 +1,5 @@
 import type { Handle, HandleServerError } from '@sveltejs/kit';
+import { waitUntil } from '@vercel/functions';
 import { ingest, sanitizeAnalyticsContext } from '$site/lib/axiom.js';
 
 type MediaRange = {
@@ -10,6 +11,17 @@ type MediaRange = {
 
 function isDocsPath(pathname: string): boolean {
 	return pathname === '/docs' || pathname.startsWith('/docs/');
+}
+
+/** Keep best-effort analytics alive after Vercel sends the response. */
+function scheduleAnalytics(events: Record<string, unknown>[]): void {
+	const task = ingest(events);
+	try {
+		waitUntil(task);
+	} catch {
+		// Local and non-Vercel runtimes have no request lifetime to extend.
+		void task;
+	}
 }
 
 function parseAccept(accept: string): MediaRange[] {
@@ -68,6 +80,25 @@ function varyOnAccept(response: Response): Response {
 }
 
 /**
+ * `event.fetch` may decode a compressed internal response while retaining its transport headers.
+ * Do not tell the outer client to decompress an already-decoded Markdown body.
+ */
+function stripDecodedBodyHeaders(response: Response): Response {
+	if (!response.headers.has('Content-Encoding') && !response.headers.has('Content-Length')) {
+		return response;
+	}
+
+	const headers = new Headers(response.headers);
+	headers.delete('Content-Encoding');
+	headers.delete('Content-Length');
+	return new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers
+	});
+}
+
+/**
  * Logs the real error server-side. SvelteKit only sends a generic message to the browser, which
  * makes a failing docs page opaque.
  */
@@ -98,7 +129,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	});
 
 	if (pathname.startsWith('/r/') && pathname.endsWith('.json')) {
-		void ingest([
+		scheduleAnalytics([
 			{
 				event: 'registry_install',
 				component: pathname.slice('/r/'.length, -'.json'.length),
@@ -117,8 +148,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const slug = pathname.replace(/^\/docs\/?/, '');
-	void ingest([{ event: 'docs_markdown_fetch', slug: slug || 'index', ...context }]);
+	scheduleAnalytics([{ event: 'docs_markdown_fetch', slug: slug || 'index', ...context }]);
 
 	// `/docs` → `/docs.md`; `/docs/<slug>` → `/docs/<slug>.md`.
-	return varyOnAccept(await event.fetch(slug ? `/docs/${slug}.md` : '/docs.md'));
+	const markdown = await event.fetch(slug ? `/docs/${slug}.md` : '/docs.md');
+	return varyOnAccept(stripDecodedBodyHeaders(markdown));
 };

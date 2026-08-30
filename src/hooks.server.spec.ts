@@ -1,8 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { ingest } = vi.hoisted(() => ({
-	ingest: vi.fn(async () => undefined)
+const { ingest, waitUntil } = vi.hoisted(() => ({
+	ingest: vi.fn(async () => undefined),
+	waitUntil: vi.fn()
 }));
+
+vi.mock('@vercel/functions', () => ({ waitUntil }));
 
 vi.mock('$site/lib/axiom.js', async (importOriginal) => ({
 	...(await importOriginal<typeof import('$site/lib/axiom.js')>()),
@@ -17,13 +20,15 @@ type EventOptions = {
 	accept?: string;
 	headers?: Record<string, string>;
 	fetchVary?: string;
+	fetchHeaders?: Record<string, string>;
 };
 
 function eventFor({
 	pathname = '/docs/layerchart/area-chart',
 	accept,
 	headers = {},
-	fetchVary
+	fetchVary,
+	fetchHeaders = {}
 }: EventOptions = {}) {
 	const requestHeaders = new Headers(headers);
 	if (accept !== undefined) requestHeaders.set('Accept', accept);
@@ -38,6 +43,7 @@ function eventFor({
 				new Response(`# ${path}`, {
 					headers: {
 						'Content-Type': 'text/markdown',
+						...fetchHeaders,
 						...(fetchVary ? { Vary: fetchVary } : {})
 					}
 				})
@@ -55,6 +61,7 @@ function varyValues(response: Response) {
 describe('docs content negotiation', () => {
 	beforeEach(() => {
 		ingest.mockClear();
+		waitUntil.mockClear();
 	});
 
 	it.each([
@@ -152,6 +159,22 @@ describe('docs content negotiation', () => {
 		expect(await response.text()).toBe('immutable-body');
 	});
 
+	it('removes stale compression headers from decoded internal Markdown responses', async () => {
+		const event = eventFor({
+			accept: 'text/markdown',
+			fetchHeaders: { 'Content-Encoding': 'gzip', 'Content-Length': '999' }
+		});
+
+		const response = await handle({
+			event,
+			resolve: vi.fn(async () => new Response('<html></html>'))
+		} as never);
+
+		expect(response.headers.get('content-encoding')).toBeNull();
+		expect(response.headers.get('content-length')).toBeNull();
+		expect(await response.text()).toContain('/docs/layerchart/area-chart.md');
+	});
+
 	it('leaves Vary wildcard responses unchanged', async () => {
 		const event = eventFor({ accept: 'text/html' });
 		const original = new Response('<html></html>', { headers: { Vary: '*' } });
@@ -169,6 +192,7 @@ describe('docs content negotiation', () => {
 describe('analytics metadata', () => {
 	beforeEach(() => {
 		ingest.mockClear();
+		waitUntil.mockClear();
 	});
 
 	it('keeps only a normalized referrer origin and two-letter country code', () => {
@@ -237,6 +261,8 @@ describe('analytics metadata', () => {
 			]);
 			expect(JSON.stringify(ingest.mock.calls)).not.toContain('private-agent-detail');
 			expect(JSON.stringify(ingest.mock.calls)).not.toContain('/private');
+			expect(waitUntil).toHaveBeenCalledOnce();
+			expect(waitUntil).toHaveBeenCalledWith(expect.any(Promise));
 		}
 	);
 });

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { processMdxForLLMs } from './llm.js';
-import { getPages } from './source.js';
+import { getPages } from './source.server.js';
 import { MDX_COMPONENTS } from './mdsvex-components.js';
 
 /** Every custom component the docs use, in one fixture. */
 const FIXTURE = `
 <ComponentPreview title="Basic Chart" name="ex-area-chart" />
+<ComponentPreview title="Dashboard Block" name="audience-echarts-area-chart" />
 
 ## Installation
 
@@ -119,6 +120,8 @@ describe('processMdxForLLMs', () => {
 	it('rewrites registry imports to the consumer paths', () => {
 		expect(output).toContain('$lib/components/evilcharts/charts/');
 		expect(output).not.toContain('$lib/registry/');
+		expect(output).not.toMatch(/from\s+['"]\.\.\/\.\.\/(charts|ui)\//);
+		expect(output).not.toMatch(/from\s+['"]\.\/b-/);
 	});
 
 	it('unescapes the braces the Svelte parser needed', () => {

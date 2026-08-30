@@ -28,7 +28,7 @@
 </script>
 
 <SidebarProvider>
-	<DocsSidebar />
+	<DocsSidebar tree={data.pageTree} />
 	<div class={cn('w-full bg-sidebar', 'p-0 pl-0 sm:py-2 sm:pr-2')}>
 		<DecorativeBorder />
 		<div

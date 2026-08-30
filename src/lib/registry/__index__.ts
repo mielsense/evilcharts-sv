@@ -241,7 +241,7 @@ export const Index: Record<string, RegistryItem> = {
 		type: 'registry:component',
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-chart","@evilcharts/echarts-tooltip"],
 		dependencies: ["echarts@^6.1.0"],
-		files: [{"path":"charts/echarts-sankey-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/index.ts"},{"path":"charts/echarts-sankey-chart/link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/link.svelte"},{"path":"charts/echarts-sankey-chart/node-label.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/node-label.svelte"},{"path":"charts/echarts-sankey-chart/node-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/node-slots.svelte.ts"},{"path":"charts/echarts-sankey-chart/node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/node.svelte"},{"path":"charts/echarts-sankey-chart/option.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/option.ts"},{"path":"charts/echarts-sankey-chart/sankey-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/sankey-chart-context.svelte.ts"},{"path":"charts/echarts-sankey-chart/sankey-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/sankey-chart.svelte"},{"path":"charts/echarts-sankey-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/types.ts"}]
+		files: [{"path":"charts/echarts-sankey-chart/index.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/index.ts"},{"path":"charts/echarts-sankey-chart/link.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/link.svelte"},{"path":"charts/echarts-sankey-chart/node-label.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/node-label.svelte"},{"path":"charts/echarts-sankey-chart/node-slots.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/node-slots.svelte.ts"},{"path":"charts/echarts-sankey-chart/node.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/node.svelte"},{"path":"charts/echarts-sankey-chart/option.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/option.ts"},{"path":"charts/echarts-sankey-chart/sankey-chart-context.svelte.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/sankey-chart-context.svelte.ts"},{"path":"charts/echarts-sankey-chart/sankey-chart.svelte","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/sankey-chart.svelte"},{"path":"charts/echarts-sankey-chart/types.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/types.ts"},{"path":"charts/echarts-sankey-chart/validation.ts","type":"registry:component","target":"$lib/components/evilcharts/charts/echarts-sankey-chart/validation.ts"}]
 	},
 	'ex-area-chart': {
 		name: 'ex-area-chart',
@@ -1144,7 +1144,7 @@ export const Index: Record<string, RegistryItem> = {
 		description: "",
 		type: 'registry:block',
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-bar-chart"],
-		dependencies: [],
+		dependencies: ["@lucide/svelte@^1.33.0"],
 		files: [{"path":"examples/layerchart/ex-chart-config-icons-bar-chart.svelte","type":"registry:block"}]
 	},
 	'ex-dither-area-chart': {
@@ -1296,7 +1296,7 @@ export const Index: Record<string, RegistryItem> = {
 		description: "",
 		type: 'registry:block',
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-bar-chart"],
-		dependencies: ["@lucide/svelte"],
+		dependencies: ["@lucide/svelte@^1.33.0"],
 		files: [{"path":"examples/echarts/ex-chart-config-icons-echarts-bar-chart.svelte","type":"registry:block"}]
 	},
 	'ex-circle-grid-echarts-radar-chart': {
@@ -2256,7 +2256,7 @@ export const Index: Record<string, RegistryItem> = {
 		description: "Bar chart with active value line and animated marker",
 		type: 'registry:block',
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-chart"],
-		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","@number-flow/svelte"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","@number-flow/svelte@^0.4.2"],
 		files: [{"path":"blocks/layerchart/b-hover-trace-bar-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-bar-chart.svelte"},{"path":"blocks/layerchart/b-hover-trace-bar-chart-bar.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-bar-chart-bar.svelte"},{"path":"blocks/layerchart/b-hover-trace-bar-chart-trace.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/hover-trace-bar-chart-trace.svelte"}]
 	},
 	'grid-bar-chart': {
@@ -2328,7 +2328,7 @@ export const Index: Record<string, RegistryItem> = {
 		description: "Cycling activity dashboard with goal, radial metrics, and effort splits",
 		type: 'registry:block',
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/layerchart-radial-chart"],
-		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","@lucide/svelte"],
+		dependencies: ["layerchart@^2.3.0","@humanspeak/svelte-motion@^0.9.4","@lucide/svelte@^1.33.0"],
 		files: [{"path":"blocks/layerchart/b-ride-radial-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/ride-radial-chart.svelte"}]
 	},
 	'cache-tiers-radial-chart': {
@@ -2416,7 +2416,7 @@ export const Index: Record<string, RegistryItem> = {
 		description: "Activity summary card with a distance goal bar and three metric gauges",
 		type: 'registry:block',
 		registryDependencies: ["@evilcharts/evilcharts-notice","@evilcharts/echarts-radial-chart"],
-		dependencies: ["echarts@^6.1.0","@lucide/svelte"],
+		dependencies: ["echarts@^6.1.0","@lucide/svelte@^1.33.0"],
 		files: [{"path":"blocks/echarts/b-ride-echarts-radial-chart.svelte","type":"registry:block","target":"$lib/components/evilcharts/blocks/ride-echarts-radial-chart.svelte"}]
 	},
 	'cache-tiers-echarts-radial-chart': {

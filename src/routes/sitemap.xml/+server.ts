@@ -1,5 +1,5 @@
 import { absoluteUrl } from '$site/lib/utils.js';
-import { getPages } from '$site/lib/source.js';
+import { getPages } from '$site/lib/source.server.js';
 import type { RequestHandler } from './$types.js';
 
 /**
