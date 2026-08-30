@@ -13,4 +13,3 @@ export {
 	type TooltipRoundness,
 	type TooltipVariant
 } from './tooltip.js';
-

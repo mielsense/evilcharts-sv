@@ -1,4 +1,6 @@
+import type { LineSeriesOption } from 'echarts/charts';
 import type { DotVariant } from '../../ui/echarts-dot/index.js';
+import type { DitherVariant } from '../../ui/echarts-dither/index.js';
 import type { LegendVariant } from '../../ui/echarts-legend/index.js';
 import type {
 	TooltipPosition,
@@ -13,20 +15,9 @@ export const BUFFER_DASH: [number, number] = [4, 3];
 
 export type StrokeVariant = 'solid' | 'dashed' | 'animated-dashed';
 export type LineAnimationType =
-	| 'none'
-	| 'left-to-right'
-	| 'right-to-left'
-	| 'center-out'
-	| 'edges-in';
+	'none' | 'left-to-right' | 'right-to-left' | 'center-out' | 'edges-in';
 export type CurveType =
-	| 'linear'
-	| 'smooth'
-	| 'bump'
-	| 'monotone'
-	| 'monotoneX'
-	| 'monotoneY'
-	| 'natural'
-	| 'step';
+	'linear' | 'smooth' | 'bump' | 'monotone' | 'monotoneX' | 'monotoneY' | 'natural' | 'step';
 
 export type LineRegistration = {
 	dataKey: string;
@@ -40,6 +31,8 @@ export type LineRegistration = {
 	enableBufferLine: boolean;
 	dotVariant: DotVariant;
 	activeDotVariant: DotVariant;
+	lineProps?: Partial<LineSeriesOption>;
+	ditherVariant?: DitherVariant;
 };
 
 export type AxisRegistration = {
@@ -69,4 +62,3 @@ export type BrushRegistration = {
 	formatLabel?: (value: string, index: number) => string;
 	onChange?: (range: { startIndex: number; endIndex: number }) => void;
 };
-

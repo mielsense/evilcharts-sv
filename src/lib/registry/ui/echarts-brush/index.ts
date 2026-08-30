@@ -9,4 +9,3 @@ export {
 	type BrushOverlayParams,
 	type BrushRange
 } from './brush.js';
-

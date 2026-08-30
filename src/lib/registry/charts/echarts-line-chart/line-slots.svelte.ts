@@ -22,4 +22,3 @@ export function useEChartsLineSlots(): EChartsLineSlots {
 	if (!context) throw new Error('[EvilCharts] ECharts Dot must be nested inside Line.');
 	return context;
 }
-

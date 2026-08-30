@@ -31,7 +31,11 @@
 		return (node: HTMLDivElement) => {
 			const chart = echarts.init(node, undefined, { renderer: activeRenderer });
 			instance = chart;
-			const resizeObserver = new ResizeObserver(() => chart.resize());
+			const resizeObserver = new ResizeObserver(() => {
+				if (node.clientWidth === chart.getWidth() && node.clientHeight === chart.getHeight())
+					return;
+				chart.resize();
+			});
 			resizeObserver.observe(node);
 
 			return () => {
@@ -66,7 +70,10 @@
 	{@attach createChartAttachment(renderer)}
 	data-slot="echarts-host"
 	data-echarts-source-hidden={hideSource || undefined}
-	class={cn('absolute inset-0 min-h-0 min-w-0', hideSource && '[&_canvas]:opacity-0 [&_svg]:opacity-0', className)}
+	class={cn(
+		'absolute inset-0 min-h-0 min-w-0',
+		hideSource && '[&_canvas]:opacity-0 [&_svg]:opacity-0',
+		className
+	)}
 	{...restProps}
 ></div>
-

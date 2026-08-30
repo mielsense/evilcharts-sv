@@ -25,4 +25,3 @@ export class RegistrationSet<T> {
 		return this.#entries.size;
 	}
 }
-

@@ -167,8 +167,7 @@ export function buildBrushDataZoom(params: {
 			fillerColor,
 			dataBackground: { lineStyle: { opacity: 0 }, areaStyle: { opacity: 0 } },
 			selectedDataBackground: { lineStyle: { opacity: 0 }, areaStyle: { opacity: 0 } },
-			handleIcon:
-				'path://M -3 -5 L -3 5 A 3 3 0 0 0 3 5 L 3 -5 A 3 3 0 0 0 -3 -5 Z',
+			handleIcon: 'path://M -3 -5 L -3 5 A 3 3 0 0 0 3 5 L 3 -5 A 3 3 0 0 0 -3 -5 Z',
 			handleSize: '35%',
 			handleStyle: { opacity: 0 },
 			moveHandleSize: 0,
@@ -177,4 +176,3 @@ export function buildBrushDataZoom(params: {
 		{ type: 'inside', xAxisIndex: [0] }
 	];
 }
-

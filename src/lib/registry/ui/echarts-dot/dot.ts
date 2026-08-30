@@ -78,4 +78,3 @@ export function sampleGradient(slots: string[], position: number): string {
 	const lerp = (from: number, to: number) => from + (to - from) * fraction;
 	return `rgba(${Math.round(lerp(redFrom, redTo))}, ${Math.round(lerp(greenFrom, greenTo))}, ${Math.round(lerp(blueFrom, blueTo))}, ${lerp(alphaFrom, alphaTo).toFixed(3)})`;
 }
-

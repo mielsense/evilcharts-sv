@@ -7,4 +7,3 @@ export {
 	type DotStyle,
 	type DotVariant
 } from './dot.js';
-

@@ -1,0 +1,39 @@
+import Root from './composed-chart.svelte';
+import Bar from './bar.svelte';
+import Line from './line.svelte';
+import Dot from './dot.svelte';
+import ActiveDot from './active-dot.svelte';
+import XAxis from './x-axis.svelte';
+import YAxis from './y-axis.svelte';
+import Grid from './grid.svelte';
+import { Tooltip } from '../../ui/echarts-tooltip/index.js';
+import { Legend } from '../../ui/echarts-legend/index.js';
+import { Brush } from '../../ui/echarts-brush/index.js';
+type RootComponent = typeof Root;
+export const EChartsComposedChart: RootComponent & {
+	Bar: typeof Bar;
+	Line: typeof Line;
+	Dot: typeof Dot;
+	ActiveDot: typeof ActiveDot;
+	XAxis: typeof XAxis;
+	YAxis: typeof YAxis;
+	Grid: typeof Grid;
+	Tooltip: typeof Tooltip;
+	Legend: typeof Legend;
+	Brush: typeof Brush;
+} = Object.assign(Root, { Bar, Line, Dot, ActiveDot, XAxis, YAxis, Grid, Tooltip, Legend, Brush });
+export type {
+	ChartAccessibility,
+	ChartConfig,
+	EChartsRenderer,
+	EChartsRenderStyle
+} from '../../ui/echarts-chart/index.js';
+export type { DitherBloom, DitherVariant, RenderStyle } from '../../ui/echarts-dither/index.js';
+export type { DotVariant } from '../../ui/echarts-dot/index.js';
+export type { LegendVariant } from '../../ui/echarts-legend/index.js';
+export type {
+	TooltipPosition,
+	TooltipRoundness,
+	TooltipVariant
+} from '../../ui/echarts-tooltip/index.js';
+export type { BarVariant, ComposedAnimationType, CurveType, StrokeVariant } from './types.js';

@@ -12,4 +12,3 @@
 	const slots = getEChartsSharedSlotContext();
 	$effect(() => slots.register('brush', token, () => ({ height, formatLabel, onChange })));
 </script>
-

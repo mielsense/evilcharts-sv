@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { LineSeriesOption } from 'echarts/charts';
+	import type { DitherVariant } from '../../ui/echarts-dither/index.js';
 	import { useEChartsLineChart } from './line-chart-context.svelte.js';
 	import { setEChartsLineSlots } from './line-slots.svelte.js';
 	import {
@@ -19,6 +21,8 @@
 		isClickable = false,
 		glowing = false,
 		enableBufferLine = false,
+		lineProps,
+		ditherVariant,
 		children
 	}: {
 		dataKey: string;
@@ -30,6 +34,8 @@
 		isClickable?: boolean;
 		glowing?: boolean;
 		enableBufferLine?: boolean;
+		lineProps?: Partial<LineSeriesOption>;
+		ditherVariant?: DitherVariant;
 		children?: Snippet;
 	} = $props();
 
@@ -48,6 +54,8 @@
 			isClickable,
 			glowing,
 			enableBufferLine,
+			lineProps,
+			ditherVariant,
 			dotVariant: slots.dots.first?.variant ?? 'none',
 			activeDotVariant: slots.activeDots.first?.variant ?? 'none'
 		}))
@@ -55,4 +63,3 @@
 </script>
 
 {@render children?.()}
-

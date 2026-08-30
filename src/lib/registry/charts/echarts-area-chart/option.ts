@@ -4,7 +4,7 @@ import type {
 	GridComponentOption,
 	TooltipComponentOption
 } from 'echarts/components';
-import type { ComposeOption } from 'echarts/core';
+import type { ComposeOption, EChartsType } from 'echarts/core';
 import * as echarts from 'echarts/core';
 import {
 	flattenColor,
@@ -78,7 +78,13 @@ export type AreaOptionContext = {
 };
 
 const ditherBloomBlur = (style: RenderStyle, bloom?: DitherBloom) =>
-	style !== 'dither' || bloom === 'none' || bloom === undefined ? 0 : bloom === 'strong' ? 14 : 8;
+	style !== 'dither' || bloom === 'off' || bloom === undefined
+		? 0
+		: bloom === 'aura'
+			? 14
+			: bloom === 'high'
+				? 8
+				: 4;
 
 const labelFor = (config: ChartConfig, key: string) =>
 	typeof config[key]?.label === 'string' ? (config[key].label as string) : key;
@@ -104,6 +110,20 @@ function rawValues(c: AreaOptionContext, key: string): (number | null)[] {
 		typeof row[key] === 'number' && Number.isFinite(row[key]) ? (row[key] as number) : 0
 	);
 }
+
+function ditherPlotBounds(c: AreaOptionContext, reverse = false) {
+	const top = c.legend?.verticalAlign === 'top' ? 42 : 16;
+	const showBrush = Boolean(c.brush) && !c.isLoading;
+	const bottom =
+		8 +
+		(showBrush ? (c.brush?.height ?? 56) + 30 + (c.xAxis?.label ? 22 : 0) : 0) +
+		(c.legend?.verticalAlign === 'bottom' ? 34 : 0);
+	return {
+		height: Math.max(c.ditherCellSize, c.rendererSize.height - top - bottom),
+		offsetY: top,
+		reverse
+	};
+}
 function values(c: AreaOptionContext, key: string) {
 	const raw = rawValues(c, key);
 	if (c.stackType !== 'expanded') return raw;
@@ -128,6 +148,7 @@ function axes(c: AreaOptionContext): { xAxis: XAxisOption; yAxis: YAxisOption } 
 			axisLine: { show: false },
 			axisTick: {
 				show: !c.isLoading && Boolean(c.xAxis) && !c.xAxis?.hideDots,
+				alignWithLabel: true,
 				length: 0.5,
 				lineStyle: { color: dotColor, width: 3, cap: 'round' }
 			},
@@ -135,6 +156,7 @@ function axes(c: AreaOptionContext): { xAxis: XAxisOption; yAxis: YAxisOption } 
 				show: !c.isLoading && Boolean(c.xAxis),
 				color: mutedForeground,
 				fontSize: 10,
+				margin: 8,
 				formatter: c.xAxis?.tickFormatter
 			},
 			splitLine: { show: false }
@@ -144,7 +166,7 @@ function axes(c: AreaOptionContext): { xAxis: XAxisOption; yAxis: YAxisOption } 
 			max: c.stackType === 'expanded' ? 1 : undefined,
 			name: c.isLoading ? undefined : c.yAxis?.label,
 			nameLocation: 'middle',
-			nameGap: 42,
+			nameGap: 38,
 			nameTextStyle: { color: mutedForeground, fontSize: 10 },
 			axisLine: { show: false },
 			axisTick: {
@@ -156,21 +178,147 @@ function axes(c: AreaOptionContext): { xAxis: XAxisOption; yAxis: YAxisOption } 
 				show: !c.isLoading && Boolean(c.yAxis),
 				color: mutedForeground,
 				fontSize: 10,
+				margin: 8,
 				formatter:
 					c.stackType === 'expanded'
 						? (value: number) => `${Math.round(value * 100)}%`
 						: c.yAxis?.tickFormatter
 			},
-			splitLine: { show: c.showGrid, lineStyle: { color: border, type: [3, 3], width: 0.8 } }
+			splitLine: {
+				show: c.showGrid && !c.isLoading,
+				lineStyle: { color: border, type: [3, 3], width: 1 }
+			}
 		}
 	};
 }
-function areaPaint(c: AreaOptionContext, area: AreaRegistration, slots: string[]) {
+type ImagePattern = {
+	image: HTMLCanvasElement;
+	repeat: 'repeat' | 'no-repeat';
+	rotation?: number;
+	scaleX?: number;
+	scaleY?: number;
+};
+
+function nativePatternFill(
+	kind: 'dotted' | 'lines' | 'hatched' | 'stripe',
+	color: string
+): ImagePattern | null {
+	if (typeof document === 'undefined') return null;
+	const dpr = Math.max(window.devicePixelRatio || 1, 1);
+	const canvas = document.createElement('canvas');
+	const context = canvas.getContext('2d');
+	if (!context) return null;
+	const size = (width: number, height: number) => {
+		canvas.width = width * dpr;
+		canvas.height = height * dpr;
+		context.scale(dpr, dpr);
+	};
+	const pattern = (rotation = 0): ImagePattern => ({
+		image: canvas,
+		repeat: 'repeat',
+		rotation,
+		scaleX: 1 / dpr,
+		scaleY: 1 / dpr
+	});
+	if (kind === 'dotted') {
+		size(6, 6);
+		context.fillStyle = withAlpha(color, 0.7);
+		context.beginPath();
+		context.arc(3, 3, 0.85, 0, Math.PI * 2);
+		context.fill();
+		return pattern();
+	}
+	if (kind === 'lines' || kind === 'stripe') {
+		size(5, 5);
+		context.strokeStyle = withAlpha(color, 0.3);
+		context.lineWidth = 1;
+		context.beginPath();
+		context.moveTo(2.5, -1);
+		context.lineTo(2.5, 6);
+		context.stroke();
+		return pattern(-Math.PI / 4);
+	}
+	size(20, 20);
+	context.fillStyle = withAlpha(color, 0.06);
+	context.fillRect(0, 0, 10, 20);
+	context.fillStyle = withAlpha(color, 0.22);
+	context.fillRect(10, 0, 10, 20);
+	return pattern((20 * Math.PI) / 180);
+}
+
+function gradientFillTexture(slots: string[], width: number, height: number, reverse: boolean) {
+	if (typeof document === 'undefined' || width < 1 || height < 1) return null;
+	const canvas = document.createElement('canvas');
+	canvas.width = Math.ceil(width);
+	canvas.height = Math.ceil(height);
+	const context = canvas.getContext('2d');
+	if (!context) return null;
+	const colors = context.createLinearGradient(0, 0, canvas.width, 0);
+	for (const [index, color] of slots.entries()) {
+		colors.addColorStop(index / (slots.length - 1), color);
+	}
+	context.fillStyle = colors;
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	const fade = context.createLinearGradient(0, 0, 0, canvas.height);
+	fade.addColorStop(0, `rgba(0, 0, 0, ${reverse ? 0 : 0.1})`);
+	fade.addColorStop(1, `rgba(0, 0, 0, ${reverse ? 0.1 : 0})`);
+	context.globalCompositeOperation = 'destination-in';
+	context.fillStyle = fade;
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	return canvas;
+}
+
+function patternFadeTexture(
+	kind: 'dotted' | 'lines' | 'hatched',
+	color: string,
+	width: number,
+	height: number
+) {
+	const source = nativePatternFill(kind, color);
+	if (!source || typeof document === 'undefined' || width < 1 || height < 1) return null;
+	const tile = source.image;
+	const canvas = document.createElement('canvas');
+	canvas.width = Math.ceil(width);
+	canvas.height = Math.ceil(height);
+	const context = canvas.getContext('2d');
+	if (!context) return null;
+	const pattern = context.createPattern(tile, 'repeat');
+	if (!pattern) return null;
+	if (typeof pattern.setTransform === 'function') {
+		const transform = new DOMMatrix();
+		transform.rotateSelf(((source.rotation ?? 0) * 180) / Math.PI);
+		transform.scaleSelf(source.scaleX ?? 1, source.scaleY ?? 1);
+		pattern.setTransform(transform);
+	}
+	context.fillStyle = pattern;
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	const fade = context.createLinearGradient(0, 0, 0, canvas.height);
+	fade.addColorStop(0, 'rgba(0, 0, 0, 1)');
+	fade.addColorStop(1, 'rgba(0, 0, 0, 0)');
+	context.globalCompositeOperation = 'destination-in';
+	context.fillStyle = fade;
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	return canvas;
+}
+
+function areaPaint(
+	c: AreaOptionContext,
+	area: AreaRegistration,
+	slots: string[],
+	showUnselected = false
+) {
 	const color = slots[0] ?? c.resolved.tokens.foreground;
 	if (area.variant === 'none') return 'transparent';
 	if (c.renderStyle === 'dither') {
-		return createDitherPattern(slots, area.ditherVariant ?? c.ditherVariant, c.ditherCellSize, 0.8);
+		return createDitherPattern(
+			slots,
+			area.ditherVariant ?? c.ditherVariant,
+			c.ditherCellSize,
+			0.8,
+			ditherPlotBounds(c, area.variant === 'gradient-reverse')
+		);
 	}
+	if (showUnselected) return nativePatternFill('stripe', color) ?? withAlpha(color, 0.1);
 	if (area.variant === 'solid') {
 		if (slots.length > 1)
 			return new echarts.graphic.LinearGradient(
@@ -185,10 +333,27 @@ function areaPaint(c: AreaOptionContext, area: AreaRegistration, slots: string[]
 			);
 		return withAlpha(color, 0.1);
 	}
-	if (area.variant === 'dotted') return createDitherPattern(slots, 'dotted', 2, 0.65);
-	if (area.variant === 'hatched') return createDitherPattern(slots, 'hatched', 2, 0.72);
-	if (area.variant === 'lines') return createDitherPattern(slots, 'hatched', 1, 0.5);
+	if (area.variant === 'dotted' || area.variant === 'hatched' || area.variant === 'lines') {
+		const texture = patternFadeTexture(
+			area.variant,
+			color,
+			c.rendererSize.width,
+			c.rendererSize.height
+		);
+		return texture
+			? ({ image: texture, repeat: 'no-repeat' } as ImagePattern)
+			: (nativePatternFill(area.variant, color) ?? withAlpha(color, 0.1));
+	}
 	const reverse = area.variant === 'gradient-reverse';
+	if (slots.length > 1) {
+		const texture = gradientFillTexture(
+			slots,
+			c.rendererSize.width,
+			c.rendererSize.height,
+			reverse
+		);
+		if (texture) return { image: texture, repeat: 'no-repeat' } as ImagePattern;
+	}
 	const transparent = withAlpha(color, 0);
 	return new echarts.graphic.LinearGradient(0, reverse ? 1 : 0, 0, reverse ? 0 : 1, [
 		{ offset: 0, color: withAlpha(color, 0.1) },
@@ -270,13 +435,34 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 	return c.areas.flatMap((area, index) => {
 		const vals = values(c, area.dataKey);
 		const slots = c.resolved.series[area.dataKey] ?? [c.resolved.tokens.foreground];
+		const showUnselected = c.selectedDataKey !== null && c.selectedDataKey !== area.dataKey;
 		const bloomBlur = ditherBloomBlur(c.renderStyle, c.bloom);
 		const bloomColor =
 			bloomBlur > 0 ? withAlpha(slots[0] ?? c.resolved.tokens.foreground, 0.55) : undefined;
 		const ditherStroke = c.renderStyle === 'dither' && area.strokeVariant !== 'animated-dashed';
 		const paint = ditherStroke
-			? createDitherPattern(slots, area.ditherVariant ?? c.ditherVariant, c.ditherCellSize)
+			? createDitherPattern(
+					slots,
+					area.ditherVariant ?? c.ditherVariant,
+					c.ditherCellSize,
+					1,
+					ditherPlotBounds(c)
+				)
 			: seriesPaint(slots);
+		const strokePaint =
+			c.enableHoverReveal && slots.length > 1 && c.renderStyle === 'native'
+				? new echarts.graphic.LinearGradient(
+						8,
+						0,
+						Math.max(c.rendererSize.width - 8, 9),
+						0,
+						slots.map((color, slotIndex) => ({
+							offset: slotIndex / (slots.length - 1),
+							color
+						})),
+						true
+					)
+				: paint;
 		const dotPaint = seriesPaint(slots);
 		const curve = curveConfig(area.curveType ?? c.curveType);
 		const opacity = opacityFor(c.selectedDataKey, area.dataKey);
@@ -315,11 +501,13 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			};
 		});
 		const result: LineSeriesOption[] = [];
-		if (revealActive)
+		if (c.enableHoverReveal)
 			result.push({
-				id: `__reveal-base-${area.dataKey}`,
+				id: `__reveal-${area.dataKey}`,
 				type: 'line',
-				data: vals.map((value, valueIndex) => (valueIndex < c.hoverRevealIndex! ? null : value)),
+				data: revealActive
+					? vals.map((value, valueIndex) => (valueIndex < c.hoverRevealIndex! ? null : value))
+					: vals,
 				stack: c.stackType === 'default' ? undefined : '__area-reveal-stack',
 				smooth: curve.smooth,
 				step: curve.step,
@@ -330,10 +518,12 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 				lineStyle: {
 					color: c.resolved.tokens.mutedForeground,
 					width: area.strokeWidth,
-					type: area.strokeVariant === 'solid' ? 'solid' : [3, 3],
-					opacity: 0.18
+					type: hasBuffer || area.strokeVariant === 'solid' ? 'solid' : [3, 3],
+					opacity: revealActive ? 0.3 : 0
 				},
-				areaStyle: { opacity: 0 },
+				emphasis: { disabled: true },
+				blur: { lineStyle: { opacity: revealActive ? 0.3 : 0 } },
+				tooltip: { show: false },
 				animation: false
 			});
 		result.push({
@@ -352,7 +542,7 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			triggerEvent: area.isClickable,
 			z: c.selectedDataKey === area.dataKey ? 3 : c.selectedDataKey === null ? 2 : 1,
 			lineStyle: {
-				color: paint,
+				color: strokePaint,
 				width: ditherStroke ? Math.max(area.strokeWidth, c.ditherCellSize) : area.strokeWidth,
 				type: ditherStroke
 					? [c.ditherCellSize, c.ditherCellSize]
@@ -365,7 +555,7 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			},
 			itemStyle: { ...dot.itemStyle, opacity },
 			areaStyle: {
-				color: areaPaint(c, area, slots),
+				color: areaPaint(c, area, slots, showUnselected),
 				opacity: c.selectedDataKey === null || c.selectedDataKey === area.dataKey ? 0.8 : 0.1,
 				shadowBlur: bloomBlur,
 				shadowColor: bloomColor
@@ -386,7 +576,6 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			animation:
 				c.animation && (area.animationType ?? c.animationType) !== 'none' && !c.reducedMotion,
 			animationDuration: 1000,
-			animationDelay: (i) => i * 20,
 			animationDurationUpdate: 0
 		});
 		if (hasBuffer)
@@ -423,7 +612,7 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 			});
 		if (hasBuffer)
 			result.push({
-				id: `__buffer-fill-${area.dataKey}`,
+				id: `__bufferfill-${area.dataKey}`,
 				type: 'line',
 				data: vals.map((v, i) => (i >= vals.length - 2 ? v : null)),
 				stack: c.stackType === 'default' ? undefined : '__area-buffer-fill-stack',
@@ -435,7 +624,7 @@ function series(c: AreaOptionContext): LineSeriesOption[] {
 				z: index,
 				lineStyle: { opacity: 0 },
 				areaStyle: {
-					color: areaPaint(c, area, slots),
+					color: areaPaint(c, area, slots, showUnselected),
 					opacity: c.selectedDataKey === null || c.selectedDataKey === area.dataKey ? 0.8 : 0.1,
 					shadowBlur: bloomBlur,
 					shadowColor: bloomColor
@@ -509,7 +698,58 @@ export function buildAreaOption(c: AreaOptionContext): EChartsAreaOption {
 	};
 }
 export function createAreaLoadingData(points: number): number[] {
-	return Array.from({ length: Math.max(0, points) }, (_, i) =>
-		Math.round(34 + Math.sin(i * 1.45) * 10 + Math.cos(i * 0.61) * 5)
-	);
+	const rows: number[] = [];
+	let value = 30 + Math.random() * 20;
+	for (let index = 0; index < Math.max(0, points); index += 1) {
+		value = Math.min(58, Math.max(16, value + (Math.random() - 0.5) * 16));
+		rows.push(Math.round(value));
+	}
+	return rows;
+}
+
+export function computeAreaPlottedTops(c: AreaOptionContext): Record<string, number[]> {
+	const running = new Array(c.data.length).fill(0);
+	const tops: Record<string, number[]> = {};
+	for (const area of c.areas) {
+		const plotted = values(c, area.dataKey).map((value) => Number(value) || 0);
+		tops[area.dataKey] = plotted.map((value, index) =>
+			c.stackType === 'default' ? value : (running[index] += value)
+		);
+	}
+	return tops;
+}
+
+export function resolveAreaAtPixel(
+	chart: EChartsType,
+	tops: Record<string, number[]>,
+	keys: string[],
+	x: number,
+	y: number
+): string | null {
+	if (keys.length < 2 || !chart.containPixel({ gridIndex: 0 }, [x, y])) return null;
+	const converted = chart.convertFromPixel({ gridIndex: 0 }, [x, y]);
+	const rawIndex = Array.isArray(converted) ? converted[0] : converted;
+	if (typeof rawIndex !== 'number') return null;
+	const index = Math.round(rawIndex);
+	let nearest: string | null = null;
+	let nearestDistance = Number.POSITIVE_INFINITY;
+	let above: string | null = null;
+	let abovePixelY = Number.NEGATIVE_INFINITY;
+	for (const key of keys) {
+		const value = tops[key]?.[index];
+		if (value === undefined) continue;
+		const point = chart.convertToPixel({ gridIndex: 0 }, [index, value]);
+		const pixelY = Array.isArray(point) ? point[1] : undefined;
+		if (typeof pixelY !== 'number') continue;
+		const distance = Math.abs(pixelY - y);
+		if (distance < nearestDistance) {
+			nearestDistance = distance;
+			nearest = key;
+		}
+		if (pixelY <= y && pixelY > abovePixelY) {
+			abovePixelY = pixelY;
+			above = key;
+		}
+	}
+	return nearestDistance <= 10 ? nearest : above;
 }

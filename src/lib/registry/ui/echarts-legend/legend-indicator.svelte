@@ -30,4 +30,3 @@
 {:else}
 	<span class="h-2 w-2 shrink-0 rounded-[2px]" style={fillStyle}></span>
 {/if}
-

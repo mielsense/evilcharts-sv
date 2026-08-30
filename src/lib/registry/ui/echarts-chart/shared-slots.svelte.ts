@@ -3,11 +3,7 @@ import { getContext, setContext } from 'svelte';
 export type EChartsSharedSlotName = 'tooltip' | 'legend' | 'brush';
 
 type SharedSlotContext = {
-	register: (
-		slot: EChartsSharedSlotName,
-		token: string,
-		getter: () => unknown
-	) => () => void;
+	register: (slot: EChartsSharedSlotName, token: string, getter: () => unknown) => () => void;
 };
 
 const ECHARTS_SHARED_SLOT_CONTEXT = Symbol('evilcharts-echarts-shared-slots');
@@ -24,4 +20,3 @@ export function getEChartsSharedSlotContext(): SharedSlotContext {
 	}
 	return context;
 }
-

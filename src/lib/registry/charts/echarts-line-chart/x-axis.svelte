@@ -17,10 +17,10 @@
 	$effect(() =>
 		chart.xAxes.register(token, () => ({
 			dataKey,
-			tickFormatter: tickFormatter as ((value: string | number, index: number) => string) | undefined,
+			tickFormatter: tickFormatter as
+				((value: string | number, index: number) => string) | undefined,
 			label,
 			hideDots
 		}))
 	);
 </script>
-

@@ -35,31 +35,42 @@
 			item: config[key],
 			colorsCount: getColorsCount(config[key] ?? {}),
 			selected:
-				(selectedKey === null || selectedKey === key) &&
-				(hoveredKey === null || hoveredKey === key)
+				(selectedKey === null || selectedKey === key) && (hoveredKey === null || hoveredKey === key)
 		}))
 	);
 </script>
 
 <div {style} class={['pointer-events-auto flex items-center gap-4 select-none', justify]}>
 	{#each entries as entry (entry.key)}
-		<button
-			type="button"
-			disabled={!isClickable}
-			class={[
-				'flex appearance-none items-center gap-1.5 border-0 bg-transparent p-0 text-inherit transition-opacity',
-				!entry.selected && 'opacity-30',
-				isClickable ? 'cursor-pointer' : 'cursor-default'
-			]}
-			onclick={() => onToggle(entry.key)}
-		>
-			<LegendIndicator {variant} dataKey={entry.key} colorsCount={entry.colorsCount} />
-			{#if typeof entry.item?.label === 'function'}
-				{@render entry.item.label()}
-			{:else}
-				{entry.item?.label ?? entry.key}
-			{/if}
-		</button>
+		{#if isClickable}
+			<button
+				type="button"
+				aria-pressed={selectedKey === entry.key}
+				class={[
+					'flex appearance-none items-center gap-1.5 border-0 bg-transparent p-0 text-inherit transition-opacity',
+					!entry.selected && 'opacity-30',
+					'cursor-pointer'
+				]}
+				onclick={() => onToggle(entry.key)}
+			>
+				<LegendIndicator {variant} dataKey={entry.key} colorsCount={entry.colorsCount} />
+				{#if typeof entry.item?.label === 'function'}
+					{@render entry.item.label()}
+				{:else}
+					{entry.item?.label ?? entry.key}
+				{/if}
+			</button>
+		{:else}
+			<div
+				class={['flex items-center gap-1.5 transition-opacity', !entry.selected && 'opacity-30']}
+			>
+				<LegendIndicator {variant} dataKey={entry.key} colorsCount={entry.colorsCount} />
+				{#if typeof entry.item?.label === 'function'}
+					{@render entry.item.label()}
+				{:else}
+					{entry.item?.label ?? entry.key}
+				{/if}
+			</div>
+		{/if}
 	{/each}
 </div>
-

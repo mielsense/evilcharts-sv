@@ -4,4 +4,3 @@
 	const chart = useEChartsLineChart();
 	$effect(() => chart.grids.register(token, () => ({})));
 </script>
-
