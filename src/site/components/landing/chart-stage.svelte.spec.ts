@@ -84,11 +84,16 @@ describe('ChartStage lazy card loading', () => {
 
 	it('retries a failed card after it leaves and re-enters the wanted set', async () => {
 		let failedOnce = false;
+		let resolveRetry!: () => void;
+		const retryStarted = new Promise<void>((resolve) => {
+			resolveRetry = resolve;
+		});
 		loadLandingCard.mockImplementation((name: string) => {
 			if (name === 'LandingHatchedBarChart' && !failedOnce) {
 				failedOnce = true;
 				return Promise.reject(new Error('private landing chunk URL'));
 			}
+			if (name === 'LandingHatchedBarChart') resolveRetry();
 			return Promise.resolve(PreviewA);
 		});
 
@@ -101,6 +106,7 @@ describe('ChartStage lazy card loading', () => {
 		await vi.advanceTimersByTimeAsync(4600);
 		await tick();
 		await vi.advanceTimersByTimeAsync(4600);
+		await retryStarted;
 		await flushLoads();
 
 		expect(
