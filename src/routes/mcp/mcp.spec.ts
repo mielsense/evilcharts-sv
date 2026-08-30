@@ -45,6 +45,200 @@ describe('MCP JSON-RPC endpoint', () => {
 		}
 	});
 
+	it('returns constant errors without reflecting unknown methods, tools, or paths', async () => {
+		const marker = 'untrusted-marker';
+		const requests = [
+			{
+				body: { jsonrpc: '2.0', id: 1, method: marker },
+				code: -32601,
+				message: 'Method not found'
+			},
+			{
+				body: {
+					jsonrpc: '2.0',
+					id: 2,
+					method: 'tools/call',
+					params: { name: marker, arguments: {} }
+				},
+				code: -32602,
+				message: 'Unknown tool'
+			},
+			{
+				body: {
+					jsonrpc: '2.0',
+					id: 3,
+					method: 'tools/call',
+					params: { name: 'read_doc', arguments: { path: `/docs/${marker}` } }
+				},
+				code: -32602,
+				message: 'Documentation page not found'
+			}
+		];
+
+		for (const request of requests) {
+			const result = await call(request.body);
+			expect(result.body).toMatchObject({
+				error: { code: request.code, message: request.message }
+			});
+			expect(JSON.stringify(result.body)).not.toContain(marker);
+		}
+	});
+
+	it('accepts bounded method, string ID, tool name, and read path values at their limits', async () => {
+		const id = 'i'.repeat(128);
+		const initialized = await call({ jsonrpc: '2.0', id, method: 'initialize' });
+		expect(initialized.body).toEqual({
+			jsonrpc: '2.0',
+			id,
+			result: {
+				protocolVersion: '2025-06-18',
+				capabilities: { tools: {} },
+				serverInfo: { name: 'evilcharts-docs', version: '1.0.0' }
+			}
+		});
+
+		const search = await call({
+			jsonrpc: '2.0',
+			id: 2,
+			method: 'tools/call',
+			params: { name: 'search_docs', arguments: { query: 'Sankey chart' } }
+		});
+		expect(search.body).toMatchObject({ id: 2, result: { content: [{ type: 'text' }] } });
+
+		const path = `${' '.repeat(251)}/docs`;
+		expect(path).toHaveLength(256);
+		const read = await call({
+			jsonrpc: '2.0',
+			id: 3,
+			method: 'tools/call',
+			params: { name: 'read_doc', arguments: { path } }
+		});
+		expect(read.body).toMatchObject({ id: 3, result: { content: [{ type: 'text' }] } });
+	});
+
+	it('rejects bounded envelope strings above their limits without reflection', async () => {
+		const marker = 'oversized-marker';
+		const requests = [
+			{
+				body: { jsonrpc: '2.0', id: 1, method: marker },
+				code: -32601,
+				message: 'Method not found'
+			},
+			{
+				body: { jsonrpc: '2.0', id: marker.repeat(9), method: 'initialize' },
+				code: -32600,
+				message: 'Invalid Request'
+			},
+			{
+				body: {
+					jsonrpc: '2.0',
+					id: 3,
+					method: 'tools/call',
+					params: { name: marker, arguments: {} }
+				},
+				code: -32602,
+				message: 'Unknown tool'
+			},
+			{
+				body: {
+					jsonrpc: '2.0',
+					id: 4,
+					method: 'tools/call',
+					params: { name: 'read_doc', arguments: { path: marker.repeat(17) } }
+				},
+				code: -32602,
+				message: 'Invalid read_doc path'
+			}
+		];
+
+		for (const request of requests) {
+			const result = await call(request.body);
+			expect(result.body).toMatchObject({
+				error: { code: request.code, message: request.message }
+			});
+			expect(JSON.stringify(result.body)).not.toContain(marker);
+		}
+	});
+
+	it('keeps successful initialize and tools/list payloads unchanged', async () => {
+		const initialized = await call({ jsonrpc: '2.0', id: 1, method: 'initialize' });
+		expect(initialized.body).toEqual({
+			jsonrpc: '2.0',
+			id: 1,
+			result: {
+				protocolVersion: '2025-06-18',
+				capabilities: { tools: {} },
+				serverInfo: { name: 'evilcharts-docs', version: '1.0.0' }
+			}
+		});
+
+		const listed = await call({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+		expect(listed.body).toEqual({
+			jsonrpc: '2.0',
+			id: 2,
+			result: {
+				tools: [
+					{
+						name: 'search_docs',
+						description:
+							'Search EvilCharts documentation pages by title, description, and content.',
+						inputSchema: {
+							type: 'object',
+							properties: {
+								query: {
+									type: 'string',
+									description: 'Search terms to match against the documentation.'
+								}
+							},
+							required: ['query']
+						}
+					},
+					{
+						name: 'read_doc',
+						description: 'Read one EvilCharts documentation page as markdown.',
+						inputSchema: {
+							type: 'object',
+							properties: {
+								path: {
+									type: 'string',
+									description: 'Documentation path, for example /docs/layerchart/bar-chart.'
+								}
+							},
+							required: ['path']
+						}
+					}
+				]
+			}
+		});
+	});
+
+	it('keeps successful search_docs and read_doc payload shapes unchanged', async () => {
+		const search = await call({
+			jsonrpc: '2.0',
+			id: 3,
+			method: 'tools/call',
+			params: { name: 'search_docs', arguments: { query: 'Sankey chart' } }
+		});
+		expect(search.response.status).toBe(200);
+		expect(search.body).toMatchObject({ id: 3, result: { content: [{ type: 'text' }] } });
+
+		const read = await call({
+			jsonrpc: '2.0',
+			id: 4,
+			method: 'tools/call',
+			params: { name: 'read_doc', arguments: { path: '/docs' } }
+		});
+		expect(read.response.status).toBe(200);
+		expect(read.body).toMatchObject({ id: 4, result: { content: [{ type: 'text' }] } });
+	});
+
+	it('keeps notifications response-free even for an oversized method', async () => {
+		const result = await call({ jsonrpc: '2.0', method: 'oversized-method-marker' });
+
+		expect(result.response.status).toBe(202);
+		expect(result.body).toBeNull();
+	});
+
 	it('returns a controlled error for an unknown documentation path', async () => {
 		const result = await call({
 			jsonrpc: '2.0',
@@ -56,7 +250,7 @@ describe('MCP JSON-RPC endpoint', () => {
 		expect(result.response.status).toBe(200);
 		expect(result.body).toMatchObject({
 			id: 'missing-doc',
-			error: { code: -32602, message: 'No documentation page found for path: /docs/not-real' }
+			error: { code: -32602, message: 'Documentation page not found' }
 		});
 	});
 
