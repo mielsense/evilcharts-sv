@@ -4,6 +4,7 @@ import {
 	generateLlmsFullTxt,
 	generateLlmsTxt,
 	generateSkillMd,
+	generateSkillReference,
 	getAgentDocPages,
 	getAgentSkillsIndex
 } from './agent-docs.js';
@@ -164,6 +165,19 @@ describe('generateSkillMd', () => {
 		expect(previewSkill).toContain(`${previewOrigin}/r/{item-name}.json`);
 		expect(previewSkill).not.toContain(productionOrigin);
 		expect(previewSkill).toContain('https://github.com/mielsense/evilcharts-sv');
+	});
+
+	it('publishes both bundled references for HTTP-only skill loaders', () => {
+		const previewOrigin = 'https://evilcharts-preview.example';
+		const catalog = generateSkillReference('chart-catalog.md', previewOrigin);
+		const guide = generateSkillReference('implementation-guide.md', previewOrigin);
+
+		expect(text).toContain(
+			`${absoluteUrl('')}/.well-known/agent-skills/evilcharts-svelte/references/chart-catalog.md`
+		);
+		expect(catalog).toContain('EvilAreaChart');
+		expect(catalog).toContain(`${previewOrigin}/docs/layerchart/{family}`);
+		expect(guide).toContain('config={chartConfig}');
 	});
 });
 

@@ -16,6 +16,15 @@ import { processMdxForLLMs } from './llm.js';
 import { absoluteUrl } from './utils.js';
 import { getPages, type DocsPage } from './source.js';
 import skillSource from '../../../skills/evilcharts-svelte/SKILL.md?raw';
+import chartCatalogSource from '../../../skills/evilcharts-svelte/references/chart-catalog.md?raw';
+import implementationGuideSource from '../../../skills/evilcharts-svelte/references/implementation-guide.md?raw';
+
+const SKILL_REFERENCES = {
+	'chart-catalog.md': chartCatalogSource,
+	'implementation-guide.md': implementationGuideSource
+} as const;
+
+export type SkillReferenceName = keyof typeof SKILL_REFERENCES;
 
 // Pages that belong to no provider: the intro, and the config contract both engines share.
 const SHARED_DOCS = new Set(['/docs', '/docs/chart-config', '/docs/changelog']);
@@ -158,6 +167,10 @@ ${sections.join('\n\n---\n\n')}
  */
 export function generateSkillMd(origin = absoluteUrl('')) {
 	return skillSource.replaceAll(PORT_SITE_URL, origin.replace(/\/$/, ''));
+}
+
+export function generateSkillReference(name: SkillReferenceName, origin = absoluteUrl('')) {
+	return SKILL_REFERENCES[name].replaceAll(PORT_SITE_URL, origin.replace(/\/$/, ''));
 }
 
 export function getAgentSkillsIndex() {

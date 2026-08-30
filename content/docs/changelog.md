@@ -7,7 +7,7 @@ This page records changes to the Svelte port, its registry, and its documentatio
 
 ## 2026-08-30
 
-- Added the installable `evilcharts-svelte` agent skill, with skills.sh-compatible discovery, a
+- Added the installable `evilcharts-svelte` agent skill, with skills.sh and HTTP discovery, a
   complete chart and compound-component catalog, implementation workflows, example and block
   guidance, plus links to the Markdown docs, Context7 library, and MCP endpoint.
 - Corrected the public `miel` attribution, replaced the Svelte stand-in with LayerChart's official
@@ -17,7 +17,7 @@ This page records changes to the Svelte port, its registry, and its documentatio
   made ECharts resolve chart-local color changes after mount.
 - Hardened LayerChart Sankey layout for invalid endpoints, cycles, zero-flow graphs, and numeric
   edge cases while preserving valid Recharts-compatible geometry.
-- Added recoverable lazy-preview failures, terminal preview markers, strict docs content
+- Added announced, recoverable lazy-preview failures, terminal preview markers, strict docs content
   negotiation, minimized analytics metadata, and bounded non-reflective MCP inputs.
 - Added Apache ECharts as a complete second rendering provider for all eight chart families, with
   Canvas rendering by default and optional SVG output.

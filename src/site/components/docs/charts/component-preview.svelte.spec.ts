@@ -40,6 +40,7 @@ describe('ComponentPreview lazy loading', () => {
 		expect(container.textContent).not.toContain('Contact the developer');
 		expect(container.querySelector('a')?.textContent).toBe('Open an issue');
 		expect(container.querySelector('button')).toBeNull();
+		expect(container.querySelector('[role="alert"]')).not.toBeNull();
 	});
 
 	it('shows a bounded failure and retries the loader', async () => {
@@ -55,6 +56,7 @@ describe('ComponentPreview lazy loading', () => {
 
 		await expect.poll(() => container.textContent).toContain('could not be loaded');
 		expect(container.textContent).not.toContain('private chunk URL');
+		expect(container.querySelector('[role="alert"]')).not.toBeNull();
 
 		container.querySelector<HTMLButtonElement>('button')?.click();
 

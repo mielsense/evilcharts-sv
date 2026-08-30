@@ -56,6 +56,7 @@ describe('standalone preview lazy loading', () => {
 			)
 			.toBe('missing');
 		expect(container.textContent).toContain('not found in registry');
+		expect(container.querySelector('[role="alert"]')).not.toBeNull();
 	});
 
 	it('marks a failed chunk as terminal and retries it', async () => {
@@ -76,6 +77,7 @@ describe('standalone preview lazy loading', () => {
 			)
 			.toBe('failed');
 		expect(container.textContent).not.toContain('private standalone chunk URL');
+		expect(container.querySelector('[role="alert"]')).not.toBeNull();
 
 		container.querySelector<HTMLButtonElement>('button')?.click();
 

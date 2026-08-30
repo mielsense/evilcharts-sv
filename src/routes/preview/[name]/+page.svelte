@@ -103,7 +103,10 @@
 				{#if Preview}
 					<Preview />
 				{:else if currentState?.status === 'missing'}
-					<p class="flex size-full items-center justify-center text-[13px] text-muted-foreground">
+					<p
+						role="alert"
+						class="flex size-full items-center justify-center text-[13px] text-muted-foreground"
+					>
 						Component <code
 							class="relative mx-1 rounded-md border bg-background px-[0.3rem] py-1 font-mono text-[0.75rem] text-red-500 outline-none"
 							>{name}</code
@@ -111,6 +114,7 @@
 					</p>
 				{:else if currentState?.status === 'failed'}
 					<div
+						role="alert"
 						class="flex size-full flex-col items-center justify-center gap-3 text-[13px] text-muted-foreground"
 					>
 						<p>
