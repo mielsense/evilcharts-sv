@@ -13,7 +13,7 @@ are styled for [shadcn-svelte][shadcn-svelte] and installed as source in your pr
 > implementation. This independent port preserves that credit and the original MIT license.
 >
 > - Svelte port: <https://github.com/mielsense/evilcharts-sv>
-> - Svelte site and install guide: <https://evilcharts-sv.vercel.app/>
+> - Svelte site and install guide: <https://charts.miel.my/>
 > - Original project: <https://github.com/legions-developer/evilcharts>
 > - Original site: <https://evilcharts.com>
 >
@@ -48,13 +48,13 @@ loading, brushes, responsive layout, and transparent SVG interaction targets kee
 ## Install a chart
 
 ```bash
-npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/layerchart-area-chart.json
+npx shadcn-svelte@latest add https://charts.miel.my/r/layerchart-area-chart.json
 ```
 
 Use the ECharts provider by changing the item prefix:
 
 ```bash
-npx shadcn-svelte@latest add https://evilcharts-sv.vercel.app/r/echarts-area-chart.json
+npx shadcn-svelte@latest add https://charts.miel.my/r/echarts-area-chart.json
 ```
 
 Then use it:
@@ -88,7 +88,7 @@ Then use it:
 ```
 
 Every chart is a compound component: the root owns the data, the config and the shared selection
-state; the visible parts are children. See the [Svelte docs](https://evilcharts-sv.vercel.app/docs)
+state; the visible parts are children. See the [Svelte docs](https://charts.miel.my/docs)
 for the full API.
 
 ## Stack
@@ -183,7 +183,7 @@ A request to any `/docs/…` page with `Accept: text/markdown` is served its mar
 
 ### Install the agent skill
 
-The [Agent Skill guide](https://evilcharts-sv.vercel.app/docs/agent-skill) explains what the skill
+The [Agent Skill guide](https://charts.miel.my/docs/agent-skill) explains what the skill
 covers, gives example prompts, and lists the documentation fallbacks available to agents.
 
 ```bash
@@ -209,9 +209,9 @@ Use Context7 library /mielsense/evilcharts-sv for EvilCharts Svelte docs.
 The explicit ID selects this Svelte port instead of the original React project. The repository's
 [`context7.json`](./context7.json) controls what Context7 indexes from `content/docs`.
 
-Agents can also read <https://evilcharts-sv.vercel.app/llms.txt> for the page index,
-<https://evilcharts-sv.vercel.app/llms-full.txt> for the combined documentation, or connect to the
-JSON-RPC endpoint at <https://evilcharts-sv.vercel.app/mcp>.
+Agents can also read <https://charts.miel.my/llms.txt> for the page index,
+<https://charts.miel.my/llms-full.txt> for the combined documentation, or connect to the
+JSON-RPC endpoint at <https://charts.miel.my/mcp>.
 
 ## Contributing
 
